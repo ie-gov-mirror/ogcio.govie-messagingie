@@ -1,8 +1,10 @@
 "use client"
 
+import { getEnv } from "@citizen-portal/shared"
 import { useEffect, useRef } from "react"
 import { CssSpinner } from "@/components/css-spinner"
 import { env } from "@/env/env.client"
+import { getTrustedRedirectOrigins } from "@/util/trusted-redirect-origins"
 import { getValidReturnUrl } from "@/util/valid-return-url"
 
 const POST_GLOBAL_SIGNOUT_COOKIE = "postGlobalSignoutUrl"
@@ -74,8 +76,10 @@ export function PostGlobalSignout() {
     }
 
     const destination =
-      getValidReturnUrl(readCookie(POST_GLOBAL_SIGNOUT_COOKIE)) ??
-      env.NEXT_PUBLIC_BASE_URL
+      getValidReturnUrl(
+        readCookie(POST_GLOBAL_SIGNOUT_COOKIE),
+        getTrustedRedirectOrigins(getEnv().hosts),
+      ) ?? env.NEXT_PUBLIC_BASE_URL
     clearCookie(POST_GLOBAL_SIGNOUT_COOKIE)
     window.location.replace(destination)
   }, [])

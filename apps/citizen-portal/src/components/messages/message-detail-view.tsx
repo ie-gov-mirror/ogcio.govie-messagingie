@@ -9,8 +9,9 @@ import { useLocale, useTranslations } from "next-intl"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { BackButton } from "@/components/button/back-button"
 import { CssSpinner } from "@/components/css-spinner"
+import { useFeatureFlags } from "@/components/feature-flags-provider"
 import { ANALYTICS } from "@/const/analytics"
-import { isFoldersEnabled } from "@/lib/feature-config"
+import { isFoldersEnabled, isLeaEnabled } from "@/lib/feature-config"
 import { getMockAttachmentIds } from "@/mock/attachments"
 import { findMockMessageById } from "@/mock/messages"
 import { findMockSubmissionIdForRelatedMessage } from "@/mock/related-messages"
@@ -46,6 +47,8 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   const tMove = useTranslations("home.move.modal")
   const tDetail = useTranslations("home.detail")
   useAuth()
+  const { isSubmissionLinkingEnabled } = useFeatureFlags()
+  const submissionLinkingEnabled = isLeaEnabled() && isSubmissionLinkingEnabled
   const submissionIdFromUrl = searchParams.get("submissionId")
 
   const {
@@ -55,7 +58,9 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   } = useGatewayFetch<Message>(`/messaging/api/v1/messages/${id}`)
 
   const { data: metadataMessage } = useGatewayFetch<Message>(
-    submissionIdFromUrl ? null : buildMessageMetadataUrl(id),
+    submissionLinkingEnabled && !submissionIdFromUrl
+      ? buildMessageMetadataUrl(id)
+      : null,
   )
 
   const data = useMemo(() => {
@@ -64,6 +69,7 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   }, [apiData, id])
 
   const submissionId = useMemo(() => {
+    if (!submissionLinkingEnabled) return null
     if (submissionIdFromUrl) return submissionIdFromUrl
     if (metadataMessage?.metadata?.journey?.submissionId) {
       return metadataMessage.metadata.journey.submissionId
@@ -71,6 +77,7 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
     return findMockSubmissionIdForRelatedMessage(id)
   }, [
     metadataMessage?.metadata?.journey?.submissionId,
+    submissionLinkingEnabled,
     submissionIdFromUrl,
     id,
   ])
@@ -192,7 +199,7 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
           <AttachmentList attachmentIds={attachments} />
         )}
 
-        {submissionId && submissionHref ? (
+        {submissionLinkingEnabled && submissionId && submissionHref ? (
           <div className={styles.applicationLink}>
             <Paragraph size='sm'>
               {tDetail.rich("relatesToSubmission", {

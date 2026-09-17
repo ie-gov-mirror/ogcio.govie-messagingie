@@ -1,6 +1,5 @@
 "use client"
 
-import { useEnv } from "@citizen-portal/shared"
 import {
   FormField,
   FormFieldError,
@@ -10,6 +9,7 @@ import {
   TextInput,
   toaster,
 } from "@ogcio/design-system-react"
+import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { useTranslations } from "next-intl"
 import { type FormEvent, useCallback, useState } from "react"
 import { FullWidthContainer } from "@/components/layout/containers"
@@ -24,10 +24,12 @@ export function PublicNameForm({
   onUpdated: () => void
 }) {
   const t = useTranslations("profile")
-  const { sagUrl } = useEnv()
   const [value, setValue] = useState(publicName)
   const [validationError, setValidationError] = useState<string | undefined>()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { trigger, isLoading } = useGatewayMutation<
+    unknown,
+    { publicName: string }
+  >(`/profile/api/v1/profiles/${profileId}`, { method: "PATCH" })
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -40,22 +42,9 @@ export function PublicNameForm({
       }
 
       setValidationError(undefined)
-      setIsSubmitting(true)
 
       try {
-        const response = await fetch(
-          `${sagUrl}/profile/api/v1/profiles/${profileId}`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({ publicName: trimmed }),
-          },
-        )
-
-        if (!response.ok) {
-          throw new Error("Failed to update public name")
-        }
+        await trigger({ publicName: trimmed })
 
         toaster.create({
           title: t("publicNameUpdatedToast"),
@@ -69,11 +58,9 @@ export function PublicNameForm({
           position: { x: "right", y: "top" },
           variant: "danger",
         })
-      } finally {
-        setIsSubmitting(false)
       }
     },
-    [value, t, onUpdated, profileId, sagUrl],
+    [value, t, onUpdated, trigger],
   )
 
   return (
@@ -107,7 +94,7 @@ export function PublicNameForm({
             <button
               type='submit'
               className='gi-btn gi-btn-primary gi-btn-regular'
-              disabled={isSubmitting}
+              disabled={isLoading}
               data-testid='public-name-submit'
             >
               {t("update")}

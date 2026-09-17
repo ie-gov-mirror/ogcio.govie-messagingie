@@ -1,5 +1,6 @@
 "use client"
 
+import { useEnv } from "@citizen-portal/shared"
 import { Heading, Link, Paragraph, Stack } from "@ogcio/design-system-react"
 import {
   CONNECTOR_MYGOVID,
@@ -12,6 +13,7 @@ import { useTranslations } from "next-intl"
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"
 import { CssSpinner } from "@/components/css-spinner"
 import { env } from "@/env/env.client"
+import { getTrustedRedirectOrigins } from "@/util/trusted-redirect-origins"
 import { resolveOnboardingSource } from "./resolve-onboarding-source"
 
 const GOV_IE_SAFE_REGISTRATION_URL =
@@ -77,7 +79,11 @@ function OnboardingContent() {
   // `citizen-portal`, which the gateway's strict per-app match rejected with a
   // 401 against the profile-bound session (AB#40235).
   const client = useSagClient()
-  const source = resolveOnboardingSource(searchParams.get("source"))
+  const { hosts } = useEnv()
+  const source = resolveOnboardingSource(
+    searchParams.get("source"),
+    getTrustedRedirectOrigins(hosts),
+  )
 
   const [status, setStatus] = useState<OnboardingStatus>("idle")
   const [timedOut, setTimedOut] = useState(false)

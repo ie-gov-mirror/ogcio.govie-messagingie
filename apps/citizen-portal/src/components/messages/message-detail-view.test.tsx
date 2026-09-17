@@ -85,6 +85,7 @@ let fetchState: {
 }
 
 let searchParams = new URLSearchParams()
+const gatewayFetchKeys: Array<string | null> = []
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
@@ -165,6 +166,7 @@ vi.mock("next-intl", () => ({
 vi.mock("@ogcio/sag-client/react", () => ({
   useAuth: () => ({ user: { sub: "user-1", name: "Mark Murphy" } }),
   useGatewayFetch: (path: string | null) => {
+    gatewayFetchKeys.push(path)
     if (path?.startsWith("/messaging/api/v1/messages/")) {
       return {
         data: fetchState.message,
@@ -246,10 +248,21 @@ vi.mock("@/components/messages/use-message-folders", () => ({
 
 // Folders are a build-time flag (AB#42582), so each spec pins the flag
 // state it needs; the default matches a folders-enabled build.
-const flagState = vi.hoisted(() => ({ folders: true }))
+const flagState = vi.hoisted(() => ({
+  folders: true,
+  lea: true,
+  submissionLinking: true,
+}))
 
 vi.mock("@/lib/feature-config", () => ({
   isFoldersEnabled: () => flagState.folders,
+  isLeaEnabled: () => flagState.lea,
+}))
+
+vi.mock("@/components/feature-flags-provider", () => ({
+  useFeatureFlags: () => ({
+    isSubmissionLinkingEnabled: flagState.submissionLinking,
+  }),
 }))
 
 vi.mock("@/components/messages/move-message-modal", () => ({
@@ -327,6 +340,7 @@ describe("MessageDetailView", () => {
     findMockSubmissionById.mockReset()
     findMockSubmissionById.mockReturnValue(null)
     searchParams = new URLSearchParams()
+    gatewayFetchKeys.length = 0
     sessionStorage.clear()
     fetchState = {
       message: MESSAGE,
@@ -343,6 +357,8 @@ describe("MessageDetailView", () => {
     vi.spyOn(window.history, "back").mockImplementation(() => {})
     trackEvent.mockClear()
     flagState.folders = true
+    flagState.lea = true
+    flagState.submissionLinking = true
   })
 
   it("fires message-detail once message data is loaded", () => {
@@ -534,6 +550,48 @@ describe("MessageDetailView", () => {
     expect(
       screen.getByRole("link", { name: "SCH-2025-084321" }),
     ).toHaveAttribute("href", applicationHref)
+  })
+
+  it.each([
+    { gate: "LEA", lea: false, submissionLinking: true },
+    { gate: "submission-linking", lea: true, submissionLinking: false },
+  ])(
+    "does not fetch metadata or derive a submission link when $gate is off",
+    ({ lea, submissionLinking }) => {
+      flagState.lea = lea
+      flagState.submissionLinking = submissionLinking
+      fetchState.metadataMessage = {
+        metadata: { journey: { submissionId: "PPMG0004" } },
+      }
+      findMockSubmissionIdForRelatedMessage.mockReturnValue(
+        "SCH-2025-084321",
+      )
+
+      render(<MessageDetailView id='msg-1' />)
+
+      expect(gatewayFetchKeys).not.toContain(
+        "/messaging-public-api/api/v1/citizens/messages/msg-1?includeMetadata=true",
+      )
+      expect(
+        screen.queryByText(/Message relates to submission/),
+      ).not.toBeInTheDocument()
+      expect(
+        findMockSubmissionIdForRelatedMessage,
+      ).not.toHaveBeenCalled()
+    },
+  )
+
+  it("hides a URL-provided submission link when LEA is off", () => {
+    flagState.lea = false
+    searchParams = new URLSearchParams({
+      submissionId: "SCH-2025-073296",
+    })
+
+    render(<MessageDetailView id='msg-1' />)
+
+    expect(
+      screen.queryByRole("link", { name: "SCH-2025-073296" }),
+    ).not.toBeInTheDocument()
   })
 
   it("links the toolbar Back action to the messages list by default", () => {

@@ -183,9 +183,23 @@ export default async function routes(app: FastifyInstance) {
     },
     async (request, reply) => {
       const fileId = request.body.fileId;
+      const userId = request.userData?.userId;
+      const organizationId = request.userData?.organizationId;
+
+      const auditDeletion = (allowed: boolean, message: string) => {
+        request.log.info({ fileId, userId, organizationId, allowed }, message);
+      };
 
       if (!fileId) {
         throw app.httpErrors.badRequest("File key not provided");
+      }
+
+      // Same policy as GET /metadata/:id: owning org, share, or linked profile.
+      try {
+        await userCanAccessFileOrThrow(app, request, fileId);
+      } catch (err) {
+        auditDeletion(false, "file deletion denied");
+        throw err;
       }
 
       const fileData = await getFileMetadataById(app.pg, fileId);
@@ -193,6 +207,7 @@ export default async function routes(app: FastifyInstance) {
       const file = fileData.rows?.[0];
 
       if (!file) {
+        auditDeletion(false, "file deletion denied");
         throw app.httpErrors.notFound("File not found");
       }
 
@@ -205,6 +220,8 @@ export default async function routes(app: FastifyInstance) {
           parent: err,
         });
       }
+
+      auditDeletion(true, "file deletion scheduled");
 
       reply.send({ data: { id: fileId } });
     },

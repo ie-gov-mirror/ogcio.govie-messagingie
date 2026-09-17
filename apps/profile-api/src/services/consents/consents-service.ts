@@ -48,16 +48,31 @@ export async function getConsentsForUser({
   userId,
   paginationParams,
   subject,
+  organisationId,
 }: {
   pool: Pool;
   userId: string;
   paginationParams: Required<PaginationParams>;
   subject: string;
+  organisationId?: string;
 }): Promise<{ data: ConsentWithStatement[]; totalCount: number }> {
   return withClient(pool, async (client) => {
     const { rows: rowsCount } = await client.query<{ count: number }>(
-      "SELECT COUNT(*) FROM profile_consents WHERE profile_id = $1 AND subject = $2",
-      [userId, subject],
+      `SELECT COUNT(*)
+       FROM profile_consents pc
+       WHERE pc.profile_id = $1
+         AND pc.subject = $2
+         AND (
+           $3::text IS NULL
+           OR EXISTS (
+             SELECT 1
+             FROM profile_details pd
+             WHERE pd.profile_id = pc.profile_id
+               AND pd.organisation_id = $3
+               AND pd.is_latest = TRUE
+           )
+         )`,
+      [userId, subject, organisationId ?? null],
     );
 
     if (!rowsCount[0] || Number(rowsCount[0].count ?? 0) === 0) {
@@ -91,10 +106,26 @@ export async function getConsentsForUser({
         LEFT JOIN profiles target_profile ON pc.profile_id = target_profile.id
         WHERE pc.profile_id = $1
         AND pc.subject = $2
+        AND (
+          $3::text IS NULL
+          OR EXISTS (
+            SELECT 1
+            FROM profile_details pd
+            WHERE pd.profile_id = pc.profile_id
+              AND pd.organisation_id = $3
+              AND pd.is_latest = TRUE
+          )
+        )
         ORDER BY pc.created_at DESC
-        LIMIT $3::integer OFFSET $4::integer;
+        LIMIT $4::integer OFFSET $5::integer;
       `,
-      [userId, subject, paginationParams.limit, paginationParams.offset],
+      [
+        userId,
+        subject,
+        organisationId ?? null,
+        paginationParams.limit,
+        paginationParams.offset,
+      ],
     );
 
     const transformedResults: ConsentWithStatement[] = rows.map((row) => ({

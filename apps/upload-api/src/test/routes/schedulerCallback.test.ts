@@ -327,7 +327,7 @@ describe("scheduler", () => {
     expect(res.json()).toEqual({ status: "ok" });
   });
 
-  it("Should return a positive response when the api is called with an invalid token", async () => {
+  it("Should return 401 when the api is called with an invalid token", async () => {
     app = await buildApp({
       getConfigValue: () => Promise.resolve("schedulerToken"),
     });
@@ -340,8 +340,6 @@ describe("scheduler", () => {
         token: "wrongToken",
       },
     });
-    expect(res.statusCode).toBe(200);
-    expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
-    expect(res.json()).toEqual({ status: "ok" });
+    expect(res.statusCode).toBe(401);
   });
 });

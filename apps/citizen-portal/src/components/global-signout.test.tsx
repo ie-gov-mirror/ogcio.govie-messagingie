@@ -1,7 +1,7 @@
 import { act, render } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-const POST_REDIRECT_URI = "https://journey.uat.services.gov.ie/journey/abc-123"
+const POST_REDIRECT_URI = "https://journey.uat.test/journey/abc-123"
 
 const { searchParamsHolder } = vi.hoisted(() => ({
   searchParamsHolder: { value: new URLSearchParams() },

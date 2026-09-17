@@ -22,4 +22,12 @@ describe("envSchema", () => {
     expect(envSchema.properties.LOG_LEVEL.default).toBe("debug");
     expect(envSchema.properties.POSTGRES_SSL.default).toBe(false);
   });
+
+  it("defaults callback batch and rate limits", () => {
+    expect(envSchema.properties.CALLBACK_MAX_ITEMS.default).toBe(1000);
+    expect(envSchema.properties.CALLBACK_RATE_LIMIT_MAX.default).toBe(60);
+    expect(envSchema.properties.CALLBACK_RATE_LIMIT_WINDOW_MS.default).toBe(
+      60_000,
+    );
+  });
 });

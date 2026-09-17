@@ -25,24 +25,20 @@ function GlobalErrorBody({
   const t = useTranslations("errors.global")
 
   return (
-    <Stack
-      direction='column'
-      gap={4}
-      role='alert'
-      aria-live='assertive'
-      aria-atomic='true'
-    >
-      <Heading as='h2'>{t("title")}</Heading>
-      {error.message && (
-        <Paragraph size='sm'>
-          <span className='gi-sr-only'>{t("title")}: </span>
-          {error.message}
-        </Paragraph>
-      )}
-      <div>
-        <Button onClick={reset}>{t("retry")}</Button>
-      </div>
-    </Stack>
+    <div role='alert' aria-live='assertive' aria-atomic='true'>
+      <Stack direction='column' gap={4}>
+        <Heading as='h2'>{t("title")}</Heading>
+        {error.message && (
+          <Paragraph size='sm'>
+            <span className='gi-sr-only'>{t("title")}: </span>
+            {error.message}
+          </Paragraph>
+        )}
+        <div>
+          <Button onClick={reset}>{t("retry")}</Button>
+        </div>
+      </Stack>
+    </div>
   )
 }
 
@@ -81,21 +77,17 @@ export default function GlobalError({
             </NextIntlClientProvider>
           ) : (
             <Container>
-              <Stack
-                direction='column'
-                gap={4}
-                role='alert'
-                aria-live='assertive'
-                aria-atomic='true'
-              >
-                <Heading as='h2'>An unexpected error occurred</Heading>
-                {error.message && (
-                  <Paragraph size='sm'>{error.message}</Paragraph>
-                )}
-                <div>
-                  <Button onClick={reset}>Retry</Button>
-                </div>
-              </Stack>
+              <div role='alert' aria-live='assertive' aria-atomic='true'>
+                <Stack direction='column' gap={4}>
+                  <Heading as='h2'>An unexpected error occurred</Heading>
+                  {error.message && (
+                    <Paragraph size='sm'>{error.message}</Paragraph>
+                  )}
+                  <div>
+                    <Button onClick={reset}>Retry</Button>
+                  </div>
+                </Stack>
+              </div>
             </Container>
           )}
         </main>

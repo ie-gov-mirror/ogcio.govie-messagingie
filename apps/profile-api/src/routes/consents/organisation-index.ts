@@ -29,6 +29,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         pool: fastify.pg.pool,
         paginationParams: sanitizePagination(request.query),
         subject: request.query.subject,
+        organisationId: ensureOrganizationIdIsSet(request),
       });
 
       return formatAPIResponse({

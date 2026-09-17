@@ -1,8 +1,8 @@
 # Local-development variant of ./Dockerfile.
 #
 # Identical to the production Dockerfile except for the runner base image: this
-# one uses the public `node:24-alpine3.23` instead of the hardened
-# `dhi.io/node:24-alpine3.23` mirror in ECR, which needs AWS credentials most
+# one uses the public `node:24-alpine3.24` instead of the hardened
+# `dhi.io/node:24-alpine3.24` mirror in ECR, which needs AWS credentials most
 # developers do not have locally.
 #
 # Keep this file in sync with ./Dockerfile. The ONLY line that should ever
@@ -32,7 +32,7 @@ RUN pnpm --filter upload-api run build
 
 RUN pnpm deploy --filter=upload-api --prod /app/deploy
 
-FROM node:24-alpine3.23 AS runner
+FROM node:24-alpine3.24 AS runner
 WORKDIR /app
 
 USER node

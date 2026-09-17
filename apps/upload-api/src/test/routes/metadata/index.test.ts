@@ -22,6 +22,7 @@ const buildApp = async ({
   removeAllFileSharings,
   userCanAccessFileOrThrow,
   userData,
+  infoLogs,
 }: {
   userData?: {
     isM2MApplication: boolean;
@@ -38,6 +39,7 @@ const buildApp = async ({
   scheduleFileForDeletion?: () => Promise<unknown>;
   removeAllFileSharings?: () => Promise<unknown>;
   userCanAccessFileOrThrow?: () => Promise<unknown>;
+  infoLogs?: unknown[][];
 }) => {
   vi.resetModules();
 
@@ -110,6 +112,15 @@ const buildApp = async ({
 
   const app = await build();
   app.addHook("onRequest", async (req: FastifyRequest) => {
+    if (infoLogs) {
+      const originalLog = req.log;
+      const captured = Object.create(originalLog);
+      captured.info = (...args: unknown[]) => {
+        infoLogs.push(args);
+        return originalLog.info(...(args as [unknown]));
+      };
+      req.log = captured;
+    }
     // Override the request decorator
     app.checkPermissions = async (
       request: FastifyRequest,
@@ -607,34 +618,34 @@ describe("metadata", () => {
       global.Date = OriginalDate;
     });
 
+    const ownOrgFile = {
+      fileName: "fileName",
+      id: "1",
+      key: "user/fileName",
+      ownerId: "user",
+      fileSize: 100,
+      mimeType: "image/png",
+      createdAt: "2024-08-12T13:12:18.681Z",
+      lastScan: "2024-08-12T13:12:18.681Z",
+      deleted: false,
+      infected: false,
+      infectionDescription: null,
+      antivirusDbVersion: "1",
+    };
+
     it("Should schedule a file metadata for deletion and return scheduled file id", async () => {
-      const paramsUsed: string[] = [];
+      const infoLogs: unknown[][] = [];
+      const scheduleFileForDeletion = vi.fn(() =>
+        Promise.resolve({ rows: [] }),
+      );
+      const removeAllFileSharings = vi.fn(() => Promise.resolve());
 
       app = await buildApp({
-        getFileMetadataById: () =>
-          Promise.resolve({
-            rows: [
-              {
-                fileName: "fileName",
-                id: "1",
-                key: "user/fileName",
-                ownerId: "user",
-                fileSize: 100,
-                mimeType: "image/png",
-                createdAt: "2024-08-12T13:12:18.681Z",
-                lastScan: "2024-08-12T13:12:18.681Z",
-                deleted: false,
-                infected: false,
-                infectionDescription: null,
-                antivirusDbVersion: "1",
-              },
-            ],
-          }),
-        scheduleFileForDeletion: (...params) => {
-          paramsUsed.push(...params);
-          return Promise.resolve({ rows: [] });
-        },
-        removeAllFileSharings: () => Promise.resolve(),
+        userCanAccessFileOrThrow: () => Promise.resolve(),
+        getFileMetadataById: () => Promise.resolve({ rows: [ownOrgFile] }),
+        scheduleFileForDeletion,
+        removeAllFileSharings,
+        infoLogs,
       });
 
       const response = await app.inject({
@@ -652,6 +663,113 @@ describe("metadata", () => {
       });
 
       expect(response.statusCode).toBe(200);
+      expect(scheduleFileForDeletion).toHaveBeenCalled();
+      expect(removeAllFileSharings).toHaveBeenCalled();
+      const auditLine = infoLogs.find(
+        (args) => args[1] === "file deletion scheduled",
+      );
+      expect(auditLine?.[0]).toMatchObject({
+        fileId: "1",
+        userId: "userId",
+        allowed: true,
+      });
+    });
+
+    it("Should allow deletion when the caller can access the file via share (same helper as GET)", async () => {
+      const scheduleFileForDeletion = vi.fn(() =>
+        Promise.resolve({ rows: [] }),
+      );
+      const removeAllFileSharings = vi.fn(() => Promise.resolve());
+
+      app = await buildApp({
+        userCanAccessFileOrThrow: () => Promise.resolve(),
+        getFileMetadataById: () => Promise.resolve({ rows: [ownOrgFile] }),
+        scheduleFileForDeletion,
+        removeAllFileSharings,
+      });
+
+      const response = await app.inject({
+        method: "DELETE",
+        url: "/metadata/",
+        body: { fileId: "shared-file" },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(scheduleFileForDeletion).toHaveBeenCalled();
+    });
+
+    it("Should return 403 and not delete when the file is outside the caller's org", async () => {
+      const scheduleFileForDeletion = vi.fn(() =>
+        Promise.resolve({ rows: [] }),
+      );
+      const removeAllFileSharings = vi.fn(() => Promise.resolve());
+      const infoLogs: unknown[][] = [];
+
+      app = await buildApp({
+        userCanAccessFileOrThrow: () =>
+          Promise.reject(
+            app.httpErrors.forbidden("User cannot access this file"),
+          ),
+        getFileMetadataById: () => Promise.resolve({ rows: [ownOrgFile] }),
+        scheduleFileForDeletion,
+        removeAllFileSharings,
+        infoLogs,
+      });
+
+      const response = await app.inject({
+        method: "DELETE",
+        url: "/metadata/",
+        body: { fileId: "other-org-file" },
+      });
+
+      expect(response.statusCode).toBe(403);
+      expect(scheduleFileForDeletion).not.toHaveBeenCalled();
+      expect(removeAllFileSharings).not.toHaveBeenCalled();
+      const auditLine = infoLogs.find(
+        (args) => args[1] === "file deletion denied",
+      );
+      expect(auditLine?.[0]).toMatchObject({
+        fileId: "other-org-file",
+        userId: "userId",
+        allowed: false,
+      });
+    });
+
+    it("Should return 403 and not delete for an unknown file id", async () => {
+      const scheduleFileForDeletion = vi.fn(() =>
+        Promise.resolve({ rows: [] }),
+      );
+      const removeAllFileSharings = vi.fn(() => Promise.resolve());
+      const infoLogs: unknown[][] = [];
+
+      app = await buildApp({
+        userCanAccessFileOrThrow: () =>
+          Promise.reject(
+            app.httpErrors.forbidden("User cannot access this file"),
+          ),
+        getFileMetadataById: () => Promise.resolve({ rows: [] }),
+        scheduleFileForDeletion,
+        removeAllFileSharings,
+        infoLogs,
+      });
+
+      const response = await app.inject({
+        method: "DELETE",
+        url: "/metadata/",
+        body: { fileId: "unknown-file" },
+      });
+
+      expect(response.statusCode).toBe(403);
+      expect(scheduleFileForDeletion).not.toHaveBeenCalled();
+      expect(removeAllFileSharings).not.toHaveBeenCalled();
+      const auditLine = infoLogs.find(
+        (args) => args[1] === "file deletion denied",
+      );
+      expect(auditLine?.[0]).toMatchObject({
+        fileId: "unknown-file",
+        userId: "userId",
+        allowed: false,
+      });
     });
 
     it("Should throw a bad request error if file id is not provided", async () => {
@@ -673,12 +791,21 @@ describe("metadata", () => {
     });
 
     it("Should throw a 404 when the metadata is not found", async () => {
+      const scheduleFileForDeletion = vi.fn(() =>
+        Promise.resolve({ rows: [] }),
+      );
+      const removeAllFileSharings = vi.fn(() => Promise.resolve());
+      const infoLogs: unknown[][] = [];
+
       app = await buildApp({
         userCanAccessFileOrThrow: () => Promise.resolve(),
         getFileMetadataById: () =>
           Promise.resolve({
             rows: [],
           }),
+        scheduleFileForDeletion,
+        removeAllFileSharings,
+        infoLogs,
       });
 
       const response = await app.inject({
@@ -690,6 +817,16 @@ describe("metadata", () => {
       });
 
       expect(response.statusCode).toBe(404);
+      expect(scheduleFileForDeletion).not.toHaveBeenCalled();
+      expect(removeAllFileSharings).not.toHaveBeenCalled();
+      const auditLine = infoLogs.find(
+        (args) => args[1] === "file deletion denied",
+      );
+      expect(auditLine?.[0]).toMatchObject({
+        fileId: "1",
+        userId: "userId",
+        allowed: false,
+      });
     });
 
     it("Should throw a 500 when a query operation throws", async () => {

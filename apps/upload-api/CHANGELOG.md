@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.3](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.1.2...upload-api-v1.1.3) (2026-09-14)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#930](https://github.com/ogcio/govie-services-messaging/issues/930)) ([b4856b9](https://github.com/ogcio/govie-services-messaging/commit/b4856b9464d10c577b5666322980e8f556e8b635))
+
+
+### Miscellaneous Chores
+
+* update deps AB[#42955](https://github.com/ogcio/govie-services-messaging/issues/42955) ([#936](https://github.com/ogcio/govie-services-messaging/issues/936)) ([adaf09f](https://github.com/ogcio/govie-services-messaging/commit/adaf09f9e64afcbe660bb7d1b30c76f7a40b8518))
+
 ## [1.1.2](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.1.1...upload-api-v1.1.2) (2026-09-10)
 
 

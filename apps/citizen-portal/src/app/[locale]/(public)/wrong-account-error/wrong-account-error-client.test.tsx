@@ -8,6 +8,16 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }))
 
+vi.mock("@citizen-portal/shared", () => ({
+  useEnv: () => ({
+    hosts: {
+      messages: "https://messages.uat.test",
+      profile: "https://profile.uat.test",
+      dashboard: "https://dashboard.uat.test",
+    },
+  }),
+}))
+
 vi.mock("next/navigation", () => ({
   useSearchParams: () =>
     new URLSearchParams({
@@ -18,6 +28,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/env/env.client", () => ({
   env: {
     NEXT_PUBLIC_BASE_URL: "https://citizen.uat.test",
+    NEXT_PUBLIC_JOURNEY_URL: "https://journey.uat.services.gov.ie",
     NEXT_PUBLIC_SAG_URL: "https://sag.uat.test",
   },
 }))

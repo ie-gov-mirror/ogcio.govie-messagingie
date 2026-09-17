@@ -36,6 +36,10 @@ let authenticatedPage: Page
  * notification subject (`secureMessageSubject`, "You have received a new
  * secure message from ...", which the reader's `subject:secure message`
  * query matches) were both verified intact for AB#42515.
+ *
+ * The already-owned Confirm 400 UX (AB#42525) is covered hermetically in
+ * `user-link-account-already-owned.spec.ts` — do not bolt that onto this
+ * Gmail-backed suite.
  */
 test.describe("User can link a new email address to an account", () => {
   test.skip(

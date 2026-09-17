@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.4](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.3...citizen-portal-v0.1.4) (2026-09-16)
+
+
+### Bug Fixes
+
+* actionable UX for account-linking already-owned 400 AB[#42525](https://github.com/ogcio/govie-services-messaging/issues/42525) ([#931](https://github.com/ogcio/govie-services-messaging/issues/931)) ([18cee67](https://github.com/ogcio/govie-services-messaging/commit/18cee67adf752a9b04232e84b23f6150e8c93367))
+* **citizen-portal:** gate submission metadata lookup AB[#41487](https://github.com/ogcio/govie-services-messaging/issues/41487) ([#943](https://github.com/ogcio/govie-services-messaging/issues/943)) ([7ff5306](https://github.com/ogcio/govie-services-messaging/commit/7ff5306e83b91a3aa1cb492273ff2b5b170c606e))
+* **citizen-portal:** restrict redirect origins AB[#42621](https://github.com/ogcio/govie-services-messaging/issues/42621) ([#912](https://github.com/ogcio/govie-services-messaging/issues/912)) ([45b685a](https://github.com/ogcio/govie-services-messaging/commit/45b685a6eddfe69cfde400f0b83d17d6a606de9a))
+* **deps:** update all non-major dependencies ([#930](https://github.com/ogcio/govie-services-messaging/issues/930)) ([b4856b9](https://github.com/ogcio/govie-services-messaging/commit/b4856b9464d10c577b5666322980e8f556e8b635))
+* restore citizen public-name updates AB[#42620](https://github.com/ogcio/govie-services-messaging/issues/42620) ([#939](https://github.com/ogcio/govie-services-messaging/issues/939)) ([8650702](https://github.com/ogcio/govie-services-messaging/commit/8650702372b9ff4882c3412e99339a8e51fc9b64))
+* sanitize rich message HTML AB[#42622](https://github.com/ogcio/govie-services-messaging/issues/42622) ([#913](https://github.com/ogcio/govie-services-messaging/issues/913)) ([9d0d133](https://github.com/ogcio/govie-services-messaging/commit/9d0d13309fa1944537e88f956f7732a63511c5ff))
+
+
+### Miscellaneous Chores
+
+* **deps:** update @ogcio/design-system-react to 1.42.0 AB[#42958](https://github.com/ogcio/govie-services-messaging/issues/42958) ([#924](https://github.com/ogcio/govie-services-messaging/issues/924)) ([b19ed22](https://github.com/ogcio/govie-services-messaging/commit/b19ed22f5d8f68946d11aa2f1022bfeec57ba1a7))
+* pin image to 3.24 AB[#43098](https://github.com/ogcio/govie-services-messaging/issues/43098) ([#941](https://github.com/ogcio/govie-services-messaging/issues/941)) ([4e69f87](https://github.com/ogcio/govie-services-messaging/commit/4e69f8738304e8a9d419c41346be1e613f2649c4))
+
 ## [0.1.3](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.2...citizen-portal-v0.1.3) (2026-09-10)
 
 

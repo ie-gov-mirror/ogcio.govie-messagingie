@@ -275,6 +275,57 @@ describe("Message Service", () => {
       });
     });
 
+    it.each([
+      {
+        name: "supported formatting",
+        input:
+          '<p>Hello <strong>there</strong>. <a href="https://www.gov.ie">Read more</a></p>',
+        expected:
+          '<p>Hello <strong>there</strong>. <a href="https://www.gov.ie">Read more</a></p>',
+      },
+      {
+        name: "active HTML",
+        input:
+          '<p onclick="alert(1)">Hello<script>alert(1)</script><svg><circle /></svg><form><input /></form><a href="javascript:alert(1)">Bad link</a></p>',
+        expected: "<p>Hello</p><a>Bad link</a><p></p>",
+      },
+      {
+        name: "encoded JavaScript URL",
+        input: '<a href="jav&#x61;script:alert(1)">Bad link</a>',
+        expected: "<a>Bad link</a>",
+      },
+      {
+        name: "Base64-encoded active HTML",
+        input: Buffer.from("<p>Hello</p><script>alert(1)</script>").toString(
+          "base64",
+        ),
+        expected: "<p>Hello</p>",
+      },
+    ])(
+      "sanitizes $name before storing rich text",
+      async ({ input, expected }) => {
+        const message = getMockMessage();
+        message.message.richText = input;
+
+        const output = await processMessage({
+          pool,
+          sender,
+          message,
+          logger: getMockBaseLogger(),
+        });
+        const gotMessage = await getMessage({
+          pool,
+          userId: message.recipientUserId,
+          messageId: output.messageId,
+          loggedInUser: { userId: message.recipientUserId, accessToken: "123" },
+          hasOnboardingPermission: false,
+          logger: getMockBaseLogger(),
+        });
+
+        expect(gotMessage.richText).toBe(expected);
+      },
+    );
+
     it("emits messages_scheduled tagged by organization on successful scheduling", async () => {
       schedulerWorks = true;
       const message = getMockMessage();

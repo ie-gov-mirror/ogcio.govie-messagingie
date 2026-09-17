@@ -38,6 +38,11 @@ vi.mock("@ogcio/sag-client/react", () => ({
 // to reading env, the assertions below break.
 vi.mock("@citizen-portal/shared", () => ({
   useEnv: () => ({
+    hosts: {
+      messages: "http://messaging.local.test",
+      profile: "http://profile.local.test",
+      dashboard: "http://dashboard.local.test",
+    },
     sagUrl: "http://WRONG-env-url.local.test:9999",
     sagAppName: "citizen-portal",
   }),

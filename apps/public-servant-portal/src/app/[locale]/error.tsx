@@ -27,24 +27,20 @@ export default function ErrorPage({
   }, [error])
 
   return (
-    <Stack
-      direction='column'
-      gap={4}
-      role='alert'
-      aria-live='assertive'
-      aria-atomic='true'
-    >
-      <Heading as='h1'>{t("title")}</Heading>
-      <Paragraph>{t("paragraph")}</Paragraph>
-      {error.message && (
-        <Paragraph size='sm'>
-          <span className='gi-sr-only'>{t("title")}: </span>
-          {error.message}
-        </Paragraph>
-      )}
-      <div>
-        <Button onClick={reset}>{t("button")}</Button>
-      </div>
-    </Stack>
+    <div role='alert' aria-live='assertive' aria-atomic='true'>
+      <Stack direction='column' gap={4}>
+        <Heading as='h1'>{t("title")}</Heading>
+        <Paragraph>{t("paragraph")}</Paragraph>
+        {error.message && (
+          <Paragraph size='sm'>
+            <span className='gi-sr-only'>{t("title")}: </span>
+            {error.message}
+          </Paragraph>
+        )}
+        <div>
+          <Button onClick={reset}>{t("button")}</Button>
+        </div>
+      </Stack>
+    </div>
   )
 }

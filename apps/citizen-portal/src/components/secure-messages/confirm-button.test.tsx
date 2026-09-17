@@ -108,7 +108,7 @@ describe("ConfirmButton", () => {
       expect(mocks.createToast).toHaveBeenCalledWith(
         expect.objectContaining({
           title: "error.linking",
-          description: "error.server",
+          description: "error.linkingFailed",
           variant: "danger",
         }),
       )
@@ -121,6 +121,47 @@ describe("ConfirmButton", () => {
       context: { ...props, error: error.message },
     })
     expect(mocks.replace).not.toHaveBeenCalled()
+    expect(screen.getByRole("button", { name: "confirm" })).not.toBeDisabled()
+  })
+
+  it("shows already-owned copy and disables Confirm after that 400", async () => {
+    const error = Object.assign(
+      new Error("Cannot update data for a profile that already logged in"),
+      { status: 400 },
+    )
+    mocks.trigger.mockRejectedValue(error)
+    render(<ConfirmButton {...props} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "confirm" }))
+
+    await waitFor(() => {
+      expect(mocks.createToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "error.alreadyOwnedTitle",
+          description: "error.alreadyOwned",
+          variant: "danger",
+        }),
+      )
+    })
+    expect(screen.getByRole("button", { name: "confirm" })).toBeDisabled()
+  })
+
+  it("treats Fastify Bad Request 400 as already-owned (sag-client shape)", async () => {
+    const error = Object.assign(new Error("Bad Request"), { status: 400 })
+    mocks.trigger.mockRejectedValue(error)
+    render(<ConfirmButton {...props} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "confirm" }))
+
+    await waitFor(() => {
+      expect(mocks.createToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "error.alreadyOwnedTitle",
+          description: "error.alreadyOwned",
+        }),
+      )
+    })
+    expect(screen.getByRole("button", { name: "confirm" })).toBeDisabled()
   })
 
   it("disables the action and shows progress while linking", () => {

@@ -10,10 +10,7 @@ export async function sendMessageAndVerify(page: Page, sendLater = false) {
 
 export async function scheduleMessage(page: Page) {
   // Select send later option
-  await page
-    .getByTestId("govie-stack-item-2")
-    .getByTestId("govie-stack-item-1")
-    .click()
+  await page.getByRole("radio", { name: "Send later" }).click()
 
   // Set future date
   const date = new Date()

@@ -169,6 +169,7 @@ export default function TemplatesList() {
                 size='large'
                 appearance='dark'
                 variant='flat'
+                ariaLabel={t("button.delete")}
                 onClick={() => {
                   analyticsClient.trackEvent({
                     event: {

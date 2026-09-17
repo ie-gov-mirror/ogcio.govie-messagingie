@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import fastify from "fastify";
 import fp from "fastify-plugin";
+import { Permissions } from "~/const/permissions.js";
 import buildServer from "~/server.js";
 
 declare module "fastify" {
@@ -29,9 +30,7 @@ export interface MockAuthConfig {
   organizationId?: string;
   isM2MApplication?: boolean;
   /**
-   * When true, the first checkPermissions call per request sets userData,
-   * the second call throws (simulating missing onboarding permissions).
-   * Set to true to grant secondary permissions.
+   * Set to true to grant onboarding permission checks after authentication.
    */
   hasOnboardingPermissions?: boolean;
 }
@@ -55,7 +54,7 @@ export async function buildOnce() {
     app.checkPermissions = async (
       request: FastifyRequest,
       _reply: FastifyReply,
-      _permissions: string[],
+      permissions: string[],
       _matchConfig?: { method: "AND" | "OR" },
     ) => {
       if (
@@ -74,7 +73,10 @@ export async function buildOnce() {
       }
 
       // Secondary permission check
-      if (!currentAuth.hasOnboardingPermissions) {
+      if (
+        !currentAuth.hasOnboardingPermissions ||
+        !permissions.includes(Permissions.UserOnboarding.Read)
+      ) {
         throw new Error();
       }
     };

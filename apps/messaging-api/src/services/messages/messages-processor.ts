@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { httpErrors } from "@fastify/sensible";
 import type { FastifyBaseLogger } from "fastify";
 import type { Pool, PoolClient } from "pg";
+import sanitizeHtml from "sanitize-html";
 import type { CreateMessageBody, SenderUser } from "../../types/messages.js";
 import { getM2MSchedulerSdk } from "../../utils/authentication-factory.js";
 import {
@@ -401,23 +402,58 @@ export class MessagesProcessor {
   }
 
   private parseRichText(richText: string | undefined): string | undefined {
-    try {
-      if (richText === undefined) {
-        return undefined;
-      }
-
-      if (this.isValidBase64(richText)) {
-        return Buffer.from(richText, "base64").toString("utf8");
-      }
-
-      return richText;
-    } catch (error) {
-      this.logger.error(
-        { err: error, richText },
-        "Failed to parse richText as Base64, returning original string",
-      );
-      return richText;
+    if (richText === undefined) {
+      return undefined;
     }
+
+    const decoded = this.isValidBase64(richText)
+      ? Buffer.from(richText, "base64").toString("utf8")
+      : richText;
+
+    return sanitizeHtml(decoded, {
+      allowedTags: [
+        "p",
+        "br",
+        "strong",
+        "b",
+        "em",
+        "i",
+        "u",
+        "s",
+        "ul",
+        "ol",
+        "li",
+        "blockquote",
+        "a",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "pre",
+        "code",
+        "hr",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "th",
+        "td",
+        "img",
+      ],
+      allowedAttributes: {
+        a: ["href", "title"],
+        img: ["src", "alt", "title", "width", "height"],
+        th: ["colspan", "rowspan"],
+        td: ["colspan", "rowspan"],
+      },
+      allowedSchemes: ["http", "https", "mailto", "tel"],
+      allowedSchemesByTag: {
+        img: ["http", "https", "data"],
+      },
+      allowProtocolRelative: false,
+    });
   }
 
   /**

@@ -17,21 +17,18 @@ minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@ogcio/*"
 overrides:
-  protobufjs: 8.6.6 # GHSA-jfj6-75fj-8934, GHSA-j3f2-48v5-ccww
-  postcss: 8.5.23 # CVE-2026-45623, GHSA-6g55-p6wh-862q, GHSA-r28c-9q8g-f849
-  sharp: 0.35.4 # GHSA-rgj7-g3m4-5g8c, GHSA-f88m-g3jw-g9cj
+  #   protobufjs: 8.6.6 # GHSA-jfj6-75fj-8934, GHSA-j3f2-48v5-ccww
+  #   postcss: 8.5.23 # CVE-2026-45623, GHSA-6g55-p6wh-862q, GHSA-r28c-9q8g-f849
+  #   sharp: 0.35.4 # GHSA-rgj7-g3m4-5g8c, GHSA-f88m-g3jw-g9cj
   js-yaml: 4.3.2 # GHSA-2883-xcg3-v3hh, CVE-2026-84375
-  brace-expansion: 5.0.9 # CVE-2026-14257, GHSA-mh99-v99m-4gvg, GHSA-3jxr-9vmj-r5cp, CVE-2026-69152
-  nanoid: 3.3.18 # CVE-2026-67213, GHSA-2v37-7h3g-55p8
-  browserslist: 4.28.8 # CVE-2026-73088 / GHSA-73wf-gq98-2v4g, CVE-2026-73089 / GHSA-c83g-rgw3-j3cx (fixed in 4.28.7+)
-  unleash-proxy-client: 3.8.0
-  axios: 1.19.0 # GHSA-gcfj-64vw-6mp9 and axios 1.18.0 advisory set
-  form-data: 4.0.6 # CVE-2026-12143, GHSA-hmw2-7cc7-3qxx
+  #   brace-expansion: 5.0.9 # CVE-2026-14257, GHSA-mh99-v99m-4gvg, GHSA-3jxr-9vmj-r5cp, CVE-2026-69152
+  #   nanoid: 3.3.18 # CVE-2026-67213, GHSA-2v37-7h3g-55p8
+  #   browserslist: 4.28.8 # CVE-2026-73088 / GHSA-73wf-gq98-2v4g, CVE-2026-73089 / GHSA-c83g-rgw3-j3cx (fixed in 4.28.7+)
+  #   unleash-proxy-client: 3.8.0
+  #   axios: 1.19.0 # GHSA-gcfj-64vw-6mp9 and axios 1.18.0 advisory set
+  #   form-data: 4.0.6 # CVE-2026-12143, GHSA-hmw2-7cc7-3qxx
   uuid: 11.1.1 # CVE-2026-41907, GHSA-w5hq-g745-h8pq (last CJS line; 8/9/10 unpatched)
-  "@opentelemetry/core": 2.10.0 # CVE-2026-54285, GHSA-8988-4f7v-96qf
-patchedDependencies:
-  "@ogcio/design-system-react@1.34.0": patches/@ogcio__design-system-react@1.34.0.patch
-  "@ogcio/design-system-react@1.41.0": patches/@ogcio__design-system-react@1.41.0.patch
+#   "@opentelemetry/core": 2.10.0 # CVE-2026-54285, GHSA-8988-4f7v-96qf
 allowUnusedPatches: true
 allowBuilds:
   "@ogcio/announcements": true
@@ -46,3 +43,5 @@ allowBuilds:
   protobufjs: false
   sharp: false
   ssh2: false
+patchedDependencies:
+  "@ogcio/design-system-react@1.42.0": patches/@ogcio__design-system-react@1.42.0.patch

@@ -331,7 +331,10 @@
     "loading": "Loading...",
     "error": {
       "server": "Failed to load account information. Please report an issue if the problem persists.",
-      "linking": "Failed to link accounts"
+      "linking": "Failed to link accounts",
+      "linkingFailed": "We could not link these accounts. Please try again, or select Report an Issue if the problem persists.",
+      "alreadyOwnedTitle": "This mailbox already has an owner",
+      "alreadyOwned": "This mailbox already belongs to an account that has signed in. Sign in with that account to read these messages, or select Report an Issue if you need help."
     }
   },
   "profile": {

@@ -1,9 +1,20 @@
 import { render } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
+vi.mock("@citizen-portal/shared", () => ({
+  getEnv: () => ({
+    hosts: {
+      messages: "https://messages.uat.test",
+      profile: "https://profile.uat.test",
+      dashboard: "https://dashboard.uat.test",
+    },
+  }),
+}))
+
 const envHolder = vi.hoisted(() => ({
   value: {
     NEXT_PUBLIC_BASE_URL: "https://citizen.uat.test",
+    NEXT_PUBLIC_JOURNEY_URL: "https://journey.uat.services.gov.ie",
     NEXT_PUBLIC_MYGOVID_END_SESSION_URL: undefined as string | undefined,
   },
 }))

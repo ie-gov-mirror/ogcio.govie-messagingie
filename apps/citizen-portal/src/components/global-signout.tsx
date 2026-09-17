@@ -14,6 +14,7 @@ import {
 } from "@/lib/feature-config"
 import { ZONE_CONFIG } from "@/lib/zone-config"
 import { getZoneFromOrigin } from "@/util/get-zone-from-origin"
+import { getTrustedRedirectOrigins } from "@/util/trusted-redirect-origins"
 import { getValidReturnUrl } from "@/util/valid-return-url"
 
 const IFRAME_TIMEOUT_MS = 20_000
@@ -172,9 +173,11 @@ export function buildIframeUrlList(role: string | null) {
 function GlobalSignoutInner() {
   const t = useTranslations("globalSignout")
   const searchParams = useSearchParams()
+  const { hosts } = getEnv()
   const postRedirectUri = getValidReturnUrl(
     searchParams.get("postRedirectUri") ??
       searchParams.get("post_logout_redirect_uri"),
+    getTrustedRedirectOrigins(hosts),
   )
   const sagSignout = searchParams.get("sagSignout") === "true"
   const role = searchParams.get("role")

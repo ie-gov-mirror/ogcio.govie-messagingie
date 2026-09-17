@@ -44,6 +44,14 @@ export default defineConfig({
         },
       },
     },
+    server: {
+      deps: {
+        // The design system barrel uses `import { debounce } from "lodash"`,
+        // a named import from a CJS module that Node's ESM loader can't resolve.
+        // Inlining lets Vite transform it with proper CJS interop.
+        inline: [/@ogcio[/\\]design-system-react/],
+      },
+    },
   },
   resolve: {
     alias: {

@@ -109,6 +109,23 @@ describe("GET /api/v1/organisations/consents", () => {
     expect(body.metadata.totalCount).toBe(0);
   });
 
+  it("returns no consents for a profile in another organisation", async () => {
+    const profileId = await createProfileWithConsent({
+      organisationId: "another-organisation",
+      subject,
+    });
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/v1/organisations/consents",
+      query: { subject, profileId },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    expect(body.data).toEqual([]);
+    expect(body.metadata.totalCount).toBe(0);
+  });
+
   it("returns all consents for a profile and subject, ordered by created_at DESC", async () => {
     const profileId = await createProfileWithConsent({
       profileId: "list-prof-1",

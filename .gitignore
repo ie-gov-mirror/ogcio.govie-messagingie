@@ -51,6 +51,7 @@ playwright-report/
 results.xml
 .tap
 credentials.json
+artifacts/
 
 # ------------------------------------------------------------------------------
 # Logs and debug

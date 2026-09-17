@@ -3,7 +3,7 @@
 # The upstream `apps/secure-api-gateway/Dockerfile` final runner stage
 # uses a private AWS ECR image:
 #
-#   FROM 428528001781.dkr.ecr.eu-west-1.amazonaws.com/dhi.io/node:24-alpine3.23 AS runner
+#   FROM 428528001781.dkr.ecr.eu-west-1.amazonaws.com/dhi.io/node:24-alpine3.24 AS runner
 #
 # Outside the OGCIO CI runners that's gated behind `aws ecr
 # get-login-password` and AWS credentials, so a plain `docker build`

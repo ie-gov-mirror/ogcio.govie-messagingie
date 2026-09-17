@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.3](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.2...messaging-support-v0.1.3) (2026-09-10)
+
+
+### Features
+
+* support-initiated user data export AB[#41557](https://github.com/ogcio/govie-services-messaging/issues/41557) ([#802](https://github.com/ogcio/govie-services-messaging/issues/802)) ([348e900](https://github.com/ogcio/govie-services-messaging/commit/348e9002905f5242b85b4e3c44d5c9ad0cc32c86))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#869](https://github.com/ogcio/govie-services-messaging/issues/869)) ([680dc92](https://github.com/ogcio/govie-services-messaging/commit/680dc9212263e5da43fb6925b949564e86451ca7))
+* **deps:** update dependency @azure/msal-node to v6 ([#886](https://github.com/ogcio/govie-services-messaging/issues/886)) ([f0b85f8](https://github.com/ogcio/govie-services-messaging/commit/f0b85f829b30be5b3b76afe9a1be73220ce88e26))
+* ignore Go stdlib CVEs blocking upload-api Trivy/grype scans AB[#41977](https://github.com/ogcio/govie-services-messaging/issues/41977) ([#829](https://github.com/ogcio/govie-services-messaging/issues/829)) ([582ca5e](https://github.com/ogcio/govie-services-messaging/commit/582ca5eea9d0f794779a53efc6942f44752f2065))
+* **messaging-support:** stop auditing export and deletion from the browser AB[#41557](https://github.com/ogcio/govie-services-messaging/issues/41557) ([#811](https://github.com/ogcio/govie-services-messaging/issues/811)) ([4a1953b](https://github.com/ogcio/govie-services-messaging/commit/4a1953bf81926a207e9fc8f049bfd05566fd173f))
+
+
+### Miscellaneous Chores
+
+* deps update AB[#42306](https://github.com/ogcio/govie-services-messaging/issues/42306) ([#853](https://github.com/ogcio/govie-services-messaging/issues/853)) ([3b207d0](https://github.com/ogcio/govie-services-messaging/commit/3b207d0226a628af1bbcfceb28dabc79645e2553))
+* **deps:** update vitest monorepo to v5 (major) ([#899](https://github.com/ogcio/govie-services-messaging/issues/899)) ([5da3cfe](https://github.com/ogcio/govie-services-messaging/commit/5da3cfefc5803c9651aaa33c75fec60c91b1cad9))
+* smart workspace dependency update AB[#41977](https://github.com/ogcio/govie-services-messaging/issues/41977) ([#836](https://github.com/ogcio/govie-services-messaging/issues/836)) ([3462288](https://github.com/ogcio/govie-services-messaging/commit/3462288c326b7e3ca2af93e415ca43c40ce96109))
+
 ## [0.1.2](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.1...messaging-support-v0.1.2) (2026-08-04)
 
 

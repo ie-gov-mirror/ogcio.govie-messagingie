@@ -28,6 +28,7 @@ vi.mock("@citizen-portal/shared", () => ({
 vi.mock("@/env/env.client", () => ({
   env: {
     NEXT_PUBLIC_BASE_URL: "https://citizen.uat.test",
+    NEXT_PUBLIC_JOURNEY_URL: "https://journey.uat.services.gov.ie",
     NEXT_PUBLIC_SAG_URL: "https://sag.uat.test",
   },
 }))
@@ -95,6 +96,19 @@ describe("ClearSessionPage redirect handling", () => {
 
     render(<ClearSessionPage />)
 
+    expect(hrefValue).toBe("")
+  })
+
+  it("does not clear the session or navigate to an external origin", () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal("fetch", fetchMock)
+    searchParamsHolder.value = new URLSearchParams({
+      redirect: "https://journey.uat.services.gov.ie.evil.com",
+    })
+
+    render(<ClearSessionPage />)
+
+    expect(fetchMock).not.toHaveBeenCalled()
     expect(hrefValue).toBe("")
   })
 })

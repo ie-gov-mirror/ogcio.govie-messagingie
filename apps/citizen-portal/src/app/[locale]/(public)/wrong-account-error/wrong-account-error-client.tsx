@@ -1,17 +1,23 @@
 "use client"
 
+import { useEnv } from "@citizen-portal/shared"
 import { Heading, Link, Paragraph, Stack } from "@ogcio/design-system-react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Suspense } from "react"
 import { CssSpinner } from "@/components/css-spinner"
 import { env } from "@/env/env.client"
+import { getTrustedRedirectOrigins } from "@/util/trusted-redirect-origins"
 import { getValidReturnUrl } from "@/util/valid-return-url"
 
 function WrongAccountErrorContent() {
   const t = useTranslations("wrongAccountPage")
   const searchParams = useSearchParams()
-  const returnUrl = getValidReturnUrl(searchParams.get("returnUrl"))
+  const { hosts } = useEnv()
+  const returnUrl = getValidReturnUrl(
+    searchParams.get("returnUrl"),
+    getTrustedRedirectOrigins(hosts),
+  )
 
   const appBase = env.NEXT_PUBLIC_BASE_URL.replace(/\/$/, "")
   const signoutHref = returnUrl

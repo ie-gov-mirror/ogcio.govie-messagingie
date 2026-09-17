@@ -1,4 +1,5 @@
 import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
+import { httpErrors } from "@fastify/sensible";
 import type { FastifyInstance } from "fastify";
 import type { FileMetadataType } from "../types/schemaDefinitions.js";
 import scheduleCleanupTask from "../utils/scheduleCleanupTask.js";
@@ -21,8 +22,9 @@ export default async function scheduler(app: FastifyInstance) {
         SCHEDULER_TOKEN,
       );
 
+      // Bad auth must be non-2xx so the scheduler does not mark the job delivered.
       if (token !== expectedSchedulerToken) {
-        return { status: "ok" };
+        throw httpErrors.unauthorized("Invalid scheduler token");
       }
 
       const now = new Date();

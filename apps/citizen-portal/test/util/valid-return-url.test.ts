@@ -1,19 +1,16 @@
 import { describe, expect, it } from "vitest"
 import { getValidReturnUrl } from "@/util/valid-return-url"
 
-/**
- * `getValidReturnUrl` is the open-redirect chokepoint for every
- * external `returnUrl` / `postRedirectUri` / `?redirect=` parameter
- * the public error pages and the global-signout flow consume.
- *
- * The guarantees we care about:
- *   1. Only http: and https: pass — never javascript:, data:, about:,
- *      vbscript:, file:, or any custom scheme.
- *   2. Null / undefined / empty / whitespace-only inputs return null.
- *   3. Anything that doesn't parse as a URL returns null.
- *   4. Valid URLs come back EXACTLY as supplied (we don't re-serialise
- *      because some downstream consumers compare strings).
- */
+const TRUSTED_ORIGINS = [
+  "https://messaging.dev.services.gov.ie",
+  "https://profile.dev.services.gov.ie",
+  "https://journey.dev.services.gov.ie",
+  "http://messaging.local.test:8080",
+]
+
+const validate = (raw: string | null | undefined) =>
+  getValidReturnUrl(raw, TRUSTED_ORIGINS)
+
 describe("getValidReturnUrl", () => {
   describe("nullish + empty", () => {
     it.each([
@@ -23,21 +20,22 @@ describe("getValidReturnUrl", () => {
       "   ",
       "\t\n",
     ])("returns null for %p", (raw) => {
-      expect(getValidReturnUrl(raw)).toBeNull()
+      expect(validate(raw)).toBeNull()
     })
   })
 
   describe("malformed inputs", () => {
     it.each([
       "not a url",
-      "//missing-scheme.example.com",
       "example.com/path",
+      " https://profile.dev.services.gov.ie",
+      "https://profile.dev.services.gov.ie ",
     ])("returns null for %s", (raw) => {
-      expect(getValidReturnUrl(raw)).toBeNull()
+      expect(validate(raw)).toBeNull()
     })
   })
 
-  describe("dangerous schemes", () => {
+  describe("untrusted destinations", () => {
     it.each([
       "javascript:alert(1)",
       "data:text/html,<script>alert(1)</script>",
@@ -45,27 +43,30 @@ describe("getValidReturnUrl", () => {
       "file:///etc/passwd",
       "about:blank",
       "ftp://example.com/secret",
-    ])("rejects %s — open-redirect protection", (raw) => {
-      // Every entry in this list is a known XSS / SSRF vector. If
-      // any of them returns a non-null value, the redirect target
-      // gets handed to `window.location.assign()` (or equivalent)
-      // unfiltered.
-      expect(getValidReturnUrl(raw)).toBeNull()
+      "https://example.com",
+      "https://profile.dev.services.gov.ie.evil.com",
+      "https://user:password@profile.dev.services.gov.ie",
+      "//example.com",
+      "/\\example.com",
+      "%2F%2Fexample.com",
+      "%252F%252Fexample.com",
+      "https%3A%2F%2Fexample.com",
+    ])("rejects %s", (raw) => {
+      expect(validate(raw)).toBeNull()
     })
   })
 
-  describe("valid URLs", () => {
+  describe("trusted destinations", () => {
     it.each([
+      "/",
+      "/en/messages?return=%2Fhome#latest",
       "http://messaging.local.test:8080",
       "https://messaging.dev.services.gov.ie",
       "https://messaging.dev.services.gov.ie/en/messages?id=abc",
-      "https://messaging.dev.services.gov.ie/en/messages#fragment",
-      "HTTP://EXAMPLE.COM",
+      "https://profile.dev.services.gov.ie/en/my-profile",
+      "https://journey.dev.services.gov.ie/en/journey/abc",
     ])("returns %s verbatim", (raw) => {
-      // Verbatim, not re-serialised: `new URL().toString()` would
-      // strip default ports and lowercase the host, breaking
-      // string-equality comparisons downstream.
-      expect(getValidReturnUrl(raw)).toBe(raw)
+      expect(validate(raw)).toBe(raw)
     })
   })
 })

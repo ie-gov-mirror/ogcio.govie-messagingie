@@ -2,7 +2,7 @@
   "name": "@ogcio/govie-services-messaging",
   "version": "0.0.1",
   "type": "module",
-  "packageManager": "pnpm@12.3.4",
+  "packageManager": "pnpm@12.4.1",
   "description": "",
   "engines": {
     "node": ">=24.0.0"
@@ -98,20 +98,20 @@
   "license": "ISC",
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
-    "@biomejs/biome": "2.5.10",
+    "@biomejs/biome": "2.5.13",
     "@commitlint/cli": "21.2.2",
     "@commitlint/config-conventional": "21.2.2",
-    "@types/node": "26.4.1",
+    "@types/node": "26.5.1",
     "@vitest/coverage-v8": "5.0.0",
     "concurrently": "10.0.5",
     "husky": "9.1.7",
     "nodemon": "3.1.14",
-    "tsc-alias": "1.9.4",
+    "tsc-alias": "1.9.5",
     "tsx": "4.23.13",
     "typescript": "6.0.3",
-    "vite": "8.2.2",
+    "vite": "8.3.0",
     "vitest": "5.0.0",
-    "yaml": "2.9.0"
+    "yaml": "2.9.1"
   },
   "resolutions": {
     "mdast-util-gfm-autolink-literal": "2.0.1"

@@ -1,8 +1,0 @@
-node_modules
-.env
-.tap
-dist
-k6/.env
-k6/artifacts
-
-results.xml

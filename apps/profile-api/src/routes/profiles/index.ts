@@ -22,6 +22,7 @@ import { findProfile } from "~/services/profiles/find-profile.js";
 import { getProfile } from "~/services/profiles/get-profile.js";
 import { listProfiles } from "~/services/profiles/list-profiles.js";
 import { selectProfiles } from "~/services/profiles/select-profiles.js";
+import { areProfilesRelated } from "~/services/profiles/sql/are-profiles-related.js";
 import { updateProfile } from "~/services/profiles/update-profile.js";
 import { parseBooleanEnum } from "~/types/typebox.js";
 import { ensureUserIdIsSet } from "~/utils/authentication-factory.js";
@@ -192,27 +193,39 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         app: fastify,
         request,
         reply,
-        permissions: [
-          Permissions.UserAdmin.Read,
-          Permissions.UserOnboarding.Read,
-        ],
+        permissions: [Permissions.UserAdmin.Read],
       });
+      const requesterId = ensureUserIdIsSet(request);
+      const isCrossProfileCitizenRequest =
+        requesterId !== request.params.profileId &&
+        request.userData?.organizationId === undefined;
+      const isRelatedOnboardingProfile =
+        !isSuperAdmin &&
+        isCrossProfileCitizenRequest &&
+        (await hasPermissions({
+          app: fastify,
+          request,
+          reply,
+          permissions: [Permissions.UserOnboarding.Read],
+        })) &&
+        (await areProfilesRelated(pool, requesterId, request.params.profileId));
+      const canAccessOtherProfiles = isSuperAdmin || isRelatedOnboardingProfile;
       ensureUserCanAccessGetProfile(
         request.userData,
         request.params.profileId,
         request.query.organizationId,
-        isSuperAdmin,
+        canAccessOtherProfiles,
       );
 
       const returnPrivateDetails = await privateDetailsRequested({
         userData: {
-          userId: ensureUserIdIsSet(request),
+          userId: requesterId,
           organizationId: request.userData?.organizationId,
         },
         requestProfileId: request.params.profileId,
         queryPrivateDetails: request.query.privateDetails,
         queryOrganizationId: request.query.organizationId,
-        hasSuperAdminPermission: isSuperAdmin,
+        hasSuperAdminPermission: canAccessOtherProfiles,
       });
 
       const toGetOrganizationId =
@@ -223,7 +236,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       // as a super admin/onboarding
       const addLinkedProfiles =
         (request.params.profileId === request.userData?.userId ||
-          isSuperAdmin) &&
+          canAccessOtherProfiles) &&
         returnPrivateDetails;
 
       const consentSubjects = request.query.consentSubjects

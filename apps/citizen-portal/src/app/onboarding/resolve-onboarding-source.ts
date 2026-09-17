@@ -1,15 +1,23 @@
-/** Reject sources that point back to this onboarding page (redirect loops). */
+import { getValidReturnUrl } from "@/util/valid-return-url"
+
+/** Reject untrusted sources and sources that point back to onboarding. */
 export function resolveOnboardingSource(
   rawSource: string | null,
+  trustedOrigins: readonly string[],
 ): string | null {
-  if (!rawSource) return null
+  const source = getValidReturnUrl(rawSource, trustedOrigins)
+  if (!source) return null
+
+  let pathname: string
   try {
-    const { pathname } = new URL(rawSource)
-    if (pathname === "/onboarding" || pathname.endsWith("/onboarding")) {
-      return null
-    }
-    return rawSource
+    pathname = decodeURIComponent(
+      new URL(source, "https://relative.invalid").pathname,
+    )
   } catch {
-    return /\/onboarding(?:\?|$|\/)/i.test(rawSource) ? null : rawSource
+    return null
   }
+  if (pathname === "/onboarding" || pathname.endsWith("/onboarding")) {
+    return null
+  }
+  return source
 }

@@ -107,6 +107,7 @@ export default function EmailProviders() {
             appearance='dark'
             variant='flat'
             size='large'
+            ariaLabel={t("deleteButton")}
             onClick={() => {
               setToDelete({
                 id: row.original.id,

@@ -4,6 +4,8 @@ import { useEnv } from "@citizen-portal/shared"
 import { useSearchParams } from "next/navigation"
 import { Suspense, useEffect } from "react"
 import { env } from "@/env/env.client"
+import { getTrustedRedirectOrigins } from "@/util/trusted-redirect-origins"
+import { getValidReturnUrl } from "@/util/valid-return-url"
 
 /**
  * Static-export-compatible "clear-session" redirect target.
@@ -19,8 +21,11 @@ import { env } from "@/env/env.client"
  */
 function ClearSessionRedirect() {
   const searchParams = useSearchParams()
-  const { sagUrl } = useEnv()
-  const redirectTo = searchParams.get("redirect")
+  const { hosts, sagUrl } = useEnv()
+  const redirectTo = getValidReturnUrl(
+    searchParams.get("redirect"),
+    getTrustedRedirectOrigins(hosts),
+  )
   const globalSignout = searchParams.get("globalSignout") === "true"
   // Forwarded by SAG's /post-sign-out for MyGovID citizens so the
   // global-signout page also terminates the upstream MyGovID (Azure B2C)

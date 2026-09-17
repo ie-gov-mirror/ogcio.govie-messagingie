@@ -330,8 +330,11 @@
     "report": "Rapóirt an Chuntas",
     "loading": "Táimid ag fáilte duit an teachtaireacht a chur ar an phost a phostáil ar do phróifíl.",
     "error": {
-      "server": "Níor cuireadh an teachtaireacht. Déan iarracht arís le do thoil.",
-      "linking": "Níor cuireadh an teachtaireacht."
+      "server": "Níorbh fhéidir eolas an chuntais a lódáil. Roghnaigh Tuairiscigh Fadhb má leanann an fhadhb.",
+      "linking": "Theip ar nascadh na gcuntas",
+      "linkingFailed": "Níorbh fhéidir na cuntais seo a nascadh. Bain triail eile as, nó roghnaigh Tuairiscigh Fadhb má leanann an fhadhb.",
+      "alreadyOwnedTitle": "Tá úinéir ag an mbosca poist seo cheana",
+      "alreadyOwned": "Baineann an bosca poist seo le cuntas atá sínithe isteach cheana. Sínigh isteach leis an gcuntas sin chun na teachtaireachtaí seo a léamh, nó roghnaigh Tuairiscigh Fadhb má theastaíonn cabhair uait."
     }
   },
   "profile": {

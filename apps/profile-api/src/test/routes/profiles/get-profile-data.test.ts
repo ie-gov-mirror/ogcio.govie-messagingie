@@ -308,7 +308,7 @@ describe("GET /api/v1/profiles/{id} data", async () => {
     );
 
     app = getServer({
-      userId: "another-user",
+      userId: childData.profileId,
       hasOnboardingPermissions: true,
       organizationId: undefined,
     });
@@ -351,6 +351,21 @@ describe("GET /api/v1/profiles/{id} data", async () => {
       ],
       status: ProfileStatuses.Active,
     });
+  });
+
+  it("Returns 403 when an onboarding user asks for an unrelated profile", async () => {
+    app = getServer({
+      userId: "unrelated-user",
+      hasOnboardingPermissions: true,
+      organizationId: undefined,
+    });
+
+    const response = await app.inject({
+      method: "GET",
+      url: `/api/v1/profiles/${loggedInUser}`,
+    });
+
+    expect(response.statusCode).toBe(403);
   });
 
   it("Returns expected data when a public servant asks for itself private details", async () => {
