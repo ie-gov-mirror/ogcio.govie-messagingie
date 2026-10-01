@@ -34,6 +34,8 @@ describe("scheduleCleanupTask", () => {
     vi.doMock("../../utils/storeConfig.js", () => ({
       SCHEDULER_TOKEN,
       getConfigValue: () => Promise.resolve("token"),
+      claimNextRun: () => Promise.resolve(true),
+      releaseNextRun: () => Promise.resolve(),
     }));
 
     const { default: scheduleCleanupTask } = await import(
@@ -79,6 +81,8 @@ describe("scheduleCleanupTask", () => {
     vi.doMock("../../utils/storeConfig.js", () => ({
       SCHEDULER_TOKEN,
       getConfigValue: () => Promise.resolve("token"),
+      claimNextRun: () => Promise.resolve(true),
+      releaseNextRun: () => Promise.resolve(),
     }));
 
     const { default: scheduleCleanupTask } = await import(
@@ -132,6 +136,8 @@ describe("scheduleCleanupTask", () => {
     vi.doMock("../../utils/storeConfig.js", () => ({
       SCHEDULER_TOKEN,
       getConfigValue: () => Promise.resolve("token"),
+      claimNextRun: () => Promise.resolve(true),
+      releaseNextRun: () => Promise.resolve(),
     }));
 
     const { default: scheduleCleanupTask } = await import(
@@ -154,5 +160,79 @@ describe("scheduleCleanupTask", () => {
         webhookAuth: "token",
       },
     ]);
+  });
+
+  it("scheduleCleanupTask should not schedule when a run is already claimed", async () => {
+    const usedParams: string[] = [];
+
+    vi.doMock("../../utils/authentication-factory.js", () => ({
+      getSchedulerSdk: () =>
+        Promise.resolve({
+          scheduleTasks: (...params: string[]) => {
+            usedParams.push(...params);
+            return Promise.resolve();
+          },
+        }),
+    }));
+
+    vi.doMock("../../utils/storeConfig.js", () => ({
+      SCHEDULER_TOKEN,
+      getConfigValue: () => Promise.resolve("token"),
+      claimNextRun: () => Promise.resolve(false),
+      releaseNextRun: () => Promise.resolve(),
+    }));
+
+    const { default: scheduleCleanupTask } = await import(
+      "../../utils/scheduleCleanupTask.js"
+    );
+
+    const app = {
+      pg: { pool: {} },
+      log: { info: () => {}, error: () => {} },
+      config: {
+        SCHEDULED_JOBS_HOURS_INTERVAL: 5,
+        HOST: "http://foo.com",
+      },
+    } as unknown as FastifyInstance;
+    await scheduleCleanupTask(app);
+
+    expect(usedParams).toHaveLength(0);
+  });
+
+  it("scheduleCleanupTask should release the claim when scheduling fails", async () => {
+    let released = false;
+
+    vi.doMock("../../utils/authentication-factory.js", () => ({
+      getSchedulerSdk: () =>
+        Promise.resolve({
+          scheduleTasks: () => Promise.reject("error"),
+        }),
+    }));
+
+    vi.doMock("../../utils/storeConfig.js", () => ({
+      SCHEDULER_TOKEN,
+      getConfigValue: () => Promise.resolve("token"),
+      claimNextRun: () => Promise.resolve(true),
+      releaseNextRun: () => {
+        released = true;
+        return Promise.resolve();
+      },
+    }));
+
+    const { default: scheduleCleanupTask } = await import(
+      "../../utils/scheduleCleanupTask.js"
+    );
+
+    const app = {
+      pg: { pool: {} },
+      log: { info: () => {}, error: () => {} },
+      config: {
+        SCHEDULED_JOBS_HOURS_INTERVAL: 5,
+        HOST: "http://foo.com",
+      },
+    } as unknown as FastifyInstance;
+    await scheduleCleanupTask(app);
+
+    expect(released).toBe(true);
   });
 });

@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.1.6](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.5...citizen-portal-v0.1.6) (2026-10-01)
+
+
+### Features
+
+* add life events discovery pages from build-time CMS fixtures AB[#43539](https://github.com/ogcio/govie-services-messaging/issues/43539) ([#987](https://github.com/ogcio/govie-services-messaging/issues/987)) ([b6056a1](https://github.com/ogcio/govie-services-messaging/commit/b6056a189d28d70e5676ccd4f06d97e15f0b4263))
+* **citizen-portal:** implement the new navigation pattern AB[#43820](https://github.com/ogcio/govie-services-messaging/issues/43820) ([#977](https://github.com/ogcio/govie-services-messaging/issues/977)) ([940bc33](https://github.com/ogcio/govie-services-messaging/commit/940bc33d67af1e591baeb7c6b7ac250e5ff2189a))
+
+
+### Bug Fixes
+
+* cap citizen attachment card width AB[#43871](https://github.com/ogcio/govie-services-messaging/issues/43871) ([#981](https://github.com/ogcio/govie-services-messaging/issues/981)) ([3d2a7a2](https://github.com/ogcio/govie-services-messaging/commit/3d2a7a27f2bf80604754bfd01a6ab74eac61727b))
+* **citizen-portal:** point e2e at the desktop side nav AB[#43820](https://github.com/ogcio/govie-services-messaging/issues/43820) ([#986](https://github.com/ogcio/govie-services-messaging/issues/986)) ([a7e2393](https://github.com/ogcio/govie-services-messaging/commit/a7e239378ddb468ff28c5875de13ae4fbc213001))
+* **deps:** update all non-major dependencies ([#952](https://github.com/ogcio/govie-services-messaging/issues/952)) ([70671c4](https://github.com/ogcio/govie-services-messaging/commit/70671c43f22f78463032a20e968c5fed50a84673))
+* **deps:** update all non-major dependencies ([#974](https://github.com/ogcio/govie-services-messaging/issues/974)) ([d16ccbb](https://github.com/ogcio/govie-services-messaging/commit/d16ccbbc84b6ce9c4f9aada3830f1cfb88a3fed2))
+* fill citizen message iframe to the pane height AB[#43874](https://github.com/ogcio/govie-services-messaging/issues/43874) ([#979](https://github.com/ogcio/govie-services-messaging/issues/979)) ([270ad1f](https://github.com/ogcio/govie-services-messaging/commit/270ad1f945f6bb290e7aca1063e5e37107f1e269))
+* keep citizen inbox filters beside the search box AB[#43873](https://github.com/ogcio/govie-services-messaging/issues/43873) ([#978](https://github.com/ogcio/govie-services-messaging/issues/978)) ([4bfd0eb](https://github.com/ogcio/govie-services-messaging/commit/4bfd0ebc854a061aba4a84c93bba4a7b32bc13d4))
+* keep the side menu mounted across page changes AB[#43539](https://github.com/ogcio/govie-services-messaging/issues/43539) ([#988](https://github.com/ogcio/govie-services-messaging/issues/988)) ([840550c](https://github.com/ogcio/govie-services-messaging/commit/840550c102470bf4db8e20e184821f5d80f61bd4))
+* pin Faro 2.11 until Alloy CORS allows Idempotency-Key AB[#43698](https://github.com/ogcio/govie-services-messaging/issues/43698) ([#971](https://github.com/ogcio/govie-services-messaging/issues/971)) ([84c725c](https://github.com/ogcio/govie-services-messaging/commit/84c725cdbd383cd356479a0a3b203ed0e804e6af))
+* **public-servant-portal:** serve router payloads AB[#43284](https://github.com/ogcio/govie-services-messaging/issues/43284) ([#969](https://github.com/ogcio/govie-services-messaging/issues/969)) ([e7a184c](https://github.com/ogcio/govie-services-messaging/commit/e7a184c9792caa149d34f936f718a762ea349d09))
+* re-resolve nginx proxy upstreams AB[#44041](https://github.com/ogcio/govie-services-messaging/issues/44041) ([#992](https://github.com/ogcio/govie-services-messaging/issues/992)) ([44dae26](https://github.com/ogcio/govie-services-messaging/commit/44dae265c56300d5274935e7df779067f5e376f4))
+* remove borders on the citizen message Back/Delete bar AB[#43870](https://github.com/ogcio/govie-services-messaging/issues/43870) ([#980](https://github.com/ogcio/govie-services-messaging/issues/980)) ([aad5c0f](https://github.com/ogcio/govie-services-messaging/commit/aad5c0f989486f2234209b7a4093fcbe7d89cc6e))
+
+
+### Miscellaneous Chores
+
+* bump sag-client to 0.8.2 AB[#43504](https://github.com/ogcio/govie-services-messaging/issues/43504) ([#968](https://github.com/ogcio/govie-services-messaging/issues/968)) ([bf62420](https://github.com/ogcio/govie-services-messaging/commit/bf62420e770a7e881d3ef7e2321023d6c7ba7110))
+* update rds certificates AB[#43420](https://github.com/ogcio/govie-services-messaging/issues/43420) ([#985](https://github.com/ogcio/govie-services-messaging/issues/985)) ([b23a21b](https://github.com/ogcio/govie-services-messaging/commit/b23a21b01fa10bb704b504339e28847265904db5))
+
+## [0.1.5](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.4...citizen-portal-v0.1.5) (2026-09-17)
+
+
+### Bug Fixes
+
+* **citizen-portal:** constrain attachment card width AB[#43182](https://github.com/ogcio/govie-services-messaging/issues/43182) ([#946](https://github.com/ogcio/govie-services-messaging/issues/946)) ([a714b6a](https://github.com/ogcio/govie-services-messaging/commit/a714b6afd989313286d30a00249ceda3b100d189))
+* **citizen-portal:** open secure message links in a new tab AB[#43175](https://github.com/ogcio/govie-services-messaging/issues/43175) ([#945](https://github.com/ogcio/govie-services-messaging/issues/945)) ([17699d0](https://github.com/ogcio/govie-services-messaging/commit/17699d05b7487e8ac8a289f2d59344f03a2180b5))
+
 ## [0.1.4](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.3...citizen-portal-v0.1.4) (2026-09-16)
 
 

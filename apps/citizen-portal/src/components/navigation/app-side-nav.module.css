@@ -1,0 +1,10 @@
+.nav {
+  flex: 0 0 280px;
+  width: 280px;
+}
+
+@media (max-width: 640px) {
+  .nav {
+    display: none;
+  }
+}

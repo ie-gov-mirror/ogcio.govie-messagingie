@@ -9,6 +9,7 @@ import { ProfileMeta } from "./ProfileMeta"
 
 const profile: MainProfile = {
   id: "p-1",
+  primaryUserId: "p-1",
   firstName: "Ada",
   lastName: "Lovelace",
   email: "ada@test.ie",

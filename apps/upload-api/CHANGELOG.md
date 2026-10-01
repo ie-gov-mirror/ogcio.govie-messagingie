@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.4](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.1.3...upload-api-v1.1.4) (2026-09-16)
+
+
+### Bug Fixes
+
+* reject invalid upload scheduler callbacks with 401 AB[#42627](https://github.com/ogcio/govie-services-messaging/issues/42627) ([#918](https://github.com/ogcio/govie-services-messaging/issues/918)) ([6c053ac](https://github.com/ogcio/govie-services-messaging/commit/6c053ac064bc2b1d41f7b9eb098fce5d6c70855c))
+* **upload-api:** require file access before metadata delete AB[#42618](https://github.com/ogcio/govie-services-messaging/issues/42618) ([#909](https://github.com/ogcio/govie-services-messaging/issues/909)) ([3aa22d0](https://github.com/ogcio/govie-services-messaging/commit/3aa22d04bae4e328f0f73b2ebdf056eb8bba4fe5))
+
+
+### Miscellaneous Chores
+
+* pin image to 3.24 AB[#43098](https://github.com/ogcio/govie-services-messaging/issues/43098) ([#941](https://github.com/ogcio/govie-services-messaging/issues/941)) ([4e69f87](https://github.com/ogcio/govie-services-messaging/commit/4e69f8738304e8a9d419c41346be1e613f2649c4))
+* update dist definition AB[#42955](https://github.com/ogcio/govie-services-messaging/issues/42955) ([#937](https://github.com/ogcio/govie-services-messaging/issues/937)) ([748f086](https://github.com/ogcio/govie-services-messaging/commit/748f086659514e54d3dec3a37ba40e687b6a7fdf))
+
 ## [1.1.3](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.1.2...upload-api-v1.1.3) (2026-09-14)
 
 

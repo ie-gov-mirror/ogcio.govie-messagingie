@@ -15,15 +15,15 @@ export function buildPaging(
   return { totalPages, currentPage }
 }
 
-export function usePaginationParams(): {
+export function usePaginationParams(prefix = ""): {
   page: number
   size: number
   offset: number
 } {
   const searchParams = useSearchParams()
   return useMemo(() => {
-    const rawPage = Number(searchParams.get("page"))
-    const rawSize = Number(searchParams.get("size"))
+    const rawPage = Number(searchParams.get(prefix ? `${prefix}Page` : "page"))
+    const rawSize = Number(searchParams.get(prefix ? `${prefix}Size` : "size"))
     const page = Number.isNaN(rawPage) || rawPage < 0 ? 1 : rawPage + 1
     const size =
       Number.isNaN(rawSize) || rawSize <= 0 ? PAGINATION_LIMIT_DEFAULT : rawSize
@@ -32,5 +32,5 @@ export function usePaginationParams(): {
       size,
       offset: (page - 1) * size,
     }
-  }, [searchParams])
+  }, [prefix, searchParams])
 }

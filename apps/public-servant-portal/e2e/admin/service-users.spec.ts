@@ -1,7 +1,7 @@
 import { Buffer } from "node:buffer"
 import { randomInt } from "node:crypto"
 import path from "node:path"
-import { expect, type Page, test } from "@playwright/test"
+import { expect, type Locator, type Page, test } from "@playwright/test"
 import { urls } from "../fixtures"
 import { authenticateUser } from "../helpers/auth"
 import { createPageWithVideo } from "../helpers/browser-context"
@@ -51,18 +51,93 @@ function createServiceUserImport(partial = false) {
   }
 }
 
+/**
+ * Type into one of the Service Users search boxes and submit it.
+ *
+ * Located by placeholder rather than accessible name on purpose: both search
+ * inputs render `aria-label="Search"` (from the `<key>.search.button` message),
+ * so `getByRole("textbox", { name: "Search Imports" })` matches nothing and the
+ * call blocks for the entire test timeout. There is also no "Search" button —
+ * the field debounces on change and submits on Enter — so clicking one blocked
+ * just as long.
+ */
+async function searchIn(page: Page, placeholder: string, term: string) {
+  const box = page.getByPlaceholder(placeholder)
+  await box.fill(term)
+  await box.press("Enter")
+}
+
+type TabName = "Service Users" | "Imports" | "Import CSV"
+
+/**
+ * Content that proves a tab's panel is rendered and usable, not merely marked
+ * selected. The panels are hidden with CSS rather than the `hidden` attribute,
+ * so an element can resolve from the DOM while still not displayed.
+ */
+function tabPanelReady(page: Page, name: TabName): Locator {
+  switch (name) {
+    case "Service Users":
+      return page.getByPlaceholder("Search Service Users")
+    case "Imports":
+      return page.getByPlaceholder("Search Imports")
+    case "Import CSV":
+      return page.getByRole("button", { name: "Upload", exact: true })
+  }
+}
+
+/**
+ * Select one of the Service Users tabs and wait until its panel is usable.
+ */
+async function openTab(page: Page, name: TabName) {
+  const tab = page.getByRole("tab", { name, exact: true })
+  await expect(tab).toBeVisible({ timeout: 5000 })
+  // Playwright's pointer click can stall before dispatching the DOM event.
+  await tab.evaluate((element) => element.click())
+  await expect(tab).toHaveAttribute("aria-selected", "true", { timeout: 5000 })
+  await expect(tabPanelReady(page, name)).toBeVisible({ timeout: 5000 })
+}
+
+/**
+ * Return to the Service Users list from an import detail page.
+ *
+ * "Back" is a client-side navigation and the tablist re-renders behind it.
+ * Touching a tab before that settles is what left earlier runs waiting on
+ * elements that existed but were not yet displayed.
+ */
+async function backToList(page: Page) {
+  await page
+    .getByText("Back", { exact: true })
+    .click({ timeout: 5000, noWaitAfter: true })
+  await expect(
+    page.getByRole("heading", { name: /service users/i }),
+  ).toBeVisible({ timeout: 30_000 })
+  await expect(
+    page.getByRole("tab", { name: "Service Users", exact: true }),
+  ).toBeVisible({ timeout: 30_000 })
+}
+
+async function submitUpload(page: Page) {
+  const button = page.getByRole("button", { name: "Upload", exact: true })
+  await expect(button).toBeEnabled({ timeout: 5000 })
+  await button.evaluate((element) => element.form?.requestSubmit(element))
+}
+
 async function uploadServiceUser(
   page: Page,
   serviceUser: ReturnType<typeof createServiceUserImport>,
 ) {
   await page.goto(SERVICE_USERS_URL)
-  await page.getByText("Import CSV").click()
+  await openTab(page, "Import CSV")
   await page.locator('input[type="file"]').setInputFiles(serviceUser.file)
-  await page.getByRole("button", { name: "Upload", exact: true }).click()
-  await expect(page.getByText("File uploaded successfully.")).toBeVisible()
+  // Playwright's pointer click can stall before dispatching the form submit,
+  // so submit the same enabled form without navigation auto-waiting.
+  await submitUpload(page)
+  await expect(page.getByText("File uploaded successfully.")).toBeVisible({
+    timeout: 5000,
+  })
   await expect(
     page.getByRole("heading", { name: "Service User Import Detail" }),
-  ).toBeVisible()
+  ).toBeVisible({ timeout: 5000 })
 }
 
 async function waitForServiceUser(page: Page, email: string) {
@@ -87,6 +162,8 @@ test.describe("Admin Service Users Import Tests", () => {
   })
 
   test.afterAll(async () => {
+    // A wedged browser action must not get a second full test timeout to close.
+    test.setTimeout(5000)
     await page.close()
   })
 
@@ -98,15 +175,12 @@ test.describe("Admin Service Users Import Tests", () => {
     await expect(
       page.getByRole("cell", { name: new RegExp(serviceUser.email) }),
     ).toBeVisible()
-    await page.getByText("Back", { exact: true }).click()
+    await backToList(page)
 
     // Click the Imports tab
-    await page.getByText("Imports").click()
+    await openTab(page, "Imports")
 
-    await page
-      .getByRole("textbox", { name: "Search Imports" })
-      .fill(serviceUser.fileName)
-    await page.getByRole("button", { name: "Search" }).click()
+    await searchIn(page, "Search Imports", serviceUser.fileName)
 
     await expect(
       page.getByRole("row", { name: serviceUser.fileName }).first(),
@@ -116,7 +190,7 @@ test.describe("Admin Service Users Import Tests", () => {
       .getByRole("row", { name: serviceUser.fileName })
       .first()
       .getByRole("link")
-      .click()
+      .click({ timeout: 5000, noWaitAfter: true })
 
     await expect(
       page.getByRole("heading", { name: "Service User Import Detail" }),
@@ -141,15 +215,12 @@ test.describe("Admin Service Users Import Tests", () => {
     await expect(
       page.getByRole("cell", { name: new RegExp(serviceUser.email) }),
     ).toBeVisible()
-    await page.getByText("Back", { exact: true }).click()
+    await backToList(page)
 
     // Click the Imports tab
-    await page.getByText("Imports").click()
+    await openTab(page, "Imports")
 
-    await page
-      .getByRole("textbox", { name: "Search Imports" })
-      .fill(serviceUser.fileName)
-    await page.getByRole("button", { name: "Search" }).click()
+    await searchIn(page, "Search Imports", serviceUser.fileName)
 
     // Make sure the file name appears in the table
     await expect(
@@ -165,9 +236,9 @@ test.describe("Admin Service Users Import Tests", () => {
   test("an admin cannot upload a blank import @regression", async () => {
     const csvPath = path.join(__dirname, TEST_CSV_BLANK_FILENAME)
 
-    await page.getByText("Import CSV").click()
+    await openTab(page, "Import CSV")
     await page.locator('input[type="file"]').setInputFiles(csvPath)
-    await page.getByRole("button", { name: "Upload", exact: true }).click()
+    await submitUpload(page)
     // Expect upload to be blocked - should NOT see success message
     await expect(
       page.getByText("File uploaded successfully."),
@@ -177,9 +248,9 @@ test.describe("Admin Service Users Import Tests", () => {
   test("an admin cannot upload an incorrect import @regression", async () => {
     const csvPath = path.join(__dirname, TEST_CSV_INCORRECT_FILENAME)
 
-    await page.getByText("Import CSV").click()
+    await openTab(page, "Import CSV")
     await page.locator('input[type="file"]').setInputFiles(csvPath)
-    await page.getByRole("button", { name: "Upload", exact: true }).click()
+    await submitUpload(page)
 
     // Expect upload to be blocked - should NOT see success message
     await expect(
@@ -190,9 +261,9 @@ test.describe("Admin Service Users Import Tests", () => {
   test("an admin cannot upload a file with XSS content @regression", async () => {
     const csvPath = path.join(__dirname, TEST_CSV_XSS_FILENAME)
 
-    await page.getByText("Import CSV").click()
+    await openTab(page, "Import CSV")
     await page.locator('input[type="file"]').setInputFiles(csvPath)
-    await page.getByRole("button", { name: "Upload", exact: true }).click()
+    await submitUpload(page)
 
     // Expect upload to be blocked - should NOT see success message
     await expect(
@@ -211,11 +282,8 @@ test.describe("Admin Service Users Import Tests", () => {
       const uuid = crypto.randomUUID()
       await page.locator('input[name="lastName"]').fill(`User${uuid}`)
       await page.getByRole("button", { name: "Update" }).click()
-      await page.getByText("Back", { exact: true }).click()
-      await page
-        .getByRole("textbox", { name: "Search Service Users" })
-        .fill(uuid)
-      await page.getByRole("button", { name: "Search" }).click()
+      await backToList(page)
+      await searchIn(page, "Search Service Users", uuid)
       await expect(
         page.getByRole("cell", { name: `User${uuid}` }),
       ).toBeVisible()

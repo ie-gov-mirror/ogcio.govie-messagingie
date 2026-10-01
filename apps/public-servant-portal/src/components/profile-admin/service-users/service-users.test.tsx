@@ -196,6 +196,7 @@ describe("profile-admin service-user components", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.stubGlobal("fetch", vi.fn())
+    window.history.replaceState({}, "", "/")
     for (const key of [...searchParams.keys()]) searchParams.delete(key)
     gatewayFetchMock.mockImplementation((path: string | null) => {
       if (path === "/profile/api/v1/profiles/user-1") {
@@ -228,12 +229,53 @@ describe("profile-admin service-user components", () => {
   })
 
   it("renders the users tabs and tracks import-log views", () => {
+    window.history.replaceState({}, "", "/?profiles=foo")
     render(<ServiceUsers />)
     fireEvent.click(screen.getByRole("button", { name: "tabs.imports" }))
 
     expect(screen.getByText("tabs.users")).toBeInTheDocument()
     expect(trackEventMock).toHaveBeenCalledOnce()
-    expect(replaceMock).toHaveBeenCalledWith("?")
+  })
+
+  it.each(["tabs.users", "tabs.imports", "tabs.importCsv"])(
+    "does not navigate when the %s tab is clicked with a query",
+    (tabName) => {
+      window.history.replaceState({}, "", "/?imports=abc")
+      render(<ServiceUsers />)
+
+      fireEvent.click(screen.getByRole("button", { name: tabName }))
+
+      expect(pushMock).not.toHaveBeenCalled()
+      expect(replaceMock).not.toHaveBeenCalled()
+    },
+  )
+
+  it("ignores import query keys in the users panel", () => {
+    searchParams.set("imports", "users.csv")
+    searchParams.set("importsPage", "4")
+    searchParams.set("importsSize", "5")
+    searchParams.set("page", "4")
+    searchParams.set("size", "5")
+
+    render(<ServiceUsersTable />)
+
+    expect(gatewayFetchMock).toHaveBeenCalledWith(
+      "/profile/api/v1/profiles/?offset=0&limit=20",
+    )
+  })
+
+  it("ignores user query keys in the imports panel", () => {
+    searchParams.set("profiles", "alice")
+    searchParams.set("profilesPage", "4")
+    searchParams.set("profilesSize", "5")
+    searchParams.set("page", "4")
+    searchParams.set("size", "5")
+
+    render(<ServiceUsersImportsTable />)
+
+    expect(gatewayFetchMock).toHaveBeenCalledWith(
+      "/profile/api/v1/profiles/imports/?offset=0&limit=20",
+    )
   })
 
   it("fetches and renders both list tables", () => {
@@ -331,13 +373,23 @@ describe("profile-admin service-user components", () => {
 
   it("updates pagination while retaining query parameters", () => {
     searchParams.set("profiles", "alice")
-    render(<PaginationWrapper currentPage={1} totalPages={3} size={10} />)
+    render(
+      <PaginationWrapper
+        currentPage={1}
+        totalPages={3}
+        size={10}
+        pageKey='profilesPage'
+        sizeKey='profilesSize'
+      />,
+    )
     fireEvent.click(screen.getByRole("button", { name: "page 1" }))
-    expect(pushMock).toHaveBeenCalledWith("?profiles=alice&page=1&size=10")
+    expect(pushMock).toHaveBeenCalledWith(
+      "?profiles=alice&profilesPage=1&profilesSize=10",
+    )
   })
 
   it("pushes a search immediately on Enter", () => {
-    render(<SearchForm searchKey='profiles' />)
+    render(<SearchForm searchKey='profiles' pageKey='profilesPage' />)
     const input = screen.getByRole("textbox")
     fireEvent.change(input, { target: { value: " Alice " } })
     fireEvent.keyDown(input, { key: "Enter" })

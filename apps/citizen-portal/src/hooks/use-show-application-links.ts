@@ -22,6 +22,15 @@ interface ProfileSafeLevel {
  * unified `PageHeader`.
  */
 export function useShowApplicationLinks(): boolean {
+  return useApplicationLinksState() === true
+}
+
+/**
+ * Same as `useShowApplicationLinks`, but `undefined` while this hook's own
+ * auth check is still running (each `useAuth()` call checks separately),
+ * so callers can keep what they last showed instead of flashing it off.
+ */
+export function useApplicationLinksState(): boolean | undefined {
   const { user, claims, loading: authLoading } = useAuth()
   const isOnboarded = isCitizenOnboarded(claims?.roles)
   const idleReady = useIdleMount()
@@ -33,7 +42,11 @@ export function useShowApplicationLinks(): boolean {
 
   const { data: profile } = useGatewayFetch<ProfileSafeLevel>(profilePath)
 
-  if (authLoading || !user) {
+  if (authLoading) {
+    return undefined
+  }
+
+  if (!user) {
     return false
   }
 

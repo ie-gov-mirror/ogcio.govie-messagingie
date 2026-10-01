@@ -35,13 +35,33 @@ export function FullWidthContainer({ children }: { children: ReactNode }) {
 }
 
 /** Main content area aligned with HeaderNext / PageHeader container width. */
-export function AppMainContent({ children }: { children: ReactNode }) {
+export function AppMainContent({
+  children,
+  aside,
+}: {
+  children: ReactNode
+  /** Desktop side nav. The aside hides itself below 640px. */
+  aside?: ReactNode
+}) {
   return (
     <MainContainer>
       <Container>
-        <Stack direction='row' wrap gap={10}>
-          <FullWidthContainer>{children}</FullWidthContainer>
-        </Stack>
+        {aside ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "2rem",
+            }}
+          >
+            {aside}
+            <FullWidthContainer>{children}</FullWidthContainer>
+          </div>
+        ) : (
+          <Stack direction='row' wrap gap={10}>
+            <FullWidthContainer>{children}</FullWidthContainer>
+          </Stack>
+        )}
       </Container>
     </MainContainer>
   )

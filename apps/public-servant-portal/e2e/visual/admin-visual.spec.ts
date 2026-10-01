@@ -75,7 +75,11 @@ test.describe("Admin Visual Regression", () => {
   })
 
   test("admin profile page visual snapshot @visual", async () => {
-    await navigateAndVerifyHeading(page, urls.profileAdmin, "My Profile")
+    await navigateAndVerifyHeading(
+      page,
+      `${urls.profileAdmin}/my-profile`,
+      "My Profile",
+    )
     await expect(page).toHaveScreenshot("admin-profile.png", {
       fullPage: true,
       maxDiffPixelRatio: maxDiff,

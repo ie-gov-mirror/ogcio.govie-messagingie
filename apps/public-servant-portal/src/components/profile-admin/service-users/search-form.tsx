@@ -16,8 +16,10 @@ type InputTextChangeEvent = React.ChangeEvent<HTMLInputElement> & {
 
 export const SearchForm = memo(function SearchForm({
   searchKey,
+  pageKey,
 }: {
   searchKey: string
+  pageKey: string
 }) {
   const t = useTranslations("serviceUsers")
   const router = useRouter()
@@ -38,7 +40,7 @@ export const SearchForm = memo(function SearchForm({
   const pushQuery = useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParamsRef.current)
-      params.delete("page")
+      params.delete(pageKey)
 
       if (value.trim()) {
         params.set(searchKey, value.trim())
@@ -49,7 +51,7 @@ export const SearchForm = memo(function SearchForm({
       const qs = params.toString()
       router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
     },
-    [router, pathname, searchKey],
+    [router, pathname, searchKey, pageKey],
   )
 
   const pushQueryRef = useRef(pushQuery)

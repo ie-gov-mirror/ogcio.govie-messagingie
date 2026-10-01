@@ -16,6 +16,7 @@ vi.mock("next/navigation", () => ({
 
 const profile: MainProfile = {
   id: "p-1",
+  primaryUserId: "p-1",
   publicName: "Ada L",
   status: "active",
 }

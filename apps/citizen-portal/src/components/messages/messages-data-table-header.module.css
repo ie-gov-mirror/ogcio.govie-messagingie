@@ -7,3 +7,17 @@
 .searchOnlyChrome {
   padding-bottom: var(--gieds-space-4);
 }
+
+/*
+ * DS DataTableHeaderSearch is `.gi-flex-1` (`flex: 1 1 0%`), which grows
+ * the search slot and pins Filters to the far edge of a wide toolbar.
+ * Doubled class beats that single utility. The slot then matches the
+ * search field's 25rem cap, and the header row's existing gap sits
+ * between Search and Filters.
+ */
+.searchBesideFilters.searchBesideFilters {
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: 25rem;
+  min-width: 0;
+}

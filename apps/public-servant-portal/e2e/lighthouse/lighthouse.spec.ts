@@ -34,10 +34,10 @@ const adminPathCases: AuditCase[] = [
 const crossAppCases: AuditCase[] = [
   {
     title: "profile admin",
-    auditUrl: `${PROFILE_ADMIN_URL}/en`,
+    auditUrl: `${PROFILE_ADMIN_URL}/en/my-profile`,
     reportName: "lighthouse-profile-admin",
     prepare: async (page) => {
-      await page.goto(`${PROFILE_ADMIN_URL}/en`)
+      await page.goto(`${PROFILE_ADMIN_URL}/en/my-profile`)
     },
   },
   {

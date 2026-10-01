@@ -30,7 +30,7 @@ const {
   }
 })
 
-vi.mock("@ogcio/sag-client", () => ({
+vi.mock("@/util/gateway-organization", () => ({
   selectOrganization: (...args: unknown[]) => selectOrganizationMock(...args),
 }))
 
@@ -165,7 +165,7 @@ beforeEach(() => {
   usePublicServantGuardMock.mockReturnValue({ resolved: true, authorized: true })
   selectedOrgValue = null
   vi.stubGlobal("fetch", fetchMock)
-  selectOrganizationMock.mockResolvedValue(undefined)
+  selectOrganizationMock.mockResolvedValue(true)
   clearAllCookies()
   // The last-selected-org restore reads localStorage keyed by user sub; wipe
   // it so each test starts from a clean, deterministic state (AB#28623).
@@ -324,6 +324,26 @@ describe("ClientShell — gate states", () => {
 })
 
 describe("ClientShell — organization selection race guard", () => {
+  it("does not render protected content when gateway organization selection fails", async () => {
+    useAuthMock.mockReturnValue({
+      ...defaultAuth,
+      user: { sub: "u1", name: "Alice" },
+      claims: { organizations: ["org-1"] },
+    })
+    selectOrganizationMock.mockResolvedValue(false)
+
+    render(
+      <ClientShell>
+        <span data-testid='child'>protected</span>
+      </ClientShell>,
+    )
+
+    await waitFor(() => expect(selectOrganizationMock).toHaveBeenCalledOnce())
+    expect(screen.queryByTestId("child")).not.toBeInTheDocument()
+    expect(screen.getByTestId("ds-spinner")).toBeInTheDocument()
+    expect(window.localStorage).toHaveLength(0)
+  })
+
   it("calls selectOrganization at most once across re-renders when claims expose orgs", async () => {
     const user = { sub: "u1", name: "Alice" }
     const claims = { organizations: ["org-1", "org-2"] }
@@ -350,6 +370,7 @@ describe("ClientShell — organization selection race guard", () => {
     await waitFor(() =>
       expect(selectOrganizationMock).toHaveBeenCalledWith(
         process.env.NEXT_PUBLIC_SAG_URL,
+        "messaging-admin",
         "org-1",
       ),
     )
@@ -395,11 +416,13 @@ describe("ClientShell — organization selection race guard", () => {
     await waitFor(() =>
       expect(selectOrganizationMock).toHaveBeenCalledWith(
         process.env.NEXT_PUBLIC_SAG_URL,
+        "messaging-admin",
         "org-2",
       ),
     )
     expect(selectOrganizationMock).not.toHaveBeenCalledWith(
       process.env.NEXT_PUBLIC_SAG_URL,
+      "messaging-admin",
       "org-1",
     )
   })
@@ -422,6 +445,7 @@ describe("ClientShell — organization selection race guard", () => {
     await waitFor(() =>
       expect(selectOrganizationMock).toHaveBeenCalledWith(
         process.env.NEXT_PUBLIC_SAG_URL,
+        "messaging-admin",
         "org-1",
       ),
     )

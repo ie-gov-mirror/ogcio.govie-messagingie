@@ -38,8 +38,13 @@ vi.mock("@ogcio/design-system-react", () => ({
   }: React.PropsWithChildren<{ showFilter: boolean }>) => (
     <header data-show-filter={showFilter}>{children}</header>
   ),
-  DataTableHeaderSearch: ({ children }: React.PropsWithChildren) => (
-    <div>{children}</div>
+  DataTableHeaderSearch: ({
+    children,
+    className,
+  }: React.PropsWithChildren<{ className?: string }>) => (
+    <div data-testid='search-slot' className={className}>
+      {children}
+    </div>
   ),
   DataTableHeaderFilter: ({ children }: React.PropsWithChildren) => (
     <div>{children}</div>
@@ -81,6 +86,7 @@ vi.mock("@ogcio/design-system-react", () => ({
 }))
 
 import { MessagesDataTableHeader } from "./messages-data-table-header"
+import styles from "./messages-data-table-header.module.css"
 
 describe("MessagesDataTableHeader", () => {
   beforeEach(() => {
@@ -98,6 +104,18 @@ describe("MessagesDataTableHeader", () => {
 
     expect(screen.getByTestId("custom-search")).toBeInTheDocument()
     expect(screen.queryByTestId("status-filter")).not.toBeInTheDocument()
+    expect(screen.getByTestId("search-slot")).not.toHaveClass(
+      styles.searchBesideFilters,
+    )
+  })
+
+  it("keeps the search slot from growing so Filters sits beside it", () => {
+    render(<MessagesDataTableHeader />)
+
+    expect(screen.getByTestId("search-slot")).toHaveClass(
+      styles.searchBesideFilters,
+    )
+    expect(screen.getByTestId("status-filter")).toBeInTheDocument()
   })
 
   it("applies a status filter while preserving search and resetting page", () => {

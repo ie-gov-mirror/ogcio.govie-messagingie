@@ -1,6 +1,5 @@
 "use client"
 
-import { selectOrganization as selectOrganizationOnGateway } from "@ogcio/sag-client"
 import {
   type OrganizationInfo,
   PROFILE_PUBLIC_SERVANT_ROLE_NAME,
@@ -93,14 +92,14 @@ export function useOrganizationContext(): OrganizationContext {
   const setOrganization = useCallback(
     async (organizationId: string) => {
       if (!organizationId || organizationId === selectedId) return
-      const ok = await selectOrganizationOnGateway(gatewayUrl, organizationId)
+      const ok = await client.selectOrganization(organizationId)
       if (!ok) return
       // Remember the explicit choice so it is restored after a future
       // logout/login, not just across the imminent hard reload (AB#28623).
       persistLastSelectedOrganization(user?.sub, organizationId)
       window.location.reload()
     },
-    [gatewayUrl, selectedId, user],
+    [client, selectedId, user],
   )
 
   return {

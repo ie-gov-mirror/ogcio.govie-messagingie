@@ -1,0 +1,658 @@
+{
+  "1000": {
+    "id": 2000,
+    "meta": {
+      "type": "lea.ListPage",
+      "slug": "life-events",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": null
+    },
+    "title": "Life events",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Choose the moment you are dealing with. Each one lists the services, guidance and payments involved.</p>",
+        "id": "list-intro"
+      }
+    ],
+    "categories": [
+      {
+        "key": "family",
+        "title": "Family & Children",
+        "icon": "child_care",
+        "life_events": [1101, 1102, 1103]
+      },
+      {
+        "key": "education",
+        "title": "Education & Learning",
+        "icon": "event",
+        "life_events": [1104, 1105]
+      },
+      {
+        "key": "transport",
+        "title": "Travel & Transport",
+        "icon": "directions_car",
+        "life_events": [1106]
+      },
+      {
+        "key": "housing",
+        "title": "Home & Housing",
+        "icon": "home",
+        "life_events": [1107, 1108, 1109, 1110]
+      },
+      {
+        "key": "work",
+        "title": "Work & Money",
+        "icon": "work",
+        "life_events": [1111, 1112, 1113]
+      },
+      {
+        "key": "relationships",
+        "title": "Relationships",
+        "icon": "person_check",
+        "life_events": [1114, 1115, 1116]
+      },
+      {
+        "key": "health",
+        "title": "Health & Care",
+        "icon": "health_and_safety",
+        "life_events": [1117, 1118]
+      },
+      {
+        "key": "later-life",
+        "title": "Later Life",
+        "icon": "person",
+        "life_events": [1119, 1120]
+      },
+      {
+        "key": "bereavement",
+        "title": "Bereavement",
+        "icon": "info",
+        "life_events": [1121]
+      }
+    ]
+  },
+  "1101": {
+    "id": 2101,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "birth-of-a-child",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Birth of a Child",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Registering a birth, and the payments and services available to new parents.</p>",
+        "id": "le-1101"
+      }
+    ]
+  },
+  "1102": {
+    "id": 2102,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "child-adoption",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Child Adoption",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Adopting a child in Ireland, and the supports available to adoptive families.</p>",
+        "id": "le-1102"
+      }
+    ]
+  },
+  "1103": {
+    "id": 2103,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "become-an-adult",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Become an Adult",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>What changes when you turn 18, from voting to your own PPS services.</p>",
+        "id": "le-1103"
+      }
+    ]
+  },
+  "1104": {
+    "id": 2104,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "child-starting-school",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Child starting school",
+    "summary": "Enrolling a child in primary school, the supports available, and what to do if you do not get a place.",
+    "highlighted": true,
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Enrolling a child in primary school, the supports available, and what to do if you do not get a place. Most families start this in the year before their child starts school.</p>",
+        "id": "le-1104"
+      }
+    ]
+  },
+  "1105": {
+    "id": 2105,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "transition-from-secondary-to-tertiary-education",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Transition from Secondary to Tertiary Education",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Applying for college, grants and supports after secondary school.</p>",
+        "id": "le-1105"
+      }
+    ]
+  },
+  "1106": {
+    "id": 2106,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "owning-driving-a-vehicle",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Owning/Driving a Vehicle",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Learner permits, driving licences, motor tax and vehicle registration.</p>",
+        "id": "le-1106"
+      }
+    ]
+  },
+  "1107": {
+    "id": 2107,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "accessing-social-housing",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Accessing Social Housing",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Checking if you qualify for social housing and applying to your local authority.</p>",
+        "id": "le-1107"
+      }
+    ]
+  },
+  "1108": {
+    "id": 2108,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "moving-home",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Moving home",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Updating your address with government services when you move.</p>",
+        "id": "le-1108"
+      }
+    ]
+  },
+  "1109": {
+    "id": 2109,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "buying-or-renting",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Buying or renting",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Schemes and rights for buyers and tenants.</p>",
+        "id": "le-1109"
+      }
+    ]
+  },
+  "1110": {
+    "id": 2110,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "finding-and-maintaining-a-home",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Finding and Maintaining a Home",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Grants and supports for keeping your home safe and warm.</p>",
+        "id": "le-1110"
+      }
+    ]
+  },
+  "1111": {
+    "id": 2111,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "starting-work",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Starting work",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Getting a PPS number, registering for tax and your rights at work.</p>",
+        "id": "le-1111"
+      }
+    ]
+  },
+  "1112": {
+    "id": 2112,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "losing-a-job",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Losing a job",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Jobseeker payments, redundancy and help finding new work.</p>",
+        "id": "le-1112"
+      }
+    ]
+  },
+  "1113": {
+    "id": 2113,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "starting-a-business",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Starting a business",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Registering a business, tax obligations and supports for new enterprises.</p>",
+        "id": "le-1113"
+      }
+    ]
+  },
+  "1114": {
+    "id": 2114,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "marriage",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Marriage",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Giving notice of marriage and what changes afterwards.</p>",
+        "id": "le-1114"
+      }
+    ]
+  },
+  "1115": {
+    "id": 2115,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "civil-partnership",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Civil partnership",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Civil partnership in Ireland and how it is recognised.</p>",
+        "id": "le-1115"
+      }
+    ]
+  },
+  "1116": {
+    "id": 2116,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "marriage-dissolution-separation-divorce",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Marriage Dissolution - Separation/Divorce",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Separation, divorce and the supports available to families.</p>",
+        "id": "le-1116"
+      }
+    ]
+  },
+  "1117": {
+    "id": 2117,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "developing-a-life-altering-illness",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Developing a Life-Altering Illness",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Medical cards, illness payments and care supports.</p>",
+        "id": "le-1117"
+      }
+    ]
+  },
+  "1118": {
+    "id": 2118,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "becoming-a-carer",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Becoming a carer",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Carer's payments and supports for people caring for someone at home.</p>",
+        "id": "le-1118"
+      }
+    ]
+  },
+  "1119": {
+    "id": 2119,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "retirement",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Retirement",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Planning for retirement and what to do when you stop working.</p>",
+        "id": "le-1119"
+      }
+    ]
+  },
+  "1120": {
+    "id": 2120,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "pension",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Pension",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>State pensions and how to apply for them.</p>",
+        "id": "le-1120"
+      }
+    ]
+  },
+  "1121": {
+    "id": 2121,
+    "meta": {
+      "type": "lea.LifeEventPage",
+      "slug": "supporting-the-bereaved-death-of-a-loved-one",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2000
+      }
+    },
+    "title": "Supporting the bereaved - Death of a loved one",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Registering a death, bereavement payments and dealing with an estate.</p>",
+        "id": "le-1121"
+      }
+    ]
+  },
+  "1201": {
+    "id": 2201,
+    "meta": {
+      "type": "lea.JourneyPage",
+      "slug": "apply-for-a-school-place",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2104
+      }
+    },
+    "title": "Apply for a school place",
+    "summary": "Apply for a primary school place in one of the five pilot regions. Takes 20 to 25 minutes and cannot be saved part-way.",
+    "highlighted": true,
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Use this service to apply for a primary school place for your child in one of the five pilot regions for the 2026/27 school year.</p>",
+        "id": "j-1201-intro"
+      },
+      {
+        "type": "heading",
+        "value": "Getting ready to apply",
+        "id": "j-1201-h1"
+      },
+      {
+        "type": "paragraph",
+        "value": "<p><b>Before you start, you will need:</b></p><ul><li>your child's PPS number and date of birth</li><li>your child's birth certificate (JPG, PDF, PNG or TIFF, maximum 10MB)</li><li>two proofs of address dated within the last 30 days, such as utility bills or bank statements</li><li>if you are applying for a Special Class place, a professional diagnosis report and NCSE confirmation letter</li></ul>",
+        "id": "j-1201-p1"
+      },
+      {
+        "type": "button_link",
+        "value": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://forms.uat.services.gov.ie/en/school-place-application",
+              "link_text": "Start application"
+            },
+            "id": "j-1201-cta"
+          }
+        ],
+        "id": "j-1201-b1"
+      },
+      {
+        "type": "heading",
+        "value": "How long it takes",
+        "id": "j-1201-h2"
+      },
+      {
+        "type": "paragraph",
+        "value": "<p>This application takes approximately 20 to 25 minutes to complete. You cannot save and return, so have everything ready before you begin.</p>",
+        "id": "j-1201-p2"
+      },
+      {
+        "type": "heading",
+        "value": "Application window",
+        "id": "j-1201-h3"
+      },
+      {
+        "type": "paragraph",
+        "value": "<p>Applications for the 2026/27 school year open 1 October and close 22 October 2026. Applications submitted after this date will not be accepted.</p>",
+        "id": "j-1201-p3"
+      },
+      {
+        "type": "heading",
+        "value": "What happens next",
+        "id": "j-1201-h4"
+      },
+      {
+        "type": "paragraph",
+        "value": "<ul><li>round 1 offers will be issued on 12 November 2026</li><li>round 2 offers will be issued on 4 December 2026</li></ul><p>You will receive a message when a decision is available. Open it in your messages to read the decision securely.</p>",
+        "id": "j-1201-p4"
+      }
+    ]
+  },
+  "1202": {
+    "id": 2202,
+    "meta": {
+      "type": "lea.JourneyPage",
+      "slug": "apply-for-the-school-transport-scheme",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2104
+      }
+    },
+    "title": "Apply for the School Transport Scheme",
+    "summary": "Bus transport to the nearest school, where your child is eligible.",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Bus transport to the nearest school, where your child is eligible.</p>",
+        "id": "j-1202"
+      }
+    ]
+  },
+  "1203": {
+    "id": 2203,
+    "meta": {
+      "type": "lea.JourneyPage",
+      "slug": "apply-for-the-back-to-school-clothing-and-footwear-allowance",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2104
+      }
+    },
+    "title": "Apply for the Back to School Clothing and Footwear Allowance",
+    "summary": "A payment towards uniforms and shoes for the school year.",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>A payment towards uniforms and shoes for the school year.</p>",
+        "id": "j-1203"
+      }
+    ]
+  },
+  "1204": {
+    "id": 2204,
+    "meta": {
+      "type": "lea.JourneyPage",
+      "slug": "request-an-assessment-of-special-educational-needs",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2104
+      }
+    },
+    "title": "Request an assessment of special educational needs",
+    "summary": "Arrange support before your child starts school.",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>Arrange support before your child starts school.</p>",
+        "id": "j-1204"
+      }
+    ]
+  },
+  "1205": {
+    "id": 2205,
+    "meta": {
+      "type": "lea.JourneyPage",
+      "slug": "appeal-a-refusal-of-admission",
+      "locale": "ga",
+      "alias_of": null,
+      "parent": {
+        "id": 2104
+      }
+    },
+    "title": "Appeal a refusal of admission",
+    "summary": "If a school has refused your child a place under section 29.",
+    "body": [
+      {
+        "type": "paragraph",
+        "value": "<p>If a school has refused your child a place under section 29. See <a linktype=\"page\" id=\"1201\">Apply for a school place</a> for the application itself.</p>",
+        "id": "j-1205"
+      }
+    ]
+  }
+}

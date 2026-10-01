@@ -13,13 +13,10 @@ vi.mock("@ogcio/design-system-react", () => ({
   Link: ({ href, children }: { href: string; children: ReactNode }) => (
     <a href={href}>{children}</a>
   ),
-  Button: ({
-    children,
-    onClick,
-  }: {
-    children: ReactNode
-    onClick: () => void
-  }) => <button onClick={onClick}>{children}</button>,
+  Icon: () => null,
+  ListItem: ({ href, label }: { href: string; label: string }) => (
+    <a href={href}>{label}</a>
+  ),
 }))
 
 describe("navigation primitives", () => {
@@ -40,6 +37,8 @@ describe("navigation primitives", () => {
         name='Jane'
         profileHref='/profile'
         onSignOut={onSignOut}
+        languageHref='/ga'
+        languageLabel='Gaeilge'
       >
         <li>Navigation</li>
       </UserMenuDrawer>,
@@ -50,6 +49,10 @@ describe("navigation primitives", () => {
       "href",
       "/profile",
     )
+    expect(screen.getByRole("link", { name: "Gaeilge" })).toHaveAttribute(
+      "href",
+      "/ga",
+    )
     fireEvent.click(screen.getByRole("button", { name: "logout" }))
     expect(onSignOut).toHaveBeenCalledOnce()
 
@@ -58,6 +61,8 @@ describe("navigation primitives", () => {
         name='Jane'
         profileHref='/profile'
         onSignOut={onSignOut}
+        languageHref='/ga'
+        languageLabel='Gaeilge'
         showProfileLink={false}
       />,
     )

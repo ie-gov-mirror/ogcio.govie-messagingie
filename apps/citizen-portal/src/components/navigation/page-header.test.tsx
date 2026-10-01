@@ -19,6 +19,7 @@ let mockLocale: "en" | "ga" = "en"
 // history API.
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname,
+  useRouter: () => ({ push: vi.fn() }),
 }))
 
 vi.mock("next-intl", () => ({
@@ -37,18 +38,34 @@ vi.mock("next-intl", () => ({
     const HEADER = {
       menu: "Menu",
       onboarding: "Onboarding",
-      "drawer.dashboard": "Dashboard",
-      "drawer.messaging": "MessagingIE",
-      "drawer.whatsNew": "What's new",
       "drawer.close": "Close",
+      greetingPrefix: "Hi,",
+      profile: "Profile",
       "language.english": "English",
       "language.irish": "Gaeilge",
     } as const
+    const DRAWER = {
+      dashboard: "Dashboard",
+      messages: "Messages",
+      lifeEvents: "Life events",
+      applications: "Applications",
+      close: "Close",
+    } as const
+    const USER_MENU = { logout: "Logout" } as const
     if (namespace === "navigation.title") {
       return TITLE[key as keyof typeof TITLE] ?? `${namespace}.${key}`
     }
     if (namespace === "navigation.header") {
       return HEADER[key as keyof typeof HEADER] ?? `${namespace}.${key}`
+    }
+    if (namespace === "navigation.header.drawer") {
+      return DRAWER[key as keyof typeof DRAWER] ?? `${namespace}.${key}`
+    }
+    if (namespace === "navigation.userMenu") {
+      return USER_MENU[key as keyof typeof USER_MENU] ?? `${namespace}.${key}`
+    }
+    if (namespace === "home.folders" && key === "unreadBadge") {
+      return "1 unread message"
     }
     return `${namespace}.${key}`
   },
@@ -62,7 +79,12 @@ vi.mock("@/hooks/use-show-application-links", () => ({
 // the cross-zone drawer links are gated per zone (AB#39580) without
 // loading the real env schema. `getEnabledLandingZone` is stubbed to the
 // identity fallback used by `getZoneFromPath` for unmatched paths.
-const flagState = vi.hoisted(() => ({ dashboard: true, messages: true }))
+const flagState = vi.hoisted(() => ({
+  dashboard: true,
+  messages: true,
+  lea: false,
+  journey: true,
+}))
 vi.mock("@/lib/feature-config", () => ({
   isZoneEnabled: (zone: "messages" | "profile" | "dashboard") => {
     if (zone === "profile") return true
@@ -70,9 +92,16 @@ vi.mock("@/lib/feature-config", () => ({
     return flagState.messages
   },
   getEnabledLandingZone: (zone: "messages" | "profile" | "dashboard") => zone,
-  // LEA (My Submissions) is off in this suite — the drawer's
-  // Applications link has its own dedicated coverage elsewhere.
-  isLeaEnabled: () => false,
+  isLeaEnabled: () => flagState.lea,
+  isJourneyIntegrationEnabled: () => flagState.journey,
+}))
+
+vi.mock("@/components/messages/use-inbox-unread-count", () => ({
+  useInboxUnreadCount: () => ({ count: 1, isLoading: false }),
+}))
+
+vi.mock("@/components/messages/inbox-unread-badge", () => ({
+  InboxUnreadBadge: () => <span data-testid='unread-badge' />,
 }))
 
 // `useCrossZoneLink` and the `ZONE_CONFIG` table are exercised by their
@@ -81,6 +110,13 @@ vi.mock("@/lib/feature-config", () => ({
 // deterministic local-docker triple makes every assertion a string-
 // equality check.
 vi.mock("@citizen-portal/shared", () => ({
+  useEnv: () => ({
+    hosts: {
+      messages: "http://messaging.local.test:8080",
+      profile: "http://profile.local.test:8080",
+      dashboard: "http://dashboard.local.test:8080",
+    },
+  }),
   useCrossZoneLink:
     () => (zone: "messages" | "profile" | "dashboard", p: string) => {
       const base = {
@@ -109,6 +145,7 @@ vi.mock("@ogcio/design-system-react", () => {
     HeaderTitle: Pass,
     HeaderPrimaryMenu: Pass,
     HeaderSecondaryMenu: Pass,
+    HeaderMenuItemSlot: Pass,
     HeaderMenuItemButton: ({
       children,
       onClick,
@@ -174,40 +211,42 @@ describe("PageHeader", () => {
     mockLocale = "en"
     flagState.dashboard = true
     flagState.messages = true
+    flagState.lea = false
+    flagState.journey = true
   })
 
   afterEach(() => {
     vi.clearAllMocks()
   })
 
-  it("resolves the title from the active zone on a messages path", () => {
+  it("uses the zone name as the logo label and Messages in the drawer", () => {
     mockPathname = "/en/messages"
     render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
-    // The drawer's MessagingIE cross-zone link also contains the
-    // string "MessagingIE", so `getAllByText` is the right matcher;
-    // the header title is the first occurrence and the logo's
-    // aria-label is the second (proven by the logo-href test below).
-    expect(screen.getAllByText("MessagingIE").length).toBeGreaterThan(0)
-    // The chrome title and the cross-zone drawer item must both
-    // exist; the absolute cross-zone href is asserted by the
-    // dedicated drawer-href test below. Here we only confirm that
-    // at least one absolute and one root-relative link both carry
-    // the "MessagingIE" label.
-    const messagingLinks = screen.getAllByRole("link", { name: "MessagingIE" })
+    expect(screen.getByRole("link", { name: "MessagingIE" })).toHaveAttribute(
+      "href",
+      "/en/messages",
+    )
+    expect(screen.getByRole("link", { name: /Messages/ })).toHaveAttribute(
+      "href",
+      "/en/messages",
+    )
     expect(
-      messagingLinks.some((a) => a.getAttribute("href") === "/en/messages"),
-    ).toBe(true)
+      screen.queryByRole("button", { name: "Logout" }),
+    ).not.toBeInTheDocument()
     expect(
-      messagingLinks.some((a) =>
-        a.getAttribute("href")?.startsWith("http://messaging.local.test:8080/"),
-      ),
-    ).toBe(true)
+      screen
+        .getAllByRole("link", { name: "Profile" })
+        .some((link) => link.getAttribute("data-testid") !== "profile-href"),
+    ).toBe(false)
   })
 
-  it("resolves the title from the active zone on a profile path", () => {
+  it("resolves the logo label from the active zone on a profile path", () => {
     mockPathname = "/en/my-profile"
     render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
-    expect(screen.getByText("My Profile")).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "My Profile" })).toHaveAttribute(
+      "href",
+      "/en/my-profile",
+    )
   })
 
   it("resolves the title from the active zone on a dashboard path", () => {
@@ -265,15 +304,11 @@ describe("PageHeader", () => {
       "http://dashboard.local.test:8080/en/my-dashboard",
     )
 
-    const messagingCrossZone = screen
-      .getAllByRole("link", { name: "MessagingIE" })
-      .find((a) =>
-        a.getAttribute("href")?.startsWith("http://messaging.local.test:8080/"),
-      )
-    expect(messagingCrossZone).toBeDefined()
-    expect(messagingCrossZone).toHaveAttribute(
+    // Already on the messages host, so this item is a same-origin path
+    // and the shell stays mounted. Dashboard above stays absolute.
+    expect(screen.getByRole("link", { name: /Messages/ })).toHaveAttribute(
       "href",
-      "http://messaging.local.test:8080/en/messages",
+      "/en/messages",
     )
   })
 
@@ -303,14 +338,9 @@ describe("PageHeader", () => {
       "href",
       "http://dashboard.local.test:8080/ga/my-dashboard",
     )
-    const messagingCrossZone = screen
-      .getAllByRole("link", { name: "MessagingIE" })
-      .find((a) =>
-        a.getAttribute("href")?.startsWith("http://messaging.local.test:8080/"),
-      )
-    expect(messagingCrossZone).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Messages/ })).toHaveAttribute(
       "href",
-      "http://messaging.local.test:8080/ga/messages",
+      "/ga/messages",
     )
   })
 
@@ -364,7 +394,7 @@ describe("PageHeader", () => {
 
     const messagingCrossZoneLink = () =>
       screen
-        .queryAllByRole("link", { name: "MessagingIE" })
+        .queryAllByRole("link", { name: /Messages/ })
         .find((a) =>
           a
             .getAttribute("href")
@@ -393,6 +423,24 @@ describe("PageHeader", () => {
       render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
       expect(messagingCrossZoneLink()).toBeUndefined()
       expect(dashboardCrossZoneLink()).toBeDefined()
+    })
+
+    it("shows the Profile action and LEA destinations when LEA is on", () => {
+      flagState.lea = true
+      mockPathname = "/en/messages"
+      render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
+      expect(
+        screen
+          .getAllByRole("link", { name: "Profile" })
+          .find((link) => link.getAttribute("data-testid") !== "profile-href"),
+      ).toHaveAttribute("href", "http://profile.local.test:8080/en/my-profile")
+      expect(screen.getByRole("link", { name: "Life events" })).toBeInTheDocument()
+      expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute(
+        "href",
+        "http://dashboard.local.test:8080/en/my-submissions",
+      )
+      expect(screen.getByTestId("unread-badge")).toBeInTheDocument()
+      expect(screen.getByRole("button", { name: "Logout" })).toBeInTheDocument()
     })
 
     it("hides both cross-zone links in a profile-only deployment", () => {

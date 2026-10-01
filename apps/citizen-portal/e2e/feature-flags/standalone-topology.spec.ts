@@ -1,6 +1,7 @@
 import { expect, type Page, test } from "@playwright/test"
 import { users } from "../fixtures"
 import { createAuthenticatedPage } from "../helpers/user-auth.helper"
+import { appNav } from "../utils/navigation-helpers"
 
 /**
  * Standalone-topology e2e (AB#39580): "MessagingIE + Profile, no
@@ -35,12 +36,10 @@ test.describe("Feature flags — MessagingIE + Profile, Dashboard disabled", () 
     await expect(page).toHaveURL(/\/en\/messages/)
   })
 
-  test("the menu drops the Dashboard link but keeps MessagingIE", async () => {
+  test("the menu drops the Dashboard link but keeps Messages", async () => {
     await page.goto("/en/messages")
-    await page.getByRole("button", { name: /menu/i }).click()
-    await expect(page.getByRole("link", { name: "Dashboard" })).toHaveCount(0)
-    await expect(
-      page.getByRole("link", { name: "MessagingIE" }).first(),
-    ).toBeVisible()
+    const nav = await appNav(page)
+    await expect(nav.getByRole("link", { name: "Dashboard" })).toHaveCount(0)
+    await expect(nav.getByRole("link", { name: "Messages" })).toBeVisible()
   })
 })

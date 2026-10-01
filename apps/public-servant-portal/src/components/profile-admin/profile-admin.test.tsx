@@ -96,11 +96,6 @@ vi.mock("@unleash/proxy-client-react", () => ({
   useUnleashContext: () => updateContextMock,
 }))
 
-vi.mock("@ogcio/sag-client", () => ({
-  getSelectedOrganization: () => getSelectedOrganizationMock(),
-  selectOrganization: selectOrganizationMock,
-}))
-
 vi.mock("@ogcio/sag-client/react", () => ({
   PROFILE_PUBLIC_SERVANT_ROLE_NAME: "Profile Public Servant",
   SagClientProvider: ({ children }: { children: React.ReactNode }) => (
@@ -109,6 +104,10 @@ vi.mock("@ogcio/sag-client/react", () => ({
   useAuth: () => authState,
   useGatewayFetch: () => gatewayState,
   usePublicServantGuard: () => guardState,
+  useSagClient: () => ({
+    getSelectedOrganization: getSelectedOrganizationMock,
+    selectOrganization: selectOrganizationMock,
+  }),
 }))
 
 vi.mock("@/util/zone", () => ({
@@ -296,10 +295,7 @@ describe("profile-admin root components", () => {
     render(<ClientShell>protected</ClientShell>)
     expect(await screen.findByText("protected")).toBeInTheDocument()
 
-    expect(selectOrganizationMock).toHaveBeenCalledWith(
-      "https://sag.example",
-      "org-2",
-    )
+    expect(selectOrganizationMock).toHaveBeenCalledWith("org-2")
     expect(persistLastSelectedOrganizationMock).toHaveBeenCalledWith(
       "user-1",
       "org-2",
@@ -314,10 +310,19 @@ describe("profile-admin root components", () => {
     render(<ClientShell>protected</ClientShell>)
     expect(await screen.findByText("protected")).toBeInTheDocument()
 
-    expect(selectOrganizationMock).toHaveBeenCalledWith(
-      "https://sag.example",
-      "org-1",
-    )
+    expect(selectOrganizationMock).toHaveBeenCalledWith("org-1")
+  })
+
+  it("keeps protected content gated when organization selection fails", async () => {
+    getSelectedOrganizationMock.mockResolvedValue(null)
+    selectOrganizationMock.mockResolvedValue(false)
+
+    render(<ClientShell>protected</ClientShell>)
+
+    await waitFor(() => expect(selectOrganizationMock).toHaveBeenCalledOnce())
+    expect(screen.queryByText("protected")).not.toBeInTheDocument()
+    expect(screen.getByLabelText("Loading")).toBeInTheDocument()
+    expect(persistLastSelectedOrganizationMock).not.toHaveBeenCalled()
   })
 
   it("keeps loading until an eligible organization exists", () => {

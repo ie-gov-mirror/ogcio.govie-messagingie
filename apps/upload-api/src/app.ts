@@ -23,7 +23,7 @@ import scheduleCleanupTask from "./utils/scheduleCleanupTask.js";
 import {
   CONFIG_TYPE,
   SCHEDULER_TOKEN,
-  storeConfig,
+  seedConfig,
 } from "./utils/storeConfig.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -112,7 +112,8 @@ export async function build(opts?: FastifyServerOptions) {
 
   app.register(sensible);
 
-  await storeConfig(
+  // Rotating this on boot orphans callbacks already queued with the old token.
+  await seedConfig(
     app.pg.pool,
     SCHEDULER_TOKEN,
     randomUUID(),

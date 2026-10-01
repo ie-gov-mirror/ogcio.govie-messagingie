@@ -1,3 +1,14 @@
+.card {
+  min-width: 0;
+  max-width: min(100%, 28rem);
+  align-self: flex-start;
+}
+
+.card :global(.gi-card-heading) {
+  min-width: 0;
+  width: 100%;
+}
+
 .titleRow {
   display: flex;
   flex-direction: row;

@@ -259,8 +259,14 @@
         "dashboard": "Dashboard",
         "submissions": "Submissions",
         "messaging": "MessagingIE",
+        "messages": "Messages",
+        "lifeEvents": "Life events",
+        "applications": "Applications",
         "close": "Close"
       },
+      "greetingPrefix": "Hi,",
+      "profile": "Profile",
+      "sideNav": "Main",
       "menu": "Menu",
       "language": {
         "english": "English",
@@ -268,7 +274,7 @@
       }
     },
     "userMenu": {
-      "viewMyProfile": "View my Profile",
+      "viewMyProfile": "Profile",
       "logout": "Logout"
     },
     "footer": {
@@ -471,5 +477,14 @@
     "server": "An error occurred while processing your request. Please try again later.",
     "unknown": "Something went wrong",
     "tryAgain": "Try again"
+  },
+  "discovery": {
+    "summary": "{categories, plural, one {# category} other {# categories}} · {lifeEvents, plural, one {# life event} other {# life events}}",
+    "backToDashboard": "Back to dashboard",
+    "backToLifeEvents": "Back to life events",
+    "backTo": "Back to {title}",
+    "lifeEventLabel": "Life event · {category}",
+    "services": "Services",
+    "servicesCount": "{count, plural, =0 {There are no services in this life event yet} one {# service in this life event} other {# services in this life event}}"
   }
 }

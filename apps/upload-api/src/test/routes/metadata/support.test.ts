@@ -32,7 +32,7 @@ vi.mock("../../../utils/storeConfig.js", async () => {
   >("../../../utils/storeConfig.js");
   return {
     ...actual,
-    storeConfig: () => Promise.resolve(),
+    seedConfig: () => Promise.resolve(),
   };
 });
 

@@ -1,7 +1,3 @@
-export const DEFAULT_CALLBACK_MAX_ITEMS = 1000;
-export const DEFAULT_CALLBACK_RATE_LIMIT_MAX = 60;
-export const DEFAULT_CALLBACK_RATE_LIMIT_WINDOW_MS = 60_000;
-
 export const envSchema = {
   type: "object",
   required: [
@@ -47,18 +43,6 @@ export const envSchema = {
     POSTGRES_SSL: {
       type: "boolean",
       default: false,
-    },
-    CALLBACK_MAX_ITEMS: {
-      type: "number",
-      default: DEFAULT_CALLBACK_MAX_ITEMS,
-    },
-    CALLBACK_RATE_LIMIT_MAX: {
-      type: "number",
-      default: DEFAULT_CALLBACK_RATE_LIMIT_MAX,
-    },
-    CALLBACK_RATE_LIMIT_WINDOW_MS: {
-      type: "number",
-      default: DEFAULT_CALLBACK_RATE_LIMIT_WINDOW_MS,
     },
   },
 };

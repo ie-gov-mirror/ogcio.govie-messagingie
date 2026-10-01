@@ -17,6 +17,12 @@ minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@ogcio/*"
 overrides:
+  # Faro 2.12+ sends Idempotency-Key on collect; Alloy <1.20 CORS-rejects it.
+  "@grafana/faro-core": "2.11.0"
+  "@grafana/faro-web-sdk": "2.11.0"
+  "@grafana/faro-web-tracing": "2.11.0"
+  "@grafana/faro-react": "2.11.0"
+  "@grafana/faro-instrumentation-replay": "2.11.0"
   #   protobufjs: 8.6.6 # GHSA-jfj6-75fj-8934, GHSA-j3f2-48v5-ccww
   #   postcss: 8.5.23 # CVE-2026-45623, GHSA-6g55-p6wh-862q, GHSA-r28c-9q8g-f849
   #   sharp: 0.35.4 # GHSA-rgj7-g3m4-5g8c, GHSA-f88m-g3jw-g9cj

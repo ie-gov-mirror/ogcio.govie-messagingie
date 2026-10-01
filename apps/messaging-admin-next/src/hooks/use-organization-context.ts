@@ -1,6 +1,5 @@
 "use client"
 
-import { selectOrganization as selectOrganizationOnGateway } from "@ogcio/sag-client"
 import {
   MESSAGING_PUBLIC_SERVANT_ROLE_NAME,
   type OrganizationInfo,
@@ -9,6 +8,7 @@ import {
 } from "@ogcio/sag-client/react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { env } from "@/env/env.client"
+import { selectOrganization as selectOrganizationOnGateway } from "@/util/gateway-organization"
 import { persistLastSelectedOrganization } from "@/util/last-selected-org"
 
 export type AdminOrganization = OrganizationInfo
@@ -33,12 +33,13 @@ export function useOrganizationContext(): OrganizationContext {
     let cancelled = false
     async function load() {
       try {
+        const app = encodeURIComponent(client.appName)
         const [orgsResp, selectedResp] = await Promise.all([
-          fetch(`${gatewayUrl}/auth/organizations`, {
+          fetch(`${gatewayUrl}/auth/organizations?app=${app}`, {
             credentials: "include",
             cache: "no-store",
           }),
-          fetch(`${gatewayUrl}/auth/selected-organization`, {
+          fetch(`${gatewayUrl}/auth/selected-organization?app=${app}`, {
             credentials: "include",
             cache: "no-store",
           }),
@@ -63,7 +64,7 @@ export function useOrganizationContext(): OrganizationContext {
     return () => {
       cancelled = true
     }
-  }, [gatewayUrl, claims])
+  }, [gatewayUrl, client.appName, claims])
 
   const currentOrganization = useMemo(
     () => organizations.find((o) => o.id === selectedId) ?? organizations[0],
@@ -73,14 +74,18 @@ export function useOrganizationContext(): OrganizationContext {
   const setOrganization = useCallback(
     async (organizationId: string) => {
       if (!organizationId || organizationId === selectedId) return
-      const ok = await selectOrganizationOnGateway(gatewayUrl, organizationId)
+      const ok = await selectOrganizationOnGateway(
+        gatewayUrl,
+        client.appName,
+        organizationId,
+      )
       if (!ok) return
       // Remember the explicit choice so it is restored after a future
       // logout/login, not just across the imminent hard reload (AB#28623).
       persistLastSelectedOrganization(user?.sub, organizationId)
       window.location.reload()
     },
-    [gatewayUrl, selectedId, user],
+    [gatewayUrl, client.appName, selectedId, user],
   )
 
   return {

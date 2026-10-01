@@ -46,6 +46,7 @@ import { FeatureFlagsProvider } from "@/components/feature-flags-provider"
 import { ApplicationFooter } from "@/components/layout/application-footer"
 import { AppMainContent } from "@/components/layout/containers"
 import { LoadMaterialSymbols } from "@/components/load-material-symbols"
+import { AppSideNav } from "@/components/navigation/app-side-nav"
 import { PageHeader } from "@/components/navigation/page-header"
 import { PageLoading } from "@/components/page-loading"
 import { PublicName } from "@/components/public-name"
@@ -288,7 +289,7 @@ function StaleClaimsRefreshGate({
     return user ? (
       <>
         <PageHeader publicName={<PublicName />} onSignOut={signOut} />
-        <AppMainContent>
+        <AppMainContent aside={<AppSideNav />}>
           <MainLoading />
         </AppMainContent>
         <ApplicationFooter />
@@ -431,14 +432,14 @@ function AuthenticatedShell({
         fallback={
           <>
             {header}
-            <AppMainContent>
+            <AppMainContent aside={<AppSideNav />}>
               <MainLoading />
             </AppMainContent>
           </>
         }
       >
         {header}
-        <AppMainContent>
+        <AppMainContent aside={<AppSideNav />}>
           {showConsentChrome ? <ConsentBanner /> : null}
           {children}
         </AppMainContent>

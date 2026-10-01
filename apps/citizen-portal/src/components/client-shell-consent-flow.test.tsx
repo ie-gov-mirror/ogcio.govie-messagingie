@@ -146,6 +146,9 @@ vi.mock("@/components/load-material-symbols", () => ({
 vi.mock("@/components/navigation/page-header", () => ({
   PageHeader: () => <header>header</header>,
 }))
+vi.mock("@/components/navigation/app-side-nav", () => ({
+  AppSideNav: () => null,
+}))
 vi.mock("@/components/page-loading", () => ({
   PageLoading: () => <div>loading</div>,
 }))

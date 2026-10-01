@@ -14,6 +14,7 @@ import {
 } from "@/lib/feature-config"
 import { ZONE_CONFIG } from "@/lib/zone-config"
 import { getZoneFromOrigin } from "@/util/get-zone-from-origin"
+import { clearNavSnapshot } from "@/util/nav-snapshot"
 import { getTrustedRedirectOrigins } from "@/util/trusted-redirect-origins"
 import { getValidReturnUrl } from "@/util/valid-return-url"
 
@@ -188,6 +189,7 @@ function GlobalSignoutInner() {
 
   useEffect(() => {
     clearConnectorsToShowCookie()
+    clearNavSnapshot()
     if (!sagSignout && postRedirectUri) {
       setPostGlobalSignoutCookie(postRedirectUri)
     }

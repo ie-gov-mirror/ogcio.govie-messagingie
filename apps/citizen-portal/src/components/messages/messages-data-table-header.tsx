@@ -161,7 +161,9 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
       showFilter={enableFilters}
       className={enableFilters ? undefined : styles.searchOnlyChrome}
     >
-      <DataTableHeaderSearch>
+      <DataTableHeaderSearch
+        className={enableFilters ? styles.searchBesideFilters : undefined}
+      >
         <InboxListSearchField
           searchInputTestId={searchInputTestId}
           inputId='messages-data-table-search'

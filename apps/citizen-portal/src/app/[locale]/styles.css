@@ -237,6 +237,20 @@
   }
 }
 
+.user-drawer-logout {
+  display: flex;
+  align-items: center;
+  gap: var(--gieds-space-2);
+  width: 100%;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .user-drawer-menu-container h2 {
   margin: 0;
 }

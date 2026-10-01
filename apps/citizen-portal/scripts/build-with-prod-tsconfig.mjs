@@ -41,7 +41,7 @@ try {
   console.log("✓ Updated tsconfig.json with production excludes")
 
   const { execSync } = await import("node:child_process")
-  execSync("next build", {
+  execSync("pnpm run build", {
     stdio: "inherit",
     cwd: appDir,
   })

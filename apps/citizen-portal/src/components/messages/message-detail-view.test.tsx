@@ -361,6 +361,26 @@ describe("MessageDetailView", () => {
     flagState.submissionLinking = true
   })
 
+  it("stretches the message pane down to the bottom of main", () => {
+    const main = document.createElement("main")
+    document.body.appendChild(main)
+    const rects = vi
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockImplementation(function (this: HTMLElement) {
+        if (this.tagName === "MAIN") return new DOMRect(0, 0, 400, 800)
+        return new DOMRect(0, 120, 400, 280)
+      })
+
+    try {
+      render(<MessageDetailView id='msg-1' />, { container: main })
+      const root = main.firstElementChild as HTMLElement
+      expect(root.style.height).toBe("680px")
+    } finally {
+      rects.mockRestore()
+      main.remove()
+    }
+  })
+
   it("fires message-detail once message data is loaded", () => {
     render(<MessageDetailView id='msg-1' />)
 

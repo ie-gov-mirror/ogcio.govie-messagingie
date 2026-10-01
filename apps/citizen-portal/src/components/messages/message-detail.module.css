@@ -10,7 +10,9 @@
 
 .detailContent {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
+  min-height: 0;
   gap: var(--gieds-space-6);
   width: 100%;
   min-width: 0;
@@ -168,8 +170,8 @@
   }
 
   :global(.inboxLayoutMain) .toolbar {
-    border-top: 1px solid var(--gieds-color-gray-200, #e5e5e6);
-    border-bottom: 1px solid var(--gieds-color-gray-200, #e5e5e6);
+    border-top: none;
+    border-bottom: none;
     padding-top: var(--gieds-space-2);
     padding-bottom: var(--gieds-space-2);
   }
@@ -187,7 +189,7 @@
 
   /*
    * Full-bleed the detail column on small screens (same as inbox
-   * `.mobileFullBleed`) so the toolbar rule reaches the viewport edges.
+   * `.mobileFullBleed`).
    */
   .detailRoot {
     width: 100vw;
@@ -203,7 +205,6 @@
   .toolbar {
     padding-left: var(--gieds-space-4);
     padding-right: var(--gieds-space-4);
-    border-bottom: 1px solid var(--gieds-color-gray-200, #e5e5e6);
   }
 
   .detailContent {

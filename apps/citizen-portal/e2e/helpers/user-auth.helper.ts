@@ -100,13 +100,15 @@ export async function waitForMockLoginForm(
     }
 
     // Callers that need a fresh IdP identity hit this when a live SSO session
-    // skipped the form, or when Logto stuck on oidc/auth?prompt=consent with
-    // no mock form (build 117050 new-users). Kill cookies and re-open so the
-    // bounce actually renders. One attempt only.
-    if (
-      !allowExistingSession &&
-      (onLocalizedApp || isAuthBounceUrl(currentUrl))
-    ) {
+    // skipped the form, when Logto stuck on oidc/auth?prompt=consent with no
+    // mock form (build 117050 new-users), or when the portal's client-side
+    // locale redirect had not landed yet and we were still sitting on "/"
+    // (build 121358 a11y). That last case is the first test of a run hitting a
+    // cold app: it is neither `/en/…` nor an auth bounce, so it used to skip
+    // the recovery below and fail outright on a slow load. Recover whenever a
+    // fresh identity is required — kill cookies and re-open so the bounce
+    // actually renders. One attempt only.
+    if (!allowExistingSession) {
       await page.context().clearCookies()
       await page.goto(onLocalizedApp ? currentUrl : "/")
       if (!(await signInStepVisible(page, timeout))) {
@@ -210,22 +212,6 @@ const POST_LOGIN_APP_ORIGINS = [
 
 function isPostLoginAppUrl(url: URL): boolean {
   return POST_LOGIN_APP_ORIGINS.some((origin) => url.href.startsWith(origin))
-}
-
-/** True when the page is on an IdP / SAG bounce that is not yet the mock form. */
-function isAuthBounceUrl(url: string): boolean {
-  try {
-    const { hostname, pathname } = new URL(url)
-    return (
-      pathname.includes("/oidc/auth") ||
-      pathname.includes("/direct/social/") ||
-      pathname.includes("/sign-in") ||
-      hostname.includes("authorization") ||
-      (hostname.includes("secure-api-gateway") && pathname.includes("/auth"))
-    )
-  } catch {
-    return false
-  }
 }
 
 /**

@@ -35,6 +35,12 @@ events {
 http {
   server_tokens off;
 
+  # Runtime DNS resolver — generated at container start by /docker-entrypoint.d/15-resolver.sh
+  # from the pod's /etc/resolv.conf. Lets the CloudFront-fronted proxy upstreams re-resolve
+  # on TTL instead of pinning the IPs resolved at worker start (stale edges → 502).
+  # Wildcard include = optional, so nginx still starts if the file is absent.
+  include /tmp/resolver.conf*;
+
   otel_trace ${OTEL_ENABLE};
   otel_service_name ${OTEL_SERVICE_NAME};
   otel_trace_context propagate;
@@ -127,7 +133,7 @@ http {
     default                                                                                                                                                "";
     "~^/[a-z]{2}/(messages|secure-messages|whats-new)(/|$)"                                                                                                ${MESSAGING_HOST};
     "~^/[a-z]{2}/(my-profile|accessibility-statement|contact-support|cookie-policy|wrong-account-error|wrong-login-method-error|global-signout)(/|$)"      ${PROFILE_HOST};
-    "~^/[a-z]{2}/(my-dashboard|my-submissions)(/|$)"                                                                                                       ${DASHBOARD_HOST};
+    "~^/[a-z]{2}/(my-dashboard|my-submissions|discovery)(/|$)"                                                                                             ${DASHBOARD_HOST};
     "~^/(onboarding|post-global-signout|wrong-account-error|wrong-login-method-error|global-signout)(/|$)"                                              ${PROFILE_HOST};
     "~^/api/(application-signout|clear-session)(/|$)"                                                                                                      ${PROFILE_HOST};
   }
@@ -270,11 +276,6 @@ http {
       return 404;
     }
 
-    # Block Next.js debug/metadata txt files (__next.*.txt)
-    location ~ __next\. {
-      return 404;
-    }
-
     # Immutable hashed assets from Next.js build
     location /_next/static/ {
       otel_trace off;
@@ -301,13 +302,25 @@ http {
     # returns 403 for ad-hoc prefixes (e.g. /ogcio-analytics-api/).
     location /_next/analytics-api/ {
       add_header X-Trace-ID $otel_trace_id always;
-      proxy_pass ${ANALYTICS_MANAGEMENT_API_ORIGIN}/;
+      # Variable upstream + rewrite: nginx re-resolves the CloudFront host via the
+      # http-level resolver instead of pinning the IPs resolved at worker start.
+      set $analytics_upstream "${ANALYTICS_MANAGEMENT_API_ORIGIN}";
+      rewrite ^/_next/analytics-api/(.*)$ /$1 break;
+      proxy_pass $analytics_upstream;
       proxy_http_version 1.1;
       proxy_ssl_server_name on;
       proxy_set_header Host ${ANALYTICS_MANAGEMENT_API_HOST};
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header X-Forwarded-Proto $scheme;
       proxy_set_header X-Real-IP $remote_addr;
+      # Fail fast, cap retries: normal response is ~15ms, so a dead edge should
+      # error in seconds instead of stacking 60s connect timeouts per IP.
+      proxy_connect_timeout 3s;
+      proxy_read_timeout 5s;
+      proxy_send_timeout 5s;
+      proxy_next_upstream error timeout;
+      proxy_next_upstream_tries 2;
+      proxy_next_upstream_timeout 8s;
       limit_req zone=general burst=60 nodelay;
     }
 
@@ -316,7 +329,10 @@ http {
     # ships in the browser bundle. Path under /_next/ per CloudFront/WAF rule.
     location /_next/ff/ {
       add_header X-Trace-ID $otel_trace_id always;
-      proxy_pass ${UNLEASH_FRONTEND_ORIGIN}/;
+      # Same runtime re-resolution + fail-fast treatment as the analytics upstream.
+      set $ff_upstream "${UNLEASH_FRONTEND_ORIGIN}";
+      rewrite ^/_next/ff/(.*)$ /$1 break;
+      proxy_pass $ff_upstream;
       proxy_http_version 1.1;
       proxy_ssl_server_name on;
       proxy_set_header Host ${UNLEASH_FRONTEND_HOST};
@@ -324,6 +340,12 @@ http {
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header X-Forwarded-Proto $scheme;
       proxy_set_header X-Real-IP $remote_addr;
+      proxy_connect_timeout 3s;
+      proxy_read_timeout 5s;
+      proxy_send_timeout 5s;
+      proxy_next_upstream error timeout;
+      proxy_next_upstream_tries 2;
+      proxy_next_upstream_timeout 8s;
       limit_req zone=general burst=60 nodelay;
     }
 
@@ -334,7 +356,10 @@ http {
     # zone, whose SAG audience is "messaging". Path under /_next/ per CloudFront/WAF.
     location /_next/files/ {
       add_header X-Trace-ID $otel_trace_id always;
-      proxy_pass ${NEXT_PUBLIC_SAG_URL}/;
+      # Runtime re-resolution as above; SAG is CloudFront-fronted too.
+      set $sag_upstream "${NEXT_PUBLIC_SAG_URL}";
+      rewrite ^/_next/files/(.*)$ /$1 break;
+      proxy_pass $sag_upstream;
       proxy_http_version 1.1;
       proxy_ssl_server_name on;
       proxy_set_header Host ${SAG_HOST};
@@ -343,6 +368,9 @@ http {
       proxy_set_header X-Forwarded-Proto $scheme;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_buffering off;
+      proxy_connect_timeout 3s;
+      proxy_read_timeout 30s;
+      proxy_send_timeout 30s;
       limit_req zone=general burst=60 nodelay;
     }
 

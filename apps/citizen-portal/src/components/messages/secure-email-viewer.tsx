@@ -14,6 +14,7 @@ const CSP_HEADER = `
 `.replace(/\n/g, "")
 
 export function SecureEmailViewer({ content }: { content: string }) {
+  // Links must escape this sandbox because authentication pages refuse framing.
   const srcDoc = `<!DOCTYPE html>
 <html>
 <head>
@@ -21,6 +22,7 @@ export function SecureEmailViewer({ content }: { content: string }) {
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="${CSP_HEADER}">
+  <base target="_blank">
   <style>
     body {
       margin: 0;
@@ -45,8 +47,13 @@ export function SecureEmailViewer({ content }: { content: string }) {
 
   return (
     <iframe
-      style={{ width: "100%", height: "min(30rem, 50vh)", border: "none" }}
-      sandbox=''
+      style={{
+        width: "100%",
+        flex: "1 1 auto",
+        minHeight: "min(30rem, 50vh)",
+        border: "none",
+      }}
+      sandbox='allow-popups allow-popups-to-escape-sandbox'
       title='Secure email content viewer'
       referrerPolicy='no-referrer'
       srcDoc={srcDoc}

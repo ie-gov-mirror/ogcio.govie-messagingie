@@ -167,6 +167,10 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/apps/citizen-portal/out/        /usr/share/nginx/html/
 COPY --from=builder /app/apps/citizen-portal/docker/nginx.conf  /etc/nginx/nginx.conf
 
+# Generate the nginx resolver from the container's DNS at start (runtime DNS re-resolution).
+COPY --from=builder /app/apps/citizen-portal/docker/15-resolver.sh /docker-entrypoint.d/15-resolver.sh
+RUN chmod +x /docker-entrypoint.d/15-resolver.sh
+
 ARG PORT
 ENV PORT=${PORT:-8080}
 EXPOSE ${PORT}

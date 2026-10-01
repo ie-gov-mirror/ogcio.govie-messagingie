@@ -11,12 +11,6 @@ import type {
 } from "fastify";
 
 declare module "fastify" {
-  export interface FastifyRequest {
-    userData?: {
-      userId?: string;
-    };
-  }
-
   export interface FastifyInstance<
     RawServer extends RawServerBase = RawServerDefault,
     RawRequest extends
@@ -36,9 +30,6 @@ declare module "fastify" {
       LOGTO_API_RESOURCE_INDICATOR: string;
       LOG_LEVEL: string;
       POSTGRES_SSL: boolean;
-      CALLBACK_MAX_ITEMS: number;
-      CALLBACK_RATE_LIMIT_MAX: number;
-      CALLBACK_RATE_LIMIT_WINDOW_MS: number;
     };
   }
 }

@@ -64,7 +64,7 @@ test.describe("Accessibility (a11y) checks @regression", () => {
     page,
   }) => {
     await authenticateUser(page)
-    await page.goto(urls.profileAdmin)
+    await page.goto(`${urls.profileAdmin}/my-profile`)
     await expect(page.locator("main")).toBeVisible()
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('iframe[title="reCAPTCHA"]')

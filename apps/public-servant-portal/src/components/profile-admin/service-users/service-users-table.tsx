@@ -28,7 +28,7 @@ export function ServiceUsersTable() {
   const url = buildUrl(locale)
   const searchParams = useSearchParams()
   const search = searchParams.get("profiles") ?? ""
-  const { page, size, offset } = usePaginationParams()
+  const { page, size, offset } = usePaginationParams("profiles")
 
   const query = new URLSearchParams()
   query.set("offset", String(offset))
@@ -106,7 +106,7 @@ export function ServiceUsersTable() {
   return (
     <Stack direction='column' gap={10}>
       <Stack direction='column' gap={10}>
-        <SearchForm searchKey='profiles' />
+        <SearchForm searchKey='profiles' pageKey='profilesPage' />
         <div className='table-scroll-wrapper'>
           <TanStackTable
             table={table}
@@ -122,6 +122,8 @@ export function ServiceUsersTable() {
           currentPage={paging.currentPage}
           totalPages={paging.totalPages}
           size={PAGINATION_LIMIT_DEFAULT}
+          pageKey='profilesPage'
+          sizeKey='profilesSize'
         />
       )}
     </Stack>

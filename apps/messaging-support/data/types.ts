@@ -41,6 +41,7 @@ export type ProfileQueryRow = ProfileQueryBase & {
 
 export type MainProfile = {
   id: string
+  primaryUserId: string
   firstName?: string
   lastName?: string
   email?: string

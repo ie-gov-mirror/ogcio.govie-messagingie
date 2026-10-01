@@ -74,7 +74,7 @@ const buildApp = async ({
   }));
 
   vi.doMock("../../../utils/storeConfig.js", () => ({
-    storeConfig: () => Promise.resolve(),
+    seedConfig: () => Promise.resolve(),
     CONFIG_TYPE,
     SCHEDULER_TOKEN: "SCHEDULER_TOKEN",
   }));

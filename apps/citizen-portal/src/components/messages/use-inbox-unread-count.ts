@@ -1,6 +1,7 @@
 import { useGatewayFetch } from "@ogcio/sag-client/react"
 import { useMemo } from "react"
 import { getMockUnreadCount, MOCK_MESSAGES_ENABLED } from "@/mock/messages"
+import { readNavSnapshot } from "@/util/nav-snapshot"
 
 export interface InboxUnreadCountState {
   count: number
@@ -10,15 +11,21 @@ export interface InboxUnreadCountState {
 /**
  * Unread count for the inbox folder badge. Uses the messages API
  * `metadata.totalCount` when available; falls back to mock fixtures in
- * local dev. While the total is still loading we expose `isLoading` so
- * consumers can show a spinner instead of a partial count from the
- * `limit=1` probe request.
+ * local dev. While the total is still loading we report the last count
+ * the side menu showed (possibly on another zone host), and only expose
+ * `isLoading` when there is none, so the badge does not flash a spinner
+ * after a cross-host page load.
  */
-export function useInboxUnreadCount(): InboxUnreadCountState {
+export function useInboxUnreadCount(enabled = true): InboxUnreadCountState {
+  // Only mounted after sign-in, never in the static HTML, so a direct
+  // cookie read cannot cause a hydration mismatch.
+  const snapshot = readNavSnapshot()
   const { metadata, isLoading } = useGatewayFetch<
     unknown[],
     { totalCount?: number }
-  >("/messaging/api/v1/messages?limit=1&offset=0&isSeen=false&untagged=true")
+  >("/messaging/api/v1/messages?limit=1&offset=0&isSeen=false&untagged=true", {
+    enabled,
+  })
 
   return useMemo(() => {
     if (metadata?.totalCount != null) {
@@ -26,7 +33,9 @@ export function useInboxUnreadCount(): InboxUnreadCountState {
     }
 
     if (isLoading) {
-      return { count: 0, isLoading: true }
+      return snapshot != null
+        ? { count: snapshot, isLoading: false }
+        : { count: 0, isLoading: true }
     }
 
     const mockCount = getMockUnreadCount()
@@ -35,5 +44,5 @@ export function useInboxUnreadCount(): InboxUnreadCountState {
     }
 
     return { count: 0, isLoading: false }
-  }, [isLoading, metadata?.totalCount])
+  }, [isLoading, metadata?.totalCount, snapshot])
 }

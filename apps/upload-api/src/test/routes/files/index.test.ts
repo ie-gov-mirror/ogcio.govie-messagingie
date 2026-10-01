@@ -99,7 +99,7 @@ vi.mock("../../../utils/storeConfig.js", async () => {
   >("../../../utils/storeConfig.js");
   return {
     ...actual,
-    storeConfig: () => Promise.resolve(),
+    seedConfig: () => Promise.resolve(),
   };
 });
 
@@ -488,6 +488,38 @@ describe("files", async () => {
       expect(response.json().detail).toBe("File not allowed");
     });
 
+    it("should return an error when a filename contains newline characters", async () => {
+      decorateRequest(app, {
+        file: passthroughStream,
+        filename: "file\r\nname.txt",
+        fields: {},
+      });
+
+      const response = await app.inject({
+        method: "POST",
+        url: "/files",
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.json().detail).toBe("File not allowed");
+    });
+
+    it("should return an error when a filename contains control characters", async () => {
+      decorateRequest(app, {
+        file: passthroughStream,
+        filename: "file\u0000name.txt",
+        fields: {},
+      });
+
+      const response = await app.inject({
+        method: "POST",
+        url: "/files",
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.json().detail).toBe("File not allowed");
+    });
+
     it.skip("should return an error when AV scan fails in POST", async () => {
       decorateRequest(app, {
         file: passthroughStream,
@@ -694,6 +726,158 @@ describe("files", async () => {
 
       const response = await responsePromise;
       expect(response.statusCode).toBe(200);
+    });
+
+    it("should preserve inline downloads with a safe content type", async () => {
+      const responsePromise = app.inject({
+        method: "GET",
+        url: "/files/file-id",
+      });
+
+      await nextTick();
+      // stored mimeType is client-supplied metadata and must be ignored
+      testContext.pgEventEmitter.emit("done", [
+        {
+          fileName: "image.svg",
+          mimeType: "text/html",
+          fileSize: 2,
+        },
+      ]);
+      await nextTick();
+      const stream = new PassThrough();
+      testContext.s3SendEventEmitter.emit("sendComplete", {
+        Body: { transformToWebStream: () => stream },
+      });
+      await nextTick();
+      stream.end(Buffer.from("ab"));
+      await nextTick();
+      testContext.antivirusVersionEventEmitter.emit("version", "");
+      await nextTick();
+      antivirusPassthrough.emit("scan-complete", {
+        isInfected: false,
+        viruses: [],
+      });
+      await nextTick();
+
+      const response = await responsePromise;
+      expect(response.statusCode).toBe(200);
+      expect(response.headers["content-disposition"]).toBe(
+        'filename="image.svg"',
+      );
+      expect(response.headers["content-type"]).toBe("application/octet-stream");
+      expect(response.headers["x-content-type-options"]).toBe("nosniff");
+    });
+
+    it("should serve unknown extensions as application/octet-stream", async () => {
+      const responsePromise = app.inject({
+        method: "GET",
+        url: "/files/file-id",
+      });
+
+      await nextTick();
+      testContext.pgEventEmitter.emit("done", [
+        {
+          fileName: "page.html",
+          mimeType: "text/html",
+          fileSize: 2,
+        },
+      ]);
+      await nextTick();
+      const stream = new PassThrough();
+      testContext.s3SendEventEmitter.emit("sendComplete", {
+        Body: { transformToWebStream: () => stream },
+      });
+      await nextTick();
+      stream.end(Buffer.from("ab"));
+      await nextTick();
+      testContext.antivirusVersionEventEmitter.emit("version", "");
+      await nextTick();
+      antivirusPassthrough.emit("scan-complete", {
+        isInfected: false,
+        viruses: [],
+      });
+      await nextTick();
+
+      const response = await responsePromise;
+      expect(response.statusCode).toBe(200);
+      expect(response.headers["content-type"]).toBe("application/octet-stream");
+    });
+
+    it("should sanitize stored filenames so they cannot alter response headers", async () => {
+      const responsePromise = app.inject({
+        method: "GET",
+        url: "/files/file-id",
+      });
+
+      await nextTick();
+      testContext.pgEventEmitter.emit("done", [
+        {
+          fileName: 'evil"\r\nx-injected: 1\r\n.txt',
+          mimeType: "text/plain",
+          fileSize: 2,
+        },
+      ]);
+      await nextTick();
+      const stream = new PassThrough();
+      testContext.s3SendEventEmitter.emit("sendComplete", {
+        Body: { transformToWebStream: () => stream },
+      });
+      await nextTick();
+      stream.end(Buffer.from("ab"));
+      await nextTick();
+      testContext.antivirusVersionEventEmitter.emit("version", "");
+      await nextTick();
+      antivirusPassthrough.emit("scan-complete", {
+        isInfected: false,
+        viruses: [],
+      });
+      await nextTick();
+
+      const response = await responsePromise;
+      expect(response.statusCode).toBe(200);
+      expect(response.headers["x-injected"]).toBeUndefined();
+      expect(response.headers["content-disposition"]).toBe(
+        'filename="evil\\"x-injected: 1.txt"',
+      );
+      expect(response.headers["content-type"]).toBe("text/plain");
+    });
+
+    it("should preserve non-ascii filenames via an RFC 5987 filename* parameter", async () => {
+      const responsePromise = app.inject({
+        method: "GET",
+        url: "/files/file-id",
+      });
+
+      await nextTick();
+      testContext.pgEventEmitter.emit("done", [
+        {
+          fileName: "résumé.pdf",
+          mimeType: "application/pdf",
+          fileSize: 2,
+        },
+      ]);
+      await nextTick();
+      const stream = new PassThrough();
+      testContext.s3SendEventEmitter.emit("sendComplete", {
+        Body: { transformToWebStream: () => stream },
+      });
+      await nextTick();
+      stream.end(Buffer.from("ab"));
+      await nextTick();
+      testContext.antivirusVersionEventEmitter.emit("version", "");
+      await nextTick();
+      antivirusPassthrough.emit("scan-complete", {
+        isInfected: false,
+        viruses: [],
+      });
+      await nextTick();
+
+      const response = await responsePromise;
+      expect(response.statusCode).toBe(200);
+      expect(response.headers["content-disposition"]).toBe(
+        "filename=\"r_sum_.pdf\"; filename*=UTF-8''r%C3%A9sum%C3%A9.pdf",
+      );
+      expect(response.headers["content-type"]).toBe("application/pdf");
     });
 
     it.skip("should return the stream whenn AV throws an error in GET", async () => {

@@ -47,7 +47,7 @@ export const PageHeader = ({
             <UserMenuDrawer
               name={publicName}
               selfLabel={t("drawer.link.profile")}
-              selfHref={`${profileAdminUrl}/${locale}`}
+              selfHref={`${profileAdminUrl}/${locale}/my-profile`}
               signoutLabel={t("drawer.link.logout")}
             >
               <DrawerLink isBold href={`${messagingUrl}/${locale}`}>

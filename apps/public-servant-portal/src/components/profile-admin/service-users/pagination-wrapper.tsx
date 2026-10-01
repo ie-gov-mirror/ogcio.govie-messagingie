@@ -7,20 +7,24 @@ export function PaginationWrapper({
   currentPage,
   totalPages,
   size,
+  pageKey = "page",
+  sizeKey = "size",
 }: {
   currentPage: number
   totalPages: number
   size: number
+  pageKey?: string
+  sizeKey?: string
 }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const resolvedCurrent =
-    Number(searchParams.get("page")) + 1 || currentPage || 1
+    Number(searchParams.get(pageKey)) + 1 || currentPage || 1
 
   const handlePageChange = (page: number) => {
     const sp = new URLSearchParams(searchParams)
-    sp.set("page", (page - 1).toString())
-    sp.set("size", size.toString())
+    sp.set(pageKey, (page - 1).toString())
+    sp.set(sizeKey, size.toString())
     router.push(`?${sp.toString()}`)
   }
 

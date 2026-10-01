@@ -288,6 +288,7 @@ async function getMainProfile(profileId: string): Promise<Result<MainProfile>> {
         firstName: profile.data.firstName,
         lastName: profile.data.lastName,
         id: profile.id,
+        primaryUserId: profile.primary_user_id,
         email: profile.email,
         ppsn: profile.data.ppsn,
         publicName: profile.public_name,

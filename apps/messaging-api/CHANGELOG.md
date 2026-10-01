@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.2](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.2.1...messaging-api-v1.2.2) (2026-09-16)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#930](https://github.com/ogcio/govie-services-messaging/issues/930)) ([b4856b9](https://github.com/ogcio/govie-services-messaging/commit/b4856b9464d10c577b5666322980e8f556e8b635))
+* sanitize rich message HTML AB[#42622](https://github.com/ogcio/govie-services-messaging/issues/42622) ([#913](https://github.com/ogcio/govie-services-messaging/issues/913)) ([9d0d133](https://github.com/ogcio/govie-services-messaging/commit/9d0d13309fa1944537e88f956f7732a63511c5ff))
+
+
+### Miscellaneous Chores
+
+* pin image to 3.24 AB[#43098](https://github.com/ogcio/govie-services-messaging/issues/43098) ([#941](https://github.com/ogcio/govie-services-messaging/issues/941)) ([4e69f87](https://github.com/ogcio/govie-services-messaging/commit/4e69f8738304e8a9d419c41346be1e613f2649c4))
+* update dist definition AB[#42955](https://github.com/ogcio/govie-services-messaging/issues/42955) ([#937](https://github.com/ogcio/govie-services-messaging/issues/937)) ([748f086](https://github.com/ogcio/govie-services-messaging/commit/748f086659514e54d3dec3a37ba40e687b6a7fdf))
+
 ## [1.2.1](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.2.0...messaging-api-v1.2.1) (2026-09-10)
 
 

@@ -1,6 +1,7 @@
 import { expect, type Page, test } from "@playwright/test"
 import { users } from "../fixtures"
 import { createAuthenticatedPage } from "../helpers/user-auth.helper"
+import { appNav } from "../utils/navigation-helpers"
 
 /**
  * Default deployment (every zone/integration enabled) — the regression
@@ -31,12 +32,8 @@ test.describe("Feature flags — fully enabled deployment", () => {
 
   test("the menu exposes both cross-zone links @regression", async () => {
     await page.goto("/en/my-dashboard")
-    await page.getByRole("button", { name: /menu/i }).click()
-    await expect(
-      page.getByRole("link", { name: "Dashboard" }).first(),
-    ).toBeVisible()
-    await expect(
-      page.getByRole("link", { name: "MessagingIE" }).first(),
-    ).toBeVisible()
+    const nav = await appNav(page)
+    await expect(nav.getByRole("link", { name: "Dashboard" })).toBeVisible()
+    await expect(nav.getByRole("link", { name: "Messages" })).toBeVisible()
   })
 })

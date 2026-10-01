@@ -7,7 +7,7 @@ export const WAIT_TIME = 2000
 export const TEST_DATA = {
   providerHost: "Test provider host",
   providerTestValue: "Test provider value", //this value is for the provider password field//
-  templateSubject: "Test subject",
+  templateSubject: "Test Subject",
   templateRichText: "Test rich text",
   templatePlainText: "Test plain text",
 }

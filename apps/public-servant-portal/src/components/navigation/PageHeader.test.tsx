@@ -82,6 +82,10 @@ describe("PageHeader", () => {
     expect(
       screen.getByRole("heading", { name: "Department - Messaging Admin" }),
     ).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute(
+      "href",
+      "https://profile.example/en/my-profile",
+    )
     expect(screen.getByRole("link", { name: "Messaging" })).toHaveAttribute(
       "href",
       "https://messaging.example/en",

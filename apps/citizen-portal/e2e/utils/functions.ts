@@ -45,8 +45,18 @@ export async function logout(page: Page) {
   if (page.url().includes("-admin")) {
     await page.context().clearCookies()
   } else {
-    await clickButton(page, "Menu")
-    await clickButton(page, "Logout")
+    // Desktop LEA puts Logout in the header. Menu is mobile-only there,
+    // and the only way to reach Logout when LEA is off.
+    const logoutButton = page.getByRole("button", {
+      name: "Logout",
+      exact: true,
+    })
+    const menu = page.getByRole("button", { name: "Menu", exact: true })
+    await expect(logoutButton.or(menu)).toBeVisible()
+    if (!(await logoutButton.isVisible())) {
+      await menu.click()
+    }
+    await logoutButton.click()
   }
   await confirmSignout(page)
 }

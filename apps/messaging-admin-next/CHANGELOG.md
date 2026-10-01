@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.5](https://github.com/ogcio/govie-services-messaging/compare/messaging-admin-next-v0.1.4...messaging-admin-next-v0.1.5) (2026-09-15)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#930](https://github.com/ogcio/govie-services-messaging/issues/930)) ([b4856b9](https://github.com/ogcio/govie-services-messaging/commit/b4856b9464d10c577b5666322980e8f556e8b635))
+* design system selector update AB[#42958](https://github.com/ogcio/govie-services-messaging/issues/42958) ([#929](https://github.com/ogcio/govie-services-messaging/issues/929)) ([1580dae](https://github.com/ogcio/govie-services-messaging/commit/1580daef0ffad185aaea9067a81c103d01fc380a))
+
+
+### Miscellaneous Chores
+
+* **deps:** update @ogcio/design-system-react to 1.42.0 AB[#42958](https://github.com/ogcio/govie-services-messaging/issues/42958) ([#924](https://github.com/ogcio/govie-services-messaging/issues/924)) ([b19ed22](https://github.com/ogcio/govie-services-messaging/commit/b19ed22f5d8f68946d11aa2f1022bfeec57ba1a7))
+
 ## [0.1.4](https://github.com/ogcio/govie-services-messaging/compare/messaging-admin-next-v0.1.3...messaging-admin-next-v0.1.4) (2026-09-10)
 
 

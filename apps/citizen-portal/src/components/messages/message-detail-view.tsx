@@ -6,7 +6,14 @@ import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useAuth, useGatewayFetch } from "@ogcio/sag-client/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { BackButton } from "@/components/button/back-button"
 import { CssSpinner } from "@/components/css-spinner"
 import { useFeatureFlags } from "@/components/feature-flags-provider"
@@ -126,6 +133,32 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
 
   const listPath = pathname.split("?")[0]
   const backHref = listPath
+  const detailRootRef = useRef<HTMLDivElement>(null)
+
+  // main is already the tall flex child of the viewport shell. Stretch this
+  // column to the bottom of it so the message iframe (flex: 1) fills the gap
+  // instead of scrolling inside a short frame.
+  // ponytail: remeasured on resize and when `data` changes, not on late
+  // header font shifts. Upgrade path: ResizeObserver that ignores our writes.
+  useLayoutEffect(() => {
+    const root = detailRootRef.current
+    if (!root) return
+    const pane = root.closest("main")
+    if (!(pane instanceof HTMLElement)) return
+
+    const sync = () => {
+      root.style.height = ""
+      const rootRect = root.getBoundingClientRect()
+      const paneRect = pane.getBoundingClientRect()
+      const gap = paneRect.bottom - rootRect.bottom
+      if (gap <= 1) return
+      root.style.height = `${Math.floor(rootRect.height + gap)}px`
+    }
+
+    sync()
+    window.addEventListener("resize", sync)
+    return () => window.removeEventListener("resize", sync)
+  }, [data])
 
   const handleDelete = useCallback(async () => {
     setDeleteConfirmOpen(false)
@@ -173,7 +206,7 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   const plainText = data.plainText || undefined
 
   return (
-    <div className={styles.detailRoot}>
+    <div className={styles.detailRoot} ref={detailRootRef}>
       <MessageDetailToolbar
         backHref={backHref}
         onMove={foldersEnabled ? () => setMoveModalOpen(true) : undefined}

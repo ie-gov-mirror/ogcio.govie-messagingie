@@ -29,7 +29,7 @@ export function ServiceUsersImportsTable() {
   const url = buildUrl(locale)
   const searchParams = useSearchParams()
   const search = searchParams.get("imports") ?? ""
-  const { page, size, offset } = usePaginationParams()
+  const { page, size, offset } = usePaginationParams("imports")
 
   const query = new URLSearchParams()
   query.set("offset", String(offset))
@@ -88,7 +88,7 @@ export function ServiceUsersImportsTable() {
   return (
     <Stack direction='column' gap={10}>
       <Stack direction='column' gap={10}>
-        <SearchForm searchKey='imports' />
+        <SearchForm searchKey='imports' pageKey='importsPage' />
         <div className='table-scroll-wrapper'>
           <TanStackTable
             table={table}
@@ -104,6 +104,8 @@ export function ServiceUsersImportsTable() {
           currentPage={paging.currentPage}
           totalPages={paging.totalPages}
           size={PAGINATION_LIMIT_DEFAULT}
+          pageKey='importsPage'
+          sizeKey='importsSize'
         />
       )}
     </Stack>

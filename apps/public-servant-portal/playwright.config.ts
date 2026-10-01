@@ -8,16 +8,20 @@ const baseURL = process.env.BASE_URL || "http://localhost:4002"
 
 // Reference: https://playwright.dev/docs/test-configuration
 export default defineConfig({
-  globalTimeout: 3480000, //58 minutes
+  // A green run is ~10 minutes. The nightly runs six of these stages back to
+  // back, so a suite that hangs must fail the stage early rather than sit on
+  // the agent — build 121526 spent 58 minutes to report 5 failures.
+  globalTimeout: 20 * 60 * 1000,
   expect: {
     timeout: 25000,
   },
-  // Timeout per test
-  timeout: 180 * 1000,
+  // A timed-out test gets a separate timeout for fixture/hook teardown.
+  // Keep both windows short enough that one test cannot exhaust the suite.
+  timeout: 60 * 1000,
   // Test directory
   testDir: path.join(__dirname, "e2e"),
-  // If a test fails, retry it additional 2 times
-  retries: 2,
+  // One retry preserves a flaky-test signal without tripling its runtime.
+  retries: 1,
   workers: 1,
   // Artifacts folder where screenshots, videos, and traces are stored.
   outputDir: "test-results/",

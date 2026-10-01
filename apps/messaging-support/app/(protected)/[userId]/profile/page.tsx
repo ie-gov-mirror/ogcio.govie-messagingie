@@ -33,20 +33,23 @@ export default async function Profile(props: {
   const searchParams = await props.searchParams
 
   const { userId } = await props.params
-  const [consentsResult, profileResult, consentData, exportTaskResult] =
-    await Promise.all([
-      ProfileDataService.getConsents(userId),
-      ProfileDataService.getMainProfile(userId),
-      ProfileDataService.getLatestConsentData(userId),
-      ProfileDataService.getExportTask(userId),
-    ])
+  const profileResult = await ProfileDataService.getMainProfile(userId)
+  if (!profileResult.success) {
+    return null
+  }
 
-  if (!consentsResult.success || !profileResult.success) {
+  const profile = profileResult.value
+  const [consentsResult, consentData, exportTaskResult] = await Promise.all([
+    ProfileDataService.getConsents(userId),
+    ProfileDataService.getLatestConsentData(profile.primaryUserId),
+    ProfileDataService.getExportTask(userId),
+  ])
+
+  if (!consentsResult.success) {
     return null
   }
 
   const consents = consentsResult.value
-  const profile = profileResult.value
   const isProfileActive = profile.status === "active"
   const searchParamsString = toURLSearchParams(searchParams).toString()
   const exportTask = exportTaskResult.success ? exportTaskResult.value : null
@@ -74,7 +77,10 @@ export default async function Profile(props: {
 
           <SectionBreak size='md' />
 
-          <ConsentManagement consentData={consentData} profileId={profile.id} />
+          <ConsentManagement
+            consentData={consentData}
+            profileId={profile.primaryUserId}
+          />
 
           <SectionBreak size='md' />
 

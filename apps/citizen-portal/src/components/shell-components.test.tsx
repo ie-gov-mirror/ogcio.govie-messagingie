@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import type { ReactNode } from "react"
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { clearNavSnapshot, readNavName } from "@/util/nav-snapshot"
 import { OnboardingShell } from "./onboarding-shell"
 import { PublicShell } from "./public-shell"
 import { ShellLoadingChrome } from "./shell-loading-chrome"
@@ -47,6 +48,7 @@ vi.mock("@ogcio/design-system-react", () => {
       href: string
       children: ReactNode
     }) => <a href={href}>{children}</a>,
+    HeaderMenuItemSlot: Pass,
   }
 })
 
@@ -128,6 +130,10 @@ vi.mock("@/util/locale-switch-href", () => ({
 }))
 
 describe("shell components", () => {
+  beforeEach(() => {
+    clearNavSnapshot()
+  })
+
   it("renders authenticated loading chrome", () => {
     pathname = "/en/my-submissions"
     locale = "en"
@@ -138,6 +144,16 @@ describe("shell components", () => {
       "/en/my-submissions",
     )
     expect(screen.getByText("Loading")).toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "nav:logout" })).toBeNull()
+  })
+
+  it("shows the stored name and logout while auth is still loading", () => {
+    document.cookie = "citizen_portal_nav_name=Andrew%20Parker"
+    render(<ShellLoadingChrome zone='dashboard' />)
+
+    expect(screen.getByText(/Andrew Parker/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "nav:logout" }))
+    expect(readNavName()).toBeNull()
   })
 
   it("renders public content with public-only footer options", () => {

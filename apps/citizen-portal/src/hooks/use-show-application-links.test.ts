@@ -1,6 +1,9 @@
 import { renderHook } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { useShowApplicationLinks } from "./use-show-application-links"
+import {
+  useApplicationLinksState,
+  useShowApplicationLinks,
+} from "./use-show-application-links"
 
 vi.mock("@ogcio/sag-client/react", () => ({
   isCitizenOnboarded: vi.fn(),
@@ -84,5 +87,26 @@ describe("useShowApplicationLinks", () => {
     const { result } = renderHook(() => useShowApplicationLinks())
 
     expect(result.current).toBe(true)
+  })
+
+  it("reports unknown while its auth check is still running", () => {
+    mockUseAuth.mockReturnValue({
+      user: undefined,
+      claims: undefined,
+      loading: true,
+    } as ReturnType<typeof useAuth>)
+    mockIsCitizenOnboarded.mockReturnValue(false)
+    mockUseGatewayFetch.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isValidating: false,
+    } as ReturnType<typeof useGatewayFetch>)
+
+    expect(renderHook(() => useApplicationLinksState()).result.current).toBe(
+      undefined,
+    )
+    expect(renderHook(() => useShowApplicationLinks()).result.current).toBe(
+      false,
+    )
   })
 })

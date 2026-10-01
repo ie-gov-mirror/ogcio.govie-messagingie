@@ -259,8 +259,14 @@
         "dashboard": "Painéal Rialaithe",
         "submissions": "Aighneachtaí",
         "messaging": "MessagingIE",
+        "messages": "Teachtaireachtaí",
+        "lifeEvents": "Imeachtaí saoil",
+        "applications": "Aighneachtaí",
         "close": "Dún"
       },
+      "greetingPrefix": "Dia dhuit,",
+      "profile": "Próifíl",
+      "sideNav": "Príomhroghchlár",
       "menu": "Roghchlár",
       "language": {
         "english": "English",
@@ -268,7 +274,7 @@
       }
     },
     "userMenu": {
-      "viewMyProfile": "Féach ar mo Phróifíl",
+      "viewMyProfile": "Próifíl",
       "logout": "Logáil Amach"
     },
     "footer": {
@@ -471,5 +477,14 @@
     "server": "Tharla earráid agus do iarratas á phróiseáil. Bain triail as arís ar ball.",
     "unknown": "Chuaigh rud éigin mícheart",
     "tryAgain": "Bain triail as arís"
+  },
+  "discovery": {
+    "summary": "Catagóirí: {categories} · Imeachtaí saoil: {lifeEvents}",
+    "backToDashboard": "Ar ais chuig an bPainéal Rialaithe",
+    "backToLifeEvents": "Ar ais chuig imeachtaí saoil",
+    "backTo": "Ar ais chuig {title}",
+    "lifeEventLabel": "Imeacht saoil · {category}",
+    "services": "Seirbhísí",
+    "servicesCount": "{count, plural, =0 {Níl aon seirbhísí san imeacht saoil seo fós} other {Seirbhísí san imeacht saoil seo: #}}"
   }
 }

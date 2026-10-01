@@ -54,6 +54,10 @@ export function getUserByEmail(email: string) {
   return Object.values(users).find((user) => user.email === email)
 }
 
+const profileAdminRoot =
+  process.env.PROFILE_ADMIN_URL?.replace(/\/$/, "") ||
+  "https://profile-admin.dev.services.gov.ie"
+
 export const urls = Object.freeze({
   admin: process.env.ADMIN_URL || "http://localhost:3001",
   auth: process.env.AUTH_URL || "http://localhost:3001",
@@ -63,9 +67,10 @@ export const urls = Object.freeze({
     "https://authorization.dev.services.gov.ie/sign-in",
   mock:
     process.env.MOCK_URL || "https://mock-login-service.dev.services.gov.ie",
-  profileAdminRoot: "https://profile-admin.dev.services.gov.ie",
-  profileAdmin: "https://profile-admin.dev.services.gov.ie/en",
-  profileService: "https://profile.dev.services.gov.ie",
+  profileAdminRoot,
+  profileAdmin: `${profileAdminRoot}/en`,
+  profileService:
+    process.env.PROFILE_SERVICE_URL || "https://profile.dev.services.gov.ie",
 })
 
 export const templates = Object.freeze({

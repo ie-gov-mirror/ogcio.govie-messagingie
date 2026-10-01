@@ -9,9 +9,8 @@ import {
   Tabs,
 } from "@ogcio/design-system-react"
 import { useAnalytics } from "@ogcio/nextjs-analytics"
-import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { useEffect } from "react"
+import { Suspense } from "react"
 import { FullWidthContainer } from "@/components/profile-admin/layout/containers"
 import { ANALYTICS } from "@/const/analytics"
 import { ServiceUsersImportCSV } from "./service-users-import-csv"
@@ -21,25 +20,6 @@ import { ServiceUsersTable } from "./service-users-table"
 export function ServiceUsers() {
   const t = useTranslations("serviceUsers")
   const analyticsClient = useAnalytics()
-  const router = useRouter()
-
-  // Reset search & paging when switching tabs
-  useEffect(() => {
-    const buttons = document.querySelectorAll<HTMLButtonElement>(
-      "#tab-story [role='tablist'] button",
-    )
-    const handler = () => {
-      router.replace("?")
-    }
-    buttons.forEach((button) => {
-      button.addEventListener("click", handler)
-    })
-    return () => {
-      buttons.forEach((button) => {
-        button.removeEventListener("click", handler)
-      })
-    }
-  }, [router])
 
   return (
     <Stack direction='column' gap={10}>
@@ -65,10 +45,14 @@ export function ServiceUsers() {
             <TabItem value='3'>{t("tabs.importCsv")}</TabItem>
           </TabList>
           <TabPanel value='1'>
-            <ServiceUsersTable />
+            <Suspense>
+              <ServiceUsersTable />
+            </Suspense>
           </TabPanel>
           <TabPanel value='2'>
-            <ServiceUsersImportsTable />
+            <Suspense>
+              <ServiceUsersImportsTable />
+            </Suspense>
           </TabPanel>
           <TabPanel value='3'>
             <ServiceUsersImportCSV />

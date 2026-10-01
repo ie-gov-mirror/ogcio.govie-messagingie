@@ -173,7 +173,10 @@ export class EmailSpecificProvider {
   async delete(params: { providerId: string }): Promise<void> {
     let deleted = 0;
     try {
-      const provider = await this.get({ providerId: params.providerId });
+      const provider = await this.get({
+        providerId: params.providerId,
+        includePassword: false,
+      });
       // We are prefixing and not suffixing as we do in templates
       // because fromAddress should be a valid email address
       // and we want to avoid any validation error in other points of the system

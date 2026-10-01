@@ -1,6 +1,7 @@
 import { expect, type Page, test } from "@playwright/test"
 import { users } from "../fixtures"
 import { createAuthenticatedPage } from "../helpers/user-auth.helper"
+import { appNav } from "../utils/navigation-helpers"
 
 /**
  * Backend-shaped announcement (as returned by the Profile API before the
@@ -108,14 +109,8 @@ test.describe("What's new page", () => {
 
   test("is not listed in the header menu @local", async () => {
     await page.goto("/en/messages")
-    await page.getByRole("button", { name: "Menu" }).click()
-    // The DS drawer is portalled to <body> as role="dialog", so it is not
-    // reachable through the header's `banner` landmark.
-    const drawer = page.getByRole("dialog")
-    await expect(drawer).toBeVisible()
-    await expect(
-      drawer.getByRole("link", { name: "What's new" }),
-    ).toHaveCount(0)
+    const nav = await appNav(page)
+    await expect(nav.getByRole("link", { name: "What's new" })).toHaveCount(0)
   })
 
   test("is reachable from the footer @local", async () => {

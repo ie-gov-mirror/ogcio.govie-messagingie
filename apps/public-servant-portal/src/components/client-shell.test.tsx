@@ -27,12 +27,6 @@ const {
   }
 })
 
-vi.mock("@ogcio/sag-client", () => ({
-  selectOrganization: (...args: unknown[]) => selectOrganizationMock(...args),
-  getSelectedOrganization: (...args: unknown[]) =>
-    getSelectedOrganizationMock(...args),
-}))
-
 // Org selection uses sag-client's `getSelectedOrganization` (cache: "no-store").
 let selectedOrgValue: string | null = null
 
@@ -43,6 +37,10 @@ vi.mock("@ogcio/sag-client/react", () => ({
   ),
   useAuth: () => useAuthMock(),
   usePublicServantGuard: (args: unknown) => usePublicServantGuardMock(args),
+  useSagClient: () => ({
+    getSelectedOrganization: getSelectedOrganizationMock,
+    selectOrganization: selectOrganizationMock,
+  }),
 }))
 
 type MockHeaderItem = {
@@ -158,7 +156,7 @@ beforeEach(() => {
   })
   selectedOrgValue = null
   getSelectedOrganizationMock.mockImplementation(async () => selectedOrgValue)
-  selectOrganizationMock.mockResolvedValue(undefined)
+  selectOrganizationMock.mockResolvedValue(true)
   clearAllCookies()
   // The last-selected-org restore reads localStorage keyed by user sub; wipe
   // it so each test starts from a clean, deterministic state (AB#28623).
@@ -339,12 +337,29 @@ describe("ClientShell — organization selection race guard", () => {
       expect(getSelectedOrganizationMock).toHaveBeenCalledTimes(1),
     )
     await waitFor(() =>
-      expect(selectOrganizationMock).toHaveBeenCalledWith(
-        process.env.NEXT_PUBLIC_SAG_URL,
-        "org-1",
-      ),
+      expect(selectOrganizationMock).toHaveBeenCalledWith("org-1"),
     )
     expect(selectOrganizationMock).toHaveBeenCalledTimes(1)
+  })
+
+  it("does not render protected content when organization selection fails", async () => {
+    useAuthMock.mockReturnValue({
+      ...defaultAuth,
+      user: { sub: "u1", name: "Alice" },
+      claims: { organizations: ["org-1"] },
+    })
+    selectOrganizationMock.mockResolvedValue(false)
+
+    render(
+      <ClientShell>
+        <span data-testid='child'>protected</span>
+      </ClientShell>,
+    )
+
+    await waitFor(() => expect(selectOrganizationMock).toHaveBeenCalledOnce())
+    expect(screen.queryByTestId("child")).not.toBeInTheDocument()
+    expect(screen.getByTestId("ds-spinner")).toBeInTheDocument()
+    expect(window.localStorage).toHaveLength(0)
   })
 
   it("does not call selectOrganization when the current selection is already valid", async () => {
@@ -386,15 +401,9 @@ describe("ClientShell — organization selection race guard", () => {
     )
 
     await waitFor(() =>
-      expect(selectOrganizationMock).toHaveBeenCalledWith(
-        process.env.NEXT_PUBLIC_SAG_URL,
-        "org-2",
-      ),
+      expect(selectOrganizationMock).toHaveBeenCalledWith("org-2"),
     )
-    expect(selectOrganizationMock).not.toHaveBeenCalledWith(
-      process.env.NEXT_PUBLIC_SAG_URL,
-      "org-1",
-    )
+    expect(selectOrganizationMock).not.toHaveBeenCalledWith("org-1")
   })
 
   // A saved org the user no longer belongs to must not be restored — we fall
@@ -413,10 +422,7 @@ describe("ClientShell — organization selection race guard", () => {
     )
 
     await waitFor(() =>
-      expect(selectOrganizationMock).toHaveBeenCalledWith(
-        process.env.NEXT_PUBLIC_SAG_URL,
-        "org-1",
-      ),
+      expect(selectOrganizationMock).toHaveBeenCalledWith("org-1"),
     )
   })
 
@@ -438,9 +444,7 @@ describe("ClientShell — organization selection race guard", () => {
     await waitFor(() =>
       expect(getSelectedOrganizationMock).toHaveBeenCalledTimes(1),
     )
-    expect(getSelectedOrganizationMock).toHaveBeenCalledWith(
-      process.env.NEXT_PUBLIC_SAG_URL,
-    )
+    expect(getSelectedOrganizationMock).toHaveBeenCalledWith()
     // The valid, freshly-selected org must be preserved, never overwritten.
     expect(selectOrganizationMock).not.toHaveBeenCalled()
   })
@@ -464,10 +468,7 @@ describe("ClientShell — organization selection race guard", () => {
     )
 
     await waitFor(() =>
-      expect(selectOrganizationMock).toHaveBeenCalledWith(
-        process.env.NEXT_PUBLIC_SAG_URL,
-        "org-messaging",
-      ),
+      expect(selectOrganizationMock).toHaveBeenCalledWith("org-messaging"),
     )
   })
 })

@@ -387,6 +387,22 @@ describe("getMainProfile", () => {
     expect(result.value.id).toBe("org-copy")
   })
 
+  it("exposes the primary profile id when viewing a child profile", async () => {
+    vi.mocked(queryProfile).mockResolvedValue({
+      success: true,
+      value: [
+        profileRow({ id: "child-1", primary_user_id: "primary-user-1" }),
+      ],
+    })
+
+    const result = await ProfileDataService.getMainProfile("child-1")
+
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.value.id).toBe("child-1")
+    expect(result.value.primaryUserId).toBe("primary-user-1")
+  })
+
   it("fails when the query returns no rows", async () => {
     vi.mocked(queryProfile).mockResolvedValue({ success: true, value: [] })
 

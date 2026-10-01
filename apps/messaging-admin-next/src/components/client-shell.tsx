@@ -8,7 +8,6 @@ import {
   Stack,
   ToastProvider,
 } from "@ogcio/design-system-react"
-import { selectOrganization } from "@ogcio/sag-client"
 import {
   MESSAGING_PUBLIC_SERVANT_ROLE_NAME,
   SagClientProvider,
@@ -26,6 +25,7 @@ import { NotAuthorized } from "@/components/not-authorized"
 import SideNav from "@/components/SideNav"
 import { UserProvider } from "@/components/UserContext"
 import { env } from "@/env/env.client"
+import { selectOrganization } from "@/util/gateway-organization"
 import {
   persistLastSelectedOrganization,
   readLastSelectedOrganization,
@@ -54,12 +54,17 @@ const ADMIN_CONNECTOR_ID = "ogcio-entraid"
  */
 async function readSelectedOrganization(
   gatewayUrl: string,
+  appName: string,
 ): Promise<string | null> {
   try {
-    const res = await fetch(`${gatewayUrl}/auth/selected-organization`, {
-      credentials: "include",
-      cache: "no-store",
-    })
+    const app = encodeURIComponent(appName)
+    const res = await fetch(
+      `${gatewayUrl}/auth/selected-organization?app=${app}`,
+      {
+        credentials: "include",
+        cache: "no-store",
+      },
+    )
     if (!res.ok) return null
     const data = (await res.json()) as { organizationId?: string | null }
     return data.organizationId ?? null
@@ -209,25 +214,31 @@ function AuthenticatedShell({
     organizationSelectionStarted.current = true
     const userSub = user?.sub
     void (async () => {
-      try {
-        const current = await readSelectedOrganization(env.NEXT_PUBLIC_SAG_URL)
-        if (current && orgs.includes(current)) {
-          // The gateway already has a valid selection (e.g. an in-app org
-          // switch just hard-reloaded). Mirror it to local storage so it
-          // survives the next logout/login (AB#28623).
-          persistLastSelectedOrganization(userSub, current)
-          return
-        }
-        // No valid gateway selection — a fresh login. Restore the user's last
-        // choice when they still belong to that org; only fall back to the
-        // first org when there is no valid saved selection (AB#28623).
-        const saved = readLastSelectedOrganization(userSub)
-        const target = saved && orgs.includes(saved) ? saved : orgs[0]
-        await selectOrganization(env.NEXT_PUBLIC_SAG_URL, target)
-        persistLastSelectedOrganization(userSub, target)
-      } finally {
+      const current = await readSelectedOrganization(
+        env.NEXT_PUBLIC_SAG_URL,
+        env.NEXT_PUBLIC_SAG_APP_NAME,
+      )
+      if (current && orgs.includes(current)) {
+        // The gateway already has a valid selection (e.g. an in-app org
+        // switch just hard-reloaded). Mirror it to local storage so it
+        // survives the next logout/login (AB#28623).
+        persistLastSelectedOrganization(userSub, current)
         setOrganizationSelected(true)
+        return
       }
+      // No valid gateway selection — a fresh login. Restore the user's last
+      // choice when they still belong to that org; only fall back to the
+      // first org when there is no valid saved selection (AB#28623).
+      const saved = readLastSelectedOrganization(userSub)
+      const target = saved && orgs.includes(saved) ? saved : orgs[0]
+      const selected = await selectOrganization(
+        env.NEXT_PUBLIC_SAG_URL,
+        env.NEXT_PUBLIC_SAG_APP_NAME,
+        target,
+      )
+      if (!selected) return
+      persistLastSelectedOrganization(userSub, target)
+      setOrganizationSelected(true)
     })()
   }, [claims, forbidden, user])
 

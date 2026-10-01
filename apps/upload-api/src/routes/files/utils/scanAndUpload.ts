@@ -6,6 +6,7 @@ import { getErrorMessage } from "@ogcio/shared-errors";
 import type { FastifyInstance } from "fastify";
 import type { FastifyRequest } from "fastify/types/request.js";
 import { deleteObject } from "./deleteObject.js";
+import { ALLOWED_EXTENSIONS } from "./fileTypes.js";
 import getDbVersion from "./getDbVersion.js";
 import getFilename from "./getFilename.js";
 import insertFileMetadata from "./insertFileMetadata.js";
@@ -48,45 +49,6 @@ type UploadExecutionResult = {
   uploadResult: UploadResult;
 };
 
-const ALLOWED_EXTENSIONS = [
-  ".pdf",
-  ".doc",
-  ".docx",
-  ".txt",
-  ".csv",
-  ".odt",
-  ".ods",
-  ".odp",
-  ".rtf",
-  ".xml",
-  ".json",
-  ".xls",
-  ".xlsx",
-  ".jpg",
-  ".jpeg",
-  ".png",
-  ".gif",
-  ".bmp",
-  ".svg",
-  ".tif",
-  ".tiff",
-  ".zip",
-  ".rar",
-  ".7z",
-  ".tar",
-  ".gz",
-  ".mp4",
-  ".mp3",
-  ".wav",
-  ".avi",
-  ".mov",
-  ".mpeg",
-  ".ogg",
-  ".aac",
-  ".flac",
-  ".wmv",
-];
-
 const getS3ConfiguredChunkSize = (
   app: FastifyInstance,
 ): { chunkSize: number; chunksNumber: number } => {
@@ -95,7 +57,18 @@ const getS3ConfiguredChunkSize = (
   return { chunkSize: chunkSizeMB * 1024 * 1024, chunksNumber };
 };
 
+const containsControlCharacters = (filename: string) =>
+  Array.from(filename).some((char) => {
+    const codePoint = char.codePointAt(0) ?? 0;
+    return codePoint < 0x20 || codePoint === 0x7f;
+  });
+
 const isFilenameAllowed = (filename: string) => {
+  // control characters could otherwise reach response headers on download
+  if (containsControlCharacters(filename)) {
+    return false;
+  }
+
   // it is a dotfile or does not have extension
   if (filename.startsWith(".") || !filename.match(/\.\S+$/)) {
     return false;

@@ -13,6 +13,7 @@ import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { useTranslations } from "next-intl"
 import { type FormEvent, useCallback, useState } from "react"
 import { FullWidthContainer } from "@/components/layout/containers"
+import { writeNavName } from "@/util/nav-snapshot"
 
 export function PublicNameForm({
   publicName,
@@ -45,6 +46,7 @@ export function PublicNameForm({
 
       try {
         await trigger({ publicName: trimmed })
+        writeNavName(trimmed)
 
         toaster.create({
           title: t("publicNameUpdatedToast"),

@@ -12,7 +12,6 @@ const { selectOrganization, useAuth, useSagClient } = vi.hoisted(() => {
   }
 })
 
-vi.mock("@ogcio/sag-client", () => ({ selectOrganization }))
 vi.mock("@ogcio/sag-client/react", () => ({
   MESSAGING_PUBLIC_SERVANT_ROLE_NAME: "messaging-role",
   useAuth,
@@ -38,6 +37,7 @@ describe(useOrganizationContext.name, () => {
     useSagClient.mockReturnValue({
       appName: "messaging",
       gatewayUrl: "http://gateway.test",
+      selectOrganization,
     })
     selectOrganization.mockResolvedValue(false)
   })
@@ -82,5 +82,6 @@ describe(useOrganizationContext.name, () => {
     expect(result.current.organizations).toEqual([])
     expect(result.current.currentOrganization).toBeUndefined()
     expect(selectOrganization).toHaveBeenCalledOnce()
+    expect(selectOrganization).toHaveBeenCalledWith("org-2")
   })
 })

@@ -13,7 +13,9 @@ import { getGenericResponseSchema } from "../../types/schemaDefinitions.js";
 import getFileMetadataById from "../utils/getFileMetadataById.js";
 import userCanAccessFileOrThrow from "../utils/userCanAccessFileOrThrow.js";
 import PromiseTransform from "./PromiseTransform.js";
+import buildContentDisposition from "./utils/contentDisposition.js";
 import { deleteObject } from "./utils/deleteObject.js";
+import { getResponseMimeType } from "./utils/fileTypes.js";
 import getDbVersion from "./utils/getDbVersion.js";
 import { getUploadLimit } from "./utils/getUploadLimit.js";
 import { processUpload } from "./utils/scanAndUpload.js";
@@ -331,8 +333,12 @@ export default async function routes(app: FastifyInstance) {
       }
 
       request.log.info({ fileId }, "end: get file");
-      reply.header("Content-Disposition", `filename="${file.fileName}"`);
-      reply.header("Content-type", file.mimeType);
+      reply.header(
+        "Content-Disposition",
+        buildContentDisposition(file.fileName),
+      );
+      reply.header("Content-Type", getResponseMimeType(file.fileName));
+      reply.header("X-Content-Type-Options", "nosniff");
       reply.header("Content-Length", file.fileSize);
       return reply.send(downloadPassthrough);
     },

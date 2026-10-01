@@ -1,8 +1,8 @@
 import type { NextConfig } from "next"
 import { PHASE_DEVELOPMENT_SERVER } from "next/constants"
-import createNextIntlPlugin from "next-intl/plugin"
-import "@/env/env.client"
 import type { LoggingConfig } from "next/dist/server/config-shared"
+import createNextIntlPlugin from "next-intl/plugin"
+import { env } from "@/env/env.client"
 
 const { version } = require("./package.json")
 
@@ -27,6 +27,15 @@ function withBundleAnalyzerIfEnabled(config: NextConfig): NextConfig {
 
 const nextConfig: NextConfig = {
   output: "export",
+  // LEA-only routes (discovery) are `page.lea.tsx`: they are not routes at
+  // all unless the flag is on, so a flag-off export has no trace of them.
+  pageExtensions: [
+    ...(env.NEXT_PUBLIC_ENABLE_LEA ? ["lea.tsx"] : []),
+    "tsx",
+    "ts",
+    "jsx",
+    "js",
+  ],
   allowedDevOrigins: [
     "messaging.local.test",
     "profile.local.test",

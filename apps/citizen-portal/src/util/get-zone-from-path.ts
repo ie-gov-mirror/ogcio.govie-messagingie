@@ -36,6 +36,7 @@ export const ZONE_BY_FIRST_SEGMENT: Record<string, Zone> = {
   "global-signout": "profile",
   "my-dashboard": "dashboard",
   "my-submissions": "dashboard",
+  discovery: "dashboard",
 }
 
 /**

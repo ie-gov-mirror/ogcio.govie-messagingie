@@ -119,7 +119,7 @@ describe("Email Specific Provider", () => {
     expect(got).toStrictEqual({ ...updateWith, id: createdId });
   });
 
-  it("should delete provider", async () => {
+  it("should delete provider without decrypting its password", async () => {
     const mockProvider = getMockToCreate();
     const specificProvider = new EmailSpecificProvider(
       pool,
@@ -129,6 +129,10 @@ describe("Email Specific Provider", () => {
     const createdId = await specificProvider.create({
       inputBody: mockProvider,
     });
+
+    await pool.query("UPDATE email_providers SET pw = 'legacy' WHERE id = $1", [
+      createdId,
+    ]);
 
     await specificProvider.delete({ providerId: createdId });
 

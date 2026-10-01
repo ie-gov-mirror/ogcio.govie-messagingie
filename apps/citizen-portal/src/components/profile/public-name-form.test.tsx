@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { clearNavSnapshot, readNavName } from "@/util/nav-snapshot"
 
 const { toasterCreate, trigger, useGatewayMutation } = vi.hoisted(() => ({
   toasterCreate: vi.fn(),
@@ -88,6 +89,7 @@ describe("PublicNameForm", () => {
     useGatewayMutation.mockReturnValue({ trigger, isLoading: false })
     onUpdated.mockReset()
     toasterCreate.mockReset()
+    clearNavSnapshot()
   })
 
   it("PATCHes the profile through sag-client with the trimmed publicName, then fires the success toast", async () => {
@@ -114,6 +116,7 @@ describe("PublicNameForm", () => {
     )
 
     await waitFor(() => expect(onUpdated).toHaveBeenCalledTimes(1))
+    expect(readNavName()).toBe("Jane Doe")
     expect(toasterCreate).toHaveBeenCalledWith(
       expect.objectContaining({ variant: "success" }),
     )

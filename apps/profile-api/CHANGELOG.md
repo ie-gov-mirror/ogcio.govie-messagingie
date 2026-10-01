@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.3](https://github.com/ogcio/govie-services-messaging/compare/profile-api-v0.1.2...profile-api-v0.1.3) (2026-09-16)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#930](https://github.com/ogcio/govie-services-messaging/issues/930)) ([b4856b9](https://github.com/ogcio/govie-services-messaging/commit/b4856b9464d10c577b5666322980e8f556e8b635))
+* **profile-api:** restrict onboarding profile reads AB[#42614](https://github.com/ogcio/govie-services-messaging/issues/42614) ([#908](https://github.com/ogcio/govie-services-messaging/issues/908)) ([2ea7655](https://github.com/ogcio/govie-services-messaging/commit/2ea765506b42173f69590972a311923b32828918))
+* **profile-api:** scope consent history to organisation AB[#42616](https://github.com/ogcio/govie-services-messaging/issues/42616) ([#911](https://github.com/ogcio/govie-services-messaging/issues/911)) ([a506547](https://github.com/ogcio/govie-services-messaging/commit/a506547ed74bc3474fcc44c57a757176b0bf39fb))
+
+
+### Miscellaneous Chores
+
+* pin image to 3.24 AB[#43098](https://github.com/ogcio/govie-services-messaging/issues/43098) ([#941](https://github.com/ogcio/govie-services-messaging/issues/941)) ([4e69f87](https://github.com/ogcio/govie-services-messaging/commit/4e69f8738304e8a9d419c41346be1e613f2649c4))
+* update dist definition AB[#42955](https://github.com/ogcio/govie-services-messaging/issues/42955) ([#937](https://github.com/ogcio/govie-services-messaging/issues/937)) ([748f086](https://github.com/ogcio/govie-services-messaging/commit/748f086659514e54d3dec3a37ba40e687b6a7fdf))
+
 ## [0.1.2](https://github.com/ogcio/govie-services-messaging/compare/profile-api-v0.1.1...profile-api-v0.1.2) (2026-09-10)
 
 

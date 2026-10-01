@@ -3,21 +3,25 @@
 import {
   HeaderLogo,
   HeaderMenuItemLink,
+  HeaderMenuItemSlot,
   HeaderNext,
   HeaderSecondaryMenu,
-  HeaderTitle,
 } from "@ogcio/design-system-react"
 import { LogoHarpWhite, LogoWhite } from "@ogcio/design-system-react/logos"
+import { useAuth } from "@ogcio/sag-client/react"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { ApplicationFooter } from "@/components/layout/application-footer"
 import { AppMainContent } from "@/components/layout/containers"
+import { AppSideNav } from "@/components/navigation/app-side-nav"
+import { HeaderGreeting } from "@/components/navigation/header-greeting"
 import { PageLoading } from "@/components/page-loading"
 import { LANG_EN, LANG_GA } from "@/const"
 import { useActiveLocale } from "@/hooks/use-active-locale"
 import { isLeaEnabled } from "@/lib/feature-config"
 import { ZONE_CONFIG } from "@/lib/zone-config"
 import type { Zone } from "@/util/get-zone-from-path"
+import { clearNavSnapshot, useNavName } from "@/util/nav-snapshot"
 
 /**
  * Lightweight authenticated chrome shown while auth/onboarding resolves.
@@ -32,6 +36,8 @@ export function ShellLoadingChrome({ zone }: { zone: Zone }) {
   const path = usePathname()
   const t = useTranslations("navigation.header")
   const titleT = useTranslations("navigation.title")
+  const name = useNavName()
+  const { signOut } = useAuth()
   const zoneRootPath = ZONE_CONFIG[zone].rootPath
   const isApplicationsSurface = path.includes("/my-submissions")
 
@@ -59,14 +65,24 @@ export function ShellLoadingChrome({ zone }: { zone: Zone }) {
             <LogoWhite className='gi-hidden sm:gi-block gi-h-14' />
           </a>
         </HeaderLogo>
-        <HeaderTitle>{headerTitle}</HeaderTitle>
         <HeaderSecondaryMenu>
+          {isLeaEnabled() && name ? (
+            <HeaderMenuItemSlot>
+              <HeaderGreeting
+                name={name}
+                onSignOut={() => {
+                  clearNavSnapshot()
+                  void signOut()
+                }}
+              />
+            </HeaderMenuItemSlot>
+          ) : null}
           <HeaderMenuItemLink href={languageHref}>
             {oppositeLabel}
           </HeaderMenuItemLink>
         </HeaderSecondaryMenu>
       </HeaderNext>
-      <AppMainContent>
+      <AppMainContent aside={<AppSideNav placeholder />}>
         <PageLoading minHeight='50vh' />
       </AppMainContent>
       <ApplicationFooter />

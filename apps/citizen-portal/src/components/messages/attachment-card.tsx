@@ -117,7 +117,12 @@ export function AttachmentCard({ id }: { id: string }) {
   const fileTypeIcon = getFileTypeIcon(data.mimeType, data.fileName)
 
   return (
-    <Card type='vertical' background='grey' inset='full'>
+    <Card
+      type='vertical'
+      background='grey'
+      inset='full'
+      className={styles.card}
+    >
       <CardContainer>
         <CardHeader>
           <CardTitle>

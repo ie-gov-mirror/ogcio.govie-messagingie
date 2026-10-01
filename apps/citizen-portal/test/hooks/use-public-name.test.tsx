@@ -25,6 +25,7 @@ vi.mock("@/hooks/use-idle-mount", () => ({
 
 import type { AuthUser } from "@ogcio/sag-client"
 import { usePublicName } from "@/hooks/use-public-name"
+import { clearNavSnapshot, readNavName } from "@/util/nav-snapshot"
 
 /**
  * The chain is `profile.publicName -> user.name -> user.email -> ""`, but the
@@ -37,6 +38,7 @@ describe("usePublicName", () => {
     fetchState = { data: undefined }
     fetchCalls.length = 0
     idle.ready = true
+    clearNavSnapshot()
   })
 
   const user = (extra: Record<string, unknown> = {}) =>
@@ -104,6 +106,31 @@ describe("usePublicName", () => {
   it("calls the gateway with the profile path keyed on user.sub once auth resolves", () => {
     renderHook(() => usePublicName(user({ sub: "user-42" })))
     expect(fetchCalls[0]).toBe("/profile/api/v1/profiles/user-42")
+  })
+
+  it("skips the profile fetch when the display name is already stored", () => {
+    document.cookie = "citizen_portal_nav_name=Andrew%20Parker"
+    const { result } = renderHook(() =>
+      usePublicName(user({ name: "Jane Citizen" })),
+    )
+    expect(fetchCalls[0]).toBeNull()
+    expect(result.current.publicName).toBe("Andrew Parker")
+    expect(result.current.isLoading).toBe(false)
+  })
+
+  it("stores a resolved public name so the next mount does not fetch", () => {
+    fetchState = { data: { publicName: "Janet Citizen" } }
+    const first = renderHook(() => usePublicName(user()))
+    expect(first.result.current.publicName).toBe("Janet Citizen")
+    expect(readNavName()).toBe("Janet Citizen")
+    first.unmount()
+
+    fetchCalls.length = 0
+    const second = renderHook(() =>
+      usePublicName(user({ name: "Jane Citizen" })),
+    )
+    expect(fetchCalls[0]).toBeNull()
+    expect(second.result.current.publicName).toBe("Janet Citizen")
   })
 
   it("reports loading while the idle gate defers the profile fetch", () => {

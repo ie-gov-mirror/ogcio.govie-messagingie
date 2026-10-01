@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.1.5](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.4...messaging-support-v0.1.5) (2026-10-01)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#952](https://github.com/ogcio/govie-services-messaging/issues/952)) ([70671c4](https://github.com/ogcio/govie-services-messaging/commit/70671c43f22f78463032a20e968c5fed50a84673))
+* **deps:** update all non-major dependencies ([#974](https://github.com/ogcio/govie-services-messaging/issues/974)) ([d16ccbb](https://github.com/ogcio/govie-services-messaging/commit/d16ccbbc84b6ce9c4f9aada3830f1cfb88a3fed2))
+* **deps:** update dependency @azure/msal-node to v7 ([#975](https://github.com/ogcio/govie-services-messaging/issues/975)) ([5ca5350](https://github.com/ogcio/govie-services-messaging/commit/5ca53503b16b7f924c7bbca05a79d543b104b48a))
+* **messaging-support:** target primary profile for consent updates AB[#43259](https://github.com/ogcio/govie-services-messaging/issues/43259) ([#966](https://github.com/ogcio/govie-services-messaging/issues/966)) ([0d1a16a](https://github.com/ogcio/govie-services-messaging/commit/0d1a16a47eb66a2b030f3baf9b5664ef5a06fdf7))
+
+
+### Miscellaneous Chores
+
+* update rds certificates AB[#43420](https://github.com/ogcio/govie-services-messaging/issues/43420) ([#985](https://github.com/ogcio/govie-services-messaging/issues/985)) ([b23a21b](https://github.com/ogcio/govie-services-messaging/commit/b23a21b01fa10bb704b504339e28847265904db5))
+
+## [0.1.4](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.3...messaging-support-v0.1.4) (2026-09-16)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#930](https://github.com/ogcio/govie-services-messaging/issues/930)) ([b4856b9](https://github.com/ogcio/govie-services-messaging/commit/b4856b9464d10c577b5666322980e8f556e8b635))
+
+
+### Miscellaneous Chores
+
+* **deps:** update @ogcio/design-system-react to 1.42.0 AB[#42958](https://github.com/ogcio/govie-services-messaging/issues/42958) ([#924](https://github.com/ogcio/govie-services-messaging/issues/924)) ([b19ed22](https://github.com/ogcio/govie-services-messaging/commit/b19ed22f5d8f68946d11aa2f1022bfeec57ba1a7))
+* pin image to 3.24 AB[#43098](https://github.com/ogcio/govie-services-messaging/issues/43098) ([#941](https://github.com/ogcio/govie-services-messaging/issues/941)) ([4e69f87](https://github.com/ogcio/govie-services-messaging/commit/4e69f8738304e8a9d419c41346be1e613f2649c4))
+* update deps AB[#42955](https://github.com/ogcio/govie-services-messaging/issues/42955) ([#936](https://github.com/ogcio/govie-services-messaging/issues/936)) ([adaf09f](https://github.com/ogcio/govie-services-messaging/commit/adaf09f9e64afcbe660bb7d1b30c76f7a40b8518))
+
 ## [0.1.3](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.2...messaging-support-v0.1.3) (2026-09-10)
 
 
