@@ -13,7 +13,11 @@ type FetchState = {
   isValidating: boolean
 }
 
-let authState: AuthState = { user: undefined, claims: undefined, loading: false }
+let authState: AuthState = {
+  user: undefined,
+  claims: undefined,
+  loading: false,
+}
 let fetchState: FetchState = {
   data: undefined,
   isLoading: false,
@@ -92,13 +96,21 @@ describe("useShowApplicationLinks", () => {
   })
 
   it("hides links when the resolved profile is below the required SAFE level", () => {
-    fetchState = { data: { safeLevel: 1 }, isLoading: false, isValidating: false }
+    fetchState = {
+      data: { safeLevel: 1 },
+      isLoading: false,
+      isValidating: false,
+    }
     const { result } = renderHook(() => useShowApplicationLinks())
     expect(result.current).toBe(false)
   })
 
   it("shows links when the profile meets the required SAFE level", () => {
-    fetchState = { data: { safeLevel: 2 }, isLoading: false, isValidating: false }
+    fetchState = {
+      data: { safeLevel: 2 },
+      isLoading: false,
+      isValidating: false,
+    }
     const { result } = renderHook(() => useShowApplicationLinks())
     expect(result.current).toBe(true)
   })

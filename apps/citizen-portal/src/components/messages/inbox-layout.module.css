@@ -25,7 +25,7 @@
   min-width: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .inboxLayout {
     display: grid;
     grid-template-columns: minmax(12.5rem, 17.5rem) minmax(0, 1fr);

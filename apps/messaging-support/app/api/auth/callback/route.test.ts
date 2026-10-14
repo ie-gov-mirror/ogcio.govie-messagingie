@@ -73,8 +73,8 @@ describe("GET /api/auth/callback", () => {
   it("redirects with missing_code_or_state when params are absent", async () => {
     const res = await GET(request({}))
 
-    expect(res.headers.get("location")).toContain(
-      "reason=missing_code_or_state",
+    expect(res.headers.get("location")).toBe(
+      "https://support.test/auth/error?reason=missing_code_or_state",
     )
   })
 
@@ -83,7 +83,9 @@ describe("GET /api/auth/callback", () => {
 
     const res = await GET(request({ code: "c-1", state: "state-1" }))
 
-    expect(res.headers.get("location")).toContain("reason=invalid_state")
+    expect(res.headers.get("location")).toBe(
+      "https://support.test/auth/error?reason=invalid_state",
+    )
   })
 
   it("redirects with missing_nonce_cookie when the nonce cookie is absent", async () => {
@@ -91,7 +93,9 @@ describe("GET /api/auth/callback", () => {
 
     const res = await GET(request({ code: "c-1", state: "state-1" }))
 
-    expect(res.headers.get("location")).toContain("reason=missing_nonce_cookie")
+    expect(res.headers.get("location")).toBe(
+      "https://support.test/auth/error?reason=missing_nonce_cookie",
+    )
   })
 
   it("redirects with invalid_nonce when the id token nonce mismatches", async () => {
@@ -101,7 +105,9 @@ describe("GET /api/auth/callback", () => {
 
     const res = await GET(request({ code: "c-1", state: "state-1" }))
 
-    expect(res.headers.get("location")).toContain("reason=invalid_nonce")
+    expect(res.headers.get("location")).toBe(
+      "https://support.test/auth/error?reason=invalid_nonce",
+    )
   })
 
   it("redirects with token_exchange_failed when msal throws", async () => {
@@ -110,8 +116,8 @@ describe("GET /api/auth/callback", () => {
 
     const res = await GET(request({ code: "c-1", state: "state-1" }))
 
-    expect(res.headers.get("location")).toContain(
-      "reason=token_exchange_failed",
+    expect(res.headers.get("location")).toBe(
+      "https://support.test/auth/error?reason=token_exchange_failed",
     )
   })
 
@@ -129,6 +135,14 @@ describe("GET /api/auth/callback", () => {
 
     const res = await GET(request({ code: "c-1", state: "state-1" }))
 
+    expect(acquireTokenByCode).toHaveBeenCalledWith(
+      expect.objectContaining({
+        code: "c-1",
+        nonce: "nonce-1",
+        scopes: ["openid"],
+      }),
+    )
+
     expect(res.headers.get("location")).toBe("https://support.test/")
     const cookies = res.headers.getSetCookie()
     expect(cookies.some((c) => /^session=[^;]+;/.test(c))).toBe(true)
@@ -140,6 +154,11 @@ describe("GET /api/auth/callback", () => {
     expect(
       cookies.some(
         (c) => c.startsWith("auth_nonce=") && c.includes("Max-Age=0"),
+      ),
+    ).toBe(true)
+    expect(
+      cookies.some(
+        (c) => c.startsWith("logged_out=") && c.includes("Max-Age=0"),
       ),
     ).toBe(true)
 

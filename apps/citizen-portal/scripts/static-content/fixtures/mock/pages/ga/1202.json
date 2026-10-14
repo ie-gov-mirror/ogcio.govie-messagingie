@@ -1,0 +1,21 @@
+{
+  "id": 1202,
+  "meta": {
+    "type": "lea.JourneyPage",
+    "slug": "apply-for-the-school-transport-scheme",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 1104
+    }
+  },
+  "title": "Apply for the School Transport Scheme",
+  "summary": "Bus transport to the nearest school, where your child is eligible.",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Bus transport to the nearest school, where your child is eligible.</p>",
+      "id": "j-1202"
+    }
+  ]
+}

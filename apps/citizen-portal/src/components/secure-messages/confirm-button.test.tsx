@@ -92,9 +92,7 @@ describe("ConfirmButton", () => {
     expect(mocks.pushLog).toHaveBeenCalledWith(["linking-success"], {
       context: props,
     })
-    expect(mocks.replace).toHaveBeenCalledWith(
-      "/ga/messages?id=message-id",
-    )
+    expect(mocks.replace).toHaveBeenCalledWith("/ga/messages?id=message-id")
   })
 
   it("logs and shows a toast when linking fails", async () => {

@@ -35,9 +35,9 @@ const plugin: FastifyPluginAsyncTypebox = async function healthCheck(
 };
 
 const checkDb = async (app: FastifyInstance): Promise<void> => {
-  const pool = await app.pg.connect();
+  const client = await app.pg.connect();
   try {
-    const res = await app.pg.query('SELECT 1 as "column"');
+    const res = await client.query('SELECT 1 as "column"');
     if (res.rowCount !== 1) {
       throw httpErrors.internalServerError(
         `Expected 1 record, got ${res.rowCount}`,
@@ -57,7 +57,7 @@ const checkDb = async (app: FastifyInstance): Promise<void> => {
 
     throw httpErrors.internalServerError(getErrorMessage(e));
   } finally {
-    pool.release();
+    client.release();
   }
 };
 

@@ -1,20 +1,17 @@
-export interface Message {
-  id: string
-  subject: string
-  createdAt: string
-  threadName: string | null
-  organisationId: string
-  recipientUserId: string
-  excerpt?: string
-  plainText?: string
-  richText?: string
-  /** May be omitted by messaging-public-api list responses */
-  isSeen?: boolean
-  securityLevel?: string
-  /** Full attachment IDs -- present on the detail endpoint */
-  attachments?: string[]
-  /** Attachment count -- present on the list endpoint */
-  attachmentsCount?: number
+import type { operations } from "@ogcio/api-types/messaging"
+
+type MessageListItem =
+  operations["ListMessages"]["responses"][200]["content"]["application/json"]["data"][number]
+
+type MessageDetail = Extract<
+  operations["GetMessage"]["responses"][200]["content"]["application/json"]["data"],
+  { subject: string }
+>
+
+/** The shared inbox message shape used across list, detail and mock flows. */
+export interface Message
+  extends MessageListItem,
+    Partial<Omit<MessageDetail, keyof MessageListItem>> {
   /** Gateway metadata from messaging-public-api (includes journey submission link) */
   metadata?: {
     journey?: {
@@ -24,22 +21,9 @@ export interface Message {
   } | null
 }
 
-export interface PaginatedMessages {
-  data: Message[]
-  metadata?: {
-    totalCount?: number
-  }
-}
-
-export interface FileMetadata {
-  id: string
-  fileName: string
-  fileSize: number
-  mimeType: string
-  key: string
-  ownerId: string
-  createdAt: string
-}
+/** Paginated inbox list envelope (`{ data, metadata }`) from `ListMessages`. */
+export type PaginatedMessages =
+  operations["ListMessages"]["responses"][200]["content"]["application/json"]
 
 export interface MessageFilter {
   status: "all" | "read" | "unread"

@@ -13,13 +13,15 @@ describe("DashboardPanel", () => {
       </DashboardPanel>,
     )
     const heading = screen.getByRole("heading", {
+      level: 2,
       name: "Recent applications",
     })
     const section = heading.closest("section")
     expect(section).not.toBeNull()
     expect(section).toContainElement(screen.getByText("Application one"))
-    expect(
-      screen.getByRole("link", { name: "View all" }),
-    ).toHaveAttribute("href", "/applications")
+    expect(screen.getByRole("link", { name: "View all" })).toHaveAttribute(
+      "href",
+      "/applications",
+    )
   })
 })

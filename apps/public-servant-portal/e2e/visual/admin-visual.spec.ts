@@ -109,6 +109,20 @@ test.describe("Admin Visual Regression", () => {
   test("admin service users page Imports tab visual snapshot @visual", async () => {
     await goToProfileAdminServiceUsers(page)
     await page.getByText("Imports").click()
+    const importsTable = page.getByRole("table", { name: "File Name" })
+    await expect(importsTable).toBeVisible()
+    // The table is masked, but fullPage height still follows row count.
+    // DEV import history grew the shot from 768px to 1768px (build 123736).
+    // Keep one body row and drop pagination so the footer stays put.
+    await importsTable.locator("tbody tr").evaluateAll((rows) => {
+      for (const row of rows.slice(1)) row.remove()
+    })
+    await paginationButtons(page).evaluateAll((els) => {
+      for (const el of els) {
+        const holder = el.closest("nav") ?? el.parentElement
+        if (holder) holder.style.setProperty("display", "none")
+      }
+    })
     await expect(page).toHaveScreenshot("admin-service-users-imports.png", {
       fullPage: true,
       mask: [page.locator("table")],

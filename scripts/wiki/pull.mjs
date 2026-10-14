@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Overwrites docs/wiki/ (and CONTEXT.md) with the current content of the
+// Overwrites docs/wiki/ (and GLOSSARY.md) with the current content of the
 // configured ADO wiki subtree, so `git diff` shows exactly what changed.
 // Doubles as the initial-import tool and the Sync-conflict resolution tool.
 import { execFileSync } from "node:child_process"
@@ -16,7 +16,7 @@ import { tmpdir } from "node:os"
 import { dirname, join, relative } from "node:path"
 import { fileURLToPath } from "node:url"
 import {
-  CONTEXT_FILE_NAME,
+  GLOSSARY_FILE_NAME,
   gitAuthEnv,
   isContextPage,
   listFiles,
@@ -82,7 +82,7 @@ function run() {
     }
 
     const docsWikiDir = join(args.root, "docs", "wiki")
-    const contextFile = join(args.root, CONTEXT_FILE_NAME)
+    const contextFile = join(args.root, GLOSSARY_FILE_NAME)
 
     let contextContent = null
     const pulled = []
@@ -109,10 +109,10 @@ function run() {
 
     if (contextContent !== null) {
       writeFileSync(contextFile, contextContent)
-      console.log(`Pulled the Context page into ${CONTEXT_FILE_NAME}.`)
+      console.log(`Pulled the Context page into ${GLOSSARY_FILE_NAME}.`)
     } else {
       console.log(
-        `No Context page found in the wiki subtree; left ${CONTEXT_FILE_NAME} untouched.`,
+        `No Context page found in the wiki subtree; left ${GLOSSARY_FILE_NAME} untouched.`,
       )
     }
 

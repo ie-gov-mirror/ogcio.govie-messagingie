@@ -2,17 +2,11 @@
 
 import { Heading, Paragraph, Stack } from "@ogcio/design-system-react"
 import { useTranslations } from "next-intl"
+import type { Profile } from "@/api/profile"
 import { ConfirmButton } from "./confirm-button"
 import { DEFAULT_STACK_GAP } from "./const"
 import { ProfileMatchInfo } from "./profile-match-info"
 import { ReportButton } from "./report-button"
-
-interface Profile {
-  id: string
-  email: string
-  primaryUserId: string
-  preferredLanguage?: string
-}
 
 export function AccountLinkingView({
   currentProfile,

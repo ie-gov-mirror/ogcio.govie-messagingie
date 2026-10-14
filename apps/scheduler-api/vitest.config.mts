@@ -26,6 +26,7 @@ export default defineConfig({
         ".**/**/*.js",
         ".**/**/*.ts",
         "db/**/*",
+        "src/db/**/*",
         // Migration tooling needs a live database; sibling apps
         // (messaging-api, profile-api) exclude it the same way.
         "src/migrations/**/*",

@@ -4,9 +4,14 @@ import pg from "@fastify/postgres";
 import type { FastifyInstance } from "fastify";
 import type { PoolConfig } from "pg";
 
+const connectionTimeoutMillis = 5_000;
+
 export const autoConfig = (fastify: FastifyInstance): PoolConfig => {
   if (process.env.DATABASE_TEST_URL) {
-    return { connectionString: process.env.DATABASE_TEST_URL };
+    return {
+      connectionString: process.env.DATABASE_TEST_URL,
+      connectionTimeoutMillis,
+    };
   }
 
   let sslConfig: PoolConfig["ssl"] = false;
@@ -30,6 +35,7 @@ export const autoConfig = (fastify: FastifyInstance): PoolConfig => {
     password: fastify.config.POSTGRES_PASSWORD,
     database: fastify.config.POSTGRES_DATABASE,
     ssl: sslConfig,
+    connectionTimeoutMillis,
   };
 };
 

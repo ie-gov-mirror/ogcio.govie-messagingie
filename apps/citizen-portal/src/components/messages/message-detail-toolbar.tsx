@@ -32,6 +32,7 @@ export function MessageDetailToolbar({
     <nav className={styles.toolbar} aria-label={tDetail("toolbarAriaLabel")}>
       <Link
         noColor
+        noUnderline
         href={backHref}
         className={styles.toolbarAction}
         aria-label={tBack("back")}

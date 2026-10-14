@@ -46,7 +46,8 @@ vi.mock("@ogcio/sag-client/react", () => ({
       }
     }
     const orgMatch = path.match(/^\/profile\/api\/v1\/organisations\/(.+)$/)
-    const data = orgMatch && !lookupPending ? ORG_FIXTURES[orgMatch[1]] : undefined
+    const data =
+      orgMatch && !lookupPending ? ORG_FIXTURES[orgMatch[1]] : undefined
     return {
       data,
       metadata: undefined,

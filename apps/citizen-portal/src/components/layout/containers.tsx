@@ -40,7 +40,7 @@ export function AppMainContent({
   aside,
 }: {
   children: ReactNode
-  /** Desktop side nav. The aside hides itself below 640px. */
+  /** Desktop side nav. The aside hides itself below 1024px. */
   aside?: ReactNode
 }) {
   return (

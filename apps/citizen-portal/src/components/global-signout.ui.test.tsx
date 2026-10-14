@@ -4,7 +4,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 // deployment that ships without Payments / Journey-Builder must not fan
 // a sign-out iframe out to that origin (which both references the absent
 // block and would hang on an unreachable host).
-const flagState = vi.hoisted(() => ({ journey: true, payments: true, forms: true }))
+const flagState = vi.hoisted(() => ({
+  journey: true,
+  payments: true,
+  forms: true,
+}))
 vi.mock("@/lib/feature-config", () => ({
   isJourneyIntegrationEnabled: () => flagState.journey,
   isPaymentsIntegrationEnabled: () => flagState.payments,
@@ -163,7 +167,7 @@ describe("buildIframeUrlList — cross-block fan-out gating (AB#39580)", () => {
     expect(urls).toContain(FORMS_SIGNOUT)
     expect(urls).toContain(CLEAR_SESSION)
   })
-  
+
   it("omits the Forms iframe when forms integration is disabled", () => {
     flagState.forms = false
     const urls = buildIframeUrlList("citizen")

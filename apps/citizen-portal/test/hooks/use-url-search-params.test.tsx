@@ -19,13 +19,13 @@ describe("useUrlSearchParams", () => {
     // Force the production path so we exercise the history-backed store
     // instead of the NODE_ENV=test shortcut that returns Next's params.
     vi.stubEnv("NODE_ENV", "production")
-    const { useUrlSearchParams } = await import(
-      "@/hooks/use-url-search-params"
-    )
+    const { useUrlSearchParams } = await import("@/hooks/use-url-search-params")
 
     const { result } = renderHook(() => useUrlSearchParams())
     expect(result.current.get("search")).toBe("payslip")
 
+    // Listener notification is deferred to a microtask, so flush it via an
+    // async act to let the store-backed re-render commit.
     await act(async () => {
       window.history.replaceState({}, "", "/en/messages")
     })
@@ -40,9 +40,7 @@ describe("useUrlSearchParams", () => {
 
   it("does not follow a stale Next useSearchParams value after replaceState", async () => {
     vi.stubEnv("NODE_ENV", "production")
-    const { useUrlSearchParams } = await import(
-      "@/hooks/use-url-search-params"
-    )
+    const { useUrlSearchParams } = await import("@/hooks/use-url-search-params")
 
     const { result } = renderHook(() => useUrlSearchParams())
 
@@ -60,9 +58,7 @@ describe("useUrlSearchParams", () => {
 
   it("survives a history push from an insertion effect", async () => {
     vi.stubEnv("NODE_ENV", "production")
-    const { useUrlSearchParams } = await import(
-      "@/hooks/use-url-search-params"
-    )
+    const { useUrlSearchParams } = await import("@/hooks/use-url-search-params")
 
     // Stands in for Next's App Router, which pushes history state from a
     // `useInsertionEffect` — a phase React forbids scheduling updates from.

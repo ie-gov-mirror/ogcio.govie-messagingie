@@ -1,5 +1,5 @@
-import { env } from "@/env/env.client"
 import type { Zone } from "@/util/get-zone-from-path"
+import { env } from "../env/env.client.ts"
 
 /**
  * Build-time deployment-topology flags for the consolidated

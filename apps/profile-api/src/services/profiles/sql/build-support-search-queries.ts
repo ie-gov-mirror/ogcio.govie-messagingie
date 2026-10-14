@@ -147,7 +147,10 @@ export const buildSupportSearchQueries = (params: {
             p.status,
             p.preferred_language as "preferredLanguage",
             p.safe_level as "safeLevel",
-            p.consent_statuses as "consentStatuses",
+            -- Cast the JSONB consent_statuses to text so the shared Kysely
+            -- CamelCasePlugin does not rewrite nested keys (e.g. the legacy
+            -- consent_statement_id); the model re-parses it with JSON.parse.
+            p.consent_statuses::text as "consentStatuses",
             DENSE_RANK() OVER (ORDER BY p.created_at DESC, p.id) AS dr
           ${baseFrom}
         ) sub

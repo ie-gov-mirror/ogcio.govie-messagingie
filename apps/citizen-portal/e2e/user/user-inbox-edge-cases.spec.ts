@@ -4,7 +4,7 @@ import { ids, urls, users } from "../fixtures"
 import { createPageWithVideo } from "../helpers/browser-context"
 import {
   loginAsCitizen,
-  signInStepVisible,
+  settleMessagingInbox,
 } from "../helpers/user-auth.helper"
 
 /*
@@ -126,7 +126,8 @@ async function stubMessagingApis(page: Page, options: ListStubOptions = {}) {
  *
  * Use an absolute messaging URL: login can settle on profile/dashboard, and a
  * relative `/en/messages` then hops zones. A fresh hop can bounce to MyGovId
- * again (Nightly 117543: stuck on mock-login waiting for `search-input`).
+ * again (Nightly 117543 / build 125157: stuck on mock-login waiting for
+ * `search-input` after a 5s probe).
  */
 async function openStubbedInbox(
   browser: Browser,
@@ -136,21 +137,7 @@ async function openStubbedInbox(
   await page.context().clearCookies()
   await stubMessagingApis(page, options)
   await loginAsCitizen(page, users.peterParker.email)
-
-  const inboxUrl = `${urls.messaging}/en/messages`
-  if (!page.url().startsWith(inboxUrl)) {
-    await page.goto(inboxUrl)
-  }
-  // Cross-zone hop can reopen IdP; finish login in place rather than timing
-  // out on search-input while parked on the mock form.
-  if (await signInStepVisible(page, 5_000)) {
-    await loginAsCitizen(page, users.peterParker.email)
-    if (!page.url().startsWith(inboxUrl)) {
-      await page.goto(inboxUrl)
-    }
-  }
-
-  await expect(page.getByTestId("search-input")).toBeVisible()
+  await settleMessagingInbox(page, users.peterParker.email)
   return page
 }
 

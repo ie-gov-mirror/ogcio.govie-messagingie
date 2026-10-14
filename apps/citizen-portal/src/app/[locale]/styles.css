@@ -85,7 +85,7 @@
   grid-column: span 8;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   .twelve-column-layout {
     gap: var(--gieds-space-6);
   }
@@ -156,6 +156,12 @@
  * Lifted from the deleted `zones/profile/src/app/[locale]/styles.css`
  * during Phase B2 consolidation.
  */
+@media (max-width: 1023px) {
+  .two-columns > * {
+    grid-column: span 12;
+  }
+}
+
 @media (max-width: 768px) {
   .two-columns > * {
     grid-column: span 8;
@@ -295,7 +301,7 @@ footer[data-module="gieds-footer"] img.gi-h-16 {
 }
 
 /* ── Mobile: remap top-right → full-width centred ── */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .gi-toast-portal[data-position="top-right"] {
     right: auto;
     left: 50%;

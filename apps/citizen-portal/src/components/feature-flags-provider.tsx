@@ -111,6 +111,25 @@ function FeatureFlagsBridge({ children }: { children: ReactNode }) {
   )
 }
 
+const ABORT_ERROR = "AbortError"
+
+/**
+ * Flag fetch that gives up quietly while the browser is offline.
+ *
+ * Unleash logs every rejection except an `AbortError` via `console.error`,
+ * which Faro reports as an exception: one per 30s poll per offline tab.
+ * Aborting instead skips the log and the error state, so flags keep their
+ * last value and the next poll after reconnecting recovers by itself.
+ * Failures while online still reach the client untouched.
+ */
+const fetchUnlessOffline: typeof fetch = (input, init) => {
+  if (navigator.onLine) {
+    return fetch(input, init)
+  }
+
+  return Promise.reject(new DOMException("Browser is offline", ABORT_ERROR))
+}
+
 export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
   const unleashUrl = env.NEXT_PUBLIC_UNLEASH_URL
   const clientKey = env.NEXT_PUBLIC_UNLEASH_CLIENT_KEY
@@ -128,6 +147,10 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
     clientKey,
     appName: env.NEXT_PUBLIC_UNLEASH_APP_NAME,
     refreshInterval: 30,
+    fetch: fetchUnlessOffline,
+    // A failed metrics POST is logged via `console.error` (reported by Faro)
+    // and, unlike the flag fetch, cannot be silenced through `fetch`.
+    disableMetrics: true,
   }
 
   return (

@@ -1,18 +1,26 @@
 import sensible from "@fastify/sensible";
+import { createDbFromPool } from "@ogcio/db-core";
 import fastify, { type FastifyInstance } from "fastify";
+import type { Pool } from "pg";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import type { DB } from "../../db/schema.js";
 import tasks from "../../routes/tasks/index.js";
 
 const buildTasksApp = async (query: ReturnType<typeof vi.fn>) => {
   const app = fastify();
+  const pool = {
+    connect: () =>
+      Promise.resolve({
+        query,
+        release: () => {},
+      }),
+  } as unknown as Pool;
   await app.register(sensible);
   app.decorate(
     "checkPermissions",
     vi.fn().mockResolvedValue(undefined) as unknown as PermissionsCheck,
   );
-  app.decorate("pg", {
-    pool: { query },
-  } as unknown as FastifyInstance["pg"]);
+  app.decorate("db", createDbFromPool<DB>(pool));
   await app.register(tasks);
 
   return app;

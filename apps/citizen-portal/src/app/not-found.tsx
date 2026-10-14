@@ -20,6 +20,7 @@ import { detectLocale, type Locale, messagesMap } from "@/i18n/locale"
 
 function NotFoundBody() {
   const t = useTranslations("notFound")
+  const tBack = useTranslations("home.button")
   const locale = useLocale()
 
   return (
@@ -27,7 +28,9 @@ function NotFoundBody() {
       <Stack direction='column' gap={10}>
         <Heading as='h1'>{t("heading")}</Heading>
         <Paragraph>{t("message")}</Paragraph>
-        <Link href={`/${locale}/messages`}>{t("back")}</Link>
+        <Link href={`/${locale}/messages`} noColor noUnderline>
+          {tBack("back")}
+        </Link>
       </Stack>
     </div>
   )

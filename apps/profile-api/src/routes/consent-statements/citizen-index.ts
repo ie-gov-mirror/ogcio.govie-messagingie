@@ -6,10 +6,7 @@ import {
   CitizenGetConsentStatementSchema,
 } from "~/schemas/consent-statements/citizen.js";
 import type { FastifyRequestTypebox } from "~/schemas/shared.js";
-import {
-  getConsentStatementById,
-  getCurrentConsentStatements,
-} from "~/services/consent-statements/consent-statements-service.js";
+import { ConsentStatementService } from "~/services/consent-statements/consent-statement-service.js";
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
   fastify.get(
@@ -29,10 +26,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
           ? request.query.subject.trim().split(",")
           : [];
 
-      const output = await getCurrentConsentStatements({
-        pool: fastify.pg.pool,
-        subjects: inputSubjects,
-      });
+      const output = await new ConsentStatementService(
+        fastify.db,
+      ).getCurrentMany(inputSubjects);
 
       return { data: output };
     },
@@ -49,10 +45,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       request: FastifyRequestTypebox<typeof CitizenGetConsentStatementSchema>,
     ) => {
       return {
-        data: await getConsentStatementById({
-          id: request.params.id,
-          pool: fastify.pg.pool,
-        }),
+        data: await new ConsentStatementService(fastify.db).getById(
+          request.params.id,
+        ),
       };
     },
   );

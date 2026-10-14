@@ -16,39 +16,40 @@ vi.mock("../../../utils/personal-profile-sdk-wrapper.js", () => ({
   },
 }));
 
+// `userCanAccessFileOrThrow` now derives access via SharingService/FileService
+// (Kysely) instead of raw pg queries. Mock the service factories so these tests
+// exercise the access directionality against an in-memory share set rather than
+// the generated SQL. Org ownership is intentionally false for these citizen
+// cases (userData carries no organizationId), so FileService is never consulted.
+const shareStore: { current: { fileId: string; userId: string }[] } = {
+  current: [],
+};
+
+vi.mock("../../../services/file-service.js", () => ({
+  fileServiceFromPool: () => ({
+    isFileOwnedByOrganization: async () => false,
+  }),
+}));
+
+vi.mock("../../../services/sharing-service.js", () => ({
+  sharingServiceFromPool: () => ({
+    isSharedWithUser: async (fileId: string, userId: string) =>
+      shareStore.current.some(
+        (s) => s.fileId === fileId && s.userId === userId,
+      ),
+    isSharedWithAnyUser: async (fileId: string, userIds: string[]) =>
+      shareStore.current.some(
+        (s) => s.fileId === fileId && userIds.includes(s.userId),
+      ),
+  }),
+}));
+
 import userCanAccessFileOrThrow from "../../../routes/utils/userCanAccessFileOrThrow.js";
 import { userCanAccessMultipleFilesOrThrow } from "../../../routes/utils/userCanAccessMultipleFilesOrThrow.js";
 
 type Share = { fileId: string; userId: string };
 
 const fakeLogger = {} as FastifyRequest["log"];
-
-/**
- * Fake `pg` for {@link userCanAccessFileOrThrow}: answers the three raw queries
- * (org-owned, shared-with-user, shared-with-linked) from an in-memory share
- * set. Org ownership is intentionally empty for these citizen-linking cases.
- */
-function makeSingleFilePg(shares: Share[]): PostgresDb {
-  return {
-    query: async (text: string, params: unknown[]) => {
-      if (text.includes("organization_id")) {
-        return { rowCount: 0, rows: [] };
-      }
-      if (text.includes("ANY($2)")) {
-        const [fileId, userIds] = params as [string, string[]];
-        const match = shares.some(
-          (s) => s.fileId === fileId && userIds.includes(s.userId),
-        );
-        return { rowCount: match ? 1 : 0, rows: match ? [{}] : [] };
-      }
-      const [fileId, userId] = params as [string, string];
-      const match = shares.some(
-        (s) => s.fileId === fileId && s.userId === userId,
-      );
-      return { rowCount: match ? 1 : 0, rows: match ? [{}] : [] };
-    },
-  } as unknown as PostgresDb;
-}
 
 /** Fake `pg.connect()` client for {@link userCanAccessMultipleFilesOrThrow}. */
 function makeMultiFilePg(shares: Share[]): PostgresDb {
@@ -71,14 +72,17 @@ function makeMultiFilePg(shares: Share[]): PostgresDb {
 
 beforeEach(() => {
   getLinkedProfileIds.mockReset();
+  shareStore.current = [];
 });
 
 describe("userCanAccessFileOrThrow - linked profiles", () => {
-  const buildAppWithPg = (shares: Share[]) =>
-    ({
+  const buildAppWithPg = (shares: Share[]) => {
+    shareStore.current = shares;
+    return {
       httpErrors,
-      pg: makeSingleFilePg(shares),
-    }) as unknown as FastifyInstance;
+      pg: { pool: {} },
+    } as unknown as FastifyInstance;
+  };
 
   it("POSITIVE: a file shared with a linked CHILD is accessible to the PARENT", async () => {
     getLinkedProfileIds.mockResolvedValue(["child"]);

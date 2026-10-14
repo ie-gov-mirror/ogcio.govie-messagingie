@@ -21,12 +21,9 @@ vi.mock("@/mock/messages", () => ({
   getMockMessagesPage: () => [],
   getMockMessagesTotalCount: mockTotalCount,
 }))
-vi.mock("./message-folders-sidebar", () => ({
-  DELETED_FOLDER_ID: "deleted",
-  INBOX_FOLDER_ID: "inbox",
-}))
 
-import { buildMessagesUrl, useInboxMessages } from "./use-inbox-messages"
+import { messagesApi } from "@/api/messages"
+import { useInboxMessages } from "./use-inbox-messages"
 
 const message = (id: string): Message =>
   ({
@@ -50,7 +47,7 @@ const defaults = {
   pageSize: 10,
 }
 
-describe("buildMessagesUrl", () => {
+describe("messagesApi.listKey", () => {
   it.each([
     [
       { ...defaults, status: "unread", search: "hello", folderId: "folder-1" },
@@ -60,12 +57,11 @@ describe("buildMessagesUrl", () => {
       { ...defaults, status: "read", page: 2, folderId: "deleted" },
       "limit=10&offset=10&isSeen=true&deletedAfterDateTime=1970-01-01T00%3A00%3A00.000Z",
     ],
-    [
-      { ...defaults, folderId: "inbox" },
-      "limit=10&offset=0&untagged=true",
-    ],
+    [{ ...defaults, folderId: "inbox" }, "limit=10&offset=0&untagged=true"],
   ])("builds the expected query", (params, query) => {
-    expect(buildMessagesUrl(params)).toBe(`/messaging/api/v1/messages?${query}`)
+    expect(messagesApi.listKey(params)).toBe(
+      `/messaging/api/v1/messages?${query}`,
+    )
   })
 })
 

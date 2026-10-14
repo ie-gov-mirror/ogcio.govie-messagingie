@@ -38,6 +38,19 @@ function getEnvOrPlaceholder(key: string, placeholder: string) {
   return process.env[key] || placeholder
 }
 
+// Pods inject LOGTO_COOKIE_SECRET. COOKIE_SECRET is the local name.
+// The placeholder is only for local/test; production must fail closed.
+function resolveCookieSecret(): string {
+  const secret = process.env.LOGTO_COOKIE_SECRET || process.env.COOKIE_SECRET
+  if (secret) {
+    return secret
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("LOGTO_COOKIE_SECRET or COOKIE_SECRET must be set")
+  }
+  return "dev-secret"
+}
+
 export const getEnvConfig = (): EnvConfig => {
   if (cachedEnv) {
     return cachedEnv
@@ -46,7 +59,7 @@ export const getEnvConfig = (): EnvConfig => {
   cachedEnv = {
     BASE_URL: getEnvOrPlaceholder("BASE_URL", "http://localhost"),
     LOGTO_URL: getEnvOrPlaceholder("LOGTO_URL", "https://dummy-logto"),
-    COOKIE_SECRET: getEnvOrPlaceholder("COOKIE_SECRET", "dev-secret"),
+    COOKIE_SECRET: resolveCookieSecret(),
     M2M_MANAGEMENT_ID: getEnvOrPlaceholder("M2M_MANAGEMENT_ID", "dummy-id"),
     M2M_MANAGEMENT_SECRET: getEnvOrPlaceholder(
       "M2M_MANAGEMENT_SECRET",

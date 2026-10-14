@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Life Events Profile API
   description: API for Life Events Profile Service
-  version: 0.1.1
+  version: 0.1.3
 components:
   securitySchemes:
     bearerAuth:
@@ -93,9 +93,8 @@ paths:
                               type: string
                               format: date-time
                             createdBy:
-                              anyOf:
-                                - type: string
-                                - type: "null"
+                              type: string
+                              nullable: true
                         - type: object
                           required:
                             - translations
@@ -812,9 +811,8 @@ paths:
                           type: string
                           format: date-time
                         createdBy:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                   metadata:
                     type: object
                     properties:
@@ -1008,9 +1006,8 @@ paths:
                             type: string
                             format: date-time
                           createdBy:
-                            anyOf:
-                              - type: string
-                              - type: "null"
+                            type: string
+                            nullable: true
                       - type: object
                         required:
                           - translations
@@ -1287,9 +1284,8 @@ paths:
                             type: string
                             format: date-time
                           createdBy:
-                            anyOf:
-                              - type: string
-                              - type: "null"
+                            type: string
+                            nullable: true
                       - type: object
                         required:
                           - translations
@@ -1583,13 +1579,11 @@ paths:
                                       type: string
                                       format: uuid
                                     description:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     disclaimer:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     title:
                                       type: string
                                     language:
@@ -1621,13 +1615,11 @@ paths:
                                       type: string
                                       format: uuid
                                     description:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     disclaimer:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     title:
                                       type: string
                                     language:
@@ -1866,13 +1858,11 @@ paths:
                                     type: string
                                     format: uuid
                                   description:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   disclaimer:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   title:
                                     type: string
                                   language:
@@ -1904,13 +1894,11 @@ paths:
                                     type: string
                                     format: uuid
                                   description:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   disclaimer:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   title:
                                     type: string
                                   language:
@@ -2150,13 +2138,11 @@ paths:
                                       type: string
                                       format: uuid
                                     description:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     disclaimer:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     title:
                                       type: string
                                     language:
@@ -2188,13 +2174,11 @@ paths:
                                       type: string
                                       format: uuid
                                     description:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     disclaimer:
-                                      anyOf:
-                                        - type: string
-                                        - type: "null"
+                                      type: string
+                                      nullable: true
                                     title:
                                       type: string
                                     language:
@@ -2397,13 +2381,11 @@ paths:
                         - title
                       properties:
                         description:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         disclaimer:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         title:
                           type: string
                     ga:
@@ -2414,13 +2396,11 @@ paths:
                         - title
                       properties:
                         description:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         disclaimer:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         title:
                           type: string
       responses:
@@ -2891,13 +2871,11 @@ paths:
                                     type: string
                                     format: uuid
                                   description:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   disclaimer:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   title:
                                     type: string
                                   language:
@@ -2929,13 +2907,11 @@ paths:
                                     type: string
                                     format: uuid
                                   description:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   disclaimer:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   title:
                                     type: string
                                   language:
@@ -3137,13 +3113,11 @@ paths:
                         - title
                       properties:
                         description:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         disclaimer:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         title:
                           type: string
                     ga:
@@ -3154,13 +3128,11 @@ paths:
                         - title
                       properties:
                         description:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         disclaimer:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         title:
                           type: string
       parameters:
@@ -3413,13 +3385,11 @@ paths:
                                     type: string
                                     format: uuid
                                   description:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   disclaimer:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   title:
                                     type: string
                                   language:
@@ -3451,13 +3421,11 @@ paths:
                                     type: string
                                     format: uuid
                                   description:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   disclaimer:
-                                    anyOf:
-                                      - type: string
-                                      - type: "null"
+                                    type: string
+                                    nullable: true
                                   title:
                                     type: string
                                   language:
@@ -3751,21 +3719,17 @@ paths:
                             version:
                               type: number
                         cascadeReason:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         cascadeSourceProfileId:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         sourceProfileEmail:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         targetProfileEmail:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                   metadata:
                     type: object
                     properties:
@@ -4451,21 +4415,17 @@ paths:
                             version:
                               type: number
                         cascadeReason:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         cascadeSourceProfileId:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         sourceProfileEmail:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         targetProfileEmail:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                   metadata:
                     type: object
                     properties:
@@ -4708,21 +4668,17 @@ paths:
                             version:
                               type: number
                         cascadeReason:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         cascadeSourceProfileId:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         sourceProfileEmail:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         targetProfileEmail:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                   metadata:
                     type: object
                     properties:
@@ -5513,16 +5469,15 @@ paths:
                                   enum:
                                     - failed
                             metadata:
-                              anyOf:
-                                - type: object
-                                  properties:
-                                    expiresAt:
-                                      type: string
-                                      format: date-time
-                                    uploadId:
-                                      type: string
-                                  additionalProperties: false
-                                - type: "null"
+                              type: object
+                              properties:
+                                expiresAt:
+                                  type: string
+                                  format: date-time
+                                uploadId:
+                                  type: string
+                              additionalProperties: false
+                              nullable: true
                           additionalProperties: false
         4XX:
           description: Default Response
@@ -5788,9 +5743,8 @@ paths:
                 - primaryUserId
               properties:
                 primaryUserId:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
               additionalProperties: false
       parameters:
         - schema:
@@ -6358,7 +6312,10 @@ paths:
                                   consent_statement_id:
                                     type: string
                                     format: uuid
-                            - type: "null"
+                            - type: object
+                              nullable: true
+                              enum:
+                                - null
                         status:
                           anyOf:
                             - type: string
@@ -6701,7 +6658,10 @@ paths:
                                   consent_statement_id:
                                     type: string
                                     format: uuid
-                            - type: "null"
+                            - type: object
+                              nullable: true
+                              enum:
+                                - null
                         status:
                           anyOf:
                             - type: string
@@ -7022,7 +6982,10 @@ paths:
                                   consent_statement_id:
                                     type: string
                                     format: uuid
-                            - type: "null"
+                            - type: object
+                              nullable: true
+                              enum:
+                                - null
                         status:
                           anyOf:
                             - type: string
@@ -7359,7 +7322,10 @@ paths:
                                 consent_statement_id:
                                   type: string
                                   format: uuid
-                          - type: "null"
+                          - type: object
+                            nullable: true
+                            enum:
+                              - null
                       status:
                         anyOf:
                           - type: string
@@ -7692,7 +7658,10 @@ paths:
                                 consent_statement_id:
                                   type: string
                                   format: uuid
-                          - type: "null"
+                          - type: object
+                            nullable: true
+                            enum:
+                              - null
                       status:
                         anyOf:
                           - type: string
@@ -8059,7 +8028,10 @@ paths:
                                 consent_statement_id:
                                   type: string
                                   format: uuid
-                          - type: "null"
+                          - type: object
+                            nullable: true
+                            enum:
+                              - null
                       status:
                         anyOf:
                           - type: string
@@ -8407,7 +8379,10 @@ paths:
                                 consent_statement_id:
                                   type: string
                                   format: uuid
-                          - type: "null"
+                          - type: object
+                            nullable: true
+                            enum:
+                              - null
                       status:
                         anyOf:
                           - type: string
@@ -9614,17 +9589,14 @@ paths:
                         email:
                           type: string
                         organisationId:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         ppsn:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         dateOfBirth:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         primaryUserId:
                           type: string
                         createdAt:
@@ -9634,10 +9606,9 @@ paths:
                           type: string
                           format: date-time
                         deletedAt:
-                          anyOf:
-                            - type: string
-                              format: date-time
-                            - type: "null"
+                          type: string
+                          format: date-time
+                          nullable: true
                         preferredLanguage:
                           type: string
                           description: The preferred language of the user, in ISO 639-1 format
@@ -9676,13 +9647,11 @@ paths:
                                 type: string
                                 format: uuid
                         firstName:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         lastName:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                   metadata:
                     type: object
                     properties:
@@ -9842,33 +9811,26 @@ paths:
                 - data
               properties:
                 hookId:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
                 event:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
                 sessionId:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
                 userAgent:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
                 ip:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
                 path:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
                 method:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
                 status:
                   type: number
                 createdAt:
@@ -9886,35 +9848,29 @@ paths:
                     id:
                       type: string
                     username:
-                      anyOf:
-                        - type: string
-                        - type: "null"
+                      type: string
+                      nullable: true
                     primaryEmail:
                       type: string
                       format: email
                     primaryPhone:
-                      anyOf:
-                        - type: string
-                        - type: "null"
+                      type: string
+                      nullable: true
                     name:
-                      anyOf:
-                        - type: string
-                        - type: "null"
+                      type: string
+                      nullable: true
                     avatar:
-                      anyOf:
-                        - type: string
-                        - type: "null"
+                      type: string
+                      nullable: true
                     customData:
                       type: object
                       properties:
                         profileImportId:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         organizationId:
-                          anyOf:
-                            - type: string
-                            - type: "null"
+                          type: string
+                          nullable: true
                         insertPrivateDetails:
                           type: boolean
                         onlyPrivateDetails:
@@ -9932,28 +9888,32 @@ paths:
                               - rawData
                             properties:
                               email:
-                                anyOf:
-                                  - type: string
-                                  - type: "null"
+                                type: string
+                                nullable: true
                               rawData:
                                 type: object
                                 additionalProperties:
                                   anyOf:
                                     - type: string
-                                    - type: "null"
+                                    - type: object
+                                      nullable: true
+                                      enum:
+                                        - null
                                     - type: number
                                     - type: boolean
                                     - type: array
                                       items:
                                         anyOf:
                                           - type: string
-                                          - type: "null"
+                                          - type: object
+                                            nullable: true
+                                            enum:
+                                              - null
                                           - type: boolean
                                           - type: number
                     lastSignInAt:
-                      anyOf:
-                        - type: number
-                        - type: "null"
+                      type: number
+                      nullable: true
                     createdAt:
                       type: number
                     updatedAt:
@@ -9969,13 +9929,11 @@ paths:
                   type: object
                   properties:
                     id:
-                      anyOf:
-                        - type: string
-                        - type: "null"
+                      type: string
+                      nullable: true
                 applicationId:
-                  anyOf:
-                    - type: string
-                    - type: "null"
+                  type: string
+                  nullable: true
       responses:
         "200":
           description: Default Response

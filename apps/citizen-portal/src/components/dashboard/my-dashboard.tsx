@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { MyApplications } from "@/components/dashboard/my-applications"
 import { TwoColumnLayout } from "@/components/layout/containers"
 import { BoldLink } from "@/components/navigation/bold-link"
+import pageTitleStyles from "@/components/page-title.module.css"
 import { PublicName } from "@/components/public-name"
 import { isLeaEnabled, isZoneEnabled } from "@/lib/feature-config"
 import govieLogo from "@/public/govie.png"
@@ -32,7 +33,9 @@ export function MyDashboard() {
   if (isLeaEnabled()) {
     return (
       <div className={styles.landing}>
-        <Heading as='h2'>{welcome}</Heading>
+        <Heading as='h1' className={pageTitleStyles.pageTitle}>
+          {welcome}
+        </Heading>
         <TwoColumnLayout>
           <MyApplications />
           {isZoneEnabled("messages") ? <MyMessages /> : null}
@@ -44,7 +47,9 @@ export function MyDashboard() {
   return (
     <TwoColumnLayout>
       <div className={styles.column}>
-        <Heading as='h2'>{welcome}</Heading>
+        <Heading as='h1' className={pageTitleStyles.pageTitle}>
+          {welcome}
+        </Heading>
         {isZoneEnabled("messages") ? <MyMessages /> : null}
       </div>
 

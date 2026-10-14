@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react"
 
 /**
- * Mobile breakpoint shared with the inbox CSS (`@media (max-width: 767px)`
- * in `unified-inbox-table.module.css` / `inbox-pagination.module.css`). Kept
- * in sync so the JS-driven data path (mobile infinite scroll vs desktop
+ * Mobile breakpoint shared with the inbox CSS (`@media (max-width: 1023px)`
+ * in `unified-inbox-table.module.css` / `inbox-pagination.module.css`).
+ * Desktop rules use `min-width: 1024px`, the DS `lg` breakpoint where the
+ * header swaps the Menu button for the desktop items.
+ * Kept in sync so the JS-driven data path (mobile infinite scroll vs desktop
  * pagination) flips at the exact same width the layout swaps between the
  * mobile card list and the desktop table.
  */
-export const MOBILE_MEDIA_QUERY = "(max-width: 767px)"
+export const MOBILE_MEDIA_QUERY = "(max-width: 1023px)"
 
 /**
  * Reports whether the viewport is at or below the mobile breakpoint.

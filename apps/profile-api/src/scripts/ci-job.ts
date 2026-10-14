@@ -4,18 +4,30 @@
  * This will be invoked like `node dist/scripts/ci-job.js` in ci.
  */
 
+import { fileURLToPath } from "node:url";
+import {
+  createDbFromPool,
+  type DbEnv,
+  migrateToLatest,
+  stampBaseline,
+} from "@ogcio/db-core";
 import type { Pool } from "pg";
 import pino from "pino";
 import { seedConsentStatements } from "~/migrations/scripts/seed-consent-statements.js";
 import { syncProfileConsents } from "~/migrations/scripts/sync-profile-consents.js";
-import type { EnvDbConfig } from "~/plugins/external/env.js";
 import { normalizeDateOfBirth } from "~/services/profiles/normalize-date-of-birth.js";
 import { doMigration } from "../migrations/scripts/migrate.js";
 import { getDbEnvs, getPgConnection } from "../migrations/scripts/shared.js";
 
+// Directory holding the compiled Kysely migrations (dist/migrations/kysely).
+// `0001_baseline` reproduces the schema historically managed by Postgrator.
+const kyselyMigrationFolder = fileURLToPath(
+  new URL("../migrations/kysely", import.meta.url),
+);
+
 async function runActions(
   pool: Pool,
-  postgresEnvs: EnvDbConfig,
+  postgresEnvs: DbEnv,
   migrationVersion: string,
 ) {
   try {
@@ -26,6 +38,27 @@ async function runActions(
     process.exit(1);
   }
   console.log("Migration completed.");
+
+  console.log("");
+  console.log("----------------");
+  console.log("");
+
+  // Kysely bookkeeping. Postgrator still owns schema creation during the
+  // transition, so `stampBaseline` only records the baseline as applied
+  // (idempotent — stamps existing DBs once, no-ops thereafter) and
+  // `migrateToLatest` applies any migrations added after the baseline.
+  // The Kysely client wraps the shared pool, so it is NOT destroyed here;
+  // the caller closes the pool for all steps.
+  console.log("Stamping Kysely baseline and applying Kysely migrations...");
+  const db = createDbFromPool(pool);
+  try {
+    await stampBaseline({ db, name: "0001_baseline" });
+    await migrateToLatest({ db, migrationFolder: kyselyMigrationFolder });
+  } catch (err) {
+    console.error("Error during Kysely migrations", err);
+    process.exit(1);
+  }
+  console.log("Kysely migrations completed.");
 
   console.log("");
   console.log("----------------");

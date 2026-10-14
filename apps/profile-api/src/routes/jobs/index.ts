@@ -3,7 +3,7 @@ import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import type { FastifyInstance } from "fastify";
 import { ExecuteJobReqSchema } from "~/schemas/jobs.js";
 import type { FastifyRequestTypebox } from "~/schemas/shared.js";
-import { verifyToken } from "~/services/jobs/verify-token.js";
+import { JobService } from "~/services/jobs/job-service.js";
 import { executeImportProfiles } from "~/services/profiles/imports/import-profiles.js";
 import { parseBooleanEnum } from "~/types/typebox.js";
 
@@ -18,9 +18,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       const { token } = request.body;
 
       // Verify token
-      const isTokenVerified = await verifyToken({
-        pool: fastify.pg.pool,
-        logger: request.log,
+      const isTokenVerified = await new JobService(fastify.db).verifyToken({
         profileImportId,
         token,
       });

@@ -11,7 +11,9 @@ describe("InboxLayout", () => {
     )
 
     expect(screen.getByRole("complementary")).toHaveTextContent("Folders")
-    expect(screen.getByRole("heading", { name: "Messages" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", { name: "Messages" }),
+    ).toBeInTheDocument()
   })
 
   it("omits the sidebar landmark when no sidebar is provided", () => {
@@ -22,6 +24,8 @@ describe("InboxLayout", () => {
     )
 
     expect(screen.queryByRole("complementary")).not.toBeInTheDocument()
-    expect(screen.getByRole("heading", { name: "Messages" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", { name: "Messages" }),
+    ).toBeInTheDocument()
   })
 })

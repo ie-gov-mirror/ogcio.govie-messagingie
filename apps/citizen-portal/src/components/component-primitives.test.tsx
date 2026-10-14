@@ -18,9 +18,9 @@ describe("component primitives", () => {
   it("renders decorative spinners inside labelled loading regions", () => {
     const { rerender } = render(<PageLoading />)
 
-    expect(screen.getByRole("status", { name: "Loading" }).style.minHeight).toBe(
-      "30vh",
-    )
+    expect(
+      screen.getByRole("status", { name: "Loading" }).style.minHeight,
+    ).toBe("30vh")
     expect(screen.getByRole("status").firstElementChild).toHaveAttribute(
       "aria-hidden",
       "true",

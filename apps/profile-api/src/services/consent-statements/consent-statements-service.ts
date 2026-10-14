@@ -17,6 +17,7 @@ import {
   ConsentSubjects,
 } from "~/schemas/consents/shared.js";
 import type { PaginationParams } from "~/schemas/pagination.js";
+import { consentStatementServiceFromPool } from "~/services/consent-statements/consent-statement-service.js";
 import { withClient } from "~/utils/with-client.js";
 import { withRollback } from "~/utils/with-rollback.js";
 
@@ -351,12 +352,7 @@ export async function getConsentStatementById(
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<ConsentStatementWithTranslations> {
   if ("pool" in params) {
-    return withClient(params.pool, async (client) => {
-      return executeGetConsentStatement({
-        client,
-        id: params.id,
-      });
-    });
+    return consentStatementServiceFromPool(params.pool).getById(params.id);
   }
   return executeGetConsentStatement({
     client: params.client,
@@ -370,12 +366,9 @@ export async function getCurrentConsentStatement(
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<ConsentStatementWithTranslations> {
   if ("pool" in params) {
-    return withClient(params.pool, async (client) => {
-      return executeGetConsentStatement({
-        client,
-        subject: params.subject,
-      });
-    });
+    return consentStatementServiceFromPool(params.pool).getCurrent(
+      params.subject,
+    );
   }
   return executeGetConsentStatement({
     client: params.client,
@@ -389,12 +382,9 @@ export async function getCurrentConsentStatements(
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<ConsentStatementWithTranslations[]> {
   if ("pool" in params) {
-    return withClient(params.pool, async (client) => {
-      return executeGetCurrentConsentStatementForSubjects({
-        client,
-        subjects: params.subjects,
-      });
-    });
+    return consentStatementServiceFromPool(params.pool).getCurrentMany(
+      params.subjects,
+    );
   }
   return executeGetCurrentConsentStatementForSubjects({
     client: params.client,
@@ -564,13 +554,10 @@ export async function listConsentStatements(
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<{ data: ConsentStatement[]; totalCount: number }> {
   if ("pool" in params) {
-    return withClient(params.pool, async (client) => {
-      return executeListConsentStatements({
-        client,
-        subject: params.subject,
-        isEnabled: params.isEnabled,
-        pagination: params.pagination,
-      });
+    return consentStatementServiceFromPool(params.pool).list({
+      subject: params.subject,
+      isEnabled: params.isEnabled,
+      pagination: params.pagination,
     });
   }
   return executeListConsentStatements({
@@ -739,18 +726,13 @@ async function executeDisableConsentStatement(params: {
 export async function getAvailableConsentSubjects(
   params: { pool: Pool } | { client: PoolClient },
 ): Promise<ConsentSubject[]> {
-  let output: string[] = [];
   if ("pool" in params) {
-    output = await withClient(params.pool, async (client) => {
-      return executeGetAvailableConsentSubjects({
-        client,
-      });
-    });
-  } else {
-    output = await executeGetAvailableConsentSubjects({
-      client: params.client,
-    });
+    return consentStatementServiceFromPool(params.pool).getAvailableSubjects();
   }
+
+  const output = await executeGetAvailableConsentSubjects({
+    client: params.client,
+  });
 
   const validConsentSubjects = Object.values(
     ConsentSubjects as Record<string, string>,

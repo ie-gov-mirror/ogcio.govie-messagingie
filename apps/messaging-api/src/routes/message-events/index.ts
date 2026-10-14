@@ -1,8 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import {
-  getMessageEvent,
-  listMessageEvents,
-} from "../../services/message-events/message-event-service.js";
+import { MessageEventService } from "../../services/message-events/message-event-service.js";
 import {
   type GetMessageEventParams,
   GetMessageEventReqSchema,
@@ -45,10 +42,9 @@ export default async function messageEvents(app: FastifyInstance) {
         },
       });
 
-      const response = await listMessageEvents({
+      const response = await new MessageEventService(app.db).list({
         pagination,
         organizationId: request.ensureIsPublicServant().organisationId,
-        pool: app.pg.pool,
         search: request.query.search,
         dateFrom: request.query.dateFrom,
         dateTo: request.query.dateTo,
@@ -87,10 +83,9 @@ export default async function messageEvents(app: FastifyInstance) {
         },
       });
 
-      const response = await getMessageEvent({
+      const response = await new MessageEventService(app.db).getEvent({
         eventId,
         organizationId,
-        pool: app.pg.pool,
       });
 
       return { data: response };

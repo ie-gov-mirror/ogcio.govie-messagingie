@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.3.0](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.2.2...messaging-api-v1.3.0) (2026-10-12)
+
+
+### Features
+
+* **messaging-api:** adopt @ogcio/db-core Kysely layer AB[#41141](https://github.com/ogcio/govie-services-messaging/issues/41141) ([#768](https://github.com/ogcio/govie-services-messaging/issues/768)) ([5a210d4](https://github.com/ogcio/govie-services-messaging/commit/5a210d41fdab1d2d38de9607e46dece06d4069c5))
+
+
+### Bug Fixes
+
+* delete providers without decrypting credentials AB[#43281](https://github.com/ogcio/govie-services-messaging/issues/43281) ([#959](https://github.com/ogcio/govie-services-messaging/issues/959)) ([ca768b3](https://github.com/ogcio/govie-services-messaging/commit/ca768b3c544bd92507b837a642050f91150f4279))
+* **deps:** update all non-major dependencies ([#1002](https://github.com/ogcio/govie-services-messaging/issues/1002)) ([4e80277](https://github.com/ogcio/govie-services-messaging/commit/4e8027747450fe0fdc816be9cd249e2a56d2a08c))
+* **deps:** update all non-major dependencies ([#1024](https://github.com/ogcio/govie-services-messaging/issues/1024)) ([75e7079](https://github.com/ogcio/govie-services-messaging/commit/75e70792a4c88eea9db9e7be7196c8c166f2ba1b))
+* **deps:** update all non-major dependencies ([#952](https://github.com/ogcio/govie-services-messaging/issues/952)) ([70671c4](https://github.com/ogcio/govie-services-messaging/commit/70671c43f22f78463032a20e968c5fed50a84673))
+* **deps:** update all non-major dependencies ([#974](https://github.com/ogcio/govie-services-messaging/issues/974)) ([d16ccbb](https://github.com/ogcio/govie-services-messaging/commit/d16ccbbc84b6ce9c4f9aada3830f1cfb88a3fed2))
+
+
+### Miscellaneous Chores
+
+* **openapi:** refresh generated API definitions AB[#44058](https://github.com/ogcio/govie-services-messaging/issues/44058) ([#996](https://github.com/ogcio/govie-services-messaging/issues/996)) ([07355c0](https://github.com/ogcio/govie-services-messaging/commit/07355c06471ff3d8d2eb51e5ceb29242350fe590))
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1019](https://github.com/ogcio/govie-services-messaging/issues/1019)) ([9fc95bf](https://github.com/ogcio/govie-services-messaging/commit/9fc95bf8f2d4386d28f683c802bd57c5d59322f9))
+* update rds certificates AB[#43420](https://github.com/ogcio/govie-services-messaging/issues/43420) ([#985](https://github.com/ogcio/govie-services-messaging/issues/985)) ([b23a21b](https://github.com/ogcio/govie-services-messaging/commit/b23a21b01fa10bb704b504339e28847265904db5))
+
 ## [1.2.2](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.2.1...messaging-api-v1.2.2) (2026-09-16)
 
 

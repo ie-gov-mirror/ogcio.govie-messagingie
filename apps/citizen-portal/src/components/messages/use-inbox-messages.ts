@@ -2,48 +2,17 @@
 
 import { useGatewayFetch } from "@ogcio/sag-client/react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  INBOX_FOLDER_ID,
+  type MessagesListMetadata,
+  messagesApi,
+} from "@/api/messages"
 import { getMockMessagesTotalCount } from "@/mock/messages"
 import type { Message } from "@/types"
-import { DELETED_FOLDER_ID, INBOX_FOLDER_ID } from "./message-folders-sidebar"
 import {
   hasActiveInboxListFilters,
   resolveInboxMessages,
 } from "./resolve-inbox-messages"
-
-export function buildMessagesUrl(params: {
-  search: string | null
-  page: number
-  pageSize: number
-  status?: string
-  /** Active folder: `null`/`inbox` = untagged, `deleted` = trash, else a tag id. */
-  folderId?: string | null
-}) {
-  const url = new URLSearchParams()
-  url.set("limit", String(params.pageSize))
-  url.set("offset", String((params.page - 1) * params.pageSize))
-
-  if (params.status === "unread") {
-    url.set("isSeen", "false")
-  } else if (params.status === "read") {
-    url.set("isSeen", "true")
-  }
-
-  if (params.search) {
-    url.set("search", params.search)
-  }
-
-  // Folder scoping: Inbox shows only untagged messages, Deleted shows
-  // soft-deleted messages, and a user folder filters by its tag id.
-  if (!params.folderId || params.folderId === INBOX_FOLDER_ID) {
-    url.set("untagged", "true")
-  } else if (params.folderId === DELETED_FOLDER_ID) {
-    url.set("deletedAfterDateTime", new Date(0).toISOString())
-  } else {
-    url.set("tagId", params.folderId)
-  }
-
-  return `/messaging/api/v1/messages?${url.toString()}`
-}
 
 export interface UseInboxMessagesParams {
   /** When true the list accumulates pages (mobile infinite scroll). */
@@ -115,7 +84,7 @@ export function useInboxMessages(
   const activePage = isMobile ? mobilePage : page
   const apiUrl = useMemo(
     () =>
-      buildMessagesUrl({
+      messagesApi.listKey({
         search,
         page: activePage,
         pageSize,
@@ -130,7 +99,7 @@ export function useInboxMessages(
     metadata,
     isLoading,
     refresh: swrRefresh,
-  } = useGatewayFetch<Message[], { totalCount?: number }>(apiUrl)
+  } = useGatewayFetch<Message[], MessagesListMetadata>(apiUrl)
 
   const resolvedPage = useMemo(
     () =>

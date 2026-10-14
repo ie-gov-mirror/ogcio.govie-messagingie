@@ -2,22 +2,10 @@
 
 import { useGatewayFetch } from "@ogcio/sag-client/react"
 import { useLocale, useTranslations } from "next-intl"
+import { type Organisation, profileApi } from "@/api/profile"
 import { Skeleton } from "@/components/skeleton/skeleton"
 import { LANG_GA } from "@/const"
 import { getSystemSenderTranslationKey } from "./system-senders"
-
-/**
- * Subset of `GET /profile/api/v1/organisations/{organisationId}` we
- * actually consume. The endpoint also returns `customData`, but that
- * branch only fires with `?includeCustomData=true`, which we never set.
- */
-interface OrganisationLookup {
-  id: string
-  translations: {
-    en: { name: string; shortName: string }
-    ga: { name: string; shortName: string }
-  }
-}
 
 export interface SenderNameProps {
   organisationId: string | null | undefined
@@ -67,9 +55,9 @@ export function SenderName({ organisationId, className }: SenderNameProps) {
    * "no organisationId at all" and "this is a known system slug" so the
    * profile service never sees a doomed lookup.
    */
-  const { data, isLoading } = useGatewayFetch<OrganisationLookup>(
+  const { data, isLoading } = useGatewayFetch<Organisation>(
     organisationId && !systemSenderKey
-      ? `/profile/api/v1/organisations/${organisationId}`
+      ? profileApi.organisationKey(organisationId)
       : null,
   )
 

@@ -5,13 +5,10 @@ import {
   useAuth,
   useGatewayFetch,
 } from "@ogcio/sag-client/react"
+import { type Profile, profileApi } from "@/api/profile"
 import { useIdleMount } from "@/hooks/use-idle-mount"
 
 const REQUIRED_SAFE_LEVEL = 2
-
-interface ProfileSafeLevel {
-  safeLevel?: number
-}
 
 /**
  * Whether the authenticated user may see cross-application links in
@@ -37,10 +34,10 @@ export function useApplicationLinksState(): boolean | undefined {
 
   const profilePath =
     user?.sub && isOnboarded && idleReady
-      ? `/profile/api/v1/profiles/${user.sub}?consentSubjects=messaging`
+      ? profileApi.detailKey(user.sub, { consentSubjects: "messaging" })
       : null
 
-  const { data: profile } = useGatewayFetch<ProfileSafeLevel>(profilePath)
+  const { data: profile } = useGatewayFetch<Profile>(profilePath)
 
   if (authLoading) {
     return undefined

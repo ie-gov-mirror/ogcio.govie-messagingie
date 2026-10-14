@@ -25,7 +25,12 @@ vi.mock("@/hooks/use-idle-mount", () => ({
 
 import type { AuthUser } from "@ogcio/sag-client"
 import { usePublicName } from "@/hooks/use-public-name"
-import { clearNavSnapshot, readNavName } from "@/util/nav-snapshot"
+import {
+  clearNavSnapshot,
+  readNavName,
+  unsealNavSnapshot,
+  writeNavName,
+} from "@/util/nav-snapshot"
 
 /**
  * The chain is `profile.publicName -> user.name -> user.email -> ""`, but the
@@ -39,6 +44,7 @@ describe("usePublicName", () => {
     fetchCalls.length = 0
     idle.ready = true
     clearNavSnapshot()
+    unsealNavSnapshot()
   })
 
   const user = (extra: Record<string, unknown> = {}) =>
@@ -108,14 +114,31 @@ describe("usePublicName", () => {
     expect(fetchCalls[0]).toBe("/profile/api/v1/profiles/user-42")
   })
 
-  it("skips the profile fetch when the display name is already stored", () => {
-    document.cookie = "citizen_portal_nav_name=Andrew%20Parker"
+  it("skips the profile fetch when this user's name is already stored", () => {
+    writeNavName("user-1", "Andrew Parker")
     const { result } = renderHook(() =>
       usePublicName(user({ name: "Jane Citizen" })),
     )
     expect(fetchCalls[0]).toBeNull()
     expect(result.current.publicName).toBe("Andrew Parker")
     expect(result.current.isLoading).toBe(false)
+  })
+
+  it("does not keep a previous citizen's stored name after someone else signs in", () => {
+    document.cookie = "citizen_portal_nav_name=Andrew%20Parker"
+    fetchState = { data: { publicName: "Jane Citizen" } }
+    const { result } = renderHook(() =>
+      usePublicName(user({ sub: "user-2", name: "Jane Citizen" })),
+    )
+    expect(fetchCalls[0]).toBe("/profile/api/v1/profiles/user-2")
+    expect(result.current.publicName).toBe("Jane Citizen")
+  })
+
+  it("does not write the name back after sign-out cleared it", () => {
+    writeNavName("user-1", "Andrew Parker")
+    clearNavSnapshot()
+    writeNavName("user-1", "Andrew Parker")
+    expect(readNavName()).toBeNull()
   })
 
   it("stores a resolved public name so the next mount does not fetch", () => {

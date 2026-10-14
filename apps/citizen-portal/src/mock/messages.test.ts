@@ -50,9 +50,9 @@ describe("message mocks", () => {
     expect(read.every((message) => message.isSeen)).toBe(true)
     expect(getMockUnreadCount()).toBeGreaterThan(0)
     expect(getMockMessagesTotalCount("payslip")).toBeGreaterThan(0)
-    expect(getMockMessagesTotalCount("department of education")).toBeGreaterThan(
-      0,
-    )
+    expect(
+      getMockMessagesTotalCount("department of education"),
+    ).toBeGreaterThan(0)
     expect(getMockMessagesTotalCount("definitely missing")).toBe(0)
     expect(
       findMockMessageById("00000001-0000-4000-8000-000000000001")?.subject,

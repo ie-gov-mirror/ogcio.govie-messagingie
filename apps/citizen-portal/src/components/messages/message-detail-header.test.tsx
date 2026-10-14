@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { MessageDetailHeader } from "@/components/messages/message-detail-header"
+import pageTitleStyles from "@/components/page-title.module.css"
 
 const ORG_FIXTURES: Record<
   string,
@@ -66,7 +67,7 @@ describe("MessageDetailHeader", () => {
 
     expect(
       screen.getByRole("heading", { name: "Payslip for Mark Murphy" }),
-    ).toBeInTheDocument()
+    ).toHaveClass(pageTitleStyles.pageTitle)
     expect(screen.getByText("From:")).toBeInTheDocument()
     expect(screen.getByText("Department of Education")).toBeInTheDocument()
     expect(screen.getByText("Date:")).toBeInTheDocument()

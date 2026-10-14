@@ -1,11 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import {
-  createTemplate,
-  deleteTemplate,
-  getTemplate,
-  listTemplates,
-  updateTemplate,
-} from "../../services/templates/template-service.js";
+import { TemplateService } from "../../services/templates/template-service.js";
 import { Permissions } from "../../types/permissions.js";
 import {
   type CreateTemplateReqBody,
@@ -44,8 +38,7 @@ export default async function templates(app: FastifyInstance) {
         offset: request.query.offset,
       });
 
-      const result = await listTemplates({
-        pool: app.pg.pool,
+      const result = await new TemplateService(app.db).list({
         pagination,
         organizationId,
         search: request.query.search,
@@ -70,8 +63,7 @@ export default async function templates(app: FastifyInstance) {
       const organizationId = request.ensureIsPublicServant().organisationId;
 
       return {
-        data: await getTemplate({
-          pool: app.pg.pool,
+        data: await new TemplateService(app.db).get({
           templateId: request.params.templateId,
           organizationId,
         }),
@@ -90,8 +82,7 @@ export default async function templates(app: FastifyInstance) {
       const userData = request.ensureUserIsSet();
       const userId = userData.userId;
       const organizationId = request.ensureIsPublicServant().organisationId;
-      const templateId = await createTemplate({
-        pool: app.pg.pool,
+      const templateId = await new TemplateService(app.db).create({
         inputBody: request.body,
         userId,
         organizationId,
@@ -116,8 +107,7 @@ export default async function templates(app: FastifyInstance) {
     async function handleUpdate(request, _reply) {
       const templateId = request.params.templateId;
 
-      await updateTemplate({
-        pool: app.pg.pool,
+      await new TemplateService(app.db).update({
         inputBody: request.body,
         templateId,
         organizationId: request.ensureIsPublicServant().organisationId,
@@ -138,7 +128,7 @@ export default async function templates(app: FastifyInstance) {
       const templateId = request.params.templateId;
       const organizationId = request.ensureIsPublicServant().organisationId;
 
-      await deleteTemplate({ pool: app.pg.pool, templateId, organizationId });
+      await new TemplateService(app.db).delete({ templateId, organizationId });
 
       return { data: { id: templateId } };
     },

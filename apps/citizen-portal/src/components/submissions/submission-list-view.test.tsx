@@ -28,9 +28,11 @@ vi.mock("./use-submissions", () => ({
   useSubmissionsList: () => state.result,
 }))
 vi.mock("@/components/messages/inbox-list-chrome-header", () => ({
-  InboxListChromeHeader: ({ searchChrome }: { searchChrome: React.ReactNode }) => (
-    <div>{searchChrome}</div>
-  ),
+  InboxListChromeHeader: ({
+    searchChrome,
+  }: {
+    searchChrome: React.ReactNode
+  }) => <div>{searchChrome}</div>,
 }))
 vi.mock("@/components/messages/messages-data-table-header", () => ({
   MessagesDataTableHeader: () => <div>search header</div>,
@@ -74,9 +76,7 @@ describe("SubmissionListView", () => {
   it("opens the selected submission", () => {
     render(<SubmissionListView />)
     fireEvent.click(screen.getByRole("button", { name: "open submission" }))
-    expect(mockPush).toHaveBeenCalledWith(
-      "/en/my-submissions?id=submission-1",
-    )
+    expect(mockPush).toHaveBeenCalledWith("/en/my-submissions?id=submission-1")
   })
 
   it("changes the page size while preserving filters and resetting the page", () => {

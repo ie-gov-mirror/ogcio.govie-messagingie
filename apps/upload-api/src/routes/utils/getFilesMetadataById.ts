@@ -1,30 +1,18 @@
 import type fastifyPostgres from "@fastify/postgres";
+import { fileServiceFromPool } from "../../services/file-service.js";
 import type { FileMetadataType } from "../../types/schemaDefinitions.js";
 
-export default (pg: fastifyPostgres.PostgresDb, fileIds: string[]) => {
-  return pg.query<FileMetadataType>(
-    `
-    SELECT 
-      id,
-      key,
-      owner as "ownerId",
-      file_size as "fileSize",
-      mime_type as "mimeType",
-      created_at as "createdAt",
-      last_scan as "lastScan",
-      infected,
-      infection_description as "infectionDescription",
-      file_name as "fileName",
-      antivirus_db_version as "antivirusDbVersion",
-      expires_at as "expiresAt",
-      external_id as "externalId"
-    FROM 
-      files
-    WHERE
-      id = ANY($1)
-      AND deleted = FALSE
-      AND scheduled_deletion_at IS NULL
-  `,
-    [fileIds],
+/**
+ * Backward-compatible wrapper delegating to {@link FileService} for the active
+ * file-metadata-by-ids read. The `{ rows }` shape is preserved so existing
+ * callers keep working unchanged.
+ */
+export default async (
+  pg: fastifyPostgres.PostgresDb,
+  fileIds: string[],
+): Promise<{ rows: FileMetadataType[] }> => {
+  const rows = await fileServiceFromPool(pg.pool).findFilesMetadataByIds(
+    fileIds,
   );
+  return { rows };
 };

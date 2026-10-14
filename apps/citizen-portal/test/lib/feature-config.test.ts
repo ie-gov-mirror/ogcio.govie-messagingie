@@ -21,11 +21,11 @@ vi.mock("@/env/env.client", () => ({ env: mocks.env }))
 
 import {
   getEnabledLandingZone,
-  isJourneyIntegrationEnabled,
   isFoldersEnabled,
+  isFormsIntegrationEnabled,
+  isJourneyIntegrationEnabled,
   isLeaEnabled,
   isPaymentsIntegrationEnabled,
-  isFormsIntegrationEnabled,
   isZoneEnabled,
 } from "@/lib/feature-config"
 
@@ -63,18 +63,24 @@ describe("feature-config", () => {
     it.each([
       [true, true],
       [false, false],
-    ])("maps the messages zone to NEXT_PUBLIC_ENABLE_MESSAGING=%s", (flag, expected) => {
-      setTopology({ NEXT_PUBLIC_ENABLE_MESSAGING: flag })
-      expect(isZoneEnabled("messages")).toBe(expected)
-    })
+    ])(
+      "maps the messages zone to NEXT_PUBLIC_ENABLE_MESSAGING=%s",
+      (flag, expected) => {
+        setTopology({ NEXT_PUBLIC_ENABLE_MESSAGING: flag })
+        expect(isZoneEnabled("messages")).toBe(expected)
+      },
+    )
 
     it.each([
       [true, true],
       [false, false],
-    ])("maps the dashboard zone to NEXT_PUBLIC_ENABLE_DASHBOARD=%s", (flag, expected) => {
-      setTopology({ NEXT_PUBLIC_ENABLE_DASHBOARD: flag })
-      expect(isZoneEnabled("dashboard")).toBe(expected)
-    })
+    ])(
+      "maps the dashboard zone to NEXT_PUBLIC_ENABLE_DASHBOARD=%s",
+      (flag, expected) => {
+        setTopology({ NEXT_PUBLIC_ENABLE_DASHBOARD: flag })
+        expect(isZoneEnabled("dashboard")).toBe(expected)
+      },
+    )
   })
 
   describe("cross-block integration flags", () => {

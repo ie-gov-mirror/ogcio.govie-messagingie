@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: OGCIO MessagingIE API
   description: API for OGCIO MessagingIE Service
-  version: 1.2.0
+  version: 1.2.2
 components:
   securitySchemes:
     bearerAuth:
@@ -129,10 +129,9 @@ paths:
                           type: string
                           description: Creation date time
                         threadName:
-                          anyOf:
-                            - type: string
-                              description: Thread Name used to group messages
-                            - type: "null"
+                          type: string
+                          description: Thread Name used to group messages
+                          nullable: true
                         organisationId:
                           type: string
                           description: Organisation sender id
@@ -764,10 +763,9 @@ paths:
                           type: string
                           description: Creation date time
                         threadName:
-                          anyOf:
-                            - type: string
-                              description: Thread Name used to group messages
-                            - type: "null"
+                          type: string
+                          description: Thread Name used to group messages
+                          nullable: true
                         organisationId:
                           type: string
                           description: Organisation sender id
@@ -982,10 +980,9 @@ paths:
                             type: string
                             description: Creation date time
                           threadName:
-                            anyOf:
-                              - type: string
-                                description: Thread Name used to group messages
-                              - type: "null"
+                            type: string
+                            description: Thread Name used to group messages
+                            nullable: true
                           organisationId:
                             type: string
                             description: Organisation sender id
@@ -993,18 +990,16 @@ paths:
                             type: string
                             description: Unique id of the recipient
                           excerpt:
-                            anyOf:
-                              - type: string
-                                description: Brief description of the message
-                              - type: "null"
+                            type: string
+                            description: Brief description of the message
+                            nullable: true
                           plainText:
                             type: string
                             description: Plain text version of the message
                           richText:
-                            anyOf:
-                              - type: string
-                                description: Rich text version of the message
-                              - type: "null"
+                            type: string
+                            description: Rich text version of the message
+                            nullable: true
                           isSeen:
                             type: boolean
                             description: True if the message has already been seen by the recipient
@@ -1022,10 +1017,9 @@ paths:
                             maxItems: 3
                             description: Ids of the related attachments (maximum 3)
                           externalId:
-                            anyOf:
-                              - type: string
-                                description: External id to link the message to an external system
-                              - type: "null"
+                            type: string
+                            description: External id to link the message to an external system
+                            nullable: true
                       metadata:
                         type: object
                         properties:
@@ -1487,12 +1481,10 @@ paths:
                 - messageIds
               properties:
                 tagId:
-                  anyOf:
-                    - type: string
-                      format: uuid
-                      description: Tag id to assign
-                    - type: "null"
-                      description: Set to null to remove the tag
+                  type: string
+                  format: uuid
+                  description: Tag id to assign
+                  nullable: true
                 messageIds:
                   type: array
                   items:
@@ -1517,10 +1509,9 @@ paths:
                       - messageIds
                     properties:
                       tagId:
-                        anyOf:
-                          - type: string
-                            format: uuid
-                          - type: "null"
+                        type: string
+                        format: uuid
+                        nullable: true
                       messageIds:
                         type: array
                         items:
@@ -1959,17 +1950,16 @@ paths:
                       type: boolean
                       description: Is connection to the SMTP server secure?
                     headers:
-                      anyOf:
-                        - type: "null"
-                        - type: object
-                          description: Optional field to add custom headers to all emails sent with this
-                            provider
-                          additionalProperties:
-                            anyOf:
-                              - type: string
-                              - type: array
-                                items:
-                                  type: string
+                      type: object
+                      description: Optional field to add custom headers to all emails sent with this
+                        provider
+                      additionalProperties:
+                        anyOf:
+                          - type: string
+                          - type: array
+                            items:
+                              type: string
+                      nullable: true
       responses:
         "201":
           description: Default Response
@@ -2214,17 +2204,16 @@ paths:
                         type: boolean
                         description: Is connection to the SMTP server secure?
                       headers:
-                        anyOf:
-                          - type: "null"
-                          - type: object
-                            description: Optional field to add custom headers to all emails sent with this
-                              provider
-                            additionalProperties:
-                              anyOf:
-                                - type: string
-                                - type: array
-                                  items:
-                                    type: string
+                        type: object
+                        description: Optional field to add custom headers to all emails sent with this
+                          provider
+                        additionalProperties:
+                          anyOf:
+                            - type: string
+                            - type: array
+                              items:
+                                type: string
+                        nullable: true
                   metadata:
                     type: object
                     properties:
@@ -2429,23 +2418,21 @@ paths:
                   type: boolean
                   description: Is connection to the SMTP server secure?
                 headers:
-                  anyOf:
-                    - type: "null"
-                    - type: object
-                      description: Optional field to add custom headers to all emails sent with this
-                        provider
-                      additionalProperties:
-                        anyOf:
-                          - type: string
-                          - type: array
-                            items:
-                              type: string
+                  type: object
+                  description: Optional field to add custom headers to all emails sent with this
+                    provider
+                  additionalProperties:
+                    anyOf:
+                      - type: string
+                      - type: array
+                        items:
+                          type: string
+                  nullable: true
                 password:
-                  anyOf:
-                    - type: string
-                      description: Password to use to log into the SMTP server
-                      minLength: 0
-                    - type: "null"
+                  type: string
+                  description: Password to use to log into the SMTP server
+                  minLength: 0
+                  nullable: true
       parameters:
         - schema:
             type: string
@@ -4660,10 +4647,9 @@ paths:
                           type: string
                           description: Unique id of the recipient
                         threadName:
-                          anyOf:
-                            - type: string
-                              description: Thread Name used to group messages
-                            - type: "null"
+                          type: string
+                          description: Thread Name used to group messages
+                          nullable: true
                         isSeen:
                           type: boolean
                           description: Whether the message has been seen
@@ -4671,10 +4657,9 @@ paths:
                           type: string
                           description: Subject
                         richText:
-                          anyOf:
-                            - type: string
-                              description: Rich text content of the message
-                            - type: "null"
+                          type: string
+                          description: Rich text content of the message
+                          nullable: true
                         plainText:
                           type: string
                           description: Plain text content of the message
@@ -5311,11 +5296,10 @@ paths:
                           type: string
                           description: Display name of the tag
                         parentTagId:
-                          anyOf:
-                            - type: string
-                              format: uuid
-                              description: Parent tag id
-                            - type: "null"
+                          type: string
+                          format: uuid
+                          description: Parent tag id
+                          nullable: true
                         path:
                           type: string
                           description: Materialized ltree path
@@ -5667,12 +5651,10 @@ paths:
                   minLength: 1
                   maxLength: 100
                 parentTagId:
-                  anyOf:
-                    - type: string
-                      format: uuid
-                      description: New parent tag id
-                    - type: "null"
-                      description: Set to null to move to root
+                  type: string
+                  format: uuid
+                  description: New parent tag id
+                  nullable: true
       parameters:
         - schema:
             type: string

@@ -3,9 +3,17 @@
   flex-direction: column;
   gap: var(--gieds-space-6);
   width: 100%;
-  margin-top: calc(-1 * var(--gieds-space-6));
   color: var(--gieds-color-gray-950, #0b0c0c);
   background-color: var(--gieds-color-white, #ffffff);
+}
+
+/*
+ * Mobile pulls the detail column up by one stack gap. Desktop clears it.
+ * Submission detail is not inside `.inboxLayoutMain`, so both pages use
+ * this class instead of an inbox-only selector.
+ */
+.detailOffset {
+  margin-top: calc(-1 * var(--gieds-space-6));
 }
 
 .detailContent {
@@ -21,15 +29,10 @@
 }
 
 .subject {
-  font: var(
-    --gieds-typography-default-heading-lg,
-    700 1.75rem /
-    1.25 "Lato",
-    Arial,
-    sans-serif
-  );
   margin: 0 0 var(--gieds-space-4);
   color: var(--gieds-color-gray-950, #0b0c0c);
+  font-family: "Lato", Arial, sans-serif;
+  font-weight: var(--gieds-font-weight-700, 700);
 }
 
 .metadata {
@@ -164,16 +167,20 @@
   padding-top: var(--gieds-space-4);
 }
 
-@media (min-width: 768px) {
-  :global(.inboxLayoutMain) .detailRoot {
+@media (min-width: 1024px) {
+  .detailOffset {
     margin-top: 0;
+  }
+
+  /* Same top inset for message detail and submission detail. */
+  .toolbar {
+    padding-top: var(--gieds-space-2);
+    padding-bottom: var(--gieds-space-2);
   }
 
   :global(.inboxLayoutMain) .toolbar {
     border-top: none;
     border-bottom: none;
-    padding-top: var(--gieds-space-2);
-    padding-bottom: var(--gieds-space-2);
   }
 
   :global(.inboxLayoutMain) .toolbar::after {
@@ -181,7 +188,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .subject {
     font-size: 1.5rem;
     line-height: 1.25;

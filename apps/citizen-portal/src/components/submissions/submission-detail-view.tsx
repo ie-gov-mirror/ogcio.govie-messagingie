@@ -4,6 +4,8 @@ import { Heading, Paragraph } from "@ogcio/design-system-react"
 import { usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { CssSpinner } from "@/components/css-spinner"
+import messageStyles from "@/components/messages/message-detail.module.css"
+import pageTitleStyles from "@/components/page-title.module.css"
 import { formatDate } from "@/util/datetime"
 import { pickLocalized } from "./localized"
 import styles from "./submission-detail.module.css"
@@ -33,7 +35,7 @@ export function SubmissionDetailView({ id }: { id: string }) {
 
   if (error || !submission) {
     return (
-      <div className={styles.detailRoot}>
+      <div className={`${styles.detailRoot} ${messageStyles.detailOffset}`}>
         <SubmissionDetailToolbar backHref={listHref} />
         <Paragraph className={styles.detailGutter}>
           {error?.message ?? t("notFound")}
@@ -66,10 +68,15 @@ export function SubmissionDetailView({ id }: { id: string }) {
   }
 
   return (
-    <div className={styles.detailRoot}>
+    <div className={`${styles.detailRoot} ${messageStyles.detailOffset}`}>
       <SubmissionDetailToolbar backHref={listHref} />
       <div className={styles.detailContent}>
-        <Heading className={styles.detailGutter}>{t("heading")}</Heading>
+        <Heading
+          as='h1'
+          className={`${pageTitleStyles.pageTitle} ${styles.detailGutter}`}
+        >
+          {t("heading")}
+        </Heading>
         <dl className={styles.fields}>
           {textFields.map((field) => (
             <div key={field.label} className={styles.field}>

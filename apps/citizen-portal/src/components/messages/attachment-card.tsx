@@ -15,9 +15,9 @@ import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useAuth, useGatewayFetch } from "@ogcio/sag-client/react"
 import { useTranslations } from "next-intl"
 import { type MouseEvent, useEffect, useRef } from "react"
+import { type FileMetadata, uploadApi } from "@/api/upload"
 import { ANALYTICS } from "@/const/analytics"
 import { TRACE_MESSAGES } from "@/const/traces"
-import type { FileMetadata } from "@/types"
 import styles from "./attachment-card.module.css"
 
 /**
@@ -75,7 +75,7 @@ export function AttachmentCard({ id }: { id: string }) {
   const { authenticated, loading, signIn } = useAuth()
 
   const { data, error, isLoading } = useGatewayFetch<FileMetadata>(
-    `/upload/api/v1/metadata/${id}`,
+    uploadApi.metadataKey(id),
   )
 
   const reauthIfLoggedOut = (e: MouseEvent<HTMLElement>) => {
@@ -113,7 +113,7 @@ export function AttachmentCard({ id }: { id: string }) {
   // Same-origin nginx proxy that injects the X-Application header a bare link
   // can't send. Both actions point here: Download forces a save (download attr),
   // Open previews inline in a new tab (the gateway serves files inline).
-  const fileUrl = `/_next/files/upload/api/v1/files/${id}`
+  const fileUrl = `/_next/files${uploadApi.filePath(id)}`
   const fileTypeIcon = getFileTypeIcon(data.mimeType, data.fileName)
 
   return (

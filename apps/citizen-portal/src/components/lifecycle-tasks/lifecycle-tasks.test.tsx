@@ -19,41 +19,50 @@ vi.mock("next-intl", () => ({
 // DS primitives carry side effects (portal mount, CSS-only theming) that
 // don't matter for the analytics contract this test pins. Stub them as
 // passthroughs, mirroring public-name-form.test.tsx.
-vi.mock("@ogcio/design-system-react", () => ({
-  Alert: ({
-    children,
-    title,
-  }: {
-    children: React.ReactNode
-    title: string
-  }) => (
-    <div>
-      {title}
-      {children}
-    </div>
-  ),
-  Button: ({
-    children,
-    onClick,
-    disabled,
-  }: {
-    children: React.ReactNode
-    onClick?: () => void
-    disabled?: boolean
-  }) => (
-    <button type='button' onClick={onClick} disabled={disabled}>
-      {children}
-    </button>
-  ),
-  Heading: ({ children }: { children: React.ReactNode }) => <h2>{children}</h2>,
-  Paragraph: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
-  SectionBreak: () => <hr />,
-  Spinner: () => <span>spinner</span>,
-  Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  toaster: {
-    create: (...args: unknown[]) => toasterCreate(...args),
-  },
-}))
+vi.mock("@ogcio/design-system-react", async () => {
+  const actual = await vi.importActual<
+    typeof import("@ogcio/design-system-react")
+  >("@ogcio/design-system-react")
+  return {
+    Alert: ({
+      children,
+      title,
+    }: {
+      children: React.ReactNode
+      title: string
+    }) => (
+      <div>
+        {title}
+        {children}
+      </div>
+    ),
+    Button: ({
+      children,
+      onClick,
+      disabled,
+    }: {
+      children: React.ReactNode
+      onClick?: () => void
+      disabled?: boolean
+    }) => (
+      <button type='button' onClick={onClick} disabled={disabled}>
+        {children}
+      </button>
+    ),
+    Heading: actual.Heading,
+    Paragraph: ({ children }: { children: React.ReactNode }) => (
+      <p>{children}</p>
+    ),
+    SectionBreak: () => <hr />,
+    Spinner: () => <span>spinner</span>,
+    Stack: ({ children }: { children: React.ReactNode }) => (
+      <div>{children}</div>
+    ),
+    toaster: {
+      create: (...args: unknown[]) => toasterCreate(...args),
+    },
+  }
+})
 
 vi.mock("@ogcio/sag-client/react", () => ({
   SagFetchError: class SagFetchError extends Error {
@@ -106,6 +115,9 @@ describe("LifecycleTasks analytics", () => {
     const button = await screen.findByRole("button", {
       name: "button.request",
     })
+    const heading = screen.getByRole("heading", { name: "title" })
+    expect(heading).toHaveClass("gi-text-lg", "xl:gi-text-xl")
+    expect(heading.className).not.toContain("xl:gi-text-2xl")
     fireEvent.click(button)
 
     await waitFor(() =>

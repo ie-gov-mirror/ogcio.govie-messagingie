@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.1.7](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.6...messaging-support-v0.1.7) (2026-10-13)
+
+
+### Bug Fixes
+
+* keep messaging-support logged out until sign-in AB[#34253](https://github.com/ogcio/govie-services-messaging/issues/34253) ([#1037](https://github.com/ogcio/govie-services-messaging/issues/1037)) ([3a24c3f](https://github.com/ogcio/govie-services-messaging/commit/3a24c3f5f7239258d4e3e6855725596374f12141))
+* pass login nonce through messaging-support token exchange AB[#34253](https://github.com/ogcio/govie-services-messaging/issues/34253) ([#1029](https://github.com/ogcio/govie-services-messaging/issues/1029)) ([d2a1248](https://github.com/ogcio/govie-services-messaging/commit/d2a1248d181fbef824c175326ca5bfcd38f2847f))
+* send messaging-support auth errors to /auth/error AB[#34253](https://github.com/ogcio/govie-services-messaging/issues/34253) ([#1026](https://github.com/ogcio/govie-services-messaging/issues/1026)) ([26a849b](https://github.com/ogcio/govie-services-messaging/commit/26a849b1aae89dfdf2dd32c03342909d2e8c6fbb))
+* sign messaging-support sessions with the real cookie secret AB[#34253](https://github.com/ogcio/govie-services-messaging/issues/34253) ([#1030](https://github.com/ogcio/govie-services-messaging/issues/1030)) ([36f7c7d](https://github.com/ogcio/govie-services-messaging/commit/36f7c7dadbead4bea35d57ced19f950b24783c95))
+
+## [0.1.6](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.5...messaging-support-v0.1.6) (2026-10-12)
+
+
+### Features
+
+* **messaging-api:** adopt @ogcio/db-core Kysely layer AB[#41141](https://github.com/ogcio/govie-services-messaging/issues/41141) ([#768](https://github.com/ogcio/govie-services-messaging/issues/768)) ([5a210d4](https://github.com/ogcio/govie-services-messaging/commit/5a210d41fdab1d2d38de9607e46dece06d4069c5))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1002](https://github.com/ogcio/govie-services-messaging/issues/1002)) ([4e80277](https://github.com/ogcio/govie-services-messaging/commit/4e8027747450fe0fdc816be9cd249e2a56d2a08c))
+* **deps:** update all non-major dependencies ([#1024](https://github.com/ogcio/govie-services-messaging/issues/1024)) ([75e7079](https://github.com/ogcio/govie-services-messaging/commit/75e70792a4c88eea9db9e7be7196c8c166f2ba1b))
+* keep messaging support logout in the app AB[#34253](https://github.com/ogcio/govie-services-messaging/issues/34253) ([#1006](https://github.com/ogcio/govie-services-messaging/issues/1006)) ([764d02a](https://github.com/ogcio/govie-services-messaging/commit/764d02abc1b1e9436bd739673faf647698906542))
+* scope consent history tables and show minutes AB[#33227](https://github.com/ogcio/govie-services-messaging/issues/33227) ([#1004](https://github.com/ogcio/govie-services-messaging/issues/1004)) ([a5054ae](https://github.com/ogcio/govie-services-messaging/commit/a5054aeba1ee94d1c3db3dced73f95f9c5f50808))
+
+
+### Miscellaneous Chores
+
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1019](https://github.com/ogcio/govie-services-messaging/issues/1019)) ([9fc95bf](https://github.com/ogcio/govie-services-messaging/commit/9fc95bf8f2d4386d28f683c802bd57c5d59322f9))
+
 ## [0.1.5](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.4...messaging-support-v0.1.5) (2026-10-01)
 
 

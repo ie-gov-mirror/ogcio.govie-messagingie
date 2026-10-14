@@ -8,7 +8,7 @@
  * full width of the list header (per design). Mobile keeps it full width so
  * it fills the narrow header band.
  */
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .searchInput {
     max-width: 25rem;
   }

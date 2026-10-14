@@ -5,10 +5,10 @@
   display: flex;
 }
 
-/* The desktop sidebar (>=768px) already provides folder navigation, so the
+/* The desktop sidebar (1024px and up) already provides folder navigation, so the
    slide-in panel is mobile-only even if its open state lingers across a
    viewport resize. */
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .overlay {
     display: none;
   }

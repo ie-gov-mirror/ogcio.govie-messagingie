@@ -1,6 +1,10 @@
 import { type Browser, expect, type Page } from "@playwright/test"
 import { getUserByEmail, urls } from "../fixtures"
 import { createPageWithVideo } from "./browser-context"
+import {
+  MESSAGING_INBOX_HOP_TIMEOUT_MS,
+  messagingInboxHopAction,
+} from "./messaging-inbox-hop"
 
 /** Matches `expect.timeout` in playwright.config.ts. */
 const SIGN_IN_STEP_TIMEOUT = 25_000
@@ -47,6 +51,68 @@ export async function signInStepVisible(
       () => true,
       () => false,
     )
+}
+
+/**
+ * Land on the messaging inbox after login. A cross-zone hop can reopen the
+ * IdP or stop on Logto's consent screen (`/consent`, button "Authorize").
+ * Racing the shell against both avoids waiting out `search-input` on a page
+ * that has neither (nightly 125209 delete/pagination).
+ *
+ * Always reload the inbox. Skipping that when the URL already matches leaves
+ * a stub installed after login painting the real list (mark-as-read, 125208
+ * and 125209).
+ */
+export async function settleMessagingInbox(
+  page: Page,
+  citizenName: string,
+): Promise<void> {
+  const inboxUrl = `${urls.messaging}/en/messages`
+  const search = page.getByTestId("search-input")
+  const continueWithMyGovId = page.getByRole("button", {
+    name: "Continue with MyGovId",
+  })
+  const loginForm = page.locator("#login-form")
+  const signIn = continueWithMyGovId.or(loginForm)
+  const authorize = page.getByRole("button", { name: "Authorize", exact: true })
+
+  // Consent click, then one IdP reopen after we finish login.
+  for (let hop = 0; hop < 3; hop++) {
+    await page.goto(inboxUrl)
+
+    await expect(search.or(signIn).or(authorize)).toBeVisible({
+      timeout: MESSAGING_INBOX_HOP_TIMEOUT_MS,
+    })
+
+    const signInVisible =
+      (await loginForm.isVisible()) || (await continueWithMyGovId.isVisible())
+    const action = messagingInboxHopAction(
+      signInVisible,
+      await authorize.isVisible(),
+    )
+    switch (action) {
+      case "assert-shell":
+        return
+      case "authorize":
+        await authorize.click()
+        await page.waitForURL((url) => !url.pathname.startsWith("/consent"), {
+          timeout: SIGN_IN_CALLBACK_TIMEOUT,
+        })
+        continue
+      case "relogin":
+        await loginAsCitizen(page, citizenName)
+        continue
+      default: {
+        const _never: never = action
+        return _never
+      }
+    }
+  }
+
+  await page.goto(inboxUrl)
+  await expect(search).toBeVisible({
+    timeout: MESSAGING_INBOX_HOP_TIMEOUT_MS,
+  })
 }
 
 /**

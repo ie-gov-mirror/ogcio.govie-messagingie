@@ -69,9 +69,10 @@ export function ConfirmLinkForm(props: ConfirmLinkFormProps) {
         ]}
       </Accordion>
       <Paragraph size='sm'>
-        Pressing <strong>Link Accounts</strong> will associate this account
-        as child of the parent account. After linking, the accounts will share access to
-        messages and other authorized data. The parent will be Account ID: {props.primaryProfileId}.
+        Pressing <strong>Link Accounts</strong> will associate this account as
+        child of the parent account. After linking, the accounts will share
+        access to messages and other authorized data. The parent will be Account
+        ID: {props.primaryProfileId}.
       </Paragraph>
       <Stack direction='row' gap={5}>
         <Button

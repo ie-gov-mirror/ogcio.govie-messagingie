@@ -1,5 +1,8 @@
+import { createDbFromPool } from "@ogcio/db-core";
 import type { FastifyInstance } from "fastify";
+import type { Pool } from "pg";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import type { DB } from "../db/schema.js";
 import { worker } from "../worker.js";
 
 const CONFIG_ROW = {
@@ -9,11 +12,22 @@ const CONFIG_ROW = {
   callbackTimeout: 1000,
 };
 
-const buildApp = (query: ReturnType<typeof vi.fn>) =>
-  ({
-    pg: { pool: { query } },
+const buildApp = (query: ReturnType<typeof vi.fn>) => {
+  const pool = {
+    query,
+    connect: () =>
+      Promise.resolve({
+        query,
+        release: () => {},
+      }),
+  } as unknown as Pool;
+
+  return {
+    db: createDbFromPool<DB>(pool),
+    pg: { pool },
     log: { error: vi.fn() },
-  }) as unknown as FastifyInstance;
+  } as unknown as FastifyInstance;
+};
 
 // The worker fires unitOfWork from a timer without awaiting it; drain the
 // microtask queue so the promise chain (query -> fetch -> update) completes.

@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
-import { EmailSpecificProvider } from "../../services/providers/email/email-specific-provider.js";
+import { EmailProviderService } from "../../services/providers/email/email-specific-provider.js";
 import { Permissions } from "../../types/permissions.js";
 import {
   ProviderCreateReqSchema,
@@ -139,9 +139,9 @@ export default async function providers(app: FastifyInstance) {
     },
   );
 
-  function buildEmailProvider(request: FastifyRequest): EmailSpecificProvider {
-    return new EmailSpecificProvider(
-      app.pg.pool,
+  function buildEmailProvider(request: FastifyRequest): EmailProviderService {
+    return new EmailProviderService(
+      app.db,
       request.ensureIsPublicServant().organisationId,
       app.cryptographyService,
       undefined,

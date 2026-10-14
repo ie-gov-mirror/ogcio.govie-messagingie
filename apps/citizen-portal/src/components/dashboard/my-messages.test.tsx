@@ -115,17 +115,13 @@ describe("MyMessages", () => {
   it("renders the loading spinner while auth is loading", () => {
     authState = { user: null, loading: true }
     render(<MyMessages />)
-    expect(
-      screen.getByLabelText("dashboard.messages.view"),
-    ).toBeInTheDocument()
+    expect(screen.getByLabelText("dashboard.messages.view")).toBeInTheDocument()
   })
 
   it("renders the loading spinner while the messages fetch is in flight", () => {
     fetchState = { data: undefined, error: null, isLoading: true }
     render(<MyMessages />)
-    expect(
-      screen.getByLabelText("dashboard.messages.view"),
-    ).toBeInTheDocument()
+    expect(screen.getByLabelText("dashboard.messages.view")).toBeInTheDocument()
   })
 
   it("renders the empty-state copy when there are no recent messages", () => {
@@ -154,16 +150,10 @@ describe("MyMessages", () => {
     render(<MyMessages />)
 
     screen.getByRole("button", { name: "Annual statement" }).click()
-    expect(crossZoneCalls).toContainEqual([
-      "messages",
-      "/en/messages?id=msg-1",
-    ])
+    expect(crossZoneCalls).toContainEqual(["messages", "/en/messages?id=msg-1"])
 
     screen.getByRole("button", { name: "Payment confirmation" }).click()
-    expect(crossZoneCalls).toContainEqual([
-      "messages",
-      "/en/messages?id=msg-2",
-    ])
+    expect(crossZoneCalls).toContainEqual(["messages", "/en/messages?id=msg-2"])
 
     // The "View all" CTA must also cross-zone to the messaging host.
     expect(
@@ -195,9 +185,7 @@ describe("MyMessages", () => {
     // SAG refreshes and the dashboard would scream-bleed errors
     // every time the user lands here.
     expect(screen.queryByTestId("form-field-error")).not.toBeInTheDocument()
-    expect(
-      screen.getByLabelText("dashboard.messages.view"),
-    ).toBeInTheDocument()
+    expect(screen.getByLabelText("dashboard.messages.view")).toBeInTheDocument()
   })
 
   it("renders the server-error message for non-401 failures", () => {

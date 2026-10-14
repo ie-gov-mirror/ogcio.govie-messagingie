@@ -1,13 +1,9 @@
 import type { Pool } from "pg";
-import type { KnownProfileDataDetails } from "~/schemas/profiles/model.js";
-import { getProfileImportDetails as getProfileImportDetailsSQL } from "~/services/profiles/sql/get-profile-import-details.js";
-import { withClient } from "~/utils/with-client.js";
+import type { ProfileImportDetail } from "~/schemas/profiles/model.js";
+import { profileImportServiceFromPool } from "./profile-import-service.js";
 
 export const getProfileImportDetails = async (
   pool: Pool,
   importId: string,
-  organisationId?: string,
-): Promise<KnownProfileDataDetails[]> =>
-  withClient(pool, async (client) =>
-    getProfileImportDetailsSQL(client, importId, undefined, organisationId),
-  );
+): Promise<ProfileImportDetail[]> =>
+  profileImportServiceFromPool(pool).getDetails(importId);

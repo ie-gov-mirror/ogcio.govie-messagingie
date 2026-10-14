@@ -18,9 +18,11 @@ vi.mock("next-intl", () => ({
 }))
 
 vi.mock("./inbox-list-search-field", () => ({
-  InboxListSearchField: ({ searchInputTestId }: { searchInputTestId: string }) => (
-    <input data-testid={searchInputTestId} />
-  ),
+  InboxListSearchField: ({
+    searchInputTestId,
+  }: {
+    searchInputTestId: string
+  }) => <input data-testid={searchInputTestId} />,
 }))
 
 vi.mock("@ogcio/design-system-react", () => ({
@@ -79,10 +81,8 @@ vi.mock("@ogcio/design-system-react", () => ({
       {label}
     </label>
   ),
-  Popover: ({
-    children,
-    open,
-  }: React.PropsWithChildren<{ open: boolean }>) => (open ? <div>{children}</div> : null),
+  Popover: ({ children, open }: React.PropsWithChildren<{ open: boolean }>) =>
+    open ? <div>{children}</div> : null,
 }))
 
 import { MessagesDataTableHeader } from "./messages-data-table-header"

@@ -1,0 +1,21 @@
+{
+  "id": 1204,
+  "meta": {
+    "type": "lea.JourneyPage",
+    "slug": "request-an-assessment-of-special-educational-needs",
+    "locale": "en",
+    "alias_of": null,
+    "parent": {
+      "id": 1104
+    }
+  },
+  "title": "Request an assessment of special educational needs",
+  "summary": "Arrange support before your child starts school.",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Arrange support before your child starts school.</p>",
+      "id": "j-1204"
+    }
+  ]
+}

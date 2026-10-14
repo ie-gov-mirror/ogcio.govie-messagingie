@@ -14,12 +14,13 @@
   "scripts": {
     "dev": "echo 'No dev script needed for blacklist-profiles'",
     "build": "rm -rf dist && tsc -p tsconfig.json && cp -R src/blacklists dist/blacklists",
+    "lint": "biome check",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "26.6.3"
+    "@types/node": "26.6.5"
   }
 }

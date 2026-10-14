@@ -11,7 +11,11 @@ import { describe, expect, it } from "vitest"
 
 // Vitest roots at `apps/citizen-portal`, beside the Dockerfile that envsubsts.
 const TEMPLATE_PATH = resolve(process.cwd(), "docker/nginx.conf.template")
-const CLOUDFRONT_PROXIES = ["/_next/analytics-api/", "/_next/ff/", "/_next/files/"]
+const CLOUDFRONT_PROXIES = [
+  "/_next/analytics-api/",
+  "/_next/ff/",
+  "/_next/files/",
+]
 
 const template = readFileSync(TEMPLATE_PATH, "utf8")
 

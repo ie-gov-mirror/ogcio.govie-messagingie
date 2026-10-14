@@ -9,6 +9,7 @@ import {
 } from "@ogcio/design-system-react"
 import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useLocale, useTranslations } from "next-intl"
+import type { ConsentStatuses as ProfileConsentStatuses } from "@/api/profile"
 import { ANALYTICS } from "@/const/analytics"
 
 const ConsentStatuses = {
@@ -19,19 +20,13 @@ const ConsentStatuses = {
   Undefined: "undefined",
 } as const
 
-interface ConsentStatus {
-  status?: string
-}
-
 export function ConsentSection({
   messagingUrl,
   consentStatuses,
   linkedProfilesCount = 0,
 }: {
   messagingUrl: string
-  consentStatuses?: {
-    messaging?: ConsentStatus
-  }
+  consentStatuses?: ProfileConsentStatuses | null
   linkedProfilesCount?: number
 }) {
   const t = useTranslations("consent")
@@ -59,7 +54,7 @@ export function ConsentSection({
 
   return (
     <Stack gap={4}>
-      <Heading as='h2' size='md'>
+      <Heading as='h2' size='sm'>
         {t("title")}
       </Heading>
       <Paragraph>{t("description")}</Paragraph>

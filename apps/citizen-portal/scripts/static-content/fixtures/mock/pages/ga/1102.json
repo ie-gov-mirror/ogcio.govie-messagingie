@@ -1,0 +1,20 @@
+{
+  "id": 1102,
+  "meta": {
+    "type": "lea.LifeEventPage",
+    "slug": "child-adoption",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 1000
+    }
+  },
+  "title": "Child Adoption",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Adopting a child in Ireland, and the supports available to adoptive families.</p>",
+      "id": "le-1102"
+    }
+  ]
+}

@@ -3,10 +3,7 @@ import { ensureUserCanAccessUser } from "@ogcio/api-auth";
 import type { FastifyInstance } from "fastify";
 import { getEventsForMessageId } from "../../services/message-events/message-event-service.js";
 import {
-  assignMessageTag,
-  deleteMessages,
-  getMessage,
-  listMessages,
+  MessageService,
   processMessage,
 } from "../../services/messages/message-service.js";
 import {
@@ -67,7 +64,7 @@ export default async function messages(app: FastifyInstance) {
         offset: request.query.offset,
       });
 
-      const messages = await listMessages({
+      const messages = await new MessageService(app.db, request.log).list({
         loggedInUserData: {
           userId: loggedInUserId,
           organizationId: loggedInOrgId,
@@ -87,8 +84,6 @@ export default async function messages(app: FastifyInstance) {
               : undefined,
         },
         pagination,
-        pool: app.pg.pool,
-        logger: request.log,
       });
 
       return formatAPIResponse({
@@ -123,7 +118,7 @@ export default async function messages(app: FastifyInstance) {
         offset: request.body.offset,
       });
 
-      const messages = await listMessages({
+      const messages = await new MessageService(app.db, request.log).list({
         loggedInUserData: { ...userData, organizationId },
         query: {
           recipientUserId: request.body.recipientUserId,
@@ -139,8 +134,6 @@ export default async function messages(app: FastifyInstance) {
               : undefined,
         },
         pagination,
-        pool: app.pg.pool,
-        logger: request.log,
       });
 
       return formatAPIResponse({
@@ -219,11 +212,9 @@ export default async function messages(app: FastifyInstance) {
         "Getting message",
       );
 
-      const gotMessage = await getMessage({
-        pool: app.pg.pool,
+      const gotMessage = await new MessageService(app.db, request.log).get({
         messageId: request.params.messageId,
         loggedInUser,
-        logger: request.log,
         hasOnboardingPermission,
         deleted:
           request.query.deleted !== undefined
@@ -325,10 +316,8 @@ export default async function messages(app: FastifyInstance) {
       request.ensureIsCitizen();
 
       const messageIds = request.body.ids;
-      await deleteMessages({
-        pool: app.pg.pool,
+      await new MessageService(app.db, request.log).delete({
         messageIds,
-        logger: request.log,
         loggedInUser: userData,
       });
 
@@ -350,13 +339,11 @@ export default async function messages(app: FastifyInstance) {
     ) {
       const userData = request.ensureUserIsSet();
 
-      const result = await assignMessageTag({
-        pool: app.pg.pool,
+      const result = await new MessageService(app.db, request.log).assignTag({
         userId: userData.userId,
         accessToken: userData.accessToken,
         messageIds: request.body.messageIds,
         tagId: request.body.tagId,
-        logger: request.log,
       });
 
       return reply.send({ data: result });

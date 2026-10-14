@@ -1,11 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import {
-  createTag,
-  deleteTag,
-  getTagTree,
-  listTags,
-  updateTag,
-} from "../../services/tags/tag-service.js";
+import { TagService } from "../../services/tags/tag-service.js";
 import { Permissions } from "../../types/permissions.js";
 import type { FastifyRequestTypebox } from "../../types/shared.js";
 import {
@@ -36,8 +30,7 @@ export default async function tags(app: FastifyInstance) {
     ) {
       const userData = request.ensureUserIsSet();
 
-      const result = await createTag(
-        app.pg.pool,
+      const result = await new TagService(app.db).create(
         userData.userId,
         request.body,
       );
@@ -63,7 +56,7 @@ export default async function tags(app: FastifyInstance) {
       request: FastifyRequestTypebox<typeof ListTagsReqSchema>,
     ) {
       const userData = request.ensureUserIsSet();
-      const result = await listTags(app.pg.pool, userData.userId);
+      const result = await new TagService(app.db).list(userData.userId);
 
       return { data: result };
     },
@@ -87,7 +80,7 @@ export default async function tags(app: FastifyInstance) {
     ) {
       const userData = request.ensureUserIsSet();
 
-      const result = await getTagTree(app.pg.pool, userData.userId);
+      const result = await new TagService(app.db).getTree(userData.userId);
 
       return { data: result };
     },
@@ -110,8 +103,7 @@ export default async function tags(app: FastifyInstance) {
     ) {
       const userData = request.ensureUserIsSet();
 
-      const result = await updateTag(
-        app.pg.pool,
+      const result = await new TagService(app.db).update(
         userData.userId,
         request.params.tagId,
         request.body,
@@ -138,8 +130,7 @@ export default async function tags(app: FastifyInstance) {
     ) {
       const userData = request.ensureUserIsSet();
 
-      const result = await deleteTag(
-        app.pg.pool,
+      const result = await new TagService(app.db).delete(
         userData.userId,
         request.params.tagId,
       );

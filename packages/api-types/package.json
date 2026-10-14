@@ -1,0 +1,40 @@
+{
+  "name": "@ogcio/api-types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Layer 3 frontend DTO types generated from each API's committed openapi-definition.yml via openapi-typescript. Nothing here is hand-written.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./messaging": {
+      "types": "./src/messaging.d.ts",
+      "default": "./src/messaging.d.ts"
+    },
+    "./profile": {
+      "types": "./src/profile.d.ts",
+      "default": "./src/profile.d.ts"
+    },
+    "./upload": {
+      "types": "./src/upload.d.ts",
+      "default": "./src/upload.d.ts"
+    },
+    "./scheduler": {
+      "types": "./src/scheduler.d.ts",
+      "default": "./src/scheduler.d.ts"
+    }
+  },
+  "scripts": {
+    "codegen": "openapi-typescript ../../apps/messaging-api/openapi-definition.yml -o src/messaging.d.ts && openapi-typescript ../../apps/profile-api/openapi-definition.yml -o src/profile.d.ts && openapi-typescript ../../apps/upload-api/openapi-definition.yml -o src/upload.d.ts && openapi-typescript ../../apps/scheduler-api/openapi-definition.yml -o src/scheduler.d.ts",
+    "codegen:check": "node scripts/check-codegen.mjs",
+    "typecheck": "tsc --noEmit",
+    "format": "biome check --write",
+    "lint": "biome check"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "6.0.3"
+  }
+}

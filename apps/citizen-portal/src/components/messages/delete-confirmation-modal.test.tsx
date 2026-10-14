@@ -2,9 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
 vi.mock("next-intl", () => ({
-  useTranslations:
-    () => (key: string, values?: { count: number }) =>
-      values ? `${key}:${values.count}` : key,
+  useTranslations: () => (key: string, values?: { count: number }) =>
+    values ? `${key}:${values.count}` : key,
 }))
 
 vi.mock("@ogcio/design-system-react", () => ({

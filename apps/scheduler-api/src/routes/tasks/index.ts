@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { Type } from "typebox";
+import { ScheduledEventService } from "../../services/tasks/scheduled-event-service.js";
 import { HttpError } from "../../types/httpErrors.js";
 import { Permissions } from "../../types/permissions.js";
 
@@ -33,21 +34,7 @@ export default async function tasks(app: FastifyInstance) {
     },
     async function handleScheduleTasks(request, reply) {
       try {
-        const values: string[] = [];
-        const args: string[] = [];
-        let i = 0;
-        for (const set of request.body) {
-          values.push(set.webhookUrl, set.webhookAuth, set.executeAt);
-          args.push(`($${++i}, $${++i}, $${++i})`);
-        }
-        await app.pg.pool.query(
-          `
-            insert into scheduled_events(
-                webhook_url, webhook_auth, execute_at
-            ) values ${args.join(", ")}
-        `,
-          values,
-        );
+        await new ScheduledEventService(app.db).scheduleTasks(request.body);
       } catch (err) {
         throw app.httpErrors.createError(500, "failed to parse request", {
           parent: err,

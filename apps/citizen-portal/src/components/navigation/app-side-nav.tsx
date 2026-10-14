@@ -21,7 +21,7 @@ import {
 import { useClientHref } from "./use-client-href"
 
 /**
- * Desktop application nav shown when LEA is on. Hidden below 640px; the
+ * Desktop application nav shown when LEA is on. Hidden below 1024px; the
  * header drawer covers the same destinations on small screens.
  *
  * This component stays mounted across same-origin page changes. Only the

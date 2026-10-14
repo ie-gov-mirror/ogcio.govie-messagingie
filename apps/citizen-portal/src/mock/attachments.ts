@@ -1,4 +1,5 @@
-import type { FileMetadata, Message } from "@/types"
+import type { FileMetadata } from "@/api/upload"
+import type { Message } from "@/types"
 import { MOCK_MESSAGES_ENABLED } from "./messages"
 
 /** Mock attachment ids mirror message ids with the leading `0` replaced by `1`. */
@@ -36,6 +37,9 @@ export function getMockAttachmentMetadata(
     key: "mock",
     ownerId: "mock",
     createdAt: message.createdAt,
+    lastScan: message.createdAt,
+    deleted: false,
+    infected: false,
   }
 }
 

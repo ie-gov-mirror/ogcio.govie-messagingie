@@ -84,12 +84,13 @@ describe("SubmissionListTable", () => {
     expect(
       screen.getByRole("columnheader", { name: "Status" }),
     ).toBeInTheDocument()
-    expect(screen.getByRole("columnheader", { name: "Date" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("columnheader", { name: "Date" }),
+    ).toBeInTheDocument()
     expect(table).toHaveTextContent("SCH-2025-073296")
-    expect(screen.getByRole("link", { name: "Birth registration" })).toHaveAttribute(
-      "href",
-      "/en/my-submissions?id=SCH-2025-073296",
-    )
+    expect(
+      screen.getByRole("link", { name: "Birth registration" }),
+    ).toHaveAttribute("href", "/en/my-submissions?id=SCH-2025-073296")
     expect(table).toHaveTextContent("Completed")
   })
 

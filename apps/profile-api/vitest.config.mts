@@ -28,6 +28,7 @@ export default defineConfig({
       exclude: [
         ...defaultExclude,
         "src/test/**/*",
+        "src/db/**/*",
         "src/migrations/**/*",
         "**/.yalc/**/*",
       ],

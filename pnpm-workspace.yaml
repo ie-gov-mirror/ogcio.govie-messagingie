@@ -9,6 +9,8 @@ packages:
   - "apps/scheduler-api"
   - "apps/profile-api"
   - "packages/citizen-shared"
+  - "packages/db-core"
+  - "packages/api-types"
   - "packages/blacklist-profiles"
 syncInjectedDepsAfterScripts:
   - build
@@ -16,6 +18,8 @@ injectWorkspacePackages: true
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@ogcio/*"
+  # Renovate security update: vitest@4.1.11
+  - vitest@4.1.11
 overrides:
   # Faro 2.12+ sends Idempotency-Key on collect; Alloy <1.20 CORS-rejects it.
   "@grafana/faro-core": "2.11.0"

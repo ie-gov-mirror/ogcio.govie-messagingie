@@ -1,6 +1,9 @@
 import { httpErrors } from "@fastify/sensible";
 import type { Logger } from "@ogcio/building-blocks-sdk/dist/types/index.js";
-import type { Pool, PoolClient } from "pg";
+import { createDbFromPool, type Kysely } from "@ogcio/db-core";
+import type { Pool } from "pg";
+import type { DB } from "../../../db/schema.js";
+import { ProviderModel } from "../../../models/provider-model.js";
 import type { EnvConfig } from "../../../plugins/external/env.js";
 import type {
   EditableProviderTypes,
@@ -8,7 +11,6 @@ import type {
   EmailProvider,
   NoPasswordEmailProvider,
   ProvidersList,
-  ProvidersListItem,
   ProviderUpdateBody,
 } from "../../../types/providers.js";
 import type { PaginationParams } from "../../../types/schemaDefinitions.js";
@@ -16,16 +18,24 @@ import type CryptographyService from "../../../utils/cryptography-service.js";
 
 const FAILED_TO_FIND = "failed to find email provider";
 
-export class EmailSpecificProvider {
-  readonly providerType: EditableProviderTypes;
+/**
+ * Business logic for the email provider domain. Composes {@link ProviderModel}
+ * for data access and owns the cross-cutting concerns (password
+ * encryption/decryption, default-provider fallback, primary bookkeeping error
+ * mapping). This is the class that thin controllers instantiate with `app.db`.
+ */
+export class EmailProviderService {
+  readonly providerType: EditableProviderTypes = "email";
+  protected readonly model: ProviderModel;
+
   constructor(
-    readonly pool: Pool,
+    db: Kysely<DB>,
     readonly organisationId: string,
     readonly cryptographyService: CryptographyService,
     readonly config?: EnvConfig,
     readonly logger?: Logger,
   ) {
-    this.providerType = "email";
+    this.model = new ProviderModel(db);
   }
 
   async get<T extends EmailProvider>(params: {
@@ -40,37 +50,15 @@ export class EmailSpecificProvider {
     providerId: string;
     includePassword?: boolean;
   }): Promise<T> {
-    let provider: EmailProvider | NoPasswordEmailProvider | undefined;
-    let passwordSelect = "";
-
     const includePassword = params.includePassword !== false;
-    if (includePassword) {
-      passwordSelect = "pw as password,";
-    }
 
+    let provider: EmailProvider | NoPasswordEmailProvider | undefined;
     try {
-      const queryResult = await this.pool.query<T>(
-        `
-          SELECT id,
-              'email' as "type",
-              provider_name as "providerName",
-              COALESCE(is_primary, false) as "isPrimary",
-              smtp_host as "smtpHost",
-              smtp_port as "smtpPort",
-              username,
-              ${passwordSelect}
-              COALESCE(throttle_ms, 0) as "throttle",
-              from_address as "fromAddress",
-              is_ssl as "ssl",
-              headers
-          FROM email_providers
-          WHERE organisation_id = $1 AND id = $2
-          AND deleted_at is null
-          ORDER BY provider_name`,
-        [this.organisationId, params.providerId],
-      );
-
-      provider = queryResult.rows.at(0);
+      provider = await this.model.getRow({
+        providerId: params.providerId,
+        organisationId: this.organisationId,
+        includePassword,
+      });
     } catch (error) {
       throw httpErrors.createError(500, "failed to query email provider", {
         parent: error,
@@ -124,30 +112,7 @@ export class EmailSpecificProvider {
   async getPrimaryOrDefault(): Promise<EmailProvider> {
     let provider: EmailProvider | undefined;
     try {
-      const queryResult = await this.pool.query<EmailProvider>(
-        `
-          SELECT id,
-            'email' as "type",
-            provider_name as "providerName",
-            is_primary as "isPrimary",
-            smtp_host as "smtpHost",
-            smtp_port as "smtpPort",
-            username,
-            pw as "password",
-            COALESCE(throttle_ms, 0) as "throttle",
-            from_address as "fromAddress",
-            is_ssl as "ssl",
-            headers
-          FROM email_providers
-          WHERE organisation_id = $1 AND is_primary = true
-          AND deleted_at is null
-          ORDER BY provider_name
-          LIMIT 1
-        `,
-        [this.organisationId],
-      );
-
-      provider = queryResult.rows.at(0);
+      provider = await this.model.getPrimaryRow(this.organisationId);
     } catch (error) {
       throw httpErrors.createError(
         500,
@@ -182,19 +147,13 @@ export class EmailSpecificProvider {
       // and we want to avoid any validation error in other points of the system
       const prefixDeleted = (toUpdate: string) =>
         `deleted-${Date.now()}-${toUpdate}`;
-      const name = prefixDeleted(provider.providerName);
-      const fromAddress = prefixDeleted(provider.fromAddress);
 
-      const deleteQueryResult = await this.pool.query(
-        `
-          UPDATE email_providers 
-          SET deleted_at = now(), provider_name = $3, from_address = $4
-          WHERE id = $1 AND organisation_id = $2
-          RETURNING 1`,
-        [params.providerId, this.organisationId, name, fromAddress],
-      );
-
-      deleted = deleteQueryResult.rowCount || 0;
+      deleted = await this.model.softDeleteProvider({
+        providerId: params.providerId,
+        organisationId: this.organisationId,
+        providerName: prefixDeleted(provider.providerName),
+        fromAddress: prefixDeleted(provider.fromAddress),
+      });
     } catch (error) {
       throw httpErrors.createError(500, "failed delete query", {
         parent: error,
@@ -213,76 +172,27 @@ export class EmailSpecificProvider {
       organisationId: this.organisationId,
     });
 
-    const client = await this.pool.connect();
     try {
-      client.query("BEGIN");
-
-      const isPrimary = await this.needToSetProviderAsPrimary({
-        client,
+      return await this.model.createProvider({
         organisationId: this.organisationId,
-        setAsPrimary: inputBody.isPrimary,
-        tableName: "email_providers",
+        // Encrypt password before storing it
+        encryptedPassword: this.cryptographyService.encrypt(inputBody.password),
+        inputBody: {
+          providerName: inputBody.providerName,
+          smtpHost: inputBody.smtpHost,
+          smtpPort: inputBody.smtpPort,
+          username: inputBody.username,
+          fromAddress: inputBody.fromAddress,
+          throttle: inputBody.throttle,
+          ssl: inputBody.ssl,
+          isPrimary: inputBody.isPrimary,
+          headers: inputBody.headers ?? null,
+        },
       });
-
-      if (isPrimary) {
-        await client.query(
-          `
-            UPDATE email_providers
-            SET is_primary = null
-            WHERE organisation_id = $1
-          `,
-          [this.organisationId],
-        );
-      }
-
-      const queryResult = await client.query<{ providerId: string }>(
-        `
-          INSERT INTO email_providers(
-            provider_name,
-            smtp_host,
-            smtp_port,
-            username,
-            pw,
-            from_address,
-            throttle_ms,
-            is_ssl,
-            organisation_id,
-            is_primary,
-            headers
-          )
-          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-          RETURNING id as "providerId"`,
-        [
-          inputBody.providerName,
-          inputBody.smtpHost,
-          inputBody.smtpPort,
-          inputBody.username,
-          // Encrypt password before storing it
-          this.cryptographyService.encrypt(inputBody.password),
-          inputBody.fromAddress,
-          inputBody.throttle,
-          inputBody.ssl,
-          this.organisationId,
-          isPrimary,
-          inputBody.headers ?? null,
-        ],
-      );
-
-      const providerId = queryResult.rows.at(0)?.providerId;
-      if (!providerId) {
-        throw httpErrors.internalServerError("no record has been inserted");
-      }
-
-      await client.query("COMMIT");
-
-      return providerId;
     } catch (error) {
-      await client.query("ROLLBACK");
       throw httpErrors.createError(500, "failed to insert email provider", {
         parent: error,
       });
-    } finally {
-      client.release();
     }
   }
 
@@ -299,74 +209,34 @@ export class EmailSpecificProvider {
       providerIdToIgnore: params.inputBody.id,
     });
 
-    const client = await this.pool.connect();
     let updatedCount = 0;
     try {
-      client.query("BEGIN");
-      const isPrimary = await this.needToSetProviderAsPrimary({
-        client,
+      // Encrypt password before storing it, only when a new one is provided
+      const encryptedPassword =
+        inputBody.password && inputBody.password.length > 0
+          ? this.cryptographyService.encrypt(inputBody.password)
+          : undefined;
+
+      updatedCount = await this.model.updateProvider({
         organisationId: this.organisationId,
-        setAsPrimary: inputBody.isPrimary,
-        providerIdToIgnore: inputBody.id,
-        tableName: "email_providers",
+        providerId: inputBody.id,
+        encryptedPassword,
+        inputBody: {
+          providerName: inputBody.providerName,
+          smtpHost: inputBody.smtpHost,
+          smtpPort: inputBody.smtpPort,
+          username: inputBody.username,
+          fromAddress: inputBody.fromAddress,
+          throttle: inputBody.throttle,
+          ssl: inputBody.ssl,
+          isPrimary: inputBody.isPrimary,
+          headers: inputBody.headers ?? null,
+        },
       });
-      if (isPrimary) {
-        await client.query(
-          `
-            UPDATE email_providers SET is_primary = null
-            WHERE organisation_id = $1
-          `,
-          [this.organisationId],
-        );
-      }
-
-      const values = [
-        inputBody.providerName,
-        inputBody.smtpHost,
-        inputBody.smtpPort,
-        inputBody.username,
-        inputBody.fromAddress,
-        inputBody.throttle,
-        inputBody.ssl,
-        isPrimary,
-        inputBody.id,
-        this.organisationId,
-        inputBody.headers ?? null,
-      ];
-      let passwordInsert = "";
-      if (inputBody.password && inputBody.password.length > 0) {
-        // Encrypt password before storing it
-        values.push(this.cryptographyService.encrypt(inputBody.password));
-        passwordInsert = `, pw = $12`;
-      }
-
-      const updateResult = await client.query(
-        `
-          UPDATE email_providers SET 
-            provider_name = $1, 
-            smtp_host = $2,
-            smtp_port = $3,
-            username = $4,
-            from_address = $5,
-            throttle_ms = $6,
-            is_ssl = $7,
-            is_primary = $8,
-            headers = $11
-            ${passwordInsert}
-          WHERE id = $9 AND organisation_id = $10
-          RETURNING 1
-        `,
-        values,
-      );
-      updatedCount = updateResult.rowCount || 0;
-      client.query("COMMIT");
     } catch (error) {
-      client.query("ROLLBACK");
       throw httpErrors.createError(500, "failed to update email provider", {
         parent: error,
       });
-    } finally {
-      client.release();
     }
 
     if (!updatedCount) {
@@ -378,52 +248,23 @@ export class EmailSpecificProvider {
     isPrimary: boolean | undefined;
     pagination: Required<PaginationParams>;
   }): Promise<{ data: ProvidersList; totalCount: number }> {
-    let isPrimaryWhereClause = "";
-    if (params.isPrimary !== undefined) {
-      isPrimaryWhereClause = params.isPrimary
-        ? "AND is_primary = true"
-        : "AND (is_primary = false OR is_primary IS NULL)";
-    }
     try {
-      // separated count result query because using CTE
-      // no result is returned if the requested offset is
-      // higher than the total count
-      const countResult = await this.pool.query<{ count: number }>(
-        `
-SELECT count(*) FROM email_providers
-WHERE organisation_id = $1
-AND deleted_at is null
-${isPrimaryWhereClause}`,
-        [this.organisationId],
-      );
-      if (countResult.rowCount === 0 || countResult.rows[0].count === 0) {
+      const totalCount = await this.model.countRows({
+        organisationId: this.organisationId,
+        isPrimary: params.isPrimary,
+      });
+      if (totalCount === 0) {
         return { data: [], totalCount: 0 };
       }
-      const result = await this.pool.query<ProvidersListItem>(
-        `
-          SELECT
-            id,
-            provider_name as "providerName",
-            is_primary as "isPrimary",
-            'email' as "type"
-          FROM email_providers
-          WHERE organisation_id = $1
-          AND deleted_at is null 
-          ${isPrimaryWhereClause}
-          ORDER BY provider_name
-          LIMIT $2
-          OFFSET $3`,
-        [
-          this.organisationId,
-          params.pagination.limit,
-          params.pagination.offset,
-        ],
-      );
 
-      return {
-        data: result.rows,
-        totalCount: Number(countResult.rows[0].count),
-      };
+      const data = await this.model.listRows({
+        organisationId: this.organisationId,
+        isPrimary: params.isPrimary,
+        limit: params.pagination.limit,
+        offset: params.pagination.offset,
+      });
+
+      return { data, totalCount };
     } catch (error) {
       throw httpErrors.createError(500, "failed to query email providers", {
         parent: error,
@@ -436,31 +277,12 @@ ${isPrimaryWhereClause}`,
     organisationId: string;
     providerIdToIgnore?: string;
   }): Promise<void> {
-    const values: string[] = [
-      params.organisationId,
-      params.inputBody.fromAddress,
-      params.inputBody.providerName,
-    ];
-    let templateIdToIgnoreWhere = "";
-    if (params.providerIdToIgnore) {
-      templateIdToIgnoreWhere = " AND id != $4 ";
-      values.push(params.providerIdToIgnore);
-    }
-
-    const duplicationQueryResult = await this.pool.query<{
-      exists: boolean;
-    }>(
-      `
-        SELECT exists(
-          SELECT * from email_providers
-          WHERE organisation_id = $1 
-          AND (lower(from_address) = lower($2) OR lower(provider_name) = lower($3))
-          ${templateIdToIgnoreWhere}
-        )`,
-      values,
-    );
-
-    const addressExists = Boolean(duplicationQueryResult.rows.at(0)?.exists);
+    const addressExists = await this.model.existsByNameOrAddress({
+      organisationId: params.organisationId,
+      fromAddress: params.inputBody.fromAddress,
+      providerName: params.inputBody.providerName,
+      providerIdToIgnore: params.providerIdToIgnore,
+    });
 
     if (addressExists) {
       throw httpErrors.createError(
@@ -478,33 +300,30 @@ ${isPrimaryWhereClause}`,
       );
     }
   }
+}
 
-  private async needToSetProviderAsPrimary(params: {
-    client: PoolClient;
-    organisationId: string;
-    providerIdToIgnore?: string;
-    setAsPrimary: boolean | null;
-    tableName: "email_providers";
-  }): Promise<boolean | null> {
-    if (params.setAsPrimary) {
-      return true;
-    }
-    const values = [params.organisationId];
-    let idWhereClause = "";
-    if (params.providerIdToIgnore) {
-      idWhereClause = " AND id != $2";
-      values.push(params.providerIdToIgnore);
-    }
-    const otherProviders = await params.client.query<{ id: string }>(
-      `
-        SELECT id FROM ${params.tableName}
-        WHERE organisation_id = $1
-        AND deleted_at is null
-        ${idWhereClause}
-        LIMIT 1`,
-      values,
+/**
+ * Back-compat wrapper preserving the original pool-based constructor used by
+ * the background job processor and existing tests. Delegates all behaviour to
+ * {@link EmailProviderService} over a Kysely instance built from the pool.
+ */
+export class EmailSpecificProvider extends EmailProviderService {
+  readonly pool: Pool;
+
+  constructor(
+    pool: Pool,
+    organisationId: string,
+    cryptographyService: CryptographyService,
+    config?: EnvConfig,
+    logger?: Logger,
+  ) {
+    super(
+      createDbFromPool<DB>(pool),
+      organisationId,
+      cryptographyService,
+      config,
+      logger,
     );
-
-    return otherProviders.rowCount === 0 || null;
+    this.pool = pool;
   }
 }

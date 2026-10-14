@@ -13,15 +13,12 @@ const validate = (raw: string | null | undefined) =>
 
 describe("getValidReturnUrl", () => {
   describe("nullish + empty", () => {
-    it.each([
-      null,
-      undefined,
-      "",
-      "   ",
-      "\t\n",
-    ])("returns null for %p", (raw) => {
-      expect(validate(raw)).toBeNull()
-    })
+    it.each([null, undefined, "", "   ", "\t\n"])(
+      "returns null for %p",
+      (raw) => {
+        expect(validate(raw)).toBeNull()
+      },
+    )
   })
 
   describe("malformed inputs", () => {

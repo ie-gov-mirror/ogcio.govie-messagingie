@@ -11,10 +11,9 @@ import type {
   FastifyReplyTypebox,
   FastifyRequestTypebox,
 } from "~/schemas/shared.js";
+import { AnnouncementService } from "~/services/announcements/announcement-service.js";
 import {
   createAnnouncement,
-  getAnnouncementById,
-  listAnnouncements,
   setAnnouncementEnabled,
 } from "~/services/announcements/announcements-service.js";
 import { parseBooleanEnum } from "~/types/typebox.js";
@@ -68,8 +67,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         return error;
       }
 
-      const output = await listAnnouncements({
-        pool: fastify.pg.pool,
+      const output = await new AnnouncementService(fastify.db).list({
         applicationId: request.query.applicationId,
         isEnabled:
           request.query.isEnabled !== undefined
@@ -104,10 +102,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       }
 
       return reply.send({
-        data: await getAnnouncementById({
-          pool: fastify.pg.pool,
-          id: request.params.id,
-        }),
+        data: await new AnnouncementService(fastify.db).getById(
+          request.params.id,
+        ),
       });
     },
   );

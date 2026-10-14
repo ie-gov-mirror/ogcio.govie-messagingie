@@ -21,6 +21,7 @@ export function SubmissionDetailToolbar({ backHref }: { backHref: string }) {
     >
       <Link
         noColor
+        noUnderline
         href={backHref}
         className={messageDetailStyles.toolbarAction}
         aria-label={tBack("back")}
@@ -31,7 +32,9 @@ export function SubmissionDetailToolbar({ backHref }: { backHref: string }) {
           className={messageDetailStyles.toolbarIcon}
           ariaHidden
         />
-        {tBack("back")}
+        <span className={messageDetailStyles.toolbarLabel}>
+          {tBack("back")}
+        </span>
       </Link>
     </nav>
   )

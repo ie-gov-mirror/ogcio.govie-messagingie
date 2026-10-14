@@ -1,21 +1,11 @@
 import type fastifyPostgres from "@fastify/postgres";
+import { fileServiceFromPool } from "../../../services/file-service.js";
 
-const isFilenameAlreadyPresent = async (
+const isFilenameAlreadyPresent = (
   pg: fastifyPostgres.PostgresDb,
   userId: string,
   filename: string,
-) => {
-  const clashingFileCheckQuery = await pg.query(
-    `
-    SELECT file_name as "fileName"
-    FROM files
-    WHERE deleted = false AND owner = $1 AND file_name = $2
-  `,
-    [userId, filename],
-  );
-
-  return clashingFileCheckQuery.rows.length > 0;
-};
+) => fileServiceFromPool(pg.pool).isFilenameInUse(userId, filename);
 
 const getFilename = async (
   pg: fastifyPostgres.PostgresDb,

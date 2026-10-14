@@ -4,6 +4,7 @@ import {
   DELETE_FLASH_KEY,
   MOVE_FLASH_KEY,
 } from "@/components/messages/message-action-flash-keys"
+import styles from "./message-detail.module.css"
 
 const trackEvent = vi.hoisted(() => vi.fn())
 
@@ -21,12 +22,12 @@ vi.mock("@/mock/messages", () => ({
   findMockMessageById: (id: string) => findMockMessageById(id),
 }))
 
-const findMockSubmissionIdForRelatedMessage = vi.fn<
-  (id: string) => string | null
->()
-const findMockSubmissionById = vi.fn<
-  (id: string) => { id: string; title: { en: string; ga?: string } } | null
->()
+const findMockSubmissionIdForRelatedMessage =
+  vi.fn<(id: string) => string | null>()
+const findMockSubmissionById =
+  vi.fn<
+    (id: string) => { id: string; title: { en: string; ga?: string } } | null
+  >()
 
 vi.mock("@/mock/related-messages", () => ({
   findMockSubmissionIdForRelatedMessage: (id: string) =>
@@ -126,7 +127,6 @@ vi.mock("next-intl", () => ({
           "Please select the attachment(s) to preview your message content",
       },
       "home.table": { unknownSender: "Unknown sender" },
-      "navigation.back": { ariaLabel: "Go back" },
     }
     const resolve = (key: string) => byNamespace[namespace]?.[key] ?? key
     return Object.assign(
@@ -420,7 +420,7 @@ describe("MessageDetailView", () => {
     }
     render(<MessageDetailView id='missing-message-id' />)
     expect(screen.getByText("Message not found")).toBeInTheDocument()
-    expect(screen.getByRole("link", { name: "Go back" })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Back" })).toBeInTheDocument()
   })
 
   it("falls back to mock data when the API errors but a fixture exists", () => {
@@ -583,9 +583,7 @@ describe("MessageDetailView", () => {
       fetchState.metadataMessage = {
         metadata: { journey: { submissionId: "PPMG0004" } },
       }
-      findMockSubmissionIdForRelatedMessage.mockReturnValue(
-        "SCH-2025-084321",
-      )
+      findMockSubmissionIdForRelatedMessage.mockReturnValue("SCH-2025-084321")
 
       render(<MessageDetailView id='msg-1' />)
 
@@ -595,9 +593,7 @@ describe("MessageDetailView", () => {
       expect(
         screen.queryByText(/Message relates to submission/),
       ).not.toBeInTheDocument()
-      expect(
-        findMockSubmissionIdForRelatedMessage,
-      ).not.toHaveBeenCalled()
+      expect(findMockSubmissionIdForRelatedMessage).not.toHaveBeenCalled()
     },
   )
 
@@ -621,5 +617,8 @@ describe("MessageDetailView", () => {
       "href",
       "/en/messages",
     )
+    expect(
+      screen.getByRole("navigation", { name: "Message actions" }).parentElement,
+    ).toHaveClass(styles.detailOffset)
   })
 })

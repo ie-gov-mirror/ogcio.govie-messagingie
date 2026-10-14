@@ -14,35 +14,16 @@ import { SagFetchError } from "@ogcio/sag-client"
 import { useAuth, useGatewayFetch } from "@ogcio/sag-client/react"
 import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
+import { type Profile, profileApi } from "@/api/profile"
 import { ConsentSection } from "@/components/consent/consent-section"
 import { useFeatureFlags } from "@/components/feature-flags-provider"
 import { TwoColumnLayout } from "@/components/layout/containers"
 import { LifecycleTasks } from "@/components/lifecycle-tasks/lifecycle-tasks"
 import { PageLoading } from "@/components/page-loading"
+import pageTitleStyles from "@/components/page-title.module.css"
 import { PublicNameForm } from "@/components/profile/public-name-form"
 import { useIdleMount } from "@/hooks/use-idle-mount"
 import { stringToAsterisk } from "@/util/strings"
-
-interface ProfileDetails {
-  firstName?: string
-  lastName?: string
-  ppsn?: string
-}
-
-interface ConsentStatus {
-  status?: string
-}
-
-interface ProfileResponse {
-  id: string
-  primaryUserId: string
-  publicName: string
-  email?: string
-  details?: ProfileDetails
-  consentStatuses?: {
-    messaging?: ConsentStatus
-  }
-}
 
 export function MyProfile() {
   const t = useTranslations("profile")
@@ -64,7 +45,7 @@ export function MyProfile() {
 
   const profilePath =
     user?.sub && idleReady
-      ? `/profile/api/v1/profiles/${user.sub}?consentSubjects=messaging`
+      ? profileApi.detailKey(user.sub, { consentSubjects: "messaging" })
       : null
 
   const {
@@ -73,7 +54,7 @@ export function MyProfile() {
     isLoading,
     isValidating,
     refresh,
-  } = useGatewayFetch<ProfileResponse>(profilePath)
+  } = useGatewayFetch<Profile>(profilePath)
 
   const isTransientAuthError =
     !profile &&
@@ -93,7 +74,11 @@ export function MyProfile() {
     return (
       <TwoColumnLayout>
         <Stack direction='column' gap={8} data-testid='profile-page'>
-          <Heading as='h1' size='xl' data-testid='profile-heading'>
+          <Heading
+            as='h1'
+            className={pageTitleStyles.pageTitle}
+            data-testid='profile-heading'
+          >
             {t("title")}
           </Heading>
           <PageLoading minHeight='20vh' ariaLabel='Loading profile' size='lg' />
@@ -112,7 +97,11 @@ export function MyProfile() {
   return (
     <TwoColumnLayout>
       <Stack direction='column' gap={8} data-testid='profile-page'>
-        <Heading as='h1' size='xl' data-testid='profile-heading'>
+        <Heading
+          as='h1'
+          className={pageTitleStyles.pageTitle}
+          data-testid='profile-heading'
+        >
           {t("title")}
         </Heading>
 
@@ -127,7 +116,7 @@ export function MyProfile() {
         </Paragraph>
 
         {hasFirstOrLastName && (
-          <Heading as='h2' size='md' data-testid='name-heading'>
+          <Heading as='h2' size='sm' data-testid='name-heading'>
             {t("name")}
           </Heading>
         )}
@@ -159,7 +148,7 @@ export function MyProfile() {
         )}
 
         {profile.details?.ppsn && (
-          <Heading as='h2' size='md' data-testid='ppsn-heading'>
+          <Heading as='h2' size='sm' data-testid='ppsn-heading'>
             PPSN
           </Heading>
         )}
@@ -184,7 +173,7 @@ export function MyProfile() {
         )}
 
         {profile.email && (
-          <Heading as='h2' size='md' data-testid='contact-heading'>
+          <Heading as='h2' size='sm' data-testid='contact-heading'>
             {t("contactDetails")}
           </Heading>
         )}

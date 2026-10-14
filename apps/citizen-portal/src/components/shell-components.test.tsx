@@ -122,11 +122,8 @@ vi.mock("@/util/get-zone-from-path", () => ({
   getZoneFromPath: () => "messages",
 }))
 vi.mock("@/util/locale-switch-href", () => ({
-  buildLocaleSwitchHref: (
-    path: string,
-    current: string,
-    opposite: string,
-  ) => path.replace(`/${current}/`, `/${opposite}/`),
+  buildLocaleSwitchHref: (path: string, current: string, opposite: string) =>
+    path.replace(`/${current}/`, `/${opposite}/`),
 }))
 
 describe("shell components", () => {
@@ -139,10 +136,9 @@ describe("shell components", () => {
     locale = "en"
     render(<ShellLoadingChrome zone='dashboard' />)
 
-    expect(screen.getByRole("link", { name: "title:submissions" })).toHaveAttribute(
-      "href",
-      "/en/my-submissions",
-    )
+    expect(
+      screen.getByRole("link", { name: "title:submissions" }),
+    ).toHaveAttribute("href", "/en/my-submissions")
     expect(screen.getByText("Loading")).toBeInTheDocument()
     expect(screen.queryByRole("button", { name: "nav:logout" })).toBeNull()
   })

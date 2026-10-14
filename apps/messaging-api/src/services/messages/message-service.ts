@@ -1,16 +1,16 @@
 import { httpErrors } from "@fastify/sensible";
-import { getErrorMessage } from "@ogcio/shared-errors";
+import { createDbFromPool, type Kysely } from "@ogcio/db-core";
 import type { FastifyBaseLogger } from "fastify";
 import { isHttpError } from "http-errors";
-import type { Pool, PoolClient, QueryResult } from "pg";
-import { type Static, Type } from "typebox";
-import {
-  type CreateMessageBody,
-  type Delivered,
-  type MessageList,
-  MessageListItemSchema,
-  type PartialReadMessage,
-  type ReadMessage,
+import type { Pool } from "pg";
+import type { DB } from "../../db/schema.js";
+import { MessageModel } from "../../models/message-model.js";
+import type {
+  CreateMessageBody,
+  Delivered,
+  MessageList,
+  PartialReadMessage,
+  ReadMessage,
 } from "../../types/messages.js";
 import type {
   AcceptedQueryBooleanValues,
@@ -20,51 +20,392 @@ import { messagesCreatedCounter } from "../../utils/metrics.js";
 import { ProfilePersonalSdkWrapper } from "../users/profile-personal-sdk-wrapper.js";
 import { MessagesProcessor } from "./messages-processor.js";
 
-const MessageListItemWithCount = Type.Evaluate(
-  Type.Intersect([
-    MessageListItemSchema,
-    Type.Object({ count: Type.Number() }),
-  ]),
-);
+interface LoggedInUserData {
+  organizationId: string | undefined;
+  userId: string;
+  accessToken: string;
+}
 
-type QueryRow = Static<typeof MessageListItemWithCount>;
+interface ListQuery {
+  recipientUserId: string | undefined;
+  organisationId: string | undefined;
+  messagesStatus: Delivered | undefined;
+  isSeen: AcceptedQueryBooleanValues | undefined;
+  search: string | undefined;
+  deletedAfterDateTime: string | undefined;
+  tagId: string | undefined;
+  untagged: boolean | undefined;
+}
 
-export async function listMessages(params: {
-  loggedInUserData: {
-    organizationId: string | undefined;
+/**
+ * Business logic for the `messages` domain. Composes {@link MessageModel} for
+ * data access and keeps cross-service concerns (linked-profile resolution,
+ * permission and consent checks) here, so route handlers stay thin controllers.
+ */
+export class MessageService {
+  private readonly model: MessageModel;
+
+  constructor(
+    db: Kysely<DB>,
+    private readonly logger: FastifyBaseLogger,
+  ) {
+    this.model = new MessageModel(db);
+  }
+
+  async list(params: {
+    loggedInUserData: LoggedInUserData;
+    query: ListQuery;
+    pagination: Required<PaginationParams>;
+  }): Promise<{ data: MessageList; totalCount: number }> {
+    const { loggedInUserData, query, pagination } = params;
+
+    if (query.untagged && query.tagId) {
+      throw httpErrors.badRequest(
+        "'untagged' and 'tagId' are mutually exclusive",
+      );
+    }
+
+    const requestedIds = await this.getRequestedIds(loggedInUserData, query);
+
+    return this.model.listForInbox({
+      recipientUserIds: requestedIds.userIds,
+      organizationId: requestedIds.organizationId,
+      pagination,
+      query: {
+        isSeen: query.isSeen,
+        search: query.search,
+        deletedAfterDateTime: query.deletedAfterDateTime,
+        tagId: query.tagId,
+        untagged: query.untagged,
+      },
+    });
+  }
+
+  async get(params: {
+    messageId: string;
+    userId?: string;
+    loggedInUser: { userId: string; accessToken: string };
+    hasOnboardingPermission: boolean;
+    deleted?: boolean;
+  }): Promise<ReadMessage | PartialReadMessage> {
+    const message = await this.model.findByIdWithAttachments({
+      messageId: params.messageId,
+      userId: params.userId,
+      deleted: params.deleted,
+    });
+
+    if (!message) {
+      const errorMessage = params.userId
+        ? `No message with id ${params.messageId} for the logged in user does exist`
+        : `No message with id ${params.messageId} exist`;
+      throw httpErrors.notFound(errorMessage);
+    }
+
+    // node-pg returns timestamp columns as Date objects, but the response
+    // contract types `createdAt` as an ISO string. The 200 response is an
+    // anyOf union of the full message and the redacted partial shape, and
+    // fast-json-stringify selects the first branch whose data validates. A
+    // Date value fails the full branch's `Type.String()` check, so the
+    // serializer silently falls back to the partial branch and strips
+    // subject/body/date even for the legitimate recipient. Coerce to a string
+    // here so the full branch validates.
+    message.createdAt = new Date(message.createdAt).toISOString();
+    this.logger.debug(
+      {
+        messageId: `${params.messageId.substring(0, 5)}...`,
+        recipientId: `${message.recipientUserId.substring(0, 4)}...`,
+        isRecipientIdEqualToLoggedIn:
+          message.recipientUserId === params.loggedInUser.userId,
+      },
+      "Retrieved message",
+    );
+
+    return this.prepareGetMessageResponse({
+      loggedInUser: params.loggedInUser,
+      hasOnboardingPermission: params.hasOnboardingPermission,
+      message,
+      messageId: params.messageId,
+    });
+  }
+
+  async delete(params: {
+    messageIds: string[];
+    loggedInUser: { userId: string; accessToken: string };
+  }): Promise<void> {
+    const uniqueMessageIds = Array.from(new Set(params.messageIds));
+    try {
+      const messages = await this.model.findForDeletion(uniqueMessageIds);
+
+      if (messages.length !== uniqueMessageIds.length) {
+        const notFoundIds = uniqueMessageIds.filter(
+          (id) => !messages.some((message) => message.id === id),
+        );
+        this.logger.warn(
+          { notFoundIds },
+          "One or more messages not found during delete operation",
+        );
+        throw httpErrors.notFound("One or more messages not found");
+      }
+
+      const byRecipientId = this.groupMessagesByStatus(messages);
+
+      await this.validateDeletePermissions({
+        byRecipientId,
+        loggedInUser: params.loggedInUser,
+      });
+
+      await this.model.softDeleteByIds(uniqueMessageIds);
+    } catch (error) {
+      if (isHttpError(error)) {
+        throw error;
+      }
+      throw httpErrors.internalServerError(
+        "An unexpected error occurred while deleting messages",
+      );
+    }
+  }
+
+  async assignTag(params: {
     userId: string;
     accessToken: string;
-  };
-  query: {
-    recipientUserId: string | undefined;
-    organisationId: string | undefined;
-    messagesStatus: Delivered | undefined;
-    isSeen: AcceptedQueryBooleanValues | undefined;
-    search: string | undefined;
-    deletedAfterDateTime: string | undefined;
-    tagId: string | undefined;
-    untagged: boolean | undefined;
-  };
+    messageIds: string[];
+    tagId: string | null;
+  }): Promise<{ tagId: string | null; messageIds: string[] }> {
+    const { userId, accessToken, messageIds, tagId } = params;
+    const uniqueMessageIds = Array.from(new Set(messageIds));
+
+    const owners = await this.model.findOwners(uniqueMessageIds);
+    if (owners.length < uniqueMessageIds.length) {
+      throw httpErrors.notFound("Message not found");
+    }
+
+    // A message can be moved when it belongs to the logged-in user OR to one
+    // of their linked profiles. The inbox lists messages for linked profiles
+    // too, so validating against the logged-in user id alone would 404 on
+    // messages the user can legitimately see and move.
+    await this.ensureMessagesBelongToUserOrLinkedProfiles({
+      recipientIds: owners.map((row) => row.userId),
+      userId,
+      accessToken,
+    });
+
+    if (tagId !== null) {
+      const tag = await this.model.findTag(tagId);
+      if (!tag || tag.userId !== userId) {
+        throw httpErrors.notFound("Tag not found");
+      }
+    }
+
+    await this.model.setTag(uniqueMessageIds, tagId);
+
+    return { tagId, messageIds };
+  }
+
+  private async getRequestedIds(
+    loggedInUserData: LoggedInUserData,
+    query: {
+      recipientUserId: string | undefined;
+      organisationId: string | undefined;
+    },
+  ): Promise<{ userIds: string[]; organizationId: string | undefined }> {
+    if (loggedInUserData.organizationId) {
+      throw httpErrors.forbidden("Public servant can't access messages");
+    }
+    // if the citizen is asking specifically for its own data,
+    // without linked ids, then return only its own data
+    if (loggedInUserData.userId === query.recipientUserId) {
+      return {
+        userIds: [query.recipientUserId],
+        organizationId: query.organisationId,
+      };
+    }
+
+    const linkedProfilesIds = await this.getLinkedProfiles(loggedInUserData);
+
+    const userIds = [loggedInUserData.userId, ...linkedProfilesIds];
+
+    if (!query.recipientUserId) {
+      return { userIds, organizationId: query.organisationId };
+    }
+
+    if (userIds.includes(query.recipientUserId)) {
+      return {
+        userIds: [query.recipientUserId],
+        organizationId: query.organisationId,
+      };
+    }
+
+    throw httpErrors.forbidden(
+      "Not allowed to see messages for the requested user",
+    );
+  }
+
+  private async prepareGetMessageResponse(params: {
+    loggedInUser: { userId: string; accessToken: string };
+    hasOnboardingPermission: boolean;
+    message: ReadMessage;
+    messageId: string;
+  }): Promise<ReadMessage | PartialReadMessage> {
+    const { loggedInUser, hasOnboardingPermission, message, messageId } =
+      params;
+
+    if (loggedInUser.userId === message.recipientUserId) {
+      this.logger.debug("Logged user id is the same as the recipient");
+      return message;
+    }
+
+    if (hasOnboardingPermission) {
+      this.logger.debug(
+        "Logged user has onboarding permissions, returning partial info",
+      );
+      return {
+        recipientUserId: message.recipientUserId,
+        organisationId: message.organisationId,
+      };
+    }
+
+    const linkedProfilesIds = await this.getLinkedProfiles({
+      ...loggedInUser,
+      organizationId: undefined,
+    });
+
+    if (linkedProfilesIds.includes(message.recipientUserId)) {
+      this.logger.debug(
+        "Recipient user is linked to logged in user, returning the message",
+      );
+      return message;
+    }
+
+    throw httpErrors.notFound(
+      `No message with id ${messageId} for the logged in user does exist`,
+    );
+  }
+
+  private groupMessagesByStatus(
+    messages: { id: string; deletedAt: Date | null; recipientUserId: string }[],
+  ): Record<string, string[]> {
+    const alreadyDeleted: string[] = [];
+    const byRecipientId: Record<string, string[]> = {};
+
+    for (const message of messages) {
+      if (message.deletedAt) {
+        alreadyDeleted.push(message.id);
+      } else {
+        if (!byRecipientId[message.recipientUserId]) {
+          byRecipientId[message.recipientUserId] = [];
+        }
+        byRecipientId[message.recipientUserId].push(message.id);
+      }
+    }
+
+    if (alreadyDeleted.length > 0) {
+      this.logger.warn(
+        { alreadyDeletedIds: alreadyDeleted },
+        "One or more messages already deleted during delete operation",
+      );
+      throw httpErrors.notFound("One or more messages not found");
+    }
+
+    return byRecipientId;
+  }
+
+  private async validateDeletePermissions(params: {
+    byRecipientId: Record<string, string[]>;
+    loggedInUser: { userId: string; accessToken: string };
+  }): Promise<void> {
+    const { byRecipientId, loggedInUser } = params;
+    const recipientIds = Object.keys(byRecipientId);
+
+    const hasOtherRecipients = recipientIds.some(
+      (id) => id !== loggedInUser.userId,
+    );
+
+    let validUserIds = [loggedInUser.userId];
+    if (hasOtherRecipients) {
+      const linkedProfiles = await this.getLinkedProfiles({
+        organizationId: undefined,
+        userId: loggedInUser.userId,
+        accessToken: loggedInUser.accessToken,
+      });
+      validUserIds = Array.from(
+        new Set([loggedInUser.userId, ...linkedProfiles]),
+      );
+    }
+
+    const invalidRecipientIds = recipientIds.filter(
+      (recipientId) => !validUserIds.includes(recipientId),
+    );
+    if (invalidRecipientIds.length > 0) {
+      this.logger.warn(
+        { invalidRecipientIds },
+        "User attempted to delete messages for recipient ids they don't have access to",
+      );
+      throw httpErrors.forbidden("Not allowed to delete one or more messages");
+    }
+  }
+
+  private async ensureMessagesBelongToUserOrLinkedProfiles(params: {
+    recipientIds: string[];
+    userId: string;
+    accessToken: string;
+  }): Promise<void> {
+    const { recipientIds, userId, accessToken } = params;
+    const uniqueRecipientIds = Array.from(new Set(recipientIds));
+
+    // Only reach out to the profile service when a message is addressed to
+    // someone other than the logged-in user, mirroring the delete flow.
+    const hasOtherRecipients = uniqueRecipientIds.some((id) => id !== userId);
+    let validUserIds = [userId];
+    if (hasOtherRecipients) {
+      const linkedProfiles = await this.getLinkedProfiles({
+        organizationId: undefined,
+        userId,
+        accessToken,
+      });
+      validUserIds = Array.from(new Set([userId, ...linkedProfiles]));
+    }
+
+    const invalidRecipientIds = uniqueRecipientIds.filter(
+      (id) => !validUserIds.includes(id),
+    );
+    if (invalidRecipientIds.length > 0) {
+      this.logger.warn(
+        { invalidRecipientIds },
+        "User attempted to move messages they don't have access to",
+      );
+      throw httpErrors.notFound("Message not found");
+    }
+  }
+
+  private async getLinkedProfiles(
+    userData: LoggedInUserData,
+  ): Promise<string[]> {
+    const profileSdk = new ProfilePersonalSdkWrapper(this.logger, userData);
+    return profileSdk.getLinkedProfileIds(userData.userId);
+  }
+}
+
+/**
+ * Build a {@link MessageService} from a raw pg {@link Pool}. Used by the
+ * backward-compatible function wrappers below (and by tests) that still pass a
+ * pool; route handlers instead construct the service from `app.db` directly.
+ */
+const serviceFromPool = (
+  pool: Pool,
+  logger: FastifyBaseLogger,
+): MessageService => new MessageService(createDbFromPool<DB>(pool), logger);
+
+export async function listMessages(params: {
+  loggedInUserData: LoggedInUserData;
+  query: ListQuery;
   pool: Pool;
   pagination: Required<PaginationParams>;
   logger: FastifyBaseLogger;
 }): Promise<{ data: MessageList; totalCount: number }> {
-  const { loggedInUserData, query, pool, pagination, logger } = params;
-
-  if (query.untagged && query.tagId) {
-    throw httpErrors.badRequest(
-      "'untagged' and 'tagId' are mutually exclusive",
-    );
-  }
-
-  const requestedIds = await getRequestedIds(loggedInUserData, query, logger);
-
-  return queryMessagesForList({
-    pool,
-    recipientUserIds: requestedIds.userIds,
-    organizationId: requestedIds.organizationId,
-    query,
-    pagination,
+  return serviceFromPool(params.pool, params.logger).list({
+    loggedInUserData: params.loggedInUserData,
+    query: params.query,
+    pagination: params.pagination,
   });
 }
 
@@ -77,84 +418,41 @@ export async function getMessage(params: {
   logger: FastifyBaseLogger;
   deleted?: boolean;
 }): Promise<ReadMessage | PartialReadMessage> {
-  const args: string[] = [params.messageId];
-  let userIdClause = "";
-  if (params.userId) {
-    args.push(params.userId);
-    userIdClause = "AND messages.user_id = $2";
-  }
+  return serviceFromPool(params.pool, params.logger).get({
+    messageId: params.messageId,
+    userId: params.userId,
+    loggedInUser: params.loggedInUser,
+    hasOnboardingPermission: params.hasOnboardingPermission,
+    deleted: params.deleted,
+  });
+}
 
-  const deletedAtClause =
-    params.deleted === true
-      ? "AND messages.deleted_at IS NOT NULL"
-      : "AND messages.deleted_at IS NULL";
+export async function deleteMessages(params: {
+  pool: Pool;
+  messageIds: string[];
+  logger: FastifyBaseLogger;
+  loggedInUser: { userId: string; accessToken: string };
+}): Promise<void> {
+  return serviceFromPool(params.pool, params.logger).delete({
+    messageIds: params.messageIds,
+    loggedInUser: params.loggedInUser,
+  });
+}
 
-  const data = await params.pool.query<ReadMessage>(
-    `   
-    SELECT 
-        messages.subject as "subject", 
-        messages.excerpt as "excerpt", 
-        messages.plain_text as "plainText",
-        messages.rich_text as "richText",
-        messages.created_at as "createdAt",
-        messages.thread_name as "threadName",
-        messages.organisation_id as "organisationId",
-        messages.user_id as "recipientUserId",
-        messages.is_seen as "isSeen",
-        messages.security_level as "security",
-        messages.external_id as "externalId",
-        COALESCE(ARRAY_AGG(attachments_messages.attachment_id) FILTER (WHERE attachments_messages.attachment_id IS NOT NULL), '{}') AS "attachments"
-    FROM messages
-    LEFT JOIN attachments_messages 
-        ON attachments_messages.message_id = messages.id
-    WHERE 
-        messages.id = $1
-        AND messages.scheduled_at <= now()
-        ${deletedAtClause}
-        ${userIdClause}
-    GROUP BY 
-        messages.subject, 
-        messages.excerpt, 
-        messages.plain_text, 
-        messages.rich_text, 
-        messages.created_at, 
-        messages.thread_name, 
-        messages.organisation_id, 
-        messages.user_id, 
-        messages.is_seen, 
-        messages.security_level,
-        messages.external_id
-    ORDER BY messages.created_at DESC;
-    `,
-    args,
-  );
-
-  if (data.rowCount === 0) {
-    const errorMessage = params.userId
-      ? `No message with id ${params.messageId} for the logged in user does exist`
-      : `No message with id ${params.messageId} exist`;
-    throw httpErrors.notFound(errorMessage);
-  }
-  const message = data.rows[0];
-  // node-pg returns timestamp columns as Date objects, but the response
-  // contract types `createdAt` as an ISO string. The 200 response is an
-  // anyOf union of the full message and the redacted partial shape, and
-  // fast-json-stringify selects the first branch whose data validates. A
-  // Date value fails the full branch's `Type.String()` check, so the
-  // serializer silently falls back to the partial branch and strips
-  // subject/body/date even for the legitimate recipient. Coerce to a string
-  // here so the full branch validates.
-  message.createdAt = new Date(message.createdAt).toISOString();
-  params.logger.debug(
-    {
-      messageId: `${params.messageId.substring(0, 5)}...`,
-      recipientId: `${message.recipientUserId.substring(0, 4)}...`,
-      isRecipientIdEqualToLoggedIn:
-        message.recipientUserId === params.loggedInUser.userId,
-    },
-    "Retrieved message",
-  );
-  return prepareGetMessageResponse({ ...params, message });
+export async function assignMessageTag(params: {
+  pool: Pool;
+  userId: string;
+  accessToken: string;
+  messageIds: string[];
+  tagId: string | null;
+  logger: FastifyBaseLogger;
+}): Promise<{ tagId: string | null; messageIds: string[] }> {
+  return serviceFromPool(params.pool, params.logger).assignTag({
+    userId: params.userId,
+    accessToken: params.accessToken,
+    messageIds: params.messageIds,
+    tagId: params.tagId,
+  });
 }
 
 export async function processMessage(params: {
@@ -179,483 +477,4 @@ export async function processMessage(params: {
   });
 
   return result;
-}
-
-async function getRequestedIds(
-  loggedInUserData: {
-    organizationId: string | undefined;
-    userId: string;
-    accessToken: string;
-  },
-  query: {
-    recipientUserId: string | undefined;
-    organisationId: string | undefined;
-  },
-  logger: FastifyBaseLogger,
-): Promise<{ userIds: string[]; organizationId: string | undefined }> {
-  if (loggedInUserData.organizationId) {
-    throw httpErrors.forbidden("Public servant can't access messages");
-  }
-  // if the citizen is asking specifically for its own data,
-  // without linked ids, then return only its own data
-  if (loggedInUserData.userId === query.recipientUserId) {
-    return {
-      userIds: [query.recipientUserId],
-      organizationId: query.organisationId,
-    };
-  }
-
-  const linkedProfilesIds = await getLinkedProfiles({
-    userData: loggedInUserData,
-    logger,
-  });
-
-  const userIds = [loggedInUserData.userId, ...linkedProfilesIds];
-
-  if (!query.recipientUserId) {
-    return { userIds, organizationId: query.organisationId };
-  }
-
-  if (userIds.includes(query.recipientUserId)) {
-    return {
-      userIds: [query.recipientUserId],
-      organizationId: query.organisationId,
-    };
-  }
-
-  throw httpErrors.forbidden(
-    "Not allowed to see messages for the requested user",
-  );
-}
-
-async function queryMessagesForList(params: {
-  pool: Pool;
-  recipientUserIds: string[];
-  organizationId: string | undefined;
-  pagination: Required<PaginationParams>;
-  query: {
-    isSeen: AcceptedQueryBooleanValues | undefined;
-    search: string | undefined;
-    deletedAfterDateTime: string | undefined;
-    tagId: string | undefined;
-    untagged: boolean | undefined;
-  };
-}): Promise<{ data: MessageList; totalCount: number }> {
-  const { pool, recipientUserIds, organizationId, pagination, query } = params;
-
-  // Build WHERE clauses and params dynamically so PostgreSQL
-  // can pick the optimal index for each combination.
-  const conditions: string[] = [];
-  const values: unknown[] = [];
-  let paramIndex = 1;
-
-  if (organizationId) {
-    conditions.push(`organisation_id = $${paramIndex}`);
-    values.push(organizationId);
-    paramIndex++;
-  }
-
-  conditions.push(`user_id = ANY ($${paramIndex})`);
-  values.push(recipientUserIds);
-  paramIndex++;
-
-  conditions.push(`scheduled_at <= now()`);
-
-  if (query.deletedAfterDateTime) {
-    conditions.push(`deleted_at >= $${paramIndex}`);
-    values.push(query.deletedAfterDateTime);
-    paramIndex++;
-  } else {
-    conditions.push(`deleted_at IS NULL`);
-  }
-
-  if (query.isSeen !== undefined) {
-    conditions.push(`messages.is_seen = $${paramIndex}::boolean`);
-    values.push(query.isSeen);
-    paramIndex++;
-  }
-
-  conditions.push(`subject ilike $${paramIndex}`);
-  values.push(query.search ? `%${query.search}%` : "%%");
-  paramIndex++;
-
-  // Tag filtering
-  if (query.untagged) {
-    conditions.push(`messages.tag_id IS NULL`);
-  } else if (query.tagId) {
-    conditions.push(`messages.tag_id = $${paramIndex}`);
-    values.push(query.tagId);
-    paramIndex++;
-  }
-
-  const limitParam = paramIndex++;
-  const offsetParam = paramIndex++;
-  values.push(pagination.limit, pagination.offset);
-
-  const whereClause = conditions.join("\n              AND ");
-
-  let messagesQueryResult: QueryResult<QueryRow> | undefined;
-  try {
-    messagesQueryResult = await pool.query<QueryRow>(
-      `
-          SELECT
-              messages.id,
-              messages.subject,
-              messages.thread_name AS "threadName",
-              messages.organisation_id AS "organisationId",
-              messages.user_id AS "recipientUserId",
-              messages.scheduled_at AS "createdAt",
-              messages.is_seen AS "isSeen",
-              COUNT(*) OVER() AS "count",
-              (SELECT COUNT(*) FROM attachments_messages WHERE attachments_messages.message_id = messages.id) AS "attachmentsCount"
-          FROM messages
-          WHERE
-              ${whereClause}
-          ORDER BY messages.scheduled_at DESC
-          LIMIT $${limitParam}
-          OFFSET $${offsetParam};
-        `,
-      values,
-    );
-  } catch (error) {
-    throw httpErrors.createError(500, "failed to query organisation messages", {
-      parent: error,
-    });
-  }
-
-  const totalCount = messagesQueryResult.rows.at(0)?.count
-    ? Number(messagesQueryResult.rows.at(0)?.count)
-    : undefined;
-
-  if (!totalCount) {
-    return { data: [], totalCount: 0 };
-  }
-
-  // removing count field from output
-  const output = messagesQueryResult.rows.map(
-    ({ count, ...otherFields }) => otherFields,
-  );
-
-  return { data: output, totalCount };
-}
-
-async function prepareGetMessageResponse({
-  loggedInUser,
-  hasOnboardingPermission,
-  message,
-  messageId,
-  logger,
-}: {
-  loggedInUser: { userId: string; accessToken: string };
-  hasOnboardingPermission: boolean;
-  message: ReadMessage;
-  messageId: string;
-  logger: FastifyBaseLogger;
-}): Promise<ReadMessage | PartialReadMessage> {
-  if (loggedInUser.userId === message.recipientUserId) {
-    logger.debug("Logged user id is the same as the recipient");
-    return message;
-  }
-
-  if (hasOnboardingPermission) {
-    logger.debug(
-      "Logged user has onboarding permissions, returning partial info",
-    );
-    return {
-      recipientUserId: message.recipientUserId,
-      organisationId: message.organisationId,
-    };
-  }
-
-  const linkedProfilesIds = await getLinkedProfiles({
-    userData: { ...loggedInUser, organizationId: undefined },
-    logger,
-  });
-
-  if (linkedProfilesIds.includes(message.recipientUserId)) {
-    logger.debug(
-      "Recipient user is linked to logged in user, returning the message",
-    );
-    return message;
-  }
-
-  throw httpErrors.notFound(
-    `No message with id ${messageId} for the logged in user does exist`,
-  );
-}
-
-async function getLinkedProfiles(params: {
-  userData: {
-    organizationId: string | undefined;
-    userId: string;
-    accessToken: string;
-  };
-  logger: FastifyBaseLogger;
-}): Promise<string[]> {
-  const profileSdk = new ProfilePersonalSdkWrapper(
-    params.logger,
-    params.userData,
-  );
-  const linkedProfilesIds = await profileSdk.getLinkedProfileIds(
-    params.userData.userId,
-  );
-
-  return linkedProfilesIds;
-}
-
-async function fetchAndValidateMessages(
-  client: PoolClient,
-  uniqueMessageIds: string[],
-  logger: FastifyBaseLogger,
-): Promise<
-  { id: string; deletedAt: string | null; recipientUserId: string }[]
-> {
-  const result = await client.query<{
-    id: string;
-    deletedAt: string | null;
-    recipientUserId: string;
-  }>(
-    `
-      SELECT id, deleted_at AS "deletedAt", user_id AS "recipientUserId"
-      FROM messages
-      WHERE id = ANY($1)
-    `,
-    [uniqueMessageIds],
-  );
-
-  if (result.rows.length !== uniqueMessageIds.length) {
-    const notFoundIds = uniqueMessageIds.filter(
-      (id) => !result.rows.some((message) => message.id === id),
-    );
-    logger.warn(
-      { notFoundIds },
-      "One or more messages not found during delete operation",
-    );
-    throw httpErrors.notFound("One or more messages not found");
-  }
-
-  return result.rows;
-}
-
-function groupMessagesByStatus(
-  messages: { id: string; deletedAt: string | null; recipientUserId: string }[],
-  logger: FastifyBaseLogger,
-): Record<string, string[]> {
-  const alreadyDeleted: string[] = [];
-  const byRecipientId: Record<string, string[]> = {};
-
-  for (const message of messages) {
-    if (message.deletedAt) {
-      alreadyDeleted.push(message.id);
-    } else {
-      if (!byRecipientId[message.recipientUserId]) {
-        byRecipientId[message.recipientUserId] = [];
-      }
-      byRecipientId[message.recipientUserId].push(message.id);
-    }
-  }
-
-  if (alreadyDeleted.length > 0) {
-    logger.warn(
-      { alreadyDeletedIds: alreadyDeleted },
-      "One or more messages already deleted during delete operation",
-    );
-    throw httpErrors.notFound("One or more messages not found");
-  }
-
-  return byRecipientId;
-}
-
-async function validateDeletePermissions(params: {
-  byRecipientId: Record<string, string[]>;
-  loggedInUser: { userId: string; accessToken: string };
-  logger: FastifyBaseLogger;
-}): Promise<void> {
-  const { byRecipientId, loggedInUser, logger } = params;
-  const recipientIds = Object.keys(byRecipientId);
-
-  const hasOtherRecipients = recipientIds.some(
-    (id) => id !== loggedInUser.userId,
-  );
-
-  let validUserIds = [loggedInUser.userId];
-  if (hasOtherRecipients) {
-    const linkedProfiles = await getLinkedProfiles({
-      userData: {
-        organizationId: undefined,
-        userId: loggedInUser.userId,
-        accessToken: loggedInUser.accessToken,
-      },
-      logger,
-    });
-    validUserIds = Array.from(
-      new Set([loggedInUser.userId, ...linkedProfiles]),
-    );
-  }
-
-  const invalidRecipientIds = recipientIds.filter(
-    (recipientId) => !validUserIds.includes(recipientId),
-  );
-  if (invalidRecipientIds.length > 0) {
-    logger.warn(
-      { invalidRecipientIds },
-      "User attempted to delete messages for recipient ids they don't have access to",
-    );
-    throw httpErrors.forbidden("Not allowed to delete one or more messages");
-  }
-}
-
-async function executeSoftDelete(
-  client: PoolClient,
-  uniqueMessageIds: string[],
-  logger: FastifyBaseLogger,
-): Promise<void> {
-  try {
-    await client.query("BEGIN");
-    await client.query(
-      `
-      UPDATE messages
-      SET deleted_at = now(), updated_at = now()
-      WHERE id = ANY($1)
-    `,
-      [uniqueMessageIds],
-    );
-    await client.query("COMMIT");
-  } catch (error) {
-    try {
-      await client.query("ROLLBACK");
-    } catch (rollbackError) {
-      logger.error(
-        { error: getErrorMessage(rollbackError) },
-        "Failed to rollback transaction after error in deleteMessages",
-      );
-    }
-    throw error;
-  }
-}
-
-export async function assignMessageTag(params: {
-  pool: Pool;
-  userId: string;
-  accessToken: string;
-  messageIds: string[];
-  tagId: string | null;
-  logger: FastifyBaseLogger;
-}): Promise<{ tagId: string | null; messageIds: string[] }> {
-  const { pool, userId, accessToken, messageIds, tagId, logger } = params;
-  const uniqueMessageIds = Array.from(new Set(messageIds));
-  const client = await pool.connect();
-  try {
-    // Verify every message exists
-    const messageResult = await client.query<{ id: string; user_id: string }>(
-      `SELECT id, user_id FROM messages WHERE id = ANY($1)`,
-      [uniqueMessageIds],
-    );
-
-    if (messageResult.rows.length < uniqueMessageIds.length) {
-      throw httpErrors.notFound("Message not found");
-    }
-
-    // A message can be moved when it belongs to the logged-in user OR to one
-    // of their linked profiles. The inbox lists messages for linked profiles
-    // too (see `listMessages`), so validating against the logged-in user id
-    // alone would 404 on messages the user can legitimately see and move.
-    await ensureMessagesBelongToUserOrLinkedProfiles({
-      recipientIds: messageResult.rows.map((row) => row.user_id),
-      userId,
-      accessToken,
-      logger,
-    });
-
-    // If assigning a tag, verify it exists and belongs to the user
-    if (tagId !== null) {
-      const tagResult = await client.query<{ id: string; user_id: string }>(
-        `SELECT id, user_id FROM tags WHERE id = $1`,
-        [tagId],
-      );
-
-      if (tagResult.rows.length === 0 || tagResult.rows[0].user_id !== userId) {
-        throw httpErrors.notFound("Tag not found");
-      }
-    }
-
-    await client.query(`UPDATE messages SET tag_id = $1 WHERE id = ANY($2)`, [
-      tagId,
-      uniqueMessageIds,
-    ]);
-
-    return { tagId, messageIds };
-  } finally {
-    client.release();
-  }
-}
-
-async function ensureMessagesBelongToUserOrLinkedProfiles(params: {
-  recipientIds: string[];
-  userId: string;
-  accessToken: string;
-  logger: FastifyBaseLogger;
-}): Promise<void> {
-  const { recipientIds, userId, accessToken, logger } = params;
-  const uniqueRecipientIds = Array.from(new Set(recipientIds));
-
-  // Only reach out to the profile service when a message is addressed to
-  // someone other than the logged-in user, mirroring the delete flow.
-  const hasOtherRecipients = uniqueRecipientIds.some((id) => id !== userId);
-  let validUserIds = [userId];
-  if (hasOtherRecipients) {
-    const linkedProfiles = await getLinkedProfiles({
-      userData: { organizationId: undefined, userId, accessToken },
-      logger,
-    });
-    validUserIds = Array.from(new Set([userId, ...linkedProfiles]));
-  }
-
-  const invalidRecipientIds = uniqueRecipientIds.filter(
-    (id) => !validUserIds.includes(id),
-  );
-  if (invalidRecipientIds.length > 0) {
-    logger.warn(
-      { invalidRecipientIds },
-      "User attempted to move messages they don't have access to",
-    );
-    throw httpErrors.notFound("Message not found");
-  }
-}
-
-export async function deleteMessages(params: {
-  pool: Pool;
-  messageIds: string[];
-  logger: FastifyBaseLogger;
-  loggedInUser: { userId: string; accessToken: string };
-}) {
-  const { pool, messageIds, logger, loggedInUser } = params;
-  const uniqueMessageIds = Array.from(new Set(messageIds));
-  const client = await pool.connect();
-  try {
-    const messages = await fetchAndValidateMessages(
-      client,
-      uniqueMessageIds,
-      logger,
-    );
-
-    const byRecipientId = groupMessagesByStatus(messages, logger);
-
-    await validateDeletePermissions({
-      byRecipientId,
-      loggedInUser,
-      logger,
-    });
-
-    await executeSoftDelete(client, uniqueMessageIds, logger);
-  } catch (error) {
-    if (isHttpError(error)) {
-      throw error;
-    }
-    throw httpErrors.internalServerError(
-      "An unexpected error occurred while deleting messages",
-    );
-  } finally {
-    client.release();
-  }
 }

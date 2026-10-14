@@ -93,9 +93,7 @@ describe("SecureMessagePage", () => {
 
     expect(screen.getByLabelText("Loading")).toBeInTheDocument()
     await waitFor(() => {
-      expect(mocks.replace).toHaveBeenCalledWith(
-        "/en/messages?id=message-id",
-      )
+      expect(mocks.replace).toHaveBeenCalledWith("/en/messages?id=message-id")
     })
     expect(mocks.fetchCalls[0]).toEqual([
       "/messaging/api/v1/messages/message-id",
@@ -121,14 +119,8 @@ describe("SecureMessagePage", () => {
     )
     expect(mocks.fetchCalls).toEqual([
       ["/messaging/api/v1/messages/message-id"],
-      [
-        "/messaging/api/v1/messages/message-id",
-        { actorType: "m2m" },
-      ],
-      [
-        "/profile/api/v1/profiles/linked-user-id",
-        { actorType: "m2m" },
-      ],
+      ["/messaging/api/v1/messages/message-id", { actorType: "m2m" }],
+      ["/profile/api/v1/profiles/linked-user-id", { actorType: "m2m" }],
       ["/profile/api/v1/profiles/current-user-id"],
     ])
     expect(mocks.replace).not.toHaveBeenCalled()

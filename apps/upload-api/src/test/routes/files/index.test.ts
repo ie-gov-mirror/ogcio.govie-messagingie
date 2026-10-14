@@ -68,26 +68,39 @@ vi.mock("@fastify/multipart", () => ({
 
 vi.mock("@fastify/postgres", () => ({
   default: fp(async (fastify: FastifyInstance) => {
-    fastify.decorate("pg", {
-      query: () => {
-        return new Promise<{
-          rows: unknown;
-          rowCount: number;
-          command: string;
-          oid: number;
-          fields: FieldDef[];
-        }>((resolve, reject) => {
-          testContext.pgEventEmitter.once("error", (err) => reject(err));
-          testContext.pgEventEmitter.once("done", (data) => {
-            resolve({
-              rows: data,
-              command: "",
-              rowCount: data?.length,
-              oid: 1,
-              fields: [],
-            });
+    const query = () => {
+      return new Promise<{
+        rows: unknown;
+        rowCount: number;
+        command: string;
+        oid: number;
+        fields: FieldDef[];
+      }>((resolve, reject) => {
+        testContext.pgEventEmitter.once("error", (err) => reject(err));
+        testContext.pgEventEmitter.once("done", (data) => {
+          resolve({
+            rows: data,
+            command: "",
+            rowCount: data?.length,
+            oid: 1,
+            fields: [],
           });
         });
+      });
+    };
+
+    fastify.decorate("pg", {
+      query,
+      // `getFileMetadataById` now delegates to FileService, which reads via a
+      // Kysely instance built from `pg.pool`. Route the acquired client's
+      // queries through the same event-emitter mechanism as the direct
+      // `pg.query` path used by the remaining raw-pg writes.
+      pool: {
+        connect: () =>
+          Promise.resolve({
+            query,
+            release: () => {},
+          }),
       },
     } as unknown as PostgresDb & Record<string, PostgresDb>);
   }),

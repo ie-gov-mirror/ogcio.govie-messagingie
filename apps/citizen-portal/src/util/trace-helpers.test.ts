@@ -19,32 +19,37 @@ describe("withFaroSpan", () => {
     expect(operation).toHaveBeenCalledOnce()
   })
 
-  it.each([false, true])("sets attributes and always ends the span", async (fails) => {
-    const span = { setAttribute: vi.fn(), end: vi.fn() }
-    const trace = {
-      getTracer: vi.fn(() => ({ startSpan: vi.fn(() => span) })),
-      setSpan: vi.fn(() => "span-context"),
-    }
-    const context = {
-      active: vi.fn(() => "active-context"),
-      with: vi.fn((_context, operation: () => Promise<unknown>) => operation()),
-    }
-    getOTEL.mockReturnValue({ trace, context })
-    const operation = fails
-      ? vi.fn().mockRejectedValue(new Error("failed"))
-      : vi.fn().mockResolvedValue("done")
+  it.each([false, true])(
+    "sets attributes and always ends the span",
+    async (fails) => {
+      const span = { setAttribute: vi.fn(), end: vi.fn() }
+      const trace = {
+        getTracer: vi.fn(() => ({ startSpan: vi.fn(() => span) })),
+        setSpan: vi.fn(() => "span-context"),
+      }
+      const context = {
+        active: vi.fn(() => "active-context"),
+        with: vi.fn((_context, operation: () => Promise<unknown>) =>
+          operation(),
+        ),
+      }
+      getOTEL.mockReturnValue({ trace, context })
+      const operation = fails
+        ? vi.fn().mockRejectedValue(new Error("failed"))
+        : vi.fn().mockResolvedValue("done")
 
-    if (fails) {
-      await expect(
-        withFaroSpan("load", { messageId: "one" }, operation),
-      ).rejects.toThrow("failed")
-    } else {
-      await expect(
-        withFaroSpan("load", { messageId: "one" }, operation),
-      ).resolves.toBe("done")
-    }
+      if (fails) {
+        await expect(
+          withFaroSpan("load", { messageId: "one" }, operation),
+        ).rejects.toThrow("failed")
+      } else {
+        await expect(
+          withFaroSpan("load", { messageId: "one" }, operation),
+        ).resolves.toBe("done")
+      }
 
-    expect(span.setAttribute).toHaveBeenCalledWith("messageId", "one")
-    expect(span.end).toHaveBeenCalledOnce()
-  })
+      expect(span.setAttribute).toHaveBeenCalledWith("messageId", "one")
+      expect(span.end).toHaveBeenCalledOnce()
+    },
+  )
 })

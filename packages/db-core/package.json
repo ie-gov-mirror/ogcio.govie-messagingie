@@ -1,0 +1,50 @@
+{
+  "name": "@ogcio/db-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Kysely-based data-access framework: db bootstrap, Fastify plugin, BaseModel basic ORM, migration runner and conventions for OGCIO backend APIs.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./migrator": {
+      "types": "./dist/migrator.d.ts",
+      "default": "./dist/migrator.js"
+    },
+    "./codegen": {
+      "types": "./dist/codegen.d.ts",
+      "default": "./dist/codegen.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "format": "biome check --write",
+    "lint": "biome check",
+    "test": "vitest run --reporter=junit --reporter=default --outputFile=results.xml",
+    "test:local": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "fastify-plugin": "6.0.1",
+    "kysely": "0.29.6",
+    "pg": "8.23.1"
+  },
+  "peerDependencies": {
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "12.2.0",
+    "@types/pg": "8.23.1",
+    "@vitest/coverage-v8": "5.0.3",
+    "fastify": "5.12.5",
+    "kysely-codegen": "0.20.0",
+    "vitest": "5.0.3"
+  }
+}

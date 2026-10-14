@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
+import dayjs from "dayjs"
 import { describe, expect, it } from "vitest"
 import { UserTable } from "@/app/(protected)/[userId]/account-linking/components/UserTable"
 import { ConsentTables } from "@/app/(protected)/[userId]/profile/ConsentTables"
@@ -103,24 +104,43 @@ describe("ConsentTables", () => {
     render(
       <ConsentTables
         consents={[
-          consent({ id: "c-1", subject: "messaging" }),
-          consent({ id: "c-2", subject: "marketing" }),
+          consent({ id: "c-1", subject: "messaging", status: "opted-in" }),
+          consent({ id: "c-2", subject: "marketing", status: "opted-out" }),
         ]}
       />,
     )
 
+    const messaging = screen.getByRole("heading", {
+      name: "MessagingIE consent history",
+    })
+    const marketing = screen.getByRole("heading", {
+      name: "Marketing consent history",
+    })
+    const messagingSection = messaging.parentElement
+    const marketingSection = marketing.parentElement
+
+    if (!messagingSection || !marketingSection) {
+      throw new Error("consent heading is not inside a section")
+    }
+
+    expect(within(messagingSection).getByText("Accepted")).toBeInTheDocument()
     expect(
-      screen.getByRole("heading", { name: "MessagingIE consent history" }),
-    ).toBeInTheDocument()
+      within(messagingSection).queryByText("Declined"),
+    ).not.toBeInTheDocument()
+    expect(within(marketingSection).getByText("Declined")).toBeInTheDocument()
     expect(
-      screen.getByRole("heading", { name: "Marketing consent history" }),
-    ).toBeInTheDocument()
+      within(marketingSection).queryByText("Accepted"),
+    ).not.toBeInTheDocument()
   })
 
   it("renders a formatted date per consent row", () => {
     render(<ConsentTables consents={[consent({})]} />)
 
     expect(screen.getByText("2025-03-04")).toBeInTheDocument()
+    // HH:MM would print the month (03); minutes of this fixture are 00
+    expect(
+      screen.getByText(dayjs("2025-03-04T10:00:00Z").format("HH:mm")),
+    ).toBeInTheDocument()
   })
 
   it("renders nothing for an empty consent list", () => {

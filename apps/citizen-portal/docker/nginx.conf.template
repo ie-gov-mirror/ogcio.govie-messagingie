@@ -279,7 +279,8 @@ http {
     # Immutable hashed assets from Next.js build
     location /_next/static/ {
       otel_trace off;
-      add_header Cache-Control "public, max-age=31536000, immutable" always;
+      # No `always`: a 404 for a chunk missing mid-rollout must not be cached as immutable.
+      add_header Cache-Control "public, max-age=31536000, immutable";
       add_header X-Content-Type-Options "nosniff" always;
       add_header X-Frame-Options "SAMEORIGIN" always;
       add_header Referrer-Policy "strict-origin-when-cross-origin" always;

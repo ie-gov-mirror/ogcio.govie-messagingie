@@ -10,8 +10,8 @@ import {
 } from "./containers"
 
 vi.mock("@citizen-portal/shared", () => ({
-  useCrossZoneLink:
-    () => (zone: string, path: string) => `https://${zone}.example${path}`,
+  useCrossZoneLink: () => (zone: string, path: string) =>
+    `https://${zone}.example${path}`,
 }))
 
 vi.mock("next-intl", () => ({

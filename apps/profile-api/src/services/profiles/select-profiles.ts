@@ -1,7 +1,6 @@
 import type { Pool } from "pg";
 import type { ProfileWithDetails } from "~/schemas/profiles/model.js";
-import { withClient } from "~/utils/with-client.js";
-import { selectProfilesWithData } from "./sql/select-profiles-with-data.js";
+import { profileServiceFromPool } from "./profile-service.js";
 
 export const selectProfiles = async (params: {
   pool: Pool;
@@ -9,11 +8,8 @@ export const selectProfiles = async (params: {
   profileIds: string[];
   consentSubjects: string[];
 }): Promise<Partial<ProfileWithDetails>[]> =>
-  withClient(params.pool, async (client) =>
-    selectProfilesWithData(
-      client,
-      params.organizationId,
-      params.profileIds,
-      params.consentSubjects,
-    ),
-  );
+  profileServiceFromPool(params.pool).select({
+    organizationId: params.organizationId,
+    profileIds: params.profileIds,
+    consentSubjects: params.consentSubjects,
+  });

@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.2.0](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.1.4...upload-api-v1.2.0) (2026-10-12)
+
+
+### Features
+
+* **messaging-api:** adopt @ogcio/db-core Kysely layer AB[#41141](https://github.com/ogcio/govie-services-messaging/issues/41141) ([#768](https://github.com/ogcio/govie-services-messaging/issues/768)) ([5a210d4](https://github.com/ogcio/govie-services-messaging/commit/5a210d41fdab1d2d38de9607e46dece06d4069c5))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1002](https://github.com/ogcio/govie-services-messaging/issues/1002)) ([4e80277](https://github.com/ogcio/govie-services-messaging/commit/4e8027747450fe0fdc816be9cd249e2a56d2a08c))
+* **deps:** update all non-major dependencies ([#1024](https://github.com/ogcio/govie-services-messaging/issues/1024)) ([75e7079](https://github.com/ogcio/govie-services-messaging/commit/75e70792a4c88eea9db9e7be7196c8c166f2ba1b))
+* **deps:** update all non-major dependencies ([#952](https://github.com/ogcio/govie-services-messaging/issues/952)) ([70671c4](https://github.com/ogcio/govie-services-messaging/commit/70671c43f22f78463032a20e968c5fed50a84673))
+* **deps:** update all non-major dependencies ([#974](https://github.com/ogcio/govie-services-messaging/issues/974)) ([d16ccbb](https://github.com/ogcio/govie-services-messaging/commit/d16ccbbc84b6ce9c4f9aada3830f1cfb88a3fed2))
+* **deps:** update dependency dotenv to v18 ([#953](https://github.com/ogcio/govie-services-messaging/issues/953)) ([86b62f9](https://github.com/ogcio/govie-services-messaging/commit/86b62f949f3aa735f86ca43401dc403549006324))
+* **upload-api:** keep scheduler token stable across restarts AB[#42627](https://github.com/ogcio/govie-services-messaging/issues/42627) ([#950](https://github.com/ogcio/govie-services-messaging/issues/950)) ([e617519](https://github.com/ogcio/govie-services-messaging/commit/e617519ccd0451ad940193e7f40b9da831b95f9f))
+* **upload-api:** stricter file name criteria and file type definition AB[#42623](https://github.com/ogcio/govie-services-messaging/issues/42623) ([#921](https://github.com/ogcio/govie-services-messaging/issues/921)) ([3f236c4](https://github.com/ogcio/govie-services-messaging/commit/3f236c468c9f28646bfd8880e766eb0808d1ebcd))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major dependencies ([#960](https://github.com/ogcio/govie-services-messaging/issues/960)) ([edd12b3](https://github.com/ogcio/govie-services-messaging/commit/edd12b39f5bf3757d54e37692c5b5f9b25462da3))
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1019](https://github.com/ogcio/govie-services-messaging/issues/1019)) ([9fc95bf](https://github.com/ogcio/govie-services-messaging/commit/9fc95bf8f2d4386d28f683c802bd57c5d59322f9))
+* update rds certificates AB[#43420](https://github.com/ogcio/govie-services-messaging/issues/43420) ([#985](https://github.com/ogcio/govie-services-messaging/issues/985)) ([b23a21b](https://github.com/ogcio/govie-services-messaging/commit/b23a21b01fa10bb704b504339e28847265904db5))
+
 ## [1.1.4](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.1.3...upload-api-v1.1.4) (2026-09-16)
 
 

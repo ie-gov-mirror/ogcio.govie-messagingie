@@ -11,17 +11,14 @@ describe("sameOriginPath", () => {
   })
 
   it("reduces an absolute url on the current host to a path", () => {
-    expect(
-      sameOriginPath(`${dashboard}/en/discovery?q=1#top`, dashboard),
-    ).toBe("/en/discovery?q=1#top")
+    expect(sameOriginPath(`${dashboard}/en/discovery?q=1#top`, dashboard)).toBe(
+      "/en/discovery?q=1#top",
+    )
   })
 
   it("leaves a different host for a full document load", () => {
     expect(
-      sameOriginPath(
-        "http://messaging.local.test:8080/en/messages",
-        dashboard,
-      ),
+      sameOriginPath("http://messaging.local.test:8080/en/messages", dashboard),
     ).toBeNull()
   })
 })

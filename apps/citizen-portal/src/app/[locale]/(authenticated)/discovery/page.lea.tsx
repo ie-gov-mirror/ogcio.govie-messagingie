@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { LifeEventsIndexView } from "@/components/discovery/discovery-views"
-import { getDiscovery } from "@/lib/discovery-content"
+import { getDiscovery } from "@/lib/discovery"
 
 type Props = { params: Promise<{ locale: string }> }
 

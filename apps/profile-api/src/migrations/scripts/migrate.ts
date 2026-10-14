@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { DbEnv } from "@ogcio/db-core";
 import type { Pool, PoolClient } from "pg";
 import Postgrator from "postgrator";
-import type { EnvDbConfig } from "~/plugins/external/env.js";
 
 export async function doMigration(
-  envDbConfig: EnvDbConfig,
+  envDbConfig: DbEnv,
   inputPool: Pool,
   version = "max",
 ): Promise<void> {
@@ -22,7 +22,7 @@ export async function doMigration(
     const postgrator = new Postgrator({
       migrationPattern: path.join(migrationDir, "*"),
       driver: "pg",
-      database: envDbConfig.POSTGRES_DATABASE,
+      database: envDbConfig.POSTGRES_DB_NAME,
       execQuery: (query) => client.query(query),
       validateChecksums: false,
     });

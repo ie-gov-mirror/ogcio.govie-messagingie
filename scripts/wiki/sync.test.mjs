@@ -91,7 +91,7 @@ test("clean first sync with --bootstrap creates pages and a sync-marker commit",
     readWikiFile(bare, subtree, "metrics-coverage.md"),
     "# Metrics coverage\n",
   )
-  assert.equal(readWikiFile(bare, subtree, "Context.md"), "# Domain glossary\n")
+  assert.equal(readWikiFile(bare, subtree, "Glossary.md"), "# Domain glossary\n")
   const log = git(bare, ["log", "-1", "--format=%B"])
   assert.match(log, new RegExp(`${SYNC_MARKER_TRAILER}: ${"a".repeat(40)}`))
 })
@@ -271,7 +271,7 @@ test("sibling subtree content is untouched by sync", () => {
   )
 })
 
-test("round-trip: sync then pull reproduces docs/wiki and CONTEXT.md exactly", () => {
+test("round-trip: sync then pull reproduces docs/wiki and GLOSSARY.md exactly", () => {
   const bare = initBareWiki()
   const subtree = "Team/Docs"
   const root = initSourceRoot(
@@ -315,7 +315,7 @@ test("round-trip: sync then pull reproduces docs/wiki and CONTEXT.md exactly", (
     "# Usage dashboards\n",
   )
   assert.equal(
-    readFileSync(join(pulledRoot, "CONTEXT.md"), "utf8"),
+    readFileSync(join(pulledRoot, "GLOSSARY.md"), "utf8"),
     "# Domain glossary\n",
   )
 })

@@ -62,8 +62,6 @@ describe("ServiceError", () => {
 
     expect(button).toBeDisabled()
     expect(screen.getByLabelText("loading")).toBeInTheDocument()
-    expect(href).toBe(
-      "https://forms.example.ie/report-problem?userEmail=",
-    )
+    expect(href).toBe("https://forms.example.ie/report-problem?userEmail=")
   })
 })

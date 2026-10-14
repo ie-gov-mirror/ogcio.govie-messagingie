@@ -29,7 +29,7 @@ export default function Forbidden() {
             {
               label: "Logout",
               icon: "logout",
-              href: "/signout",
+              href: "/api/auth/signout",
               itemType: "link",
               showItemMode: "always",
             },
@@ -65,7 +65,7 @@ export default function Forbidden() {
               <Paragraph>
                 If you believe this is an error, please contact an administrator
               </Paragraph>
-              <form action='/signout'>
+              <form action='/api/auth/signout'>
                 <Button>Logout</Button>
               </form>
             </Stack>

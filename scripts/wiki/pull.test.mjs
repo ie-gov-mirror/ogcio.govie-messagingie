@@ -37,7 +37,7 @@ const addToWiki = (bare, files) =>
 function initRepoRoot({ withExistingWikiFile } = {}) {
   const root = freshDir("repo-root")
   mkdirSync(join(root, "docs", "wiki"), { recursive: true })
-  writeFileSync(join(root, "CONTEXT.md"), "# Old context\n")
+  writeFileSync(join(root, "GLOSSARY.md"), "# Old glossary\n")
   if (withExistingWikiFile) {
     writeFileSync(join(root, "docs", "wiki", "stale.md"), "stale content\n")
   }
@@ -52,13 +52,13 @@ function runPull(root, extraArgs = []) {
   )
 }
 
-test("pull round-trip: pages, Context -> CONTEXT.md, nesting preserved", () => {
+test("pull round-trip: pages, Glossary -> GLOSSARY.md, nesting preserved", () => {
   const bare = initBareWiki()
   const subtree = "MessagingIE/Docs"
   seedWiki(bare, subtree, {
     "metrics-coverage.md": "# Metrics coverage\n",
     "observability/usage-dashboards.md": "# Usage dashboards\n",
-    "Context.md": "# Domain glossary\n",
+    "Glossary.md": "# Domain glossary\n",
   })
 
   const root = initRepoRoot()
@@ -77,10 +77,10 @@ test("pull round-trip: pages, Context -> CONTEXT.md, nesting preserved", () => {
     "# Usage dashboards\n",
   )
   assert.equal(
-    readFileSync(join(root, "CONTEXT.md"), "utf8"),
+    readFileSync(join(root, "GLOSSARY.md"), "utf8"),
     "# Domain glossary\n",
   )
-  assert.ok(!existsSync(join(root, "docs", "wiki", "Context.md")))
+  assert.ok(!existsSync(join(root, "docs", "wiki", "Glossary.md")))
 })
 
 test("pull overwrites docs/wiki/: stale pages no longer on the wiki are removed", () => {
@@ -119,7 +119,7 @@ test("sibling subtrees (e.g. release notes) are never pulled in", () => {
   assert.ok(!existsSync(join(root, "docs", "wiki", "Release Notes")))
 })
 
-test("missing subtree fails loudly and leaves docs/wiki and CONTEXT.md untouched", () => {
+test("missing subtree fails loudly and leaves docs/wiki and GLOSSARY.md untouched", () => {
   const bare = initBareWiki()
   seedWiki(bare, "Somewhere/Else", { "page.md": "page\n" })
 
@@ -135,8 +135,8 @@ test("missing subtree fails loudly and leaves docs/wiki and CONTEXT.md untouched
   assert.match(result.stderr, /subtree not found/i)
   assert.ok(existsSync(join(root, "docs", "wiki", "stale.md")))
   assert.equal(
-    readFileSync(join(root, "CONTEXT.md"), "utf8"),
-    "# Old context\n",
+    readFileSync(join(root, "GLOSSARY.md"), "utf8"),
+    "# Old glossary\n",
   )
 })
 

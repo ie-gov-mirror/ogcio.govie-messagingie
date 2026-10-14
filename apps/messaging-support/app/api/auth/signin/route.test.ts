@@ -38,5 +38,10 @@ describe("GET /api/auth/signin", () => {
     for (const c of cookies) {
       expect(c.toLowerCase()).toContain("httponly")
     }
+    expect(
+      cookies.some(
+        (c) => c.startsWith("logged_out=") && c.includes("Max-Age=0"),
+      ),
+    ).toBe(true)
   })
 })

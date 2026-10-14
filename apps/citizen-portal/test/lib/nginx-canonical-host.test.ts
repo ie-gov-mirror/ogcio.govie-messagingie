@@ -42,7 +42,10 @@ function parseNginxLocaleSegments(): Record<string, Zone> {
     keyPattern,
   )) {
     const zone = HOST_VAR_ZONE[hostVar]
-    expect(zone, `unknown host var ${hostVar} in canonical_host map`).toBeDefined()
+    expect(
+      zone,
+      `unknown host var ${hostVar} in canonical_host map`,
+    ).toBeDefined()
     for (const segment of alternation.split("|")) {
       owned[segment] = zone
     }
@@ -70,9 +73,10 @@ describe("nginx canonical_host map mirrors the zone table", () => {
 
   it("never claims a segment the zone table doesn't know about", () => {
     for (const [segment, zone] of Object.entries(parseNginxLocaleSegments())) {
-      expect(ZONE_BY_FIRST_SEGMENT[segment], `nginx-only segment ${segment}`).toBe(
-        zone,
-      )
+      expect(
+        ZONE_BY_FIRST_SEGMENT[segment],
+        `nginx-only segment ${segment}`,
+      ).toBe(zone)
     }
   })
 })

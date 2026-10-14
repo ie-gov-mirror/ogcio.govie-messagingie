@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { updateMessageAction } from "../../services/message-actions/message-action-service.js";
+import { MessageActionService } from "../../services/message-actions/message-action-service.js";
 import {
   type PutMessageActionBody,
   type PutMessageActionParams,
@@ -35,14 +35,12 @@ export default async function messagesActions(app: FastifyInstance) {
         throw app.httpErrors.badRequest("url params id mismatch with body id");
       }
 
-      await updateMessageAction({
+      await new MessageActionService(app.db, app.pg.pool, req.log).update({
         loggedInUser: {
           userId: userData.userId,
           accessToken: userData.accessToken,
         },
         body: req.body,
-        pool: app.pg.pool,
-        logger: req.log,
       });
     },
   );

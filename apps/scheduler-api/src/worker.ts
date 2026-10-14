@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify";
+import { ConfigService } from "./services/config-service.js";
 
 type WebhookCallbackStatus = "delivered" | "error" | "timeout";
 
@@ -172,31 +173,7 @@ function workWithTimeoutRecursive(
 }
 
 export async function worker(app: FastifyInstance, id: string) {
-  const config = await app.pg.pool
-    .query<{
-      interval: number;
-      size: number;
-      maxRetries: number;
-      callbackTimeout: number;
-    }>(
-      `
-  select 
-    base_interval_ms as interval,
-    select_size as size,
-    max_retries as "maxRetries",
-    http_callback_timeout_ms as "callbackTimeout"
-  from config
-  `,
-    )
-    .then(
-      (res) =>
-        res.rows.at(0) || {
-          size: 200,
-          interval: 10 * 1000,
-          callbackTimeout: 5000,
-          maxRetries: 5,
-        },
-    );
+  const config = await new ConfigService(app.db).getWorkerConfig();
 
   return {
     start() {

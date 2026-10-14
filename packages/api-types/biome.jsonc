@@ -1,0 +1,10 @@
+{
+  "root": false,
+  "extends": ["../../biome.jsonc"],
+  "files": {
+    // The generated OpenAPI output (`src/*.d.ts`) is machine-written and must
+    // stay byte-identical to `openapi-typescript`; it is excluded from biome at
+    // the repo root so no format/lint run reformats it into codegen drift.
+    "includes": ["./src/**/*", "./scripts/**/*", "!**/*.d.ts", "!**/dist/**/*"]
+  }
+}

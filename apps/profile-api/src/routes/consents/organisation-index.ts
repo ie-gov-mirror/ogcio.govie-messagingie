@@ -6,10 +6,7 @@ import {
   OrganisationListLatestConsentsSchema,
 } from "~/schemas/consents/organisation.js";
 import type { FastifyRequestTypebox } from "~/schemas/shared.js";
-import {
-  getConsentsForUser,
-  getLatestConsentForUsers,
-} from "~/services/consents/consents-service.js";
+import { ConsentService } from "~/services/consents/consent-service.js";
 import { ensureOrganizationIdIsSet } from "~/utils/authentication-factory.js";
 import { formatAPIResponse, sanitizePagination } from "~/utils/pagination.js";
 
@@ -24,12 +21,11 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
     async (
       request: FastifyRequestTypebox<typeof OrganisationListConsentsSchema>,
     ) => {
-      const consents = await getConsentsForUser({
+      const consents = await new ConsentService(fastify.db).getConsentsForUser({
         userId: request.query.profileId,
-        pool: fastify.pg.pool,
-        paginationParams: sanitizePagination(request.query),
         subject: request.query.subject,
         organisationId: ensureOrganizationIdIsSet(request),
+        pagination: sanitizePagination(request.query),
       });
 
       return formatAPIResponse({
@@ -56,11 +52,12 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         typeof OrganisationListLatestConsentsSchema
       >,
     ) => {
-      const output = await getLatestConsentForUsers({
-        pool: fastify.pg.pool,
+      const output = await new ConsentService(
+        fastify.db,
+      ).getLatestConsentForUsers({
         subject: request.query.subject,
-        paginationParams: sanitizePagination(request.query),
         organisationId: ensureOrganizationIdIsSet(request),
+        pagination: sanitizePagination(request.query),
       });
 
       return formatAPIResponse({

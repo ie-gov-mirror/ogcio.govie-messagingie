@@ -5,8 +5,8 @@
 import { readdirSync } from "node:fs"
 import { join } from "node:path"
 
-export const CONTEXT_FILE_NAME = "CONTEXT.md"
-export const CONTEXT_PAGE_NAME = "Context.md"
+export const GLOSSARY_FILE_NAME = "GLOSSARY.md"
+export const GLOSSARY_PAGE_NAME = "Glossary.md"
 
 export const DEFAULT_SUBTREE =
   "/Building-Blocks-%2D-(BB)/General/MessagingIE/Architecture-&-Technical-Documentation"
@@ -71,7 +71,7 @@ export function resolveSubtree(explicit, env = process.env) {
 }
 
 export function isContextPage(pageRelPath) {
-  return pageRelPath === CONTEXT_PAGE_NAME
+  return pageRelPath === GLOSSARY_PAGE_NAME
 }
 
 // Repo filenames are wiki page names verbatim (ADO renders "-" as a space in

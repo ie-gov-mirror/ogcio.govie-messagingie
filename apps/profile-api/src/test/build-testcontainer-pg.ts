@@ -1,3 +1,4 @@
+import type { DbEnv } from "@ogcio/db-core";
 import {
   PostgreSqlContainer,
   type StartedPostgreSqlContainer,
@@ -10,9 +11,9 @@ import { getPgConnection } from "~/migrations/scripts/shared.js";
 
 export const DATABASE_TEST_URL_KEY = "DATABASE_TEST_URL";
 
-function getConfigFromContainer(started: StartedPostgreSqlContainer) {
+function getConfigFromContainer(started: StartedPostgreSqlContainer): DbEnv {
   return {
-    POSTGRES_DATABASE: started.getDatabase(),
+    POSTGRES_DB_NAME: started.getDatabase(),
     POSTGRES_HOST: started.getHost(),
     POSTGRES_PASSWORD: started.getPassword(),
     POSTGRES_PORT: started.getPort(),

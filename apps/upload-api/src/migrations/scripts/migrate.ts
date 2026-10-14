@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { DbEnv } from "@ogcio/db-core";
 import type { Pool } from "pg";
 import Postgrator from "postgrator";
-import type { EnvDbConfig } from "../../config.js";
 
 export async function doMigration(
-  envDbConfig: EnvDbConfig,
+  envDbConfig: DbEnv,
   pool: Pool,
   version = "max",
 ): Promise<void> {

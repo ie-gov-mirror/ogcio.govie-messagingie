@@ -1,0 +1,20 @@
+{
+  "id": 1114,
+  "meta": {
+    "type": "lea.LifeEventPage",
+    "slug": "marriage",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 1000
+    }
+  },
+  "title": "Marriage",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Giving notice of marriage and what changes afterwards.</p>",
+      "id": "le-1114"
+    }
+  ]
+}

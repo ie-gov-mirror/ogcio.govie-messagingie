@@ -21,11 +21,10 @@ import {
   SummaryListValue,
   toaster,
 } from "@ogcio/design-system-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import type { Consent, GetUserConsentDataResponse } from "@/data/types"
 import { updateProfileConsentDataAction } from "@/utils/actions"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { ConsentStatusTag } from "./ConsentStatusTag"
 export function ConsentManagement(props: {
   consentData: GetUserConsentDataResponse

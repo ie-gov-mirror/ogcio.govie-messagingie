@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 // @ogcio/sag-client/react ships re-exports via extension-less relative
@@ -96,8 +96,9 @@ vi.mock("@/lib/feature-config", () => ({
   isJourneyIntegrationEnabled: () => flagState.journey,
 }))
 
+const unread = vi.hoisted(() => ({ count: 1, isLoading: false }))
 vi.mock("@/components/messages/use-inbox-unread-count", () => ({
-  useInboxUnreadCount: () => ({ count: 1, isLoading: false }),
+  useInboxUnreadCount: () => unread,
 }))
 
 vi.mock("@/components/messages/inbox-unread-badge", () => ({
@@ -149,14 +150,17 @@ vi.mock("@ogcio/design-system-react", () => {
     HeaderMenuItemButton: ({
       children,
       onClick,
+      "aria-describedby": describedBy,
     }: {
       children: React.ReactNode
       onClick?: () => void
+      "aria-describedby"?: string
     }) => (
-      <button type='button' onClick={onClick}>
+      <button type='button' onClick={onClick} aria-describedby={describedBy}>
         {children}
       </button>
     ),
+    Icon: () => <span />,
     HeaderMenuItemLink: ({
       href,
       children,
@@ -164,7 +168,17 @@ vi.mock("@ogcio/design-system-react", () => {
       href: string
       children: React.ReactNode
     }) => <a href={href}>{children}</a>,
-    DrawerWrapper: Pass,
+    DrawerWrapper: ({
+      children,
+      isOpen,
+    }: {
+      children?: React.ReactNode
+      isOpen?: boolean
+    }) => (
+      <div data-testid='drawer' data-open={isOpen ? "true" : "false"}>
+        {children}
+      </div>
+    ),
     DrawerBody: Pass,
     Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
       <a href={href}>{children}</a>
@@ -213,6 +227,8 @@ describe("PageHeader", () => {
     flagState.messages = true
     flagState.lea = false
     flagState.journey = true
+    unread.count = 1
+    unread.isLoading = false
   })
 
   afterEach(() => {
@@ -310,6 +326,51 @@ describe("PageHeader", () => {
       "href",
       "/en/messages",
     )
+  })
+
+  it("closes the drawer when the route changes and still opens from Menu", () => {
+    flagState.lea = true
+    mockPathname = "/en/my-dashboard"
+    const { rerender } = render(
+      <PageHeader publicName='Jane' onSignOut={() => {}} />,
+    )
+    const drawer = () => screen.getByTestId("drawer")
+
+    fireEvent.click(screen.getByRole("button", { name: "Menu" }))
+    expect(drawer()).toHaveAttribute("data-open", "true")
+    expect(
+      screen.getByRole("link", { name: "Life events" }),
+    ).toBeInTheDocument()
+
+    mockPathname = "/en/discovery"
+    rerender(<PageHeader publicName='Jane' onSignOut={() => {}} />)
+    expect(drawer()).toHaveAttribute("data-open", "false")
+
+    fireEvent.click(screen.getByRole("button", { name: "Menu" }))
+    expect(drawer()).toHaveAttribute("data-open", "true")
+  })
+
+  it("marks the Menu icon with a red dot, keeping its name", () => {
+    render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
+    const menu = screen.getByRole("button", { name: "Menu" })
+    expect(screen.getByTestId("menu-unread-dot")).toBeInTheDocument()
+    expect(menu).toHaveAccessibleDescription("1 unread message")
+  })
+
+  it("leaves the Menu icon unmarked with no unread messages", () => {
+    unread.count = 0
+    render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
+    expect(screen.queryByTestId("menu-unread-dot")).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Menu" })).not.toHaveAttribute(
+      "aria-describedby",
+    )
+  })
+
+  it("leaves the Menu icon unmarked when the drawer has no Messages link", () => {
+    flagState.messages = false
+    mockPathname = "/en/my-profile"
+    render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
+    expect(screen.queryByTestId("menu-unread-dot")).not.toBeInTheDocument()
   })
 
   it("does not list What's new in the drawer (footer only, AB#42591)", () => {
@@ -434,8 +495,12 @@ describe("PageHeader", () => {
           .getAllByRole("link", { name: "Profile" })
           .find((link) => link.getAttribute("data-testid") !== "profile-href"),
       ).toHaveAttribute("href", "http://profile.local.test:8080/en/my-profile")
-      expect(screen.getByRole("link", { name: "Life events" })).toBeInTheDocument()
-      expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute(
+      expect(
+        screen.getByRole("link", { name: "Life events" }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole("link", { name: "Applications" }),
+      ).toHaveAttribute(
         "href",
         "http://dashboard.local.test:8080/en/my-submissions",
       )

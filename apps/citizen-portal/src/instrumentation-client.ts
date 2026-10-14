@@ -43,17 +43,22 @@ if (collectorUrl) {
       // Replay stays a lazy import so it is only pulled when enabled (never on
       // the dev fast path). It initialises a beat after the base SDK, which is
       // fine — replay does not need to wrap the very first fetches.
-      void import("@ogcio/o11y-sdk-react/replay").then(({ withReplay }) => {
-        instrumentFaro(
-          withReplay({
-            ...buildFaroConfig(collectorUrl),
-            replay: {
-              enabled: true,
-              samplingRate: env.NEXT_PUBLIC_FARO_REPLAY_SAMPLING_RATE,
-            },
-          }),
-        )
-      })
+      void import("@ogcio/o11y-sdk-react/replay")
+        .then(({ withReplay }) => {
+          instrumentFaro(
+            withReplay({
+              ...buildFaroConfig(collectorUrl),
+              replay: {
+                enabled: true,
+                samplingRate: env.NEXT_PUBLIC_FARO_REPLAY_SAMPLING_RATE,
+              },
+            }),
+          )
+        })
+        // The surrounding try/catch only covers the synchronous setup.
+        .catch((error: unknown) => {
+          console.error("Faro replay failed to load", error)
+        })
     } else {
       // Static import → `fetch` is patched synchronously here, before
       // hydration and therefore before the boot requests.

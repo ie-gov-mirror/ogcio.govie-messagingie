@@ -14,6 +14,12 @@ const MAX_NAME_LENGTH = 200
 
 const listeners = new Set<() => void>()
 
+// ponytail: sign-out seals name writes for this document so an in-flight
+// profile fetch cannot put the previous citizen's name back. The next page
+// load starts unsealed. A failed sign-out that stays on the page will not
+// refresh the name cache until reload.
+let nameWritesSealed = false
+
 function emit() {
   for (const listener of listeners) listener()
 }
@@ -28,12 +34,39 @@ function sharedDomain(hostname: string): string | undefined {
   return parts.length >= 3 ? `.${parts.slice(1).join(".")}` : undefined
 }
 
-function setCookie(name: string, value: string, maxAge: number) {
+function cookieSuffix(maxAge: number): string {
   const secure = window.location.protocol === "https:" ? "; Secure" : ""
-  const base = `${name}=${value}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`
-  document.cookie = base
+  return `; path=/; max-age=${maxAge}; SameSite=Lax${secure}`
+}
+
+/**
+ * A host-only cookie and a parent-domain cookie can share a name, and one
+ * assignment expires only one of them. The host-only copy is invisible to
+ * other zone hosts and wins on this host, so messaging can keep showing the
+ * previous citizen after profile has moved on (AB#44219).
+ */
+function expireCookie(name: string): void {
+  const suffix = cookieSuffix(0)
   const domain = sharedDomain(window.location.hostname)
-  if (domain) document.cookie = `${base}; domain=${domain}`
+  for (let i = 0; i < 2; i++) {
+    document.cookie = `${name}=${suffix}`
+    if (domain) document.cookie = `${name}=${suffix}; domain=${domain}`
+  }
+}
+
+function setCookie(name: string, value: string, maxAge: number) {
+  if (maxAge === 0) {
+    expireCookie(name)
+    return
+  }
+  const suffix = cookieSuffix(maxAge)
+  const domain = sharedDomain(window.location.hostname)
+  if (domain) {
+    expireCookie(name)
+    document.cookie = `${name}=${value}${suffix}; domain=${domain}`
+    return
+  }
+  document.cookie = `${name}=${value}${suffix}`
 }
 
 function readCookie(name: string): string | null {
@@ -59,29 +92,55 @@ export function writeNavSnapshot(count: number): void {
   setCookie(UNREAD_COOKIE, String(count), MAX_AGE_SECONDS)
 }
 
-/** Display name last shown in the top bar. Shared across zone hosts. */
-export function readNavName(): string | null {
+function readNameRecord(): { sub: string | null; name: string | null } {
   const raw = readCookie(NAME_COOKIE)
-  if (raw == null) return null
+  if (raw == null) return { sub: null, name: null }
+  const pipe = raw.indexOf("|")
   try {
-    const name = decodeURIComponent(raw).trim()
-    return name || null
+    if (pipe === -1) {
+      const name = decodeURIComponent(raw).trim()
+      return { sub: null, name: name || null }
+    }
+    const sub = decodeURIComponent(raw.slice(0, pipe))
+    const name = decodeURIComponent(raw.slice(pipe + 1)).trim()
+    if (!sub || !name) return { sub: null, name: null }
+    return { sub, name }
   } catch {
-    return null
+    return { sub: null, name: null }
   }
 }
 
-export function writeNavName(name: string): void {
+/** Display name last shown in the top bar. Shared across zone hosts. */
+export function readNavName(): string | null {
+  return readNameRecord().name
+}
+
+function readNavSub(): string | null {
+  return readNameRecord().sub
+}
+
+export function writeNavName(sub: string, name: string): void {
+  if (nameWritesSealed) return
   if (typeof document === "undefined") return
   const trimmed = name.trim()
-  if (!trimmed || trimmed.length > MAX_NAME_LENGTH) return
-  if (readNavName() === trimmed) return
-  setCookie(NAME_COOKIE, encodeURIComponent(trimmed), MAX_AGE_SECONDS)
+  if (!sub || !trimmed || trimmed.length > MAX_NAME_LENGTH) return
+  if (readNavSub() === sub && readNavName() === trimmed) return
+  setCookie(
+    NAME_COOKIE,
+    `${encodeURIComponent(sub)}|${encodeURIComponent(trimmed)}`,
+    MAX_AGE_SECONDS,
+  )
   emit()
+}
+
+/** Tests reopen name writes after a beforeEach clear. Sign-out stays sealed. */
+export function unsealNavSnapshot(): void {
+  nameWritesSealed = false
 }
 
 export function clearNavSnapshot(): void {
   if (typeof document === "undefined") return
+  nameWritesSealed = true
   if (readNavSnapshot() === null && readNavName() === null) return
   if (readNavSnapshot() !== null) setCookie(UNREAD_COOKIE, "", 0)
   if (readNavName() !== null) setCookie(NAME_COOKIE, "", 0)
@@ -97,4 +156,8 @@ export function useNavSnapshot(): number | null {
 
 export function useNavName(): string | null {
   return useSyncExternalStore(subscribe, readNavName, () => null)
+}
+
+export function useNavSub(): string | null {
+  return useSyncExternalStore(subscribe, readNavSub, () => null)
 }

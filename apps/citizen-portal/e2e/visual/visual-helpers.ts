@@ -23,6 +23,23 @@ const LOADING = '[aria-busy="true"], [class*="spinner"]'
  * it. A locator that matches nothing is not an error, so masks are only ever
  * applied on the page that has them.
  */
+/**
+ * List cards are a fixed 96px (`list-card.module.css`). Masking paints over
+ * the row but leaves it in the layout, so a second recent message makes the
+ * full-page screenshot exactly 96px taller (build 123736: 786→882 and
+ * 1289→1385). Keep the first card; drop the rest before capture.
+ */
+async function keepFirstPreviewCard(page: Page, title: string) {
+  const cards = page
+    .locator("section")
+    .filter({ hasText: title })
+    .getByRole("button")
+    .filter({ hasNotText: "View all" })
+  await cards.evaluateAll((els) => {
+    for (const el of els.slice(1)) el.remove()
+  })
+}
+
 function volatileRegions(page: Page): Locator[] {
   return [
     // Dashboard: the recent-messages rows. Their subjects and dates come from
@@ -44,6 +61,8 @@ function volatileRegions(page: Page): Locator[] {
 /** Screenshots `page` once nothing on it is still loading. */
 export async function expectSettledScreenshot(page: Page, name: string) {
   await expect(page.locator(LOADING)).toHaveCount(0, { timeout: 30_000 })
+  await keepFirstPreviewCard(page, "Your recent messages")
+  await keepFirstPreviewCard(page, "Your recent submissions")
   await expect(page).toHaveScreenshot(name, {
     fullPage: true,
     maxDiffPixelRatio: MAX_DIFF_PIXEL_RATIO,

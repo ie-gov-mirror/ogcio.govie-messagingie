@@ -8,7 +8,7 @@ export default function AuthLayout({ children }: React.PropsWithChildren) {
   const cookieStore = use(cookies())
   const sessionCookie = cookieStore.get(cookieNameSession)?.value
   if (sessionCookie) {
-    redirect("/api/auth/signin")
+    redirect("/")
   }
 
   return (

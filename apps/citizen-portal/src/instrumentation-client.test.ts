@@ -81,4 +81,30 @@ describe("client instrumentation", () => {
       error,
     )
   })
+
+  it("logs a failed replay chunk load instead of leaving it unhandled", async () => {
+    const unhandled = vi.fn()
+    process.on("unhandledRejection", unhandled)
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {})
+    env.NEXT_PUBLIC_FARO_URL = "https://faro.test"
+    env.NEXT_PUBLIC_FARO_REPLAY_ENABLED = true
+    // A throwing factory makes `import()` reject, like a chunk that 404s.
+    vi.doMock("@ogcio/o11y-sdk-react/replay", () => {
+      throw new Error("Failed to load chunk /_next/static/chunks/x.js")
+    })
+
+    try {
+      await import("./instrumentation-client")
+      await vi.waitFor(() =>
+        expect(consoleError).toHaveBeenCalledWith(
+          "Faro replay failed to load",
+          expect.any(Error),
+        ),
+      )
+      expect(unhandled).not.toHaveBeenCalled()
+    } finally {
+      process.off("unhandledRejection", unhandled)
+      vi.doMock("@ogcio/o11y-sdk-react/replay", () => ({ withReplay }))
+    }
+  })
 })

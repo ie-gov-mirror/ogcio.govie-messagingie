@@ -5,6 +5,7 @@ import { FormField, Link, Paragraph } from "@ogcio/design-system-react"
 import { SagFetchError } from "@ogcio/sag-client"
 import { useAuth, useGatewayFetch } from "@ogcio/sag-client/react"
 import { useLocale, useTranslations } from "next-intl"
+import { messagesApi } from "@/api/messages"
 import { ListCard } from "@/components/list-card/list-card"
 import { SenderName } from "@/components/messages/sender-name"
 import { PanelLoading } from "@/components/panel-loading"
@@ -32,9 +33,7 @@ export function MyMessages() {
   const idleReady = useIdleMount()
 
   const messagesPath =
-    user && idleReady
-      ? `/messaging/api/v1/messages/?limit=${RECENT_LIMIT}`
-      : null
+    user && idleReady ? messagesApi.recentKey(RECENT_LIMIT) : null
 
   const {
     data: messages,

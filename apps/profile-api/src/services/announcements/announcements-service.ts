@@ -12,6 +12,7 @@ import type {
   UpdateAnnouncementEnabled,
 } from "~/schemas/announcements/support.js";
 import type { PaginationParams } from "~/schemas/pagination.js";
+import { announcementServiceFromPool } from "~/services/announcements/announcement-service.js";
 import { withClient } from "~/utils/with-client.js";
 import { withRollback } from "~/utils/with-rollback.js";
 
@@ -163,12 +164,7 @@ export async function getAnnouncementById(
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<AnnouncementWithTranslations> {
   if ("pool" in params) {
-    return withClient(params.pool, async (client) => {
-      return executeGetAnnouncement({
-        client,
-        id: params.id,
-      });
-    });
+    return announcementServiceFromPool(params.pool).getById(params.id);
   }
 
   return executeGetAnnouncement({
@@ -213,13 +209,10 @@ export async function listAnnouncements(
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<{ data: Announcement[]; totalCount: number }> {
   if ("pool" in params) {
-    return withClient(params.pool, async (client) => {
-      return executeListAnnouncements({
-        client,
-        applicationId: params.applicationId,
-        isEnabled: params.isEnabled,
-        pagination: params.pagination,
-      });
+    return announcementServiceFromPool(params.pool).list({
+      applicationId: params.applicationId,
+      isEnabled: params.isEnabled,
+      pagination: params.pagination,
     });
   }
 
@@ -305,14 +298,11 @@ export async function listCitizenAnnouncements(
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<{ data: AnnouncementWithTranslations[]; totalCount: number }> {
   if ("pool" in params) {
-    return withClient(params.pool, async (client) => {
-      return executeListCitizenAnnouncements({
-        client,
-        profileId: params.profileId,
-        applicationId: params.applicationId,
-        newOnly: params.newOnly,
-        pagination: params.pagination,
-      });
+    return announcementServiceFromPool(params.pool).listCitizen({
+      profileId: params.profileId,
+      applicationId: params.applicationId,
+      newOnly: params.newOnly,
+      pagination: params.pagination,
     });
   }
 

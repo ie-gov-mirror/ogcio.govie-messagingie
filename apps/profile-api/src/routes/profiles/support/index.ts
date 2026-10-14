@@ -9,15 +9,12 @@ import type {
   FastifyReplyTypebox,
   FastifyRequestTypebox,
 } from "~/schemas/shared.js";
-import { supportSearch } from "~/services/profiles/support.js";
+import { ProfileSupportService } from "~/services/profiles/support/profile-support-service.js";
 import { formatAPIResponse, sanitizePagination } from "~/utils/pagination.js";
 import { ensureValidSupportUser } from "~/utils/support-routes.js";
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
-  const {
-    pg: { pool },
-    config,
-  } = fastify;
+  const { config } = fastify;
 
   fastify.post(
     "/search",
@@ -36,9 +33,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       }
 
       const pagination = sanitizePagination(request.body);
-      const supportSearchResult = await supportSearch({
-        logger: request.log,
-        pool,
+      const supportSearchResult = await new ProfileSupportService(
+        fastify.db,
+      ).search({
         body: request.body,
         pagination,
       });

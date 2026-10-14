@@ -1,5 +1,10 @@
 import { useGatewayFetch } from "@ogcio/sag-client/react"
 import { useMemo } from "react"
+import {
+  type MessageListItem,
+  type MessagesListMetadata,
+  messagesApi,
+} from "@/api/messages"
 import { getMockUnreadCount, MOCK_MESSAGES_ENABLED } from "@/mock/messages"
 import { readNavSnapshot } from "@/util/nav-snapshot"
 
@@ -21,11 +26,9 @@ export function useInboxUnreadCount(enabled = true): InboxUnreadCountState {
   // cookie read cannot cause a hydration mismatch.
   const snapshot = readNavSnapshot()
   const { metadata, isLoading } = useGatewayFetch<
-    unknown[],
-    { totalCount?: number }
-  >("/messaging/api/v1/messages?limit=1&offset=0&isSeen=false&untagged=true", {
-    enabled,
-  })
+    MessageListItem[],
+    MessagesListMetadata
+  >(messagesApi.unreadCountKey(), { enabled })
 
   return useMemo(() => {
     if (metadata?.totalCount != null) {

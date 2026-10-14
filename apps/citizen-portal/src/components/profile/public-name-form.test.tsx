@@ -1,6 +1,10 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { clearNavSnapshot, readNavName } from "@/util/nav-snapshot"
+import {
+  clearNavSnapshot,
+  readNavName,
+  unsealNavSnapshot,
+} from "@/util/nav-snapshot"
 
 const { toasterCreate, trigger, useGatewayMutation } = vi.hoisted(() => ({
   toasterCreate: vi.fn(),
@@ -20,46 +24,47 @@ vi.mock("@ogcio/sag-client/react", () => ({
 // CSS-only theming) that don't matter for the contract this test
 // pins: form submit → gateway mutation → success/failure
 // toast fires. Stub them as passthroughs.
-vi.mock("@ogcio/design-system-react", () => ({
-  FormField: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  FormFieldError: ({ text }: { text: string }) => (
-    <div data-testid='public-name-validation-error'>{text}</div>
-  ),
-  Heading: ({
-    children,
-    id,
-  }: {
-    children: React.ReactNode
-    id?: string
-  }) => <h2 id={id}>{children}</h2>,
-  Paragraph: ({
-    children,
-    id,
-  }: {
-    children: React.ReactNode
-    id?: string
-  }) => (
-    <p id={id} data-testid='public-name-helper'>
-      {children}
-    </p>
-  ),
-  Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  TextInput: ({
-    value,
-    onChange,
-    ...rest
-  }: {
-    value: string
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  } & React.InputHTMLAttributes<HTMLInputElement>) => (
-    <input value={value} onChange={onChange} {...rest} />
-  ),
-  toaster: {
-    create: (...args: unknown[]) => toasterCreate(...args),
-  },
-}))
+vi.mock("@ogcio/design-system-react", async () => {
+  const actual = await vi.importActual<
+    typeof import("@ogcio/design-system-react")
+  >("@ogcio/design-system-react")
+  return {
+    FormField: ({ children }: { children: React.ReactNode }) => (
+      <div>{children}</div>
+    ),
+    FormFieldError: ({ text }: { text: string }) => (
+      <div data-testid='public-name-validation-error'>{text}</div>
+    ),
+    Heading: actual.Heading,
+    Paragraph: ({
+      children,
+      id,
+    }: {
+      children: React.ReactNode
+      id?: string
+    }) => (
+      <p id={id} data-testid='public-name-helper'>
+        {children}
+      </p>
+    ),
+    Stack: ({ children }: { children: React.ReactNode }) => (
+      <div>{children}</div>
+    ),
+    TextInput: ({
+      value,
+      onChange,
+      ...rest
+    }: {
+      value: string
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    } & React.InputHTMLAttributes<HTMLInputElement>) => (
+      <input value={value} onChange={onChange} {...rest} />
+    ),
+    toaster: {
+      create: (...args: unknown[]) => toasterCreate(...args),
+    },
+  }
+})
 
 vi.mock("@/components/layout/containers", () => ({
   FullWidthContainer: ({ children }: { children: React.ReactNode }) => (
@@ -90,6 +95,7 @@ describe("PublicNameForm", () => {
     onUpdated.mockReset()
     toasterCreate.mockReset()
     clearNavSnapshot()
+    unsealNavSnapshot()
   })
 
   it("PATCHes the profile through sag-client with the trimmed publicName, then fires the success toast", async () => {
@@ -104,6 +110,10 @@ describe("PublicNameForm", () => {
     )
 
     fireEvent.submit(screen.getByTestId("public-name-form"))
+
+    const heading = screen.getByRole("heading", { name: "profile.form.title" })
+    expect(heading).toHaveClass("gi-text-lg", "xl:gi-text-xl")
+    expect(heading.className).not.toContain("xl:gi-text-2xl")
 
     expect(useGatewayMutation).toHaveBeenCalledWith(
       "/profile/api/v1/profiles/profile-1",

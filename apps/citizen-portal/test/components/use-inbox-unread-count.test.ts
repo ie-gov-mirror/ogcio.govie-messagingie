@@ -39,7 +39,10 @@ describe("useInboxUnreadCount", () => {
 
   it("shows the last known count instead of loading after a cross-host load", () => {
     document.cookie = "citizen_portal_nav_unread=5; path=/"
-    mockUseGatewayFetch.mockReturnValue({ metadata: undefined, isLoading: true })
+    mockUseGatewayFetch.mockReturnValue({
+      metadata: undefined,
+      isLoading: true,
+    })
 
     const { result } = renderHook(() => useInboxUnreadCount())
 

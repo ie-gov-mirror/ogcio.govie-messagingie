@@ -10,7 +10,7 @@
     "sourceMap": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "resolveJsonModule": true,    
+    "resolveJsonModule": true,
     "outDir": "dist",
     "rootDir": "src",
     "types": ["node"]

@@ -23,7 +23,7 @@ vi.mock("next-intl", () => ({
 
 vi.mock("@/components/html-lang-script", () => ({
   HtmlLangScript: ({ locale }: { locale: string }) => (
-    <span data-testid="html-lang">{locale}</span>
+    <span data-testid='html-lang'>{locale}</span>
   ),
 }))
 

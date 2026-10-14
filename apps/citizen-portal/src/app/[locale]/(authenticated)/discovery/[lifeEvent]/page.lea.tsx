@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { LifeEventView } from "@/components/discovery/discovery-views"
-import { getDiscovery, getLifeEvent } from "@/lib/discovery-content"
+import { getDiscovery, getLifeEvent } from "@/lib/discovery"
 
 type Params = { locale: string; lifeEvent: string }
 type Props = { params: Promise<Params> }
@@ -26,8 +26,8 @@ export default async function LifeEventPage({ params }: Props) {
   const { locale, lifeEvent: slug } = await params
   const discovery = getDiscovery(locale)
   const lifeEvent = getLifeEvent(discovery, slug)
-  const category = discovery.categories.find(
-    (c) => c.key === lifeEvent.categoryKey,
+  const category = discovery.categories.find((c) =>
+    c.lifeEventSlugs.includes(lifeEvent.slug),
   )
 
   return (

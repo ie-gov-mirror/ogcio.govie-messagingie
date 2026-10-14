@@ -17,6 +17,8 @@ describe("getEnvConfig", () => {
     // empty string is falsy, so getEnvOrPlaceholder falls back
     vi.stubEnv("BASE_URL", "")
     vi.stubEnv("COOKIE_SECRET", "")
+    vi.stubEnv("LOGTO_COOKIE_SECRET", "")
+    vi.stubEnv("NODE_ENV", "test")
     vi.stubEnv("POSTGRES_PROFILE_SSL", "")
     const getEnvConfig = await freshGetEnvConfig()
 
@@ -29,6 +31,7 @@ describe("getEnvConfig", () => {
 
   it("reads values from the environment when present", async () => {
     vi.stubEnv("BASE_URL", "https://real.example")
+    vi.stubEnv("LOGTO_COOKIE_SECRET", "")
     vi.stubEnv("COOKIE_SECRET", "real-secret")
     vi.stubEnv("POSTGRES_MESSAGING_HOST", "db.internal")
     const getEnvConfig = await freshGetEnvConfig()
@@ -38,6 +41,25 @@ describe("getEnvConfig", () => {
     expect(config.BASE_URL).toBe("https://real.example")
     expect(config.COOKIE_SECRET).toBe("real-secret")
     expect(config.POSTGRES_MESSAGING_HOST).toBe("db.internal")
+  })
+
+  it("prefers LOGTO_COOKIE_SECRET over COOKIE_SECRET", async () => {
+    vi.stubEnv("LOGTO_COOKIE_SECRET", "pod-secret")
+    vi.stubEnv("COOKIE_SECRET", "local-secret")
+    const getEnvConfig = await freshGetEnvConfig()
+
+    expect(getEnvConfig().COOKIE_SECRET).toBe("pod-secret")
+  })
+
+  it("throws in production when no cookie secret is set", async () => {
+    vi.stubEnv("NODE_ENV", "production")
+    vi.stubEnv("LOGTO_COOKIE_SECRET", "")
+    vi.stubEnv("COOKIE_SECRET", "")
+    const getEnvConfig = await freshGetEnvConfig()
+
+    expect(() => getEnvConfig()).toThrow(
+      "LOGTO_COOKIE_SECRET or COOKIE_SECRET must be set",
+    )
   })
 
   it("caches the config after the first call", async () => {

@@ -41,7 +41,18 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <Header title='Messaging Support'></Header>
+        <Header
+          title='Messaging Support'
+          items={[
+            {
+              label: "Log out",
+              icon: "logout",
+              href: "/api/auth/signout",
+              itemType: "link",
+              showItemMode: "always",
+            },
+          ]}
+        ></Header>
         <main>
           <Suspense>
             <AnalyticsProvider config={analyticsConfig}>

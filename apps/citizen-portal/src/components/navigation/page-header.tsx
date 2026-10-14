@@ -12,12 +12,13 @@ import {
   HeaderPrimaryMenu,
   HeaderSecondaryMenu,
   HeaderTitle,
+  Icon,
   ListItem,
 } from "@ogcio/design-system-react"
 import { LogoHarpWhite, LogoWhite } from "@ogcio/design-system-react/logos"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { type ReactNode, useState } from "react"
+import { type ReactNode, useEffect, useId, useState } from "react"
 import { InboxUnreadBadge } from "@/components/messages/inbox-unread-badge"
 import { useInboxUnreadCount } from "@/components/messages/use-inbox-unread-count"
 import { LANG_EN, LANG_GA } from "@/const"
@@ -61,10 +62,16 @@ export function PageHeader({
   const titleT = useTranslations("navigation.title")
   const unreadT = useTranslations("home.folders")
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  // The header stays mounted across client navigations, so a drawer
+  // opened on the dashboard would still be open on Life Events.
+  useEffect(() => {
+    setIsDrawerOpen(false)
+  }, [path])
   const showApplicationLinks = useShowApplicationLinks()
   const lea = isLeaEnabled()
   const navItems = useAppNavItems()
   const { count: unreadCount, isLoading: unreadLoading } = useInboxUnreadCount()
+  const menuUnreadId = useId()
 
   const zone = getZoneFromPath(path)
   const zoneRootPath = ZONE_CONFIG[zone].rootPath
@@ -104,6 +111,12 @@ export function PageHeader({
     !unreadLoading && unreadCount > 0
       ? `${messagesLabel}, ${unreadT("unreadBadge", { count: unreadCount })}`
       : messagesLabel
+  // The menu only flags unread mail when its drawer links to Messages.
+  const menuHasUnread =
+    !unreadLoading &&
+    unreadCount > 0 &&
+    showApplicationLinks &&
+    navItems.some((item) => item.id === "messages")
 
   return (
     <>
@@ -136,14 +149,30 @@ export function PageHeader({
             </HeaderMenuItemLink>
           ) : null}
           <HeaderMenuItemButton
-            icon='menu'
             showItemMode={showProfileCta ? "mobile-only" : "always"}
+            aria-describedby={menuHasUnread ? menuUnreadId : undefined}
             onClick={(e) => {
               e.currentTarget.blur()
               setIsDrawerOpen(true)
             }}
           >
             {t("menu")}
+            <span className={styles.menuIcon}>
+              <Icon icon='menu' ariaHidden />
+              {menuHasUnread ? (
+                <span
+                  className={styles.menuDot}
+                  data-testid='menu-unread-dot'
+                />
+              ) : null}
+            </span>
+            {/* Hidden keeps it out of the button name ("Menu"); the
+                description still reads it. */}
+            {menuHasUnread ? (
+              <span id={menuUnreadId} hidden>
+                {unreadT("unreadBadge", { count: unreadCount })}
+              </span>
+            ) : null}
           </HeaderMenuItemButton>
         </HeaderPrimaryMenu>
       </HeaderNext>

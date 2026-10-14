@@ -39,8 +39,6 @@ describe("resolveOnboardingSource", () => {
   })
 
   it("rejects an external HTTPS source", () => {
-    expect(
-      resolve("https://journey.dev.services.gov.ie.evil.com"),
-    ).toBeNull()
+    expect(resolve("https://journey.dev.services.gov.ie.evil.com")).toBeNull()
   })
 })

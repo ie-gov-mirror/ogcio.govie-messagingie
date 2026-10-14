@@ -95,6 +95,7 @@ export const scheduleImportProfiles = async (params: {
     if (params.immediate) {
       return executeImportProfiles({
         pool: params.pool,
+        client,
         logger: params.logger,
         profileImportId,
         config: params.config,
@@ -203,6 +204,7 @@ async function prepareAsyncImportExecution(params: {
 
 export const executeImportProfiles = async (params: {
   pool: Pool;
+  client?: PoolClient;
   logger: FastifyBaseLogger;
   profileImportId: string;
   config: EnvConfig;
@@ -210,46 +212,52 @@ export const executeImportProfiles = async (params: {
   onlyPrivateDetails: boolean;
   batchIndex: number;
   totalBatches: number;
-}): Promise<{ status: ImportStatus; profileImportId: string }> =>
-  withClient(params.pool, async (client) =>
-    withRollback(client, async () => {
-      const { organisationId } = await getProfileImport(
-        client,
-        params.profileImportId,
-      );
+}): Promise<{ status: ImportStatus; profileImportId: string }> => {
+  const run = async (client: PoolClient) => {
+    const { organisationId, profileImportDetails } = await withRollback(
+      client,
+      async () => {
+        const imported = await getProfileImport(client, params.profileImportId);
+        const profileImportDetails = await getProfileImportDetailsSql(
+          client,
+          params.profileImportId,
+          params.batchIndex,
+        );
+        return {
+          organisationId: imported.organisationId,
+          profileImportDetails,
+        };
+      },
+    );
 
-      // Get the profile import details from the database
-      const profileImportDetails = await getProfileImportDetailsSql(
-        client,
-        params.profileImportId,
-        params.batchIndex,
-      );
+    params.logger.info(
+      `${params.profileImportId} [Processor] Processing batch ${params.batchIndex} (${profileImportDetails.length} profiles) of ${params.totalBatches} batches.`,
+    );
 
-      // Determine the batch to process
-      const batchIndex = params.batchIndex;
-      const totalBatches = params.totalBatches;
+    return importProfiles({
+      pool: params.pool,
+      client,
+      logger: params.logger,
+      profileImportDetails,
+      organizationId: organisationId,
+      config: params.config,
+      profileImportId: params.profileImportId,
+      insertPrivateDetails: params.insertPrivateDetails,
+      onlyPrivateDetails: params.onlyPrivateDetails,
+      analyticsSdk: await getOrgAnalyticsSdk(
+        params.config,
+        params.logger,
+        organisationId,
+      ),
+    });
+  };
 
-      params.logger.info(
-        `${params.profileImportId} [Processor] Processing batch ${batchIndex} (${profileImportDetails.length} profiles) of ${totalBatches} batches.`,
-      );
+  if (params.client) {
+    return run(params.client);
+  }
 
-      return importProfiles({
-        pool: params.pool,
-        logger: params.logger,
-        profileImportDetails,
-        organizationId: organisationId,
-        config: params.config,
-        profileImportId: params.profileImportId,
-        insertPrivateDetails: params.insertPrivateDetails,
-        onlyPrivateDetails: params.onlyPrivateDetails,
-        analyticsSdk: await getOrgAnalyticsSdk(
-          params.config,
-          params.logger,
-          organisationId,
-        ),
-      });
-    }),
-  );
+  return withClient(params.pool, run);
+};
 
 const createProfileImportAndDetails = async (params: {
   client: PoolClient;
@@ -274,6 +282,7 @@ const createProfileImportAndDetails = async (params: {
 
 export const importProfiles = async (params: {
   pool: Pool;
+  client?: PoolClient;
   logger: FastifyBaseLogger;
   profileImportDetails: (KnownProfileDataDetails & {
     id: string;
@@ -286,8 +295,8 @@ export const importProfiles = async (params: {
   insertPrivateDetails: boolean;
   onlyPrivateDetails: boolean;
   analyticsSdk: Analytics;
-}): Promise<{ status: ImportStatus; profileImportId: string }> =>
-  withClient(params.pool, async (client) => {
+}): Promise<{ status: ImportStatus; profileImportId: string }> => {
+  const run = async (client: PoolClient) => {
     // 1. Update profile details statuses to PROCESSING and prepare data
     const { profilesToUpdate, profilesToCreate, profileImportDetailsMap } =
       await importStartup({ ...params, client });
@@ -309,7 +318,14 @@ export const importProfiles = async (params: {
 
     // Check completion and update overall status
     return importTeardown({ ...params, client });
-  });
+  };
+
+  if (params.client) {
+    return run(params.client);
+  }
+
+  return withClient(params.pool, run);
+};
 
 async function importStartup({
   client,

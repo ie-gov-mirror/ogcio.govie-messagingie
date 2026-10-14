@@ -16,10 +16,8 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("next-intl", () => ({
   useTranslations: () => ({
-    rich: (
-      _key: string,
-      values: { link: (chunks: ReactNode) => ReactNode },
-    ) => values.link("Review consent"),
+    rich: (_key: string, values: { link: (chunks: ReactNode) => ReactNode }) =>
+      values.link("Review consent"),
   }),
 }))
 

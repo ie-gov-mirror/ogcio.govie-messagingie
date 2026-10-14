@@ -35,9 +35,7 @@ describe("InboxInfiniteScrollFooter", () => {
 
   it("loads the next page only when an eligible sentinel intersects", () => {
     const onLoadMore = vi.fn()
-    render(
-      <InboxInfiniteScrollFooter hasMore onLoadMore={onLoadMore} />,
-    )
+    render(<InboxInfiniteScrollFooter hasMore onLoadMore={onLoadMore} />)
 
     expect(observe).toHaveBeenCalledOnce()
     act(() => {
@@ -59,7 +57,9 @@ describe("InboxInfiniteScrollFooter", () => {
       />,
     )
 
-    expect(screen.getByRole("status", { name: "loadingMore" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("status", { name: "loadingMore" }),
+    ).toBeInTheDocument()
     expect(screen.getByTestId("inbox-load-more-spinner")).toBeInTheDocument()
     act(() => {
       intersectionCallback(

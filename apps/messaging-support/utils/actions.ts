@@ -97,15 +97,16 @@ export async function updateProfileConsentDataAction(params: {
   return result
 }
 
-export async function deleteAccountAction(params: {
-  profileId: string
-}) {
+export async function deleteAccountAction(params: { profileId: string }) {
   const user = await getIdentity()
   if (!user) {
     return failure(new Error("no user"), "unauthorized")
   }
 
-  const result = await ProfileDataService.deleteAccount({profileId: params.profileId, requesterUserId: user.sub})
+  const result = await ProfileDataService.deleteAccount({
+    profileId: params.profileId,
+    requesterUserId: user.sub,
+  })
   void emitAuditOnce(
     {
       actionName: "deleteAccount",

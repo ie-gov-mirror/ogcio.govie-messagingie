@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
+import { createDb, type Kysely } from "@ogcio/db-core";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { Pool } from "pg";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import type { DB } from "../../db/schema.js";
+import { MessageModel } from "../../models/message-model.js";
 import { Permissions } from "../../types/permissions.js";
 import { utils } from "../../utils/utils.js";
 import {
@@ -374,6 +377,87 @@ describe("POST /api/v1/messages/search", {}, () => {
     const body = res.json().data;
     expect(body).toHaveLength(1);
     expect(body[0].id).toBe(deletedMsg.id);
+  });
+});
+
+// The inbox tag-folder filter (`tagId` / `untagged`) is enforced in
+// MessageModel.listForInbox. The route/service reject `untagged` and `tagId`
+// together, so the model is exercised directly here to also pin the precedence
+// of `untagged` over `tagId`.
+describe("MessageModel.listForInbox tag filtering", () => {
+  let pool: Pool;
+  let db: Kysely<DB>;
+  let model: MessageModel;
+  const recipientId = randomUUID().substring(0, 12);
+  const orgId = randomUUID().substring(0, 10);
+  let taggedId: string;
+  let untaggedId: string;
+  let tagId: string;
+
+  beforeAll(async () => {
+    const connectionString = process.env[DATABASE_TEST_URL_KEY];
+    pool = getPoolFromConnectionString(connectionString);
+    db = createDb<DB>({ connectionString });
+    model = new MessageModel(db);
+
+    taggedId = (await insertMessage(recipientId, orgId, pool)).id;
+    untaggedId = (await insertMessage(recipientId, orgId, pool)).id;
+
+    const tagRes = await pool.query<{ id: string }>(
+      `INSERT INTO tags(user_id, label, path) VALUES($1, 'InboxTag', replace(gen_random_uuid()::text, '-', '')::ltree) RETURNING id`,
+      [recipientId],
+    );
+    tagId = tagRes.rows[0].id;
+    await pool.query(`UPDATE messages SET tag_id = $1 WHERE id = $2`, [
+      tagId,
+      taggedId,
+    ]);
+  });
+
+  afterAll(async () => {
+    await db?.destroy();
+    if (pool) {
+      await pool.end();
+    }
+  });
+
+  const listWith = (query: { tagId?: string; untagged?: boolean }) =>
+    model.listForInbox({
+      recipientUserIds: [recipientId],
+      organizationId: orgId,
+      pagination: { limit: "20", offset: "0" },
+      query: {
+        isSeen: undefined,
+        search: undefined,
+        deletedAfterDateTime: undefined,
+        tagId: query.tagId,
+        untagged: query.untagged,
+      },
+    });
+
+  it("returns only tagged messages when filtering by tagId", async () => {
+    const result = await listWith({ tagId });
+    expect(result.totalCount).toBe(1);
+    expect(result.data.map((d) => d.id)).toEqual([taggedId]);
+  });
+
+  it("returns only untagged messages when untagged=true", async () => {
+    const result = await listWith({ untagged: true });
+    expect(result.totalCount).toBe(1);
+    expect(result.data.map((d) => d.id)).toEqual([untaggedId]);
+  });
+
+  it("returns both messages when neither tag filter is set", async () => {
+    const result = await listWith({});
+    expect(result.data.map((d) => d.id).sort()).toEqual(
+      [taggedId, untaggedId].sort(),
+    );
+  });
+
+  it("gives untagged precedence over tagId when both are set", async () => {
+    const result = await listWith({ tagId, untagged: true });
+    expect(result.totalCount).toBe(1);
+    expect(result.data.map((d) => d.id)).toEqual([untaggedId]);
   });
 });
 

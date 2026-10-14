@@ -11,13 +11,7 @@ vi.mock("@/lib/swr-focus-revalidation", () => ({
 }))
 
 vi.mock("swr", () => ({
-  SWRConfig: ({
-    children,
-    value,
-  }: {
-    children: ReactNode
-    value: unknown
-  }) => {
+  SWRConfig: ({ children, value }: { children: ReactNode; value: unknown }) => {
     configSpy(value)
     return <>{children}</>
   },

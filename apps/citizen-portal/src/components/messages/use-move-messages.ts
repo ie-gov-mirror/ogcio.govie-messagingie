@@ -2,6 +2,11 @@
 
 import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { useCallback, useState } from "react"
+import {
+  type AssignTagBody,
+  type AssignTagResponse,
+  messagesApi,
+} from "@/api/messages"
 
 export interface MoveMessagesResult {
   ok: boolean
@@ -22,9 +27,9 @@ export interface UseMoveMessagesOptions {
 export function useMoveMessages(options: UseMoveMessagesOptions = {}) {
   const { onSettled } = options
   const { trigger, isLoading } = useGatewayMutation<
-    { tagId: string | null; messageIds: string[] },
-    { tagId: string | null; messageIds: string[] }
-  >("/messaging/api/v1/messages/tags", { method: "POST" })
+    AssignTagResponse,
+    AssignTagBody
+  >(messagesApi.tagsPath(), { method: "POST" })
   const [lastResult, setLastResult] = useState<MoveMessagesResult | null>(null)
 
   const moveIds = useCallback(
@@ -32,16 +37,20 @@ export function useMoveMessages(options: UseMoveMessagesOptions = {}) {
       ids: string[],
       folderId: string | null,
     ): Promise<MoveMessagesResult> => {
-      const unique = Array.from(new Set(ids))
+      const body = messagesApi.moveBody(ids, folderId)
       try {
-        await trigger({ tagId: folderId, messageIds: unique })
-        const result: MoveMessagesResult = { ok: true, ids: unique, folderId }
+        await trigger(body)
+        const result: MoveMessagesResult = {
+          ok: true,
+          ids: body.messageIds,
+          folderId,
+        }
         setLastResult(result)
         return result
       } catch {
         const result: MoveMessagesResult = {
           ok: false,
-          ids: unique,
+          ids: body.messageIds,
           folderId,
         }
         setLastResult(result)

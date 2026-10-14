@@ -6,16 +6,10 @@ import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
+import { type Profile, profileApi } from "@/api/profile"
 import { CssSpinner } from "@/components/css-spinner"
 import { TRACE_MESSAGES, TRACES } from "@/const/traces"
 import { withFaroSpan } from "@/util/trace-helpers"
-
-interface Profile {
-  id: string
-  email: string
-  primaryUserId: string
-  preferredLanguage?: string
-}
 
 /**
  * profile-api refuses the link with 400 when the target already signed in
@@ -50,7 +44,7 @@ export function ConfirmButton({
   const [linkBlocked, setLinkBlocked] = useState(false)
 
   const { trigger, isLoading } = useGatewayMutation<Profile>(
-    `/profile/api/v1/profiles/${targetUserId}`,
+    profileApi.patchPath(targetUserId),
     { method: "PATCH" },
   )
 

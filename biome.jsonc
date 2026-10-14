@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.13/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -15,6 +15,7 @@
       "!**/out/**/*",
       "!**/coverage/**/*",
       "!**/playwright-report/**/*",
+      "!**/packages/api-types/src/*.d.ts",
       "!**/next-env.d.ts"
     ]
   },

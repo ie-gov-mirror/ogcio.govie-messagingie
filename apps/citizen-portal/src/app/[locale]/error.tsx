@@ -44,8 +44,9 @@ export default function ErrorPage({
 
   useEffect(() => {
     if (isChunkLoadError(error)) {
-      faro.api?.pushLog([`ChunkLoadError: ${error.message}`])
+      // A reload recovers a stale tab, so there is nothing to report yet.
       if (reloadOnceIfChunkLoadError(error)) return
+      faro.api?.pushLog([`ChunkLoadError: ${error.message}`])
     }
     faro.api?.pushLog([`Error: ${error.message}`])
   }, [error])

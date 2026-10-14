@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto"
 import { NextResponse } from "next/server"
 import { buildMsalClient, msalScopes } from "@/msal"
-import { cookieNameAuthNonce, cookieNameAuthState } from "@/utils/cookies"
+import {
+  cookieNameAuthNonce,
+  cookieNameAuthState,
+  cookieNameLoggedOut,
+} from "@/utils/cookies"
 import { getEnvConfig } from "@/utils/env"
 
 export async function GET() {
@@ -31,6 +35,13 @@ export async function GET() {
 
   res.cookies.set(cookieNameAuthState, state, cookieOptions)
   res.cookies.set(cookieNameAuthNonce, nonce, cookieOptions)
+  res.cookies.set(cookieNameLoggedOut, "", {
+    path: "/",
+    maxAge: 0,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  })
 
   return res
 }

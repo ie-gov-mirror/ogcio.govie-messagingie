@@ -1,4 +1,4 @@
-import { getBuildingBlockSDK } from "@ogcio/building-blocks-sdk"
+import type { getBuildingBlockSDK } from "@ogcio/building-blocks-sdk"
 import type {
   MessageEventStatus,
   MessageEventType,

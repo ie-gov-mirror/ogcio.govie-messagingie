@@ -1,60 +1,22 @@
-import { readFileSync } from "node:fs";
-import { Pool, type PoolConfig } from "pg";
-import type { EnvDbConfig } from "../../plugins/external/env.js";
+import {
+  type DbEnv,
+  getDbEnv,
+  getPgConnection as getPgConnectionCore,
+  POSTGRES_MAINTENANCE_DB,
+} from "@ogcio/db-core";
+import type { Pool, PoolConfig } from "pg";
 
-export function getDbEnvs(): EnvDbConfig {
-  const envs: Partial<EnvDbConfig> = {
-    POSTGRES_DB_NAME: process.env.POSTGRES_DB_NAME,
-    POSTGRES_HOST: process.env.POSTGRES_HOST,
-    POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
-    POSTGRES_PORT: process.env.POSTGRES_PORT
-      ? Number(process.env.POSTGRES_PORT)
-      : undefined,
-    POSTGRES_USER: process.env.POSTGRES_USER,
-    POSTGRES_SSL: process.env.POSTGRES_SSL?.toLowerCase() === "true",
-  };
+// The CA bundle ships with the app; db-core keeps the path caller-supplied.
+const caCertPath = new URL(
+  "../../certificates/global-bundle.pem",
+  import.meta.url,
+).pathname;
 
-  for (const key in Object.keys(envs)) {
-    if (!key) {
-      throw new Error(`Cannot run migration, ${key} is missing`);
-    }
-  }
+export const getDbEnvs = (): DbEnv => getDbEnv();
 
-  return envs as EnvDbConfig;
-}
-
-export function getPgConnection(
-  envDbConfig: EnvDbConfig | string,
+export const getPgConnection = (
+  envDbConfig: DbEnv | string,
   additionalConfig?: Partial<PoolConfig>,
-): Pool {
-  if (typeof envDbConfig === "string") {
-    return new Pool({ connectionString: envDbConfig, ...additionalConfig });
-  }
+): Pool => getPgConnectionCore(envDbConfig, additionalConfig, { caCertPath });
 
-  let sslConfig: PoolConfig["ssl"] = false;
-  if (typeof envDbConfig !== "string" && envDbConfig.POSTGRES_SSL) {
-    console.log("Using SSL for PostgreSQL connection");
-    const certificatePath = new URL(
-      "../../certificates/global-bundle.pem",
-      import.meta.url,
-    ).pathname;
-
-    const ca = readFileSync(certificatePath);
-    sslConfig = {
-      rejectUnauthorized: false,
-      ca,
-    };
-  }
-
-  return new Pool({
-    host: envDbConfig.POSTGRES_HOST,
-    port: envDbConfig.POSTGRES_PORT,
-    database: envDbConfig.POSTGRES_DB_NAME,
-    user: envDbConfig.POSTGRES_USER,
-    password: envDbConfig.POSTGRES_PASSWORD,
-    ssl: sslConfig,
-    ...additionalConfig,
-  });
-}
-
-export const POSTGRES_DB_NAME = "postgres";
+export const POSTGRES_DB_NAME = POSTGRES_MAINTENANCE_DB;

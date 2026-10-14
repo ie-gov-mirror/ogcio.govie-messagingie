@@ -115,18 +115,26 @@ function DeferredMaterialSymbols() {
   return ready ? <LoadMaterialSymbols /> : null
 }
 
+// Best-effort: a chunk that fails to load here (stale tab after a deploy,
+// flaky network) is not user-facing. The real load on navigation reports it
+// through the error boundary, which also reloads once to recover. Left
+// unhandled, every shell mount reports an exception to Faro instead.
+function prefetch(chunk: Promise<unknown>) {
+  chunk.catch(() => undefined)
+}
+
 function preloadZoneRouteChunk(zone: Zone) {
   switch (zone) {
     case "messages":
-      void import("@/components/messages/unified-inbox")
-      void import("@/components/secure-messages/secure-message-page")
+      prefetch(import("@/components/messages/unified-inbox"))
+      prefetch(import("@/components/secure-messages/secure-message-page"))
       break
     case "dashboard":
-      void import("@/components/dashboard/my-dashboard")
-      void import("@/components/submissions/submissions")
+      prefetch(import("@/components/dashboard/my-dashboard"))
+      prefetch(import("@/components/submissions/submissions"))
       break
     case "profile":
-      void import("@/components/profile/my-profile")
+      prefetch(import("@/components/profile/my-profile"))
       break
   }
 }

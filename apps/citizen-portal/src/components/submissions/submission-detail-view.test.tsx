@@ -29,7 +29,15 @@ vi.mock("./use-submissions", () => ({
   useSubmission: () => state.result,
 }))
 vi.mock("@ogcio/design-system-react", () => ({
-  Heading: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
+  Heading: ({
+    as: Tag = "h1",
+    className,
+    children,
+  }: {
+    as?: "h1" | "h2"
+    className?: string
+    children: React.ReactNode
+  }) => <Tag className={className}>{children}</Tag>,
   Paragraph: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
 }))
 vi.mock("./submission-detail-toolbar", () => ({
@@ -38,7 +46,9 @@ vi.mock("./submission-detail-toolbar", () => ({
   ),
 }))
 vi.mock("./submission-status-tag", () => ({
-  SubmissionStatusTag: ({ status }: { status: string }) => <span>{status}</span>,
+  SubmissionStatusTag: ({ status }: { status: string }) => (
+    <span>{status}</span>
+  ),
 }))
 vi.mock("./submission-related-messages", () => ({
   SubmissionRelatedMessages: ({
@@ -50,6 +60,8 @@ vi.mock("./submission-related-messages", () => ({
   }) => <div>{`related:${submissionId}:${submissionTitle}`}</div>,
 }))
 
+import messageStyles from "@/components/messages/message-detail.module.css"
+import pageTitleStyles from "@/components/page-title.module.css"
 import { SubmissionDetailView } from "./submission-detail-view"
 
 describe("SubmissionDetailView", () => {
@@ -65,7 +77,8 @@ describe("SubmissionDetailView", () => {
 
   it("shows the error and a route back to the list", () => {
     state.result.error = new Error("Submission unavailable")
-    render(<SubmissionDetailView id='submission-1' />)
+    const { container } = render(<SubmissionDetailView id='submission-1' />)
+    expect(container.firstElementChild).toHaveClass(messageStyles.detailOffset)
     expect(screen.getByText("Submission unavailable")).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute(
       "href",
@@ -82,8 +95,11 @@ describe("SubmissionDetailView", () => {
       createdAt: "2026-01-01T00:00:00Z",
       submittedAt: "2026-01-02T00:00:00Z",
     }
-    render(<SubmissionDetailView id='submission-1' />)
-    expect(screen.getByRole("heading", { name: "heading" })).toBeInTheDocument()
+    const { container } = render(<SubmissionDetailView id='submission-1' />)
+    expect(container.firstElementChild).toHaveClass(messageStyles.detailOffset)
+    expect(screen.getByRole("heading", { name: "heading" })).toHaveClass(
+      pageTitleStyles.pageTitle,
+    )
     expect(screen.getByText("Housing support")).toBeInTheDocument()
     expect(screen.getByText("Apply for support")).toBeInTheDocument()
     expect(

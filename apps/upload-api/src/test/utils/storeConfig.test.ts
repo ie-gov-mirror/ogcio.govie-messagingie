@@ -100,52 +100,50 @@ describe("storeConfig", () => {
     expect(params[1]).toBe(SCHEDULER_NEXT_RUN_AT);
   });
 
-  it("should return undefined when a config key is not found", async () => {
-    const poolMock = {
-      query: () =>
+  // `getConfigValue` delegates to SettingsService, which reads through a
+  // Kysely instance built from the pool. Kysely acquires a client via
+  // `pool.connect()` and releases it afterwards, so the mock pool exposes a
+  // `connect()` returning a client with `query`/`release`.
+  const buildPoolMock = (rows: unknown[]): Pool =>
+    ({
+      connect: () =>
         Promise.resolve({
-          rows: [],
+          query: () => Promise.resolve({ rows }),
+          release: () => {},
         }),
-    } as unknown as Pool;
-    const value = await getConfigValue(poolMock, "key");
+    }) as unknown as Pool;
+
+  it("should return undefined when a config key is not found", async () => {
+    const value = await getConfigValue(buildPoolMock([]), "key");
 
     expect(value).toBeUndefined();
   });
 
   it("should return a string value", async () => {
-    const poolMock = {
-      query: () =>
-        Promise.resolve({
-          rows: [{ value: "value", type: "string" }],
-        }),
-    } as unknown as Pool;
-    const value = await getConfigValue(poolMock, "key");
+    const value = await getConfigValue(
+      buildPoolMock([{ key: "key", value: "value", type: "string" }]),
+      "key",
+    );
 
     expect(value).toBe("value");
     expect(typeof value).toBe("string");
   });
 
   it("should return a numeric value", async () => {
-    const poolMock = {
-      query: () =>
-        Promise.resolve({
-          rows: [{ value: "1", type: "number" }],
-        }),
-    } as unknown as Pool;
-    const value = await getConfigValue(poolMock, "key");
+    const value = await getConfigValue(
+      buildPoolMock([{ key: "key", value: "1", type: "number" }]),
+      "key",
+    );
 
     expect(value).toBe(1);
     expect(typeof value).toBe("number");
   });
 
   it("should return a boolean value", async () => {
-    const poolMock = {
-      query: () =>
-        Promise.resolve({
-          rows: [{ value: "true", type: "boolean" }],
-        }),
-    } as unknown as Pool;
-    const value = await getConfigValue(poolMock, "key");
+    const value = await getConfigValue(
+      buildPoolMock([{ key: "key", value: "true", type: "boolean" }]),
+      "key",
+    );
 
     expect(value).toBe(true);
     expect(typeof value).toBe("boolean");

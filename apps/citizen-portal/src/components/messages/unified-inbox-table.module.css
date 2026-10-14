@@ -40,26 +40,30 @@
   white-space: normal;
 }
 
+/*
+ * Header sits on gray-50 so it stays distinct from the neutral-100
+ * selected-row tint below it.
+ */
 .desktopTable :global(.gi-table-head),
 .desktopTable thead {
-  background-color: var(--gieds-color-gray-100, #e9eaed);
+  background-color: var(--gieds-color-gray-50, #f7f7f8);
 }
 
 /*
- * DS gap (no `emphasis`/`unread` variant on `TableRow`): unread row tone.
+ * DS gap (no `emphasis`/`unread` variant on `TableRow`): unread row weight.
  *
- * Unread rows get a gray-200 background + bold text across every text
- * leaf in the row (matches the Figma "unread" state). Doubled `.unreadRow`
+ * Gmail convention: read and unread rows share the same white background
+ * and bold weight is the only read/unread differentiator (WCAG 1.4.1 —
+ * weight is a non-colour cue). No unread dot, no grey fill. Selection
+ * repaints the background (see `.selectedRow`) but keeps the weight, so a
+ * selected row still tells you whether it was read. Doubled `.unreadRow`
  * selector lifts specificity above DS's `.gi-table-td` defaults so the
  * bold weight wins without `!important`.
  *
- * Removable when DS `TableRow` exposes an `emphasis`/`variant="unread"`
- * prop with the same gray-200 + 700-weight treatment.
+ * Intentionally diverges from the base DS; the DS is expected to adopt
+ * this pattern. Removable when DS `TableRow` exposes an
+ * `emphasis`/`variant="unread"` prop with the same 700-weight treatment.
  */
-.unreadRow {
-  background-color: var(--gieds-color-gray-200, #d8dadf);
-}
-
 .unreadRow.unreadRow td,
 .unreadRow.unreadRow :global(.gi-table-td) {
   font-weight: var(--gieds-font-weight-700);
@@ -71,13 +75,20 @@
   font-weight: var(--gieds-font-weight-700);
 }
 
-/* Sender cell */
+/*
+ * Sender cell: single line, truncated with an ellipsis when the name
+ * outgrows the fixed md column (bold unread names hit this first). The
+ * max-width mirrors DS `.gi-table-td-md-fixed` because auto-layout tables
+ * don't reliably clamp `nowrap` content to the cell's own max-width.
+ */
 .senderCell {
   font-weight: inherit;
   color: var(--gieds-color-gray-900, #252526);
   display: block;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  max-width: var(--gieds-space-48, 12rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Details text */
@@ -121,14 +132,15 @@
 
 /*
  * Stretched-link overlay: the subject anchor's `::after` covers the whole
- * row so the entire row is the hit area. The link text inherits the row's
- * colour/weight so the subject still reads as plain text, not a blue
- * hyperlink.
+ * row so the entire row is the hit area. The subject is painted as a
+ * convention-blue underlined link (same tone as the mobile `ListCard`
+ * preview) and inherits the row's weight, so unread subjects render bold.
  */
 .rowLink {
-  color: inherit;
   font: inherit;
-  text-decoration: none;
+  color: var(--gieds-color-text-tone-convention-default, #2c55a2);
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
 }
 
 .rowLink::after {
@@ -154,9 +166,10 @@
  * the checkbox — unlike the mobile list, which tints the whole row. This
  * mirrors the mobile ListCard selected-state neutral-100 tone (and
  * neutral-200 on hover) so selection reads consistently across both
- * viewports. The doubled `.selectedRow` selector lifts specificity above
- * `.clickableRow:hover` and `.unreadRow` so the selection tint always
- * wins while a row is checked.
+ * viewports. Only the background changes: `.unreadRow` weight still
+ * applies, so bold vs regular keeps telling read from unread. The doubled
+ * `.selectedRow` selector lifts specificity above `.clickableRow:hover`
+ * so the selection tint always wins while a row is checked.
  */
 .selectedRow.selectedRow {
   background-color: var(--gieds-color-neutral-100, #e9eaed);
@@ -566,7 +579,7 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .desktopTable {
     display: none;
   }
@@ -617,7 +630,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .mobileSelectHeader {
     display: none;
   }

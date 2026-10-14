@@ -1,3 +1,4 @@
+import { httpErrors } from "@fastify/sensible";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import type { FastifyInstance } from "fastify";
 import { Permissions } from "~/const/permissions.js";
@@ -9,19 +10,14 @@ import type {
   FastifyReplyTypebox,
   FastifyRequestTypebox,
 } from "~/schemas/shared.js";
-import { getProfileImport } from "~/services/profiles/get-profile-import.js";
 import { getProfileTemplate } from "~/services/profiles/get-profile-template.js";
-import { getProfileImportDetails } from "~/services/profiles/imports/get-profile-import-details.js";
-import { listProfileImports } from "~/services/profiles/imports/list-profile-imports.js";
+import { ProfileImportService } from "~/services/profiles/imports/profile-import-service.js";
 import { formatAPIResponse, sanitizePagination } from "~/utils/pagination.js";
 import { withOrganizationId } from "~/utils/with-organization-id.js";
 import { importProfilesRoute } from "../shared.js";
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
-  const {
-    pg: { pool },
-    config,
-  } = fastify;
+  const { config } = fastify;
 
   fastify.post(
     "/",
@@ -52,12 +48,13 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       schema: ListProfileImportsSchema,
     },
     async (request: FastifyRequestTypebox<typeof ListProfileImportsSchema>) => {
-      const { data, total: totalCount } = await listProfileImports({
-        pool,
+      const { data, total: totalCount } = await new ProfileImportService(
+        fastify.db,
+      ).list({
         organisationId: withOrganizationId(request),
         pagination: sanitizePagination(request.query),
         search: request.query.search,
-        source: request.query.source,
+        source: request.query.source ?? "csv",
       });
 
       return formatAPIResponse({
@@ -83,14 +80,16 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       request: FastifyRequestTypebox<typeof GetProfileImportDetailsSchema>,
     ) => {
       const organisationId = withOrganizationId(request);
-      const [importData, importDetailsData] = await Promise.all([
-        getProfileImport({
-          pool,
-          profileImportId: request.params.importId,
-          organisationId,
-        }),
-        getProfileImportDetails(pool, request.params.importId, organisationId),
-      ]);
+      const importService = new ProfileImportService(fastify.db);
+      const importData = await importService.get(request.params.importId);
+      if (importData.organisationId !== organisationId) {
+        throw httpErrors.notFound(
+          `Status for profile_import with id ${request.params.importId} not found`,
+        );
+      }
+      const importDetailsData = await importService.getDetails(
+        request.params.importId,
+      );
 
       return {
         data: {

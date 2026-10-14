@@ -22,29 +22,44 @@ function patchHistoryOnce() {
   // Next's App Router pushes history state from a `useInsertionEffect`, and
   // React forbids scheduling updates there. A microtask defers past it, and
   // `location.search` is already current by the time subscribers read it.
-  const notify = () => {
-    queueMicrotask(() => {
-      for (const listener of listeners) {
-        listener()
-      }
-    })
+  // Multiple synchronous history mutations coalesce into a single flush so
+  // listeners still fire exactly once per URL change.
+  let notifyScheduled = false
+
+  const flushNotify = () => {
+    notifyScheduled = false
+    for (const listener of listeners) {
+      listener()
+    }
   }
+  const scheduleNotify = () => {
+    if (notifyScheduled) return
+    notifyScheduled = true
+    const schedule =
+      typeof queueMicrotask === "function"
+        ? queueMicrotask
+        : (cb: () => void) => {
+            Promise.resolve().then(cb)
+          }
+    schedule(flushNotify)
+  }
+
   const originalPushState = history.pushState.bind(history)
   const originalReplaceState = history.replaceState.bind(history)
 
   history.pushState = (...args) => {
     const result = originalPushState(...args)
-    notify()
+    scheduleNotify()
     return result
   }
 
   history.replaceState = (...args) => {
     const result = originalReplaceState(...args)
-    notify()
+    scheduleNotify()
     return result
   }
 
-  window.addEventListener("popstate", notify)
+  window.addEventListener("popstate", scheduleNotify)
 }
 
 function getClientSearchString() {

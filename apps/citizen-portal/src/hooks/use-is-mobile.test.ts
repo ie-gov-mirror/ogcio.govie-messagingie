@@ -24,6 +24,7 @@ describe("useIsMobile", () => {
     vi.stubGlobal("matchMedia", matchMedia)
 
     const { result, unmount } = renderHook(useIsMobile)
+    expect(MOBILE_MEDIA_QUERY).toBe("(max-width: 1023px)")
     expect(matchMedia).toHaveBeenCalledWith(MOBILE_MEDIA_QUERY)
     expect(result.current).toBe(true)
 

@@ -1,6 +1,7 @@
 /*
- * Submission detail layout. Full-bleed on mobile; one shared horizontal gutter
- * aligns the back link, title, field copy, related heading and message rows.
+ * Submission detail layout. Full-bleed on mobile. Title, field copy, related
+ * heading and message rows share one horizontal gutter. The Back toolbar
+ * uses the message-detail toolbar spacing instead of this gutter.
  */
 .detailRoot {
   --submission-detail-gutter: var(--gieds-space-4);
@@ -8,7 +9,6 @@
   flex-direction: column;
   gap: var(--gieds-space-6);
   width: 100%;
-  margin-top: calc(-1 * var(--gieds-space-6));
   color: var(--gieds-color-gray-950, #0b0c0c);
   background-color: var(--gieds-color-white, #ffffff);
 }
@@ -19,18 +19,11 @@
   box-sizing: border-box;
 }
 
-.detailToolbar {
-  padding-left: var(--submission-detail-gutter);
-  padding-right: var(--submission-detail-gutter);
-  box-sizing: border-box;
-}
-
-@media (max-width: 767px) {
-  .detailToolbar {
-    padding-bottom: var(--gieds-space-2);
-    border-bottom: var(--gieds-border-width-100, 1px) solid
-      var(--gieds-color-gray-200, #e5e5e6);
-  }
+/* Message detail draws a full-bleed line with `.toolbar::after`. Hide it
+   here: submission detail is not inside `.inboxLayoutMain`, which is the
+   only place that rule is suppressed on desktop. */
+.detailToolbar::after {
+  display: none;
 }
 
 .detailContent {
@@ -73,7 +66,7 @@
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .detailRoot {
     width: 100vw;
     margin-left: calc(50% - 50vw);

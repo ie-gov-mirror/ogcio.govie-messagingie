@@ -390,9 +390,7 @@ describe("getMainProfile", () => {
   it("exposes the primary profile id when viewing a child profile", async () => {
     vi.mocked(queryProfile).mockResolvedValue({
       success: true,
-      value: [
-        profileRow({ id: "child-1", primary_user_id: "primary-user-1" }),
-      ],
+      value: [profileRow({ id: "child-1", primary_user_id: "primary-user-1" })],
     })
 
     const result = await ProfileDataService.getMainProfile("child-1")

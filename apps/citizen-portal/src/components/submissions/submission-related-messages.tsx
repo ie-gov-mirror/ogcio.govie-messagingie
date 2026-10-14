@@ -73,7 +73,7 @@ export function SubmissionRelatedMessages({
     >
       <Heading
         as='h2'
-        size='md'
+        size='sm'
         className={styles.relatedHeading}
         id='related-messages-heading'
       >

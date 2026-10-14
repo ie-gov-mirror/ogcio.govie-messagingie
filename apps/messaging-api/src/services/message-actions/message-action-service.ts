@@ -1,6 +1,9 @@
 import { httpErrors } from "@fastify/sensible";
+import { createDbFromPool, type Kysely } from "@ogcio/db-core";
 import type { FastifyBaseLogger } from "fastify";
-import type { Pool, PoolClient } from "pg";
+import type { Pool } from "pg";
+import type { DB } from "../../db/schema.js";
+import { MessageActionModel } from "../../models/message-action-model.js";
 import type { PutMessageActionBody } from "../../types/message-actions.js";
 import { messagesReadCounter } from "../../utils/metrics.js";
 import {
@@ -9,24 +12,43 @@ import {
 } from "../messages/event-logger.js";
 import { ProfilePersonalSdkWrapper } from "../users/profile-personal-sdk-wrapper.js";
 
-export async function updateMessageAction(params: {
-  loggedInUser: { userId: string; accessToken: string };
-  body: PutMessageActionBody;
-  pool: Pool;
-  logger: FastifyBaseLogger;
-}): Promise<void> {
-  const { loggedInUser, body, pool, logger } = params;
-  const client = await pool.connect();
-  try {
-    const recipient = await findMessageRecipient({
-      client,
-      messageId: body.messageId,
-    });
+/**
+ * Business logic for the `message-actions` domain. Composes
+ * {@link MessageActionModel} for data access (recipient lookup + read-status
+ * update via db-core/Kysely) and keeps the permission checks, metrics and
+ * event logging here, so route handlers stay thin controllers.
+ *
+ * The event logging side effect still writes through the shared
+ * {@link MessagingEventLogger}, which operates on a raw pg pool, so the service
+ * is constructed with both `app.db` (data access) and `app.pg.pool`
+ * (event logging), mirroring the incremental pg/db coexistence.
+ */
+export class MessageActionService {
+  private readonly model: MessageActionModel;
+
+  constructor(
+    db: Kysely<DB>,
+    private readonly pool: Pool,
+    private readonly logger: FastifyBaseLogger,
+  ) {
+    this.model = new MessageActionModel(db);
+  }
+
+  async update(params: {
+    loggedInUser: { userId: string; accessToken: string };
+    body: PutMessageActionBody;
+  }): Promise<void> {
+    const { loggedInUser, body } = params;
+
+    const recipient = await this.model.findRecipient(body.messageId);
     if (!recipient) {
       throw httpErrors.notFound("message not found");
     }
     if (recipient.recipientUserId !== loggedInUser.userId) {
-      const profileSdk = new ProfilePersonalSdkWrapper(logger, loggedInUser);
+      const profileSdk = new ProfilePersonalSdkWrapper(
+        this.logger,
+        loggedInUser,
+      );
       const linkedProfilesIds = await profileSdk.getLinkedProfileIds(
         loggedInUser.userId,
       );
@@ -35,81 +57,64 @@ export async function updateMessageAction(params: {
         throw httpErrors.notFound("message not found for user");
       }
     }
-    await setMessageReadStatus({
-      client,
-      pool,
+
+    await this.setMessageReadStatus({
       body,
       userId: recipient.recipientUserId,
       organizationId: recipient.organizationId,
-      logger,
     });
-  } finally {
-    client.release();
+  }
+
+  private async setMessageReadStatus(params: {
+    body: PutMessageActionBody;
+    userId: string;
+    organizationId: string;
+  }): Promise<void> {
+    const updatedRows = await this.model.setReadStatus({
+      userId: params.userId,
+      messageId: params.body.messageId,
+      isSeen: params.body.isSeen,
+    });
+
+    if (updatedRows) {
+      // the Unseen event is not important for the
+      // messaging-events-logs feature
+      // a public servant only needs to know if
+      // the message has been opened
+      // at any point in time
+      if (!params.body.isSeen) {
+        return;
+      }
+
+      messagesReadCounter.add(1, { organizationId: params.organizationId });
+
+      const eventLogger = new MessagingEventLogger(this.pool, this.logger);
+      eventLogger.log(MessagingEventType.citizenSeenMessage, {
+        messageId: params.body.messageId,
+      });
+      await eventLogger.commit();
+    }
   }
 }
 
-async function findMessageRecipient(params: {
-  client: PoolClient;
-  messageId: string;
-}): Promise<{ recipientUserId: string; organizationId: string } | undefined> {
-  const queryResult = await params.client.query<{
-    recipientUserId: string;
-    organizationId: string;
-  }>(
-    `
-    select user_id as "recipientUserId", organisation_id as "organizationId"
-    from messages where id = $1 AND deleted_at IS NULL
-    `,
-    [params.messageId],
-  );
-  return queryResult.rows.at(0);
-}
-
-async function setMessageReadStatus(params: {
-  client: PoolClient;
+/**
+ * Backward-compatible wrapper (used by tests and callers that still pass a raw
+ * pg {@link Pool}). Route handlers instead construct the service from `app.db`
+ * (plus `app.pg.pool` for event logging) directly.
+ */
+export async function updateMessageAction(params: {
+  loggedInUser: { userId: string; accessToken: string };
   body: PutMessageActionBody;
-  userId: string;
-  organizationId: string;
   pool: Pool;
   logger: FastifyBaseLogger;
 }): Promise<void> {
-  // Please note: in the message_selection we removed the
-  // clause for and is_delivered = true because the list API
-  // is not filtering messages based on delivery status anymore.
-  // Thus, a message can be marked as seen even if it was not
-  // marked as delivered before
-  const updateQueryResult = await params.client.query<{ isSeen: boolean }>(
-    `
-    with message_selection as(
-        select m.id from messages m
-        where 
-            m.user_id = $1
-            and m.id = $2
-            and $3 != m.is_seen
-            and m.deleted_at IS NULL
-    )
-    update messages set is_seen = $3
-    where id = any(select id from message_selection)
-    returning is_seen as "isSeen", id
-    `,
-    [params.userId, params.body.messageId, params.body.isSeen],
+  const service = new MessageActionService(
+    createDbFromPool<DB>(params.pool),
+    params.pool,
+    params.logger,
   );
-  if (updateQueryResult.rowCount) {
-    // the Unseen event is not important for the
-    // messaging-events-logs feature
-    // a public servant only needs to know if
-    // the message has been opened
-    // at any point in time
-    if (!params.body.isSeen) {
-      return;
-    }
-
-    messagesReadCounter.add(1, { organizationId: params.organizationId });
-
-    const eventLogger = new MessagingEventLogger(params.pool, params.logger);
-    eventLogger.log(MessagingEventType.citizenSeenMessage, {
-      messageId: params.body.messageId,
-    });
-    await eventLogger.commit();
-  }
+  return service.update({
+    loggedInUser: params.loggedInUser,
+    body: params.body,
+  });
 }

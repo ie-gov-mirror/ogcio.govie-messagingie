@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const stampBaseline = vi.fn();
+const migrateToLatest = vi.fn();
+vi.mock("@ogcio/db-core", () => ({
+  createDbFromPool: vi.fn(() => ({})),
+  migrateToLatest: (...args: unknown[]) => migrateToLatest(...args),
+  stampBaseline: (...args: unknown[]) => stampBaseline(...args),
+}));
+
 const doMigration = vi.fn();
 vi.mock("~/migrations/scripts/migrate.js", () => ({
   doMigration: (...args: unknown[]) => doMigration(...args),
@@ -62,6 +70,8 @@ describe("ci-job", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    stampBaseline.mockResolvedValue(undefined);
+    migrateToLatest.mockResolvedValue(undefined);
     doMigration.mockResolvedValue(undefined);
     seedConsentStatements.mockResolvedValue(undefined);
     syncProfileConsents.mockResolvedValue(undefined);

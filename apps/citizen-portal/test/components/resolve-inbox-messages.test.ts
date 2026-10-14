@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest"
-import type { Message } from "@/types"
 import {
   hasActiveInboxListFilters,
   resolveInboxMessages,
 } from "@/components/messages/resolve-inbox-messages"
+import type { Message } from "@/types"
 
 const sampleMessages: Message[] = [
   {

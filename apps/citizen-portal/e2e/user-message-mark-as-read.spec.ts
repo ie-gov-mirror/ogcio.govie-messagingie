@@ -1,10 +1,9 @@
 import { expect, test } from "@playwright/test"
 import type { Message } from "@/types"
-import { ids, urls, users } from "./fixtures"
+import { ids, users } from "./fixtures"
 import {
   createAuthenticatedPage,
-  loginAsCitizen,
-  signInStepVisible,
+  settleMessagingInbox,
 } from "./helpers/user-auth.helper"
 
 /*
@@ -136,23 +135,9 @@ test.describe("Unified inbox: mark-as-read on open", () => {
     const state: StubState = { unreadIsSeen: false, markedAsSeen: [] }
     await stubMessagingApis(page, state)
 
-    // Absolute URL, and finish login in place if the hop reopens the IdP —
-    // same guard as the edge-case spec (nightly 117543), which shares this
-    // suite's serial run and mock IdP.
-    const inboxUrl = `${urls.messaging}/en/messages`
-    await page.goto(inboxUrl)
-    if (await signInStepVisible(page, 5_000)) {
-      await loginAsCitizen(page, users.peterParker.email)
-      if (!page.url().startsWith(inboxUrl)) {
-        await page.goto(inboxUrl)
-      }
-    }
-
-    // Unified inbox no longer renders a page-level "Messages" heading — the
-    // search box is the stable shell witness (same pattern as the edge-case
-    // specs). Waiting on the removed heading timed out after auth already
-    // succeeded.
-    await expect(page.getByTestId("search-input")).toBeVisible()
+    // Absolute inbox URL. A cross-zone hop can reopen the IdP; settle races
+    // the shell against that form (nightly 117543, build 125157).
+    await settleMessagingInbox(page, users.peterParker.email)
 
     // The row's CSS Module class is hashed at build time, but the `unreadRow`
     // substring is preserved by the Next.js CSS Modules loader — making it a

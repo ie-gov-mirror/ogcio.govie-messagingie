@@ -25,3 +25,22 @@
   right: 0;
   transform: translateY(-50%);
 }
+
+.menuIcon {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Unread marker on the top-right corner of the burger icon. Only the
+   menu icon uses a dot; the nav items keep the numbered badge. */
+.menuDot {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--gieds-color-red-600, #d0021b);
+  box-shadow: 0 0 0 1px var(--gieds-color-white, #ffffff);
+  pointer-events: none;
+}

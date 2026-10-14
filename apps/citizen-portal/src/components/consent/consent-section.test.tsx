@@ -52,6 +52,9 @@ describe("ConsentSection", () => {
     render(<ConsentSection messagingUrl={messagingUrl} />)
 
     const link = screen.getByRole("link", { name: "Update consent" })
+    const heading = screen.getByRole("heading", { name: "Consent" })
+    expect(heading).toHaveClass("gi-text-lg", "xl:gi-text-xl")
+    expect(heading.className).not.toContain("xl:gi-text-2xl")
     expect(link).toHaveAttribute(
       "href",
       `${messagingUrl}/en/messages?force-consent=1`,

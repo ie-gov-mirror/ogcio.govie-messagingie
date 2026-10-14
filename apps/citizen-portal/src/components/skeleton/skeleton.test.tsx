@@ -13,7 +13,10 @@ describe("Skeleton", () => {
       />,
     )
 
-    expect(screen.getByTestId("skeleton")).toHaveAttribute("aria-hidden", "true")
+    expect(screen.getByTestId("skeleton")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    )
     expect(screen.getByTestId("skeleton")).toHaveClass("extra")
     expect(screen.getByTestId("skeleton").style.width).toBe("8rem")
     expect(screen.getByTestId("skeleton").style.height).toBe("2rem")

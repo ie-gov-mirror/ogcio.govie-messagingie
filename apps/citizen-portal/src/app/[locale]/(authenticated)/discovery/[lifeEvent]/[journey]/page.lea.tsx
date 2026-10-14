@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { JourneyView } from "@/components/discovery/discovery-views"
-import { getDiscovery, getLifeEvent } from "@/lib/discovery-content"
+import { getDiscovery, getLifeEvent } from "@/lib/discovery"
 
 type Params = { locale: string; lifeEvent: string; journey: string }
 type Props = { params: Promise<Params> }
@@ -32,10 +32,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function JourneyPage({ params }: Props) {
   const { lifeEvent, journey } = load(await params)
-  return (
-    <JourneyView
-      lifeEvent={{ slug: lifeEvent.slug, title: lifeEvent.title }}
-      journey={journey}
-    />
-  )
+  return <JourneyView lifeEvent={{ slug: lifeEvent.slug }} journey={journey} />
 }

@@ -1,11 +1,9 @@
 import {
-  Caption,
   Heading,
   Link,
   Stack,
   Table,
   TableBody,
-  TableData,
   TableHead,
   TableHeader,
   TableRow,

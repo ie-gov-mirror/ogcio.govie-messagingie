@@ -107,10 +107,9 @@ describe("top-level app shells", () => {
     expect(
       await screen.findByRole("heading", { name: "notFound.heading" }),
     ).toBeInTheDocument()
-    expect(screen.getByRole("link", { name: "notFound.back" })).toHaveAttribute(
-      "href",
-      "/en/messages",
-    )
+    expect(
+      screen.getByRole("link", { name: "home.button.back" }),
+    ).toHaveAttribute("href", "/en/messages")
   })
 
   it("delegates the post-global-signout page", () => {

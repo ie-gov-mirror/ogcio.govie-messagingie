@@ -93,13 +93,12 @@ describe("getZoneFromPath", () => {
     // The locale root is intentionally dashboard — the landing page
     // on `/en/` / `/ga/` is the dashboard home. Changing this means
     // changing locale-landing-redirect.tsx + onboarding flow.
-    it.each([
-      "/en",
-      "/ga",
-      "/",
-    ])("resolves locale root %s to 'dashboard'", (path) => {
-      expect(getZoneFromPath(path)).toBe("dashboard")
-    })
+    it.each(["/en", "/ga", "/"])(
+      "resolves locale root %s to 'dashboard'",
+      (path) => {
+        expect(getZoneFromPath(path)).toBe("dashboard")
+      },
+    )
   })
 
   describe("unknown segments", () => {
@@ -134,21 +133,19 @@ describe("getZoneFromPath", () => {
       landingZone.value = "messages"
     })
 
-    it.each([
-      "/en",
-      "/ga",
-      "/",
-      "",
-    ])("resolves locale root %s to the enabled landing zone, not dashboard", (path) => {
-      expect(getZoneFromPath(path)).toBe("messages")
-    })
+    it.each(["/en", "/ga", "/", ""])(
+      "resolves locale root %s to the enabled landing zone, not dashboard",
+      (path) => {
+        expect(getZoneFromPath(path)).toBe("messages")
+      },
+    )
 
-    it.each([
-      "/en/this-route-does-not-exist",
-      "/ga/random",
-    ])("resolves unknown %s to the enabled landing zone", (path) => {
-      expect(getZoneFromPath(path)).toBe("messages")
-    })
+    it.each(["/en/this-route-does-not-exist", "/ga/random"])(
+      "resolves unknown %s to the enabled landing zone",
+      (path) => {
+        expect(getZoneFromPath(path)).toBe("messages")
+      },
+    )
 
     it("still resolves explicit dashboard paths to 'dashboard'", () => {
       // The route segment match is independent of the fallback target —

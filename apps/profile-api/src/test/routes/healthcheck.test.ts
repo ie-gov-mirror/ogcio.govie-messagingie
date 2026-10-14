@@ -25,12 +25,13 @@ const buildHealthcheckApp = async (pg: Partial<PostgresDb>) => {
 
 const buildPgMock = () => {
   const release = vi.fn();
+  const query = vi.fn().mockResolvedValue({ rowCount: 1 });
   const pg = {
-    connect: vi.fn().mockResolvedValue({ release }),
-    query: vi.fn().mockResolvedValue({ rowCount: 1 }),
+    connect: vi.fn().mockResolvedValue({ release, query }),
+    query: vi.fn(),
   };
 
-  return { pg, release };
+  return { pg, release, query };
 };
 
 describe("Healthcheck works as expected", {}, () => {
@@ -99,7 +100,7 @@ describe("Healthcheck works as expected", {}, () => {
   });
 
   test("GET /health/ready returns db readiness when the db check succeeds", async () => {
-    const { pg, release } = buildPgMock();
+    const { pg, release, query } = buildPgMock();
     app = await buildHealthcheckApp(pg);
 
     const res = await app.inject({
@@ -109,13 +110,14 @@ describe("Healthcheck works as expected", {}, () => {
     assert.deepStrictEqual(200, res.statusCode);
     assert.deepStrictEqual({ db: true }, res.json());
     expect(pg.connect).toHaveBeenCalledOnce();
-    expect(pg.query).toHaveBeenCalledWith('SELECT 1 as "column"');
+    expect(query).toHaveBeenCalledWith('SELECT 1 as "column"');
+    expect(pg.query).not.toHaveBeenCalled();
     expect(release).toHaveBeenCalledOnce();
   });
 
   test("GET /health/ready returns 500 when the db check has an unexpected row count", async () => {
-    const { pg, release } = buildPgMock();
-    pg.query.mockResolvedValueOnce({ rowCount: 0 });
+    const { pg, release, query } = buildPgMock();
+    query.mockResolvedValueOnce({ rowCount: 0 });
     app = await buildHealthcheckApp(pg);
 
     const res = await app.inject({
@@ -128,8 +130,8 @@ describe("Healthcheck works as expected", {}, () => {
   });
 
   test("GET /health/ready returns 500 when the db query fails", async () => {
-    const { pg, release } = buildPgMock();
-    pg.query.mockRejectedValueOnce(new Error("db unavailable"));
+    const { pg, release, query } = buildPgMock();
+    query.mockRejectedValueOnce(new Error("db unavailable"));
     app = await buildHealthcheckApp(pg);
 
     const res = await app.inject({
@@ -142,8 +144,8 @@ describe("Healthcheck works as expected", {}, () => {
   });
 
   test("GET /health/ready preserves http errors from the db check", async () => {
-    const { pg, release } = buildPgMock();
-    pg.query.mockRejectedValueOnce(
+    const { pg, release, query } = buildPgMock();
+    query.mockRejectedValueOnce(
       httpErrors.serviceUnavailable("db temporarily unavailable"),
     );
     app = await buildHealthcheckApp(pg);
@@ -158,7 +160,7 @@ describe("Healthcheck works as expected", {}, () => {
   });
 
   test("GET /health/ready returns 500 when the db connection fails", async () => {
-    const { pg } = buildPgMock();
+    const { pg, query } = buildPgMock();
     pg.connect.mockRejectedValueOnce(new Error("connection refused"));
     app = await buildHealthcheckApp(pg);
 
@@ -169,5 +171,6 @@ describe("Healthcheck works as expected", {}, () => {
     assert.deepStrictEqual(500, res.statusCode);
     assert.deepStrictEqual("connection refused", res.json().message);
     expect(pg.query).not.toHaveBeenCalled();
+    expect(query).not.toHaveBeenCalled();
   });
 });

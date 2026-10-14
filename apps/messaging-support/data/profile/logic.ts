@@ -3,7 +3,7 @@ import dayjs from "dayjs"
 import customParseFormat from "dayjs/plugin/customParseFormat"
 import { decodeDateParam } from "@/utils/appliedFilter"
 import { serverProfileFilterKeySelectOptions } from "@/utils/appliedFilter.server"
-import type { NextSearchParams, Result, } from "../types"
+import type { NextSearchParams, Result } from "../types"
 import { failure, GENERIC_USER_ERROR, success } from "../utils"
 
 dayjs.extend(customParseFormat)
@@ -30,22 +30,22 @@ type SearchSupportUsersBody = Parameters<
 
 type SearchSupportUsersBodyTextKey = Extract<
   {
-  [Key in keyof SearchSupportUsersBody]: SearchSupportUsersBody[Key] extends
-    | string[]
-    | undefined
-    ? Key
-    : never
+    [Key in keyof SearchSupportUsersBody]: SearchSupportUsersBody[Key] extends
+      | string[]
+      | undefined
+      ? Key
+      : never
   }[keyof SearchSupportUsersBody],
   string
 >
 
 type SearchSupportUsersBodyDateKey = Extract<
   {
-  [Key in keyof SearchSupportUsersBody]: SearchSupportUsersBody[Key] extends
-    | { from?: string; to?: string }[]
-    | undefined
-    ? Key
-    : never
+    [Key in keyof SearchSupportUsersBody]: SearchSupportUsersBody[Key] extends
+      | { from?: string; to?: string }[]
+      | undefined
+      ? Key
+      : never
   }[keyof SearchSupportUsersBody],
   string
 >
@@ -91,7 +91,7 @@ export function buildListUserSdkBody(
         ? searchParams[key]
         : [searchParams[key]]
 
-        const filteredValues = values.map((val) => val.trim()).filter(Boolean);
+      const filteredValues = values.map((val) => val.trim()).filter(Boolean)
       switch (option.type) {
         case "text":
           if (!isSearchSupportUsersBodyTextKey(option.value)) {
@@ -100,7 +100,7 @@ export function buildListUserSdkBody(
               GENERIC_USER_ERROR,
             )
           }
-          
+
           if (filteredValues.length === 0) {
             continue
           }

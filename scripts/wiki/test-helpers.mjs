@@ -84,8 +84,8 @@ export function editWikiDirectly(
   git(scratch, ["push", "--quiet", "origin", "main"])
 }
 
-// A stand-in for this repo: docs/wiki/** plus the root CONTEXT.md that sync
-// maps to the Context page.
+// A stand-in for this repo: docs/wiki/** plus the root GLOSSARY.md that sync
+// maps to the Glossary page.
 export function initSourceRoot(
   freshDir,
   wikiPages = {},
@@ -95,7 +95,7 @@ export function initSourceRoot(
   const docsWikiDir = join(root, "docs", "wiki")
   mkdirSync(docsWikiDir, { recursive: true })
   writeAll(docsWikiDir, wikiPages)
-  writeFileSync(join(root, "CONTEXT.md"), context)
+  writeFileSync(join(root, "GLOSSARY.md"), context)
   return root
 }
 

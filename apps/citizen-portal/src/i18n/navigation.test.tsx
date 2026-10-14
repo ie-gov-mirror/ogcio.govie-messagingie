@@ -20,7 +20,7 @@ vi.mock("next-intl/navigation", () => ({
 
 describe("LinkWithoutPrefetch", () => {
   it("renders a link with prefetching disabled", () => {
-    render(<LinkWithoutPrefetch href="/messages">Messages</LinkWithoutPrefetch>)
+    render(<LinkWithoutPrefetch href='/messages'>Messages</LinkWithoutPrefetch>)
 
     expect(screen.getByRole("link", { name: "Messages" })).toHaveAttribute(
       "data-prefetch",

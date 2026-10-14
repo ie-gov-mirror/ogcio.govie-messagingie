@@ -17,18 +17,10 @@ import {
 } from "@ogcio/sag-client/react"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useState } from "react"
+import { type LifecycleTask, profileApi } from "@/api/profile"
+import { uploadApi } from "@/api/upload"
 import { CssSpinner } from "@/components/css-spinner"
 import { ANALYTICS } from "@/const/analytics"
-
-interface LifecycleTask {
-  id: string
-  type: "delete_profile" | "export_user_data"
-  status: "pending" | "processing" | "completed" | "failed"
-  metadata: {
-    expiresAt?: string
-    uploadId?: string
-  } | null
-}
 
 interface SearchTasksResponse {
   tasks: LifecycleTask[]
@@ -55,7 +47,7 @@ export function LifecycleTasks({
   const [tasks, setTasks] = useState<LifecycleTask[]>([])
 
   const { trigger: searchTasks } = useGatewayMutation<SearchTasksResponse>(
-    "/profile/api/v1/lifecycle-tasks/search",
+    profileApi.lifecycleTasksSearchPath(),
     { method: "POST" },
   )
 
@@ -72,7 +64,7 @@ export function LifecycleTasks({
   }, [fetchTasks])
 
   const { trigger: createExportTask } = useGatewayMutation<unknown>(
-    "/profile/api/v1/lifecycle-tasks",
+    profileApi.lifecycleTasksPath(),
     { method: "POST" },
   )
 
@@ -163,16 +155,14 @@ export function LifecycleTasks({
     taskStatus === TaskStatuses.Pending ||
     taskStatus === TaskStatuses.Processing
 
-  const downloadPath = taskFileId
-    ? `/upload/api/v1/files/${taskFileId}`
-    : undefined
+  const downloadPath = taskFileId ? uploadApi.filePath(taskFileId) : undefined
 
   return (
     <>
       <div style={{ width: "100%" }}>
         <SectionBreak />
       </div>
-      <Heading as='h2' size='md'>
+      <Heading as='h2' size='sm'>
         {t("title")}
       </Heading>
       <Paragraph>{t("paragraph.main")}</Paragraph>

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { mutate as swrMutate } from "swr"
+import { DELETED_FOLDER_ID, INBOX_FOLDER_ID, messagesApi } from "@/api/messages"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import type { Folder } from "@/types/folder"
 import { DeleteFolderModal } from "./delete-folder-modal"
@@ -18,24 +19,13 @@ import { useFolders } from "./use-folders"
 import { useInboxUnreadCount } from "./use-inbox-unread-count"
 import { useRenameFolder } from "./use-rename-folder"
 
-export const INBOX_FOLDER_ID = "inbox"
-export const DELETED_FOLDER_ID = "deleted"
-
 /**
  * Invalidate every cached messages listing so restored/moved messages show up
  * without waiting on SWR's focus/reconnect heuristics. Mirrors the matcher in
  * `use-mark-message-as-read.ts`.
  */
 function invalidateMessageListings() {
-  void swrMutate((key: unknown) => {
-    const url =
-      typeof key === "string"
-        ? key
-        : Array.isArray(key) && typeof key[0] === "string"
-          ? key[0]
-          : ""
-    return url.includes("/messaging/api/v1/messages?")
-  })
+  void swrMutate((key: unknown) => messagesApi.isListKey(key))
 }
 
 type FormState = { type: "create" } | { type: "rename"; folder: Folder } | null

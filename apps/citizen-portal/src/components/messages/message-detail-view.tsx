@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
 } from "react"
+import { messagesApi } from "@/api/messages"
 import { BackButton } from "@/components/button/back-button"
 import { CssSpinner } from "@/components/css-spinner"
 import { useFeatureFlags } from "@/components/feature-flags-provider"
@@ -62,7 +63,7 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
     data: apiData,
     error,
     isLoading,
-  } = useGatewayFetch<Message>(`/messaging/api/v1/messages/${id}`)
+  } = useGatewayFetch<Message>(messagesApi.detailKey(id))
 
   const { data: metadataMessage } = useGatewayFetch<Message>(
     submissionLinkingEnabled && !submissionIdFromUrl
@@ -195,7 +196,7 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
 
   if (!data) {
     return (
-      <div className={styles.detailRoot}>
+      <div className={`${styles.detailRoot} ${styles.detailOffset}`}>
         <Paragraph>{error?.message ?? "Message not found"}</Paragraph>
         <BackButton />
       </div>
@@ -206,7 +207,10 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   const plainText = data.plainText || undefined
 
   return (
-    <div className={styles.detailRoot} ref={detailRootRef}>
+    <div
+      className={`${styles.detailRoot} ${styles.detailOffset}`}
+      ref={detailRootRef}
+    >
       <MessageDetailToolbar
         backHref={backHref}
         onMove={foldersEnabled ? () => setMoveModalOpen(true) : undefined}

@@ -32,15 +32,15 @@
 /*
  * Desktop reuses the shared messages inbox data grid; mobile keeps the
  * ListCard rows below. The shared grid renders its own mobile list too, so
- * we hide the whole grid wrapper below the table breakpoint (768px, matching
- * unified-inbox-table.module.css) and hide the ListCard list at/above it —
+ * we hide the whole grid wrapper below 1024px (matching
+ * unified-inbox-table.module.css) and hide the ListCard list above it —
  * only one of the two shows at any width, and the mobile layout is untouched.
  */
 .desktopGrid {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .desktopGrid {
     display: block;
   }

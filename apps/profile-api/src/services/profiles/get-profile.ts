@@ -5,7 +5,7 @@ import type {
   ProfileWithLinkedProfiles,
 } from "~/schemas/profiles/model.js";
 import { parseProfileDetailsWithLinkedProfiles } from "~/schemas/profiles/shared.js";
-import { withClient } from "~/utils/with-client.js";
+import { profileServiceFromPool } from "./profile-service.js";
 import {
   findProfileWithEnhancedConsent,
   type ProfileWithEnhancedConsent,
@@ -20,21 +20,29 @@ export const getProfile = async (
     consentSubjects: string[];
   } & ({ pool: Pool } | { client: PoolClient }),
 ): Promise<ProfileWithLinkedProfiles> => {
-  const profileData =
-    "pool" in params
-      ? await withClient(params.pool, async (client) => {
-          return executeGetProfile({ ...params, client });
-        })
-      : await executeGetProfile(params);
+  // The transactional `{ client }` variant is used inside existing pg
+  // transactions (consents, account-linking, deletion). It must keep running
+  // on the caller's connection, so it stays on the raw pg path.
+  if ("client" in params) {
+    const profileData = await executeGetProfile(params);
 
-  if (!profileData.profile) {
-    throw httpErrors.notFound(`Profile ${params.profileId} not found`);
+    if (!profileData.profile) {
+      throw httpErrors.notFound(`Profile ${params.profileId} not found`);
+    }
+
+    return parseProfileDetailsWithLinkedProfiles(
+      profileData.profile,
+      profileData.linkedProfiles,
+    );
   }
 
-  return parseProfileDetailsWithLinkedProfiles(
-    profileData.profile,
-    profileData.linkedProfiles,
-  );
+  // The pool path delegates to the Kysely-backed service.
+  return profileServiceFromPool(params.pool).get({
+    organizationId: params.organizationId,
+    profileId: params.profileId,
+    addLinkedProfiles: params.addLinkedProfiles,
+    consentSubjects: params.consentSubjects,
+  });
 };
 
 async function executeGetProfile(params: {
@@ -50,11 +58,7 @@ async function executeGetProfile(params: {
     }
   | {
       profile: ProfileWithEnhancedConsent;
-      linkedProfiles: {
-        id: string;
-        publicName: string;
-        email: string;
-      }[];
+      linkedProfiles: LinkedProfile[];
     }
 > {
   const output = await findProfileWithEnhancedConsent(

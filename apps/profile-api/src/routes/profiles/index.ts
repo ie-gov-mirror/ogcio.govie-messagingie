@@ -18,10 +18,7 @@ import type {
   FastifyReplyTypebox,
   FastifyRequestTypebox,
 } from "~/schemas/shared.js";
-import { findProfile } from "~/services/profiles/find-profile.js";
-import { getProfile } from "~/services/profiles/get-profile.js";
-import { listProfiles } from "~/services/profiles/list-profiles.js";
-import { selectProfiles } from "~/services/profiles/select-profiles.js";
+import { ProfileService } from "~/services/profiles/profile-service.js";
 import { areProfilesRelated } from "~/services/profiles/sql/are-profiles-related.js";
 import { updateProfile } from "~/services/profiles/update-profile.js";
 import { parseBooleanEnum } from "~/types/typebox.js";
@@ -57,8 +54,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         fastify,
       );
 
-      const { data, total: totalCount } = await listProfiles({
-        pool,
+      const { data, total: totalCount } = await new ProfileService(
+        fastify.db,
+      ).list({
         organisationId,
         searchParams: request.query,
         pagination: sanitizePagination(request.query),
@@ -96,8 +94,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         fastify,
       );
       const { consentSubjects, ...searchParams } = request.body;
-      const { data, total: totalCount } = await listProfiles({
-        pool,
+      const { data, total: totalCount } = await new ProfileService(
+        fastify.db,
+      ).list({
         organisationId,
         searchParams,
         pagination: sanitizePagination(request.query),
@@ -129,8 +128,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       schema: SelectProfilesSchema,
     },
     async (request: FastifyRequestTypebox<typeof SelectProfilesSchema>) => {
-      const profiles = await selectProfiles({
-        pool,
+      const profiles = await new ProfileService(fastify.db).select({
         organizationId: withOrganizationId(request),
         profileIds: request.query.ids.split(","),
         consentSubjects: request.query.consentSubjects
@@ -159,8 +157,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
     },
     async (request: FastifyRequestTypebox<typeof FindProfileSchema>) => {
       return {
-        data: await findProfile({
-          pool,
+        data: await new ProfileService(fastify.db).find({
           organizationId: withOrganizationId(request),
           query: request.query,
           consentSubjects: request.query.consentSubjects
@@ -247,8 +244,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         : [];
 
       return {
-        data: await getProfile({
-          pool,
+        data: await new ProfileService(fastify.db).get({
           organizationId: returnPrivateDetails
             ? undefined
             : toGetOrganizationId,

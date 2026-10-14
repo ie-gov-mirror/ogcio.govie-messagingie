@@ -7,13 +7,14 @@ import type { AuthErrorKey } from "@/utils/auth"
 import {
   cookieNameAuthNonce,
   cookieNameAuthState,
+  cookieNameLoggedOut,
   cookieNameSession,
 } from "@/utils/cookies"
 import { getEnvConfig } from "@/utils/env"
 
 function buildBaseErrorUrl(reason: AuthErrorKey): URL {
   const { BASE_URL } = getEnvConfig()
-  const url = new URL("", BASE_URL)
+  const url = new URL("/auth/error", BASE_URL)
   url.searchParams.append("reason", reason)
   return url
 }
@@ -47,6 +48,8 @@ export async function GET(req: NextRequest) {
       code,
       redirectUri,
       scopes: msalScopes,
+      // msal-node 7 rejects the id_token nonce unless this matches the authorize request.
+      nonce: savedNonce,
     })
 
     const jwks = createRemoteJWKSet(
@@ -125,6 +128,7 @@ export async function GET(req: NextRequest) {
     }
     res.cookies.set(cookieNameAuthNonce, "", expiredOptions)
     res.cookies.set(cookieNameAuthState, "", expiredOptions)
+    res.cookies.set(cookieNameLoggedOut, "", expiredOptions)
 
     return res
   } catch (err) {

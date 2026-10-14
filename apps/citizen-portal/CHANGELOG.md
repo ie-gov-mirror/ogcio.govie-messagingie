@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.1.7](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.6...citizen-portal-v0.1.7) (2026-10-13)
+
+
+### Features
+
+* **citizen-portal:** update message list view AB[#44107](https://github.com/ogcio/govie-services-messaging/issues/44107) ([#1021](https://github.com/ogcio/govie-services-messaging/issues/1021)) ([88a812b](https://github.com/ogcio/govie-services-messaging/commit/88a812bedbf04cf97281ea082fc190dcbc7ccc95))
+* LEA static content generation AB[#43542](https://github.com/ogcio/govie-services-messaging/issues/43542) ([#990](https://github.com/ogcio/govie-services-messaging/issues/990)) ([07cde18](https://github.com/ogcio/govie-services-messaging/commit/07cde1856f5e29168e3588713b4ced61dad2ee8b))
+* link school place application to journey builder AB[#44193](https://github.com/ogcio/govie-services-messaging/issues/44193) ([#1010](https://github.com/ogcio/govie-services-messaging/issues/1010)) ([b047651](https://github.com/ogcio/govie-services-messaging/commit/b047651118c91446abda3354e89c2c87c70f3341))
+* **messaging-api:** adopt @ogcio/db-core Kysely layer AB[#41141](https://github.com/ogcio/govie-services-messaging/issues/41141) ([#768](https://github.com/ogcio/govie-services-messaging/issues/768)) ([5a210d4](https://github.com/ogcio/govie-services-messaging/commit/5a210d41fdab1d2d38de9607e46dece06d4069c5))
+
+
+### Bug Fixes
+
+* align citizen portal mobile view with header menu breakpoint AB[#44059](https://github.com/ogcio/govie-services-messaging/issues/44059) ([#999](https://github.com/ogcio/govie-services-messaging/issues/999)) ([2df7ac2](https://github.com/ogcio/govie-services-messaging/commit/2df7ac23e0fa43aaa4d4cad9c4d2353835d60293))
+* align life events discovery with figma type and spacing AB[#44165](https://github.com/ogcio/govie-services-messaging/issues/44165) ([#1008](https://github.com/ogcio/govie-services-messaging/issues/1008)) ([3b34665](https://github.com/ogcio/govie-services-messaging/commit/3b346654d2b648b04662ee1ad87caf597634355f))
+* authorize the Logto consent hop and reload the stubbed inbox AB[#44471](https://github.com/ogcio/govie-services-messaging/issues/44471) ([6fecd39](https://github.com/ogcio/govie-services-messaging/commit/6fecd393a304e5dd8d01e230a122d7e6e1b5e95d))
+* **citizen-portal:** align submission detail toolbar with message detail AB[#44057](https://github.com/ogcio/govie-services-messaging/issues/44057) ([#998](https://github.com/ogcio/govie-services-messaging/issues/998)) ([a5c9a59](https://github.com/ogcio/govie-services-messaging/commit/a5c9a59b8527ae2a4a7465aecb8ed408df7bb96d))
+* **citizen-portal:** limit the red dot to the mobile menu icon AB[#44108](https://github.com/ogcio/govie-services-messaging/issues/44108) ([#1013](https://github.com/ogcio/govie-services-messaging/issues/1013)) ([2fda64b](https://github.com/ogcio/govie-services-messaging/commit/2fda64bb7d5a81ddc11f1451b29c4346951d0954))
+* **citizen-portal:** remove submission detail toolbar divider AB[#44057](https://github.com/ogcio/govie-services-messaging/issues/44057) ([#995](https://github.com/ogcio/govie-services-messaging/issues/995)) ([4ef954a](https://github.com/ogcio/govie-services-messaging/commit/4ef954a451fb8eb2afe44459dc1cbf02f217063c))
+* **citizen-portal:** show unread messages as a red dot AB[#44108](https://github.com/ogcio/govie-services-messaging/issues/44108) ([#1012](https://github.com/ogcio/govie-services-messaging/issues/1012)) ([01ff2f1](https://github.com/ogcio/govie-services-messaging/commit/01ff2f1979d1b1f694c2498e8d5fb53bcc22f143))
+* close the mobile drawer after navigation AB[#44198](https://github.com/ogcio/govie-services-messaging/issues/44198) ([#1011](https://github.com/ogcio/govie-services-messaging/issues/1011)) ([b1e1012](https://github.com/ogcio/govie-services-messaging/commit/b1e10124d29d14f8e3e166a55628701737ab2e52))
+* **deps:** update all non-major dependencies ([#1002](https://github.com/ogcio/govie-services-messaging/issues/1002)) ([4e80277](https://github.com/ogcio/govie-services-messaging/commit/4e8027747450fe0fdc816be9cd249e2a56d2a08c))
+* **deps:** update all non-major dependencies ([#1024](https://github.com/ogcio/govie-services-messaging/issues/1024)) ([75e7079](https://github.com/ogcio/govie-services-messaging/commit/75e70792a4c88eea9db9e7be7196c8c166f2ba1b))
+* keep visited Back links black AB[#44165](https://github.com/ogcio/govie-services-messaging/issues/44165) ([#1009](https://github.com/ogcio/govie-services-messaging/issues/1009)) ([4753418](https://github.com/ogcio/govie-services-messaging/commit/4753418048f2d6f69d97ccbd6274168571d550ec))
+* keep visual snapshots stable when lists grow AB[#44173](https://github.com/ogcio/govie-services-messaging/issues/44173) ([#1007](https://github.com/ogcio/govie-services-messaging/issues/1007)) ([7c5d16c](https://github.com/ogcio/govie-services-messaging/commit/7c5d16ceb42ed4efb863e4b326a6d678128e7cdc))
+* match Life Events section titles to 24px and the dashboard title to 32px AB[#44276](https://github.com/ogcio/govie-services-messaging/issues/44276) ([#1018](https://github.com/ogcio/govie-services-messaging/issues/1018)) ([1a8c199](https://github.com/ogcio/govie-services-messaging/commit/1a8c1992fb3d5803a6b5401b958317479438d4a4))
+* open school place application in the portal AB[#44193](https://github.com/ogcio/govie-services-messaging/issues/44193) ([#1016](https://github.com/ogcio/govie-services-messaging/issues/1016)) ([1b636ea](https://github.com/ogcio/govie-services-messaging/commit/1b636eaf444f1305d8a935ede4d1517871c922b6))
+* rank dashboard panel titles as h2 AB[#44409](https://github.com/ogcio/govie-services-messaging/issues/44409) ([#1028](https://github.com/ogcio/govie-services-messaging/issues/1028)) ([6327b39](https://github.com/ogcio/govie-services-messaging/commit/6327b394f5104b00d556f4e12dcbba57c85914fb))
+* show the signed-in citizen's name in the header AB[#44219](https://github.com/ogcio/govie-services-messaging/issues/44219) ([#1014](https://github.com/ogcio/govie-services-messaging/issues/1014)) ([f63620f](https://github.com/ogcio/govie-services-messaging/commit/f63620ffb2a9b57884a43bc4dcfa805239319d63))
+* skip chunk-load log while reload recovers AB[#44481](https://github.com/ogcio/govie-services-messaging/issues/44481) ([#1035](https://github.com/ogcio/govie-services-messaging/issues/1035)) ([bfae994](https://github.com/ogcio/govie-services-messaging/commit/bfae9947c68ebf2cadd4173bde492d0b719c0e1c))
+* stop chunk-load noise and pinned 404s AB[#44481](https://github.com/ogcio/govie-services-messaging/issues/44481) ([#1034](https://github.com/ogcio/govie-services-messaging/issues/1034)) ([270c409](https://github.com/ogcio/govie-services-messaging/commit/270c4097753c1e5dee800d3d289ed8b136b37b9c))
+* stop Unleash network errors reaching Faro AB[#44469](https://github.com/ogcio/govie-services-messaging/issues/44469) ([#1031](https://github.com/ogcio/govie-services-messaging/issues/1031)) ([c070e97](https://github.com/ogcio/govie-services-messaging/commit/c070e97bc0bf71175b0567fc4330b231276962ce))
+* switch citizen portal to mobile view at 768px AB[#44059](https://github.com/ogcio/govie-services-messaging/issues/44059) ([#997](https://github.com/ogcio/govie-services-messaging/issues/997)) ([aabbdb1](https://github.com/ogcio/govie-services-messaging/commit/aabbdb1b3402b4b7bd1616b69bfe8ded0220b8dd))
+* use the same page and section title sizes across the citizen portal AB[#44291](https://github.com/ogcio/govie-services-messaging/issues/44291) ([#1020](https://github.com/ogcio/govie-services-messaging/issues/1020)) ([83ffb71](https://github.com/ogcio/govie-services-messaging/commit/83ffb71d67af26f1027c5191fa1ef2646fd252fa))
+* wait out the MyGovId hop before the inbox search field AB[#44471](https://github.com/ogcio/govie-services-messaging/issues/44471) ([e6797b3](https://github.com/ogcio/govie-services-messaging/commit/e6797b32382ff68b4fad9f35406c7d4be6812b78))
+
+
+### Miscellaneous Chores
+
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1019](https://github.com/ogcio/govie-services-messaging/issues/1019)) ([9fc95bf](https://github.com/ogcio/govie-services-messaging/commit/9fc95bf8f2d4386d28f683c802bd57c5d59322f9))
+* Update visual test screenshot for new navigation AB[#43820](https://github.com/ogcio/govie-services-messaging/issues/43820) ([#993](https://github.com/ogcio/govie-services-messaging/issues/993)) ([0251ac5](https://github.com/ogcio/govie-services-messaging/commit/0251ac54c5efd13088b0888c0e6bb29c60c32542))
+* Update visual test screenshots for heading text size change AB[#44276](https://github.com/ogcio/govie-services-messaging/issues/44276) ([#1025](https://github.com/ogcio/govie-services-messaging/issues/1025)) ([d3905ab](https://github.com/ogcio/govie-services-messaging/commit/d3905ab4baa8121e44759d348e03d3e11f2a794f))
+
 ## [0.1.6](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.5...citizen-portal-v0.1.6) (2026-10-01)
 
 

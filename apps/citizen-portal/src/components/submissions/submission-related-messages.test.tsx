@@ -3,7 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const gateway = vi.hoisted(() => ({
   path: "",
-  state: { data: [] as Array<Record<string, unknown>>, isLoading: false, error: null as Error | null },
+  state: {
+    data: [] as Array<Record<string, unknown>>,
+    isLoading: false,
+    error: null as Error | null,
+  },
 }))
 
 vi.mock("@citizen-portal/shared", () => ({
@@ -21,12 +25,17 @@ vi.mock("next-intl", () => ({
   useTranslations: (namespace: string) => (key: string) =>
     `${namespace}.${key}`,
 }))
-vi.mock("@ogcio/design-system-react", () => ({
-  Heading: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h2 {...props}>{children}</h2>
-  ),
-  Paragraph: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
-}))
+vi.mock("@ogcio/design-system-react", async () => {
+  const actual = await vi.importActual<
+    typeof import("@ogcio/design-system-react")
+  >("@ogcio/design-system-react")
+  return {
+    Heading: actual.Heading,
+    Paragraph: ({ children }: { children: React.ReactNode }) => (
+      <p>{children}</p>
+    ),
+  }
+})
 vi.mock("@/components/messages/unified-inbox-table", () => ({
   UnifiedInboxTable: ({
     messages,
@@ -34,9 +43,7 @@ vi.mock("@/components/messages/unified-inbox-table", () => ({
   }: {
     messages: Array<{ id: string }>
     buildDetailHref: (id: string) => string
-  }) => (
-    <a href={buildDetailHref(messages[0].id)}>desktop:{messages[0].id}</a>
-  ),
+  }) => <a href={buildDetailHref(messages[0].id)}>desktop:{messages[0].id}</a>,
 }))
 vi.mock("@/components/messages/sender-name", () => ({
   SenderName: () => <span>Sender</span>,
@@ -67,6 +74,11 @@ describe("SubmissionRelatedMessages", () => {
     expect(
       screen.getByText("submissions.detail.related.empty"),
     ).toBeInTheDocument()
+    const heading = screen.getByRole("heading", {
+      name: "submissions.detail.related.title",
+    })
+    expect(heading).toHaveClass("gi-text-lg", "xl:gi-text-xl")
+    expect(heading.className).not.toContain("xl:gi-text-2xl")
   })
 
   it("exposes an accessible loading status", () => {
@@ -103,7 +115,9 @@ describe("SubmissionRelatedMessages", () => {
         submissionTitle='Housing support'
       />,
     )
-    expect(screen.getByRole("link", { name: "desktop:message-1" })).toHaveAttribute(
+    expect(
+      screen.getByRole("link", { name: "desktop:message-1" }),
+    ).toHaveAttribute(
       "href",
       "https://messages.example/en/messages?id=message-1&submissionId=submission-1&submissionTitle=Housing+support",
     )

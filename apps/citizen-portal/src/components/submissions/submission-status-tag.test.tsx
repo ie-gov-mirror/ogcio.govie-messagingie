@@ -27,6 +27,9 @@ describe("SubmissionStatusTag", () => {
     ["cancelled", "error"],
   ] as const)("renders %s with its semantic tag type", (status, type) => {
     render(<SubmissionStatusTag status={status} />)
-    expect(screen.getByText(`status:${status}`)).toHaveAttribute("data-type", type)
+    expect(screen.getByText(`status:${status}`)).toHaveAttribute(
+      "data-type",
+      type,
+    )
   })
 })

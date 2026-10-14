@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Publishes the Wiki docs (docs/wiki/** + root CONTEXT.md) into the
+// Publishes the Wiki docs (docs/wiki/** + root GLOSSARY.md) into the
 // configured subtree of the ADO wiki git repo. Refuses to destroy a
 // wiki-side edit: any wiki commit touching the subtree since the last sync
 // marker is a Sync conflict, and the script fails loudly with the diff
@@ -19,8 +19,8 @@ import { fileURLToPath } from "node:url"
 import { checkPageNames } from "./page-names.mjs"
 import {
   buildSyncCommitMessage,
-  CONTEXT_FILE_NAME,
-  CONTEXT_PAGE_NAME,
+  GLOSSARY_FILE_NAME,
+  GLOSSARY_PAGE_NAME,
   gitAuthEnv,
   listFiles,
   parseCliArgs,
@@ -89,7 +89,7 @@ function commitsTouchingSubtree(wikiDir, range, subtree) {
 }
 
 // Builds the generated subtree content in place: docs/wiki/** copied verbatim
-// 1:1, plus root CONTEXT.md as the Context page. Pages go up byte-for-byte as
+// 1:1, plus root GLOSSARY.md as the Glossary page. Pages go up byte-for-byte as
 // they are in the repo, so what a wiki reader sees is what is committed.
 function writeGeneratedSubtree(subtreeDir, root) {
   mkdirSync(subtreeDir, { recursive: true })
@@ -104,10 +104,10 @@ function writeGeneratedSubtree(subtreeDir, root) {
     }
   }
 
-  const contextFile = join(root, CONTEXT_FILE_NAME)
+  const contextFile = join(root, GLOSSARY_FILE_NAME)
   if (existsSync(contextFile)) {
     writeFileSync(
-      join(subtreeDir, CONTEXT_PAGE_NAME),
+      join(subtreeDir, GLOSSARY_PAGE_NAME),
       readFileSync(contextFile),
     )
   }

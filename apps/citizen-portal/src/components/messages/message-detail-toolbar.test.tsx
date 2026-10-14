@@ -1,5 +1,8 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
 import { fireEvent, render, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import styles from "./message-detail.module.css"
 
 const trackEvent = vi.hoisted(() => vi.fn())
 
@@ -81,7 +84,7 @@ describe("MessageDetailToolbar", () => {
 
     expect(
       screen.getByRole("navigation", { name: "Message actions" }),
-    ).toBeInTheDocument()
+    ).toHaveClass(styles.toolbar)
     expect(screen.getByRole("link", { name: "Back" })).toBeInTheDocument()
     expect(screen.getByTestId("detail-move-button")).toHaveTextContent("Move")
     expect(screen.getByTestId("detail-delete-button")).toHaveTextContent(
@@ -140,10 +143,25 @@ describe("MessageDetailToolbar", () => {
     )
   })
 
-  it("hides the move action when onMove is omitted", () => {
-    render(
-      <MessageDetailToolbar backHref={backHref} onDelete={onDelete} />,
+  it("keeps desktop toolbar inset on .toolbar so submission detail can share it", () => {
+    const css = readFileSync(
+      resolve(import.meta.dirname, "./message-detail.module.css"),
+      "utf8",
     )
+    const desktop = css.slice(css.indexOf("@media (min-width: 1024px)"))
+    const sharedToolbar =
+      desktop.match(/(^|\n)\s*\.toolbar \{[^}]+\}/)?.[0] ?? ""
+
+    expect(sharedToolbar).toContain("padding-top: var(--gieds-space-2)")
+    expect(sharedToolbar).toContain("padding-bottom: var(--gieds-space-2)")
+    expect(desktop).toMatch(/\.detailOffset \{[^}]*margin-top:\s*0/)
+    expect(desktop).not.toMatch(
+      /inboxLayoutMain\)\s+\.toolbar\s*\{[^}]*padding-top/,
+    )
+  })
+
+  it("hides the move action when onMove is omitted", () => {
+    render(<MessageDetailToolbar backHref={backHref} onDelete={onDelete} />)
 
     expect(screen.queryByTestId("detail-move-button")).not.toBeInTheDocument()
     expect(screen.getByTestId("detail-delete-button")).toBeInTheDocument()

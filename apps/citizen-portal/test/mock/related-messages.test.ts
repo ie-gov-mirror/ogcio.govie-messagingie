@@ -55,9 +55,9 @@ describe("related message mocks", () => {
       "@/mock/related-messages"
     )
 
-    expect(findMockSubmissionIdForRelatedMessage("rel-sch-073296-completed")).toBe(
-      "SCH-2025-073296",
-    )
+    expect(
+      findMockSubmissionIdForRelatedMessage("rel-sch-073296-completed"),
+    ).toBe("SCH-2025-073296")
   })
 
   it("returns null when mocks and LEA fixtures are disabled", async () => {

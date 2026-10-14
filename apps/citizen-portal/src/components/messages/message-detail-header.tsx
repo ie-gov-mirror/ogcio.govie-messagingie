@@ -1,6 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import pageTitleStyles from "@/components/page-title.module.css"
 import { formatDate } from "@/util/datetime"
 import styles from "./message-detail.module.css"
 import { SenderName } from "./sender-name"
@@ -20,7 +21,9 @@ export function MessageDetailHeader({
 
   return (
     <header>
-      <h1 className={styles.subject}>{subject || t("noSubject")}</h1>
+      <h1 className={`${pageTitleStyles.pageTitle} ${styles.subject}`}>
+        {subject || t("noSubject")}
+      </h1>
       <dl className={styles.metadata}>
         <div className={styles.metadataRow}>
           <dt className={styles.metadataLabel}>{t("from")}</dt>

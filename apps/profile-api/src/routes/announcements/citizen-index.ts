@@ -6,10 +6,8 @@ import {
   CitizenListAnnouncementsSchema,
 } from "~/schemas/announcements/citizen.js";
 import type { FastifyRequestTypebox } from "~/schemas/shared.js";
-import {
-  acknowledgeAnnouncements,
-  listCitizenAnnouncements,
-} from "~/services/announcements/announcements-service.js";
+import { AnnouncementService } from "~/services/announcements/announcement-service.js";
+import { acknowledgeAnnouncements } from "~/services/announcements/announcements-service.js";
 import { parseBooleanEnum } from "~/types/typebox.js";
 import { ensureUserIdIsSet } from "~/utils/authentication-factory.js";
 import { formatAPIResponse, sanitizePagination } from "~/utils/pagination.js";
@@ -26,8 +24,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       request: FastifyRequestTypebox<typeof CitizenListAnnouncementsSchema>,
     ) => {
       const profileId = ensureUserIdIsSet(request);
-      const output = await listCitizenAnnouncements({
-        pool: fastify.pg.pool,
+      const output = await new AnnouncementService(fastify.db).listCitizen({
         profileId,
         applicationId: request.query.applicationId,
         newOnly:

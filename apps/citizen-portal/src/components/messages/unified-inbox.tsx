@@ -5,6 +5,7 @@ import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { DELETED_FOLDER_ID, INBOX_FOLDER_ID } from "@/api/messages"
 import { ANALYTICS } from "@/const/analytics"
 import { useIsMobile } from "@/hooks/use-is-mobile"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
@@ -16,11 +17,7 @@ import { InboxLayout } from "./inbox-layout"
 import { InboxListChromeHeader } from "./inbox-list-chrome-header"
 import { DELETE_FLASH_KEY, MOVE_FLASH_KEY } from "./message-action-flash-keys"
 import { MessageDetailView } from "./message-detail-view"
-import {
-  DELETED_FOLDER_ID,
-  INBOX_FOLDER_ID,
-  MessageFoldersSidebar,
-} from "./message-folders-sidebar"
+import { MessageFoldersSidebar } from "./message-folders-sidebar"
 import { MobileFolderPanel } from "./mobile-folder-panel"
 import { MoveMessageModal } from "./move-message-modal"
 import { MoveResultToast } from "./move-result-toast"

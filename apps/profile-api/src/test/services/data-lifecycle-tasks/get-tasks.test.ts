@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Pool } from "pg";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { LifecycleTaskTypes } from "~/schemas/data-lifecycle-tasks/index.js";
 import { createLifecycleTask } from "~/services/data-lifecycle-tasks/create-task.js";
 import { getTasks } from "~/services/data-lifecycle-tasks/get-tasks.js";
@@ -90,12 +90,24 @@ describe("getTasks", () => {
   });
 
   describe("row validation", () => {
-    const buildPoolReturning = (rows: unknown[]) =>
-      ({ query: vi.fn().mockResolvedValue({ rows }) }) as unknown as Pool;
+    const buildPoolReturning = (rows: { metadata: unknown }[]) =>
+      ({
+        connect: () =>
+          Promise.resolve({
+            query: () =>
+              Promise.resolve({
+                rows: rows.map((row) => ({
+                  ...row,
+                  metadata: JSON.stringify(row.metadata),
+                })),
+              }),
+            release: () => {},
+          }),
+      }) as unknown as Pool;
 
     const validRow = {
       id: "task-1",
-      task_type: LifecycleTaskTypes.ExportUserData,
+      taskType: LifecycleTaskTypes.ExportUserData,
       status: "pending",
       metadata: {},
     };

@@ -17,6 +17,9 @@ import { getSslConfig } from "./migrations/scripts/shared.js";
 import analyticsPlugin from "./plugins/analytics-sdk.js";
 import apiAuth from "./plugins/api-auth.js";
 import cache from "./plugins/cache.js";
+import kyselyPlugin, {
+  autoConfig as kyselyAutoConfig,
+} from "./plugins/external/kysely.js";
 import healthCheck from "./routes/healthcheck.js";
 import routes from "./routes/index.js";
 
@@ -81,6 +84,10 @@ export async function build(opts?: FastifyServerOptions) {
     database: app.config.POSTGRES_DB_NAME,
     ssl: getSslConfig(app.config.POSTGRES_SSL),
   });
+
+  // Typed Kysely client (`app.db`), coexisting with `@fastify/postgres`
+  // (`app.pg`) during the incremental cutover to the db-core data-access layer.
+  await app.register(kyselyPlugin, kyselyAutoConfig(app));
 
   app.register(healthCheck);
 

@@ -32,7 +32,6 @@
   },
   "submissions": {
     "heading": "D'aighneachtaí",
-    "backToDashboard": "Ar ais go dtí an painéal",
     "loading": "Ag lódáil aighneachtaí",
     "error": "Earráid agus aighneachtaí á lódáil: {message}",
     "empty": {
@@ -289,9 +288,6 @@
       "text": {
         "trademark": "© 2025 Córas Dearaidh Rialtas na hÉireann"
       }
-    },
-    "back": {
-      "ariaLabel": "Téigh ar ais"
     }
   },
   "consent": {
@@ -461,8 +457,7 @@
   },
   "notFound": {
     "heading": "Leathanach gan aimsiú",
-    "message": "Níl an leathanach a bhfuil tú ag lorg ann nó tá sé bogtha.",
-    "back": "Téigh go dtí teachtaireachtaí"
+    "message": "Níl an leathanach a bhfuil tú ag lorg ann nó tá sé bogtha."
   },
   "errors": {
     "page": {
@@ -480,9 +475,6 @@
   },
   "discovery": {
     "summary": "Catagóirí: {categories} · Imeachtaí saoil: {lifeEvents}",
-    "backToDashboard": "Ar ais chuig an bPainéal Rialaithe",
-    "backToLifeEvents": "Ar ais chuig imeachtaí saoil",
-    "backTo": "Ar ais chuig {title}",
     "lifeEventLabel": "Imeacht saoil · {category}",
     "services": "Seirbhísí",
     "servicesCount": "{count, plural, =0 {Níl aon seirbhísí san imeacht saoil seo fós} other {Seirbhísí san imeacht saoil seo: #}}"

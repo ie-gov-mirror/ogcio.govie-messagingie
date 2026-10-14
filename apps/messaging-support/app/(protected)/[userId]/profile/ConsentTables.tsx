@@ -7,7 +7,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Tag,
 } from "@ogcio/design-system-react"
 import dayjs from "dayjs"
 import type { Consent } from "@/data/types"
@@ -72,7 +71,7 @@ export function ConsentTables(props: { consents: Consent[] }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {props.consents.map((consent) => {
+                {stuff.consents.map((consent) => {
                   const date = dayjs(consent.createdAt)
 
                   return (
@@ -84,7 +83,7 @@ export function ConsentTables(props: { consents: Consent[] }) {
                         {date.isValid() && date.format("YYYY-MM-DD")}
                       </TableData>
                       <TableData>
-                        {date.isValid() && date.format("HH:MM")}
+                        {date.isValid() && date.format("HH:mm")}
                       </TableData>
                     </TableRow>
                   )

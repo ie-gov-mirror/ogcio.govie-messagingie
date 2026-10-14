@@ -7,18 +7,12 @@ import {
 } from "@ogcio/sag-client/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef } from "react"
+import { type Profile, profileApi } from "@/api/profile"
 import { AccountLinkingView } from "./account-linking-view"
 import { ServiceError } from "./service-error"
 
 interface PartialMessage {
   recipientUserId: string
-}
-
-interface Profile {
-  id: string
-  email: string
-  primaryUserId: string
-  preferredLanguage?: string
 }
 
 type FlowState =
@@ -87,7 +81,7 @@ export function SecureMessagePage() {
     error: profileError,
     isLoading: profileLoading,
   } = useGatewayFetch<Profile>(
-    recipientUserId ? `/profile/api/v1/profiles/${recipientUserId}` : null,
+    recipientUserId ? profileApi.detailKey(recipientUserId) : null,
     { actorType: "m2m" },
   )
 
@@ -97,7 +91,7 @@ export function SecureMessagePage() {
     error: currentProfileError,
     isLoading: currentProfileLoading,
   } = useGatewayFetch<Profile>(
-    linkedProfile && user?.sub ? `/profile/api/v1/profiles/${user.sub}` : null,
+    linkedProfile && user?.sub ? profileApi.detailKey(user.sub) : null,
   )
 
   // Derive flow state

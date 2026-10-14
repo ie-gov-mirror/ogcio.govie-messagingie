@@ -11,6 +11,7 @@ import {
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"
+import { type Profile, profileApi } from "@/api/profile"
 import { CssSpinner } from "@/components/css-spinner"
 import { env } from "@/env/env.client"
 import { getTrustedRedirectOrigins } from "@/util/trusted-redirect-origins"
@@ -46,10 +47,6 @@ function isInsufficientSafeLevelResponse(
   if (typeof data.required === "number") return true
   const combined = `${data.message ?? ""} ${data.error ?? ""}`.toLowerCase()
   return combined.includes("safe level")
-}
-
-interface ProfileResponse {
-  id: string
 }
 
 function OnboardingPanel({
@@ -93,10 +90,9 @@ function OnboardingContent() {
 
   const profilePath =
     user?.sub && status === "role_assigned"
-      ? `/profile/api/v1/profiles/${user.sub}`
+      ? profileApi.detailKey(user.sub)
       : null
-  const { data: profile, refresh } =
-    useGatewayFetch<ProfileResponse>(profilePath)
+  const { data: profile, refresh } = useGatewayFetch<Profile>(profilePath)
 
   useEffect(() => {
     if (!user?.sub || onboardingTriggered.current) return

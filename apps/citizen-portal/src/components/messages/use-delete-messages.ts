@@ -2,6 +2,11 @@
 
 import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { useCallback, useState } from "react"
+import {
+  type DeleteMessagesBody,
+  type DeleteMessagesResponse,
+  messagesApi,
+} from "@/api/messages"
 
 export interface DeleteMessagesResult {
   /** Whether the most recent delete succeeded. */
@@ -25,9 +30,9 @@ export function useDeleteMessages(options: UseDeleteMessagesOptions = {}) {
   const { onSettled } = options
 
   const { trigger, isLoading } = useGatewayMutation<
-    { data: { ids: string[] } },
-    { ids: string[] }
-  >("/messaging/api/v1/messages", { method: "DELETE" })
+    DeleteMessagesResponse,
+    DeleteMessagesBody
+  >(messagesApi.deletePath(), { method: "DELETE" })
 
   const [lastResult, setLastResult] = useState<DeleteMessagesResult | null>(
     null,
@@ -35,14 +40,14 @@ export function useDeleteMessages(options: UseDeleteMessagesOptions = {}) {
 
   const deleteIds = useCallback(
     async (ids: string[]): Promise<DeleteMessagesResult> => {
-      const unique = Array.from(new Set(ids))
+      const body = messagesApi.deleteBody(ids)
       try {
-        await trigger({ ids: unique })
-        const result: DeleteMessagesResult = { ok: true, ids: unique }
+        await trigger(body)
+        const result: DeleteMessagesResult = { ok: true, ids: body.ids }
         setLastResult(result)
         return result
       } catch {
-        const result: DeleteMessagesResult = { ok: false, ids: unique }
+        const result: DeleteMessagesResult = { ok: false, ids: body.ids }
         setLastResult(result)
         return result
       } finally {

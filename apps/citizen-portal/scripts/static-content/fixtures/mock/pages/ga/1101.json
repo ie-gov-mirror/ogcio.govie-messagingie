@@ -1,0 +1,20 @@
+{
+  "id": 1101,
+  "meta": {
+    "type": "lea.LifeEventPage",
+    "slug": "birth-of-a-child",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 1000
+    }
+  },
+  "title": "Birth of a Child",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Registering a birth, and the payments and services available to new parents.</p>",
+      "id": "le-1101"
+    }
+  ]
+}

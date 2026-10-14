@@ -15,16 +15,31 @@
   "files": {
     "includes": [
       "./src/**/*",
+      "./scripts/**/*",
+      "./test/**/*",
+      "!**/scripts/static-content/fixtures/**/*",
       "!**/.next/**/*",
       "!**/public/**/*",
       "!**/out/**/*",
       "!**/coverage/**/*",
       "!**/zones/**/*",
-      "!**/test/**/*",
       "!**/e2e/**/*",
       "!**/k6/**/*",
-      "!**/*.test.*",
       "!**/*.spec.*"
     ]
-  }
+  },
+  "overrides": [
+    {
+      // Test doubles mimic third-party markup (Link as `<a href='#'>`,
+      // spinner as `<span aria-label>`, constructor-returning mocks);
+      // a11y rules target shipped UI, not mocks.
+      "includes": ["**/*.test.*", "test/**"],
+      "linter": {
+        "rules": {
+          "a11y": "off",
+          "correctness": { "noConstructorReturn": "off" }
+        }
+      }
+    }
+  ]
 }

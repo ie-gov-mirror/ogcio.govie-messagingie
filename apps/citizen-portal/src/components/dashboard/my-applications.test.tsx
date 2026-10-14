@@ -82,7 +82,11 @@ describe("MyApplications", () => {
 
   it("requests the minimum valid page and links to the applications list", () => {
     render(<MyApplications />)
-    expect(state.hookArgs).toMatchObject({ page: 1, pageSize: 5, enabled: true })
+    expect(state.hookArgs).toMatchObject({
+      page: 1,
+      pageSize: 5,
+      enabled: true,
+    })
     expect(screen.getByRole("link", { name: "link" })).toHaveAttribute(
       "href",
       "/en/my-submissions",
@@ -99,9 +103,7 @@ describe("MyApplications", () => {
     render(<MyApplications />)
     expect(screen.getAllByRole("button")).toHaveLength(3)
     fireEvent.click(screen.getByRole("button", { name: "submission-2" }))
-    expect(mockPush).toHaveBeenCalledWith(
-      "/en/my-submissions?id=submission-2",
-    )
+    expect(mockPush).toHaveBeenCalledWith("/en/my-submissions?id=submission-2")
   })
 
   it("surfaces fetch errors without hiding the empty state", () => {

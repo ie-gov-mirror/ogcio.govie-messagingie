@@ -10,12 +10,10 @@ import {
   OrganisationUpdateConsentStatementSchema,
 } from "~/schemas/consent-statements/organisation.js";
 import type { FastifyRequestTypebox } from "~/schemas/shared.js";
+import { ConsentStatementService } from "~/services/consent-statements/consent-statement-service.js";
 import {
   createConsentStatement,
   disableConsentStatement,
-  getConsentStatementById,
-  getCurrentConsentStatements,
-  listConsentStatements,
   updateConsentStatement,
 } from "~/services/consent-statements/consent-statements-service.js";
 import { parseBooleanEnum } from "~/types/typebox.js";
@@ -43,10 +41,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
           ? request.query.subject.trim().split(",")
           : [];
 
-      const output = await getCurrentConsentStatements({
-        pool: fastify.pg.pool,
-        subjects: inputSubjects,
-      });
+      const output = await new ConsentStatementService(
+        fastify.db,
+      ).getCurrentMany(inputSubjects);
 
       return { data: output };
     },
@@ -93,8 +90,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         typeof OrganisationListConsentStatementsSchema
       >,
     ) => {
-      const output = await listConsentStatements({
-        pool: fastify.pg.pool,
+      const output = await new ConsentStatementService(fastify.db).list({
         subject: request.query.subject,
         isEnabled:
           request.query.isEnabled !== undefined
@@ -125,10 +121,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       >,
     ) => {
       return {
-        data: await getConsentStatementById({
-          id: request.params.id,
-          pool: fastify.pg.pool,
-        }),
+        data: await new ConsentStatementService(fastify.db).getById(
+          request.params.id,
+        ),
       };
     },
   );

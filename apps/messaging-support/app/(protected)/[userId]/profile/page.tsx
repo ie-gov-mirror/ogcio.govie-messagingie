@@ -5,9 +5,9 @@ import {
   SectionBreak,
   Stack,
 } from "@ogcio/design-system-react"
+import { ProfileTables } from "@/app/(protected)/[userId]/profile/ProfileTables"
 import { AnalyticsViewEventHandler } from "@/app/components/AnalyticsViewEventHandler"
 import { ProfileMeta } from "@/app/components/ProfileMeta"
-import { ProfileTables } from "@/app/(protected)/[userId]/profile/ProfileTables"
 import AuthWrapper from "@/app/server-utils/AuthWrapper"
 import { ANALYTICS } from "@/const/analytics"
 import { ProfileDataService } from "@/data/profile"
@@ -15,10 +15,10 @@ import type { NextSearchParams } from "@/data/types"
 import { getIdentity } from "@/utils/session"
 import { getFullName, toURLSearchParams } from "@/utils/utils"
 import { AlreadyDeletedAccountSection } from "./AlreadyDeleteAccountSection"
+import { ConsentManagement } from "./ConsentManagement"
 import { ConsentTables } from "./ConsentTables"
 import { DataExportSection } from "./DataExportSection"
 import { DeleteAccountSection } from "./DeleteAccountSection"
-import { ConsentManagement } from "./ConsentManagement"
 import "./overrides.css"
 
 export default async function Profile(props: {

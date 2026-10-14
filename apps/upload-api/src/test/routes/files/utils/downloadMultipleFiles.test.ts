@@ -74,7 +74,13 @@ const buildParams = ({
   bucketName: "test-bucket",
   avClient: buildAvClient(),
   pg: {
-    query: vi.fn().mockResolvedValue({ rows }),
+    pool: {
+      connect: () =>
+        Promise.resolve({
+          query: () => Promise.resolve({ rows }),
+          release: () => {},
+        }),
+    },
   } as unknown as fastifyPostgres.PostgresDb,
   logger: buildLogger(),
 });

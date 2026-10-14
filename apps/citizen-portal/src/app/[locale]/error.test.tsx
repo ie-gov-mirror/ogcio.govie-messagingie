@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import ErrorPage from "@/app/[locale]/error"
 
 const trackEvent = vi.hoisted(() => vi.fn())
+const pushLog = vi.hoisted(() => vi.fn())
+const chunkError = vi.hoisted(() => ({ isChunk: false, reloads: false }))
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => {
@@ -16,7 +18,12 @@ vi.mock("next-intl", () => ({
 }))
 
 vi.mock("@grafana/faro-web-sdk", () => ({
-  faro: { api: { pushLog: vi.fn() } },
+  faro: { api: { pushLog } },
+}))
+
+vi.mock("@/util/chunk-error", () => ({
+  isChunkLoadError: () => chunkError.isChunk,
+  reloadOnceIfChunkLoadError: () => chunkError.reloads,
 }))
 
 vi.mock("@ogcio/nextjs-analytics", () => ({
@@ -33,6 +40,12 @@ vi.mock("@/components/analytics-provider", () => ({
 }))
 
 describe("ErrorPage", () => {
+  beforeEach(() => {
+    pushLog.mockClear()
+    chunkError.isChunk = false
+    chunkError.reloads = false
+  })
+
   it("renders the error page with heading, message, and retry button", () => {
     const resetFn = vi.fn()
     render(<ErrorPage error={new Error("Test error")} reset={resetFn} />)
@@ -67,5 +80,27 @@ describe("ErrorPage", () => {
       const eventStr = JSON.stringify(call)
       expect(eventStr).not.toContain(errorMsg)
     })
+  })
+
+  it("stays quiet while a recovery reload is scheduled", () => {
+    chunkError.isChunk = true
+    chunkError.reloads = true
+    render(
+      <ErrorPage error={new Error("Failed to load chunk")} reset={vi.fn()} />,
+    )
+
+    expect(pushLog).not.toHaveBeenCalled()
+  })
+
+  it("reports a chunk-load error once recovery is spent", () => {
+    chunkError.isChunk = true
+    chunkError.reloads = false
+    render(
+      <ErrorPage error={new Error("Failed to load chunk")} reset={vi.fn()} />,
+    )
+
+    expect(pushLog).toHaveBeenCalledWith([
+      "ChunkLoadError: Failed to load chunk",
+    ])
   })
 })

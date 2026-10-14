@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { processMessage } from "../../services/messages/message-service.js";
-import { supportListMessages } from "../../services/messages/support-service.js";
+import { SupportMessageService } from "../../services/messages/support-service.js";
 import {
   type CreateMessageBody,
   CreateMessageReqSchema,
@@ -53,11 +53,12 @@ export default async function supportMessages(app: FastifyInstance) {
         offset: request.query.offset,
       });
 
-      const messages = await supportListMessages({
+      const messages = await new SupportMessageService(
+        app.db,
+        request.log,
+      ).list({
         requestParams: request.body,
         pagination,
-        pool: app.pg.pool,
-        logger: request.log,
         deletedAfterDateTime: request.query.deletedAfterDateTime,
       });
 

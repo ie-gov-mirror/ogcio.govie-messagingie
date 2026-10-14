@@ -10,8 +10,8 @@ import type {
   FastifyReplyTypebox,
   FastifyRequestTypebox,
 } from "~/schemas/shared.js";
+import { ConsentService } from "~/services/consents/consent-service.js";
 import {
-  getConsentsForUser,
   getLatestConsentForUser,
   submitConsents,
 } from "~/services/consents/consents-service.js";
@@ -34,11 +34,10 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
         limit: request.query.limit,
         offset: request.query.offset,
       });
-      const consents = await getConsentsForUser({
-        pool: fastify.pg.pool,
+      const consents = await new ConsentService(fastify.db).getConsentsForUser({
         userId,
-        paginationParams,
         subject: request.query.subject,
+        pagination: paginationParams,
       });
 
       return formatAPIResponse({

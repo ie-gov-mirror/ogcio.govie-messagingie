@@ -138,7 +138,9 @@ describe("AppSideNav", () => {
       "href",
       "/en/discovery",
     )
-    expect(screen.getByRole("link", { name: "Life events" }).querySelector("p")).toBeTruthy()
+    expect(
+      screen.getByRole("link", { name: "Life events" }).querySelector("p"),
+    ).toBeTruthy()
     expect(screen.getByRole("link", { name: /Messages/ })).toHaveAttribute(
       "href",
       "http://messaging.local.test:8080/en/messages",

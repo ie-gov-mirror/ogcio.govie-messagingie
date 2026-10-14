@@ -96,7 +96,9 @@ describe("authenticated app routes", () => {
       </AuthenticatedLayout>,
     )
 
-    expect(screen.getByTestId("client-shell")).toHaveTextContent("Private content")
+    expect(screen.getByTestId("client-shell")).toHaveTextContent(
+      "Private content",
+    )
   })
 
   it("passes the route locale to the messages view", () => {

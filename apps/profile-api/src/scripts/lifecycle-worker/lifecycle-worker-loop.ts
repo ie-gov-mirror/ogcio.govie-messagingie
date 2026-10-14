@@ -1,10 +1,10 @@
+import type { DbEnv } from "@ogcio/db-core";
 import closeWithGrace from "close-with-grace";
 import type { Pool } from "pg";
 import pino from "pino";
 import { getPgConnection } from "~/migrations/scripts/shared.js";
 import type {
   DPProxyConfig,
-  EnvDbConfig,
   LogtoManagementConfig,
   M2MSdksConfig,
 } from "~/plugins/external/env.js";
@@ -52,7 +52,7 @@ function installProcessSafetyHandlers(logger: pino.Logger): void {
 }
 
 export async function startWorkerLoop(params: {
-  envDbConfig: EnvDbConfig;
+  envDbConfig: DbEnv;
   logtoManagementConfig: LogtoManagementConfig;
   dpProxyConfig: Required<DPProxyConfig>;
   m2mSdksConfig: M2MSdksConfig;
@@ -145,7 +145,7 @@ export async function startWorkerLoop(params: {
 }
 
 async function connectToDatabase(
-  dbConfig: EnvDbConfig,
+  dbConfig: DbEnv,
   logger: pino.Logger,
 ): Promise<Pool> {
   const connectionString = process.env.DATABASE_TEST_URL?.length

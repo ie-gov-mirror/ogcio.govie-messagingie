@@ -42,14 +42,19 @@ describe("public app routes", () => {
       </PublicLayout>,
     )
 
-    expect(screen.getByTestId("public-shell")).toHaveTextContent("Public content")
+    expect(screen.getByTestId("public-shell")).toHaveTextContent(
+      "Public content",
+    )
   })
 
   it("renders the accessibility statement", () => {
     render(<AccessibilityStatement />)
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Statement of commitment" }),
+      screen.getByRole("heading", {
+        level: 1,
+        name: "Statement of commitment",
+      }),
     ).toBeInTheDocument()
     expect(screen.getByText(/S\.I\. 358\/2020/)).toBeInTheDocument()
   })

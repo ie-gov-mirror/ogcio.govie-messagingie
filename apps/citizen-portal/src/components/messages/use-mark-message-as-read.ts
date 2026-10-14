@@ -3,6 +3,7 @@
 import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { useEffect, useRef } from "react"
 import { mutate as swrMutate } from "swr"
+import { type MarkMessageReadBody, messagesApi } from "@/api/messages"
 
 /**
  * Mark a message as read exactly once after its detail data has loaded,
@@ -28,25 +29,17 @@ import { mutate as swrMutate } from "swr"
  */
 export function useMarkMessageAsRead(id: string, ready: boolean): void {
   const hasMarkedRead = useRef(false)
-  const { trigger: markAsSeen } = useGatewayMutation(
-    `/messaging/api/v1/message-actions/${id}`,
-    { method: "PUT" },
-  )
+  const { trigger: markAsSeen } = useGatewayMutation<
+    unknown,
+    MarkMessageReadBody
+  >(messagesApi.markReadPath(id), { method: "PUT" })
 
   useEffect(() => {
     if (!ready || hasMarkedRead.current) return
     hasMarkedRead.current = true
-    markAsSeen({ messageId: id, isSeen: true })
+    markAsSeen(messagesApi.markReadBody(id))
       .then(() => {
-        void swrMutate((key: unknown) => {
-          const url =
-            typeof key === "string"
-              ? key
-              : Array.isArray(key) && typeof key[0] === "string"
-                ? key[0]
-                : ""
-          return url.includes("/messaging/api/v1/messages?")
-        })
+        void swrMutate((key: unknown) => messagesApi.isListKey(key))
       })
       .catch(() => {})
   }, [ready, id, markAsSeen])

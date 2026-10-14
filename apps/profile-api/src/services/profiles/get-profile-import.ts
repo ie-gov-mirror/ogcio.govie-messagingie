@@ -1,7 +1,7 @@
+import { httpErrors } from "@fastify/sensible";
 import type { Pool } from "pg";
+import { profileImportServiceFromPool } from "~/services/profiles/imports/profile-import-service.js";
 import type { SavedFileInfo } from "~/utils/save-request-file.js";
-import { withClient } from "~/utils/with-client.js";
-import { getProfileImport as getProfileImportSql } from "./sql/get-profile-import.js";
 
 export const getProfileImport = async (params: {
   pool: Pool;
@@ -13,11 +13,16 @@ export const getProfileImport = async (params: {
   status: string;
   createdAt: string;
 }> => {
-  return withClient(params.pool, async (client) => {
-    return await getProfileImportSql(
-      client,
-      params.profileImportId,
-      params.organisationId,
+  const data = await profileImportServiceFromPool(params.pool).get(
+    params.profileImportId,
+  );
+  if (
+    params.organisationId !== undefined &&
+    data.organisationId !== params.organisationId
+  ) {
+    throw httpErrors.notFound(
+      `Status for profile_import with id ${params.profileImportId} not found`,
     );
-  });
+  }
+  return data;
 };

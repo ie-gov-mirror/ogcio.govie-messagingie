@@ -1,8 +1,9 @@
 /*
  * Mobile list card — single-row item for inbox-style lists.
  * Spec: 96px height, 12px padding, 320–1024px width, checkbox gap 10px,
- * attachment gap 8px. Unread = grey + bold; read = white + bottom border;
- * selected = tinted background.
+ * attachment gap 8px. Read and unread share the white background + bottom
+ * border; bold weight is the only unread cue (Gmail convention, WCAG 1.4.1).
+ * Selected = tinted background, weight unchanged.
  */
 .card {
   display: flex;
@@ -25,17 +26,9 @@
   color: inherit;
 }
 
-.cardUnread {
-  background-color: var(--gieds-color-gray-200, #d8dadf);
-  border-bottom-color: transparent;
-}
-
 /*
- * Selected tint uses neutral-100 (lighter than the previous gray-200) so a
- * selected row reads as highlighted without looking as dark as an unread row.
- * `.cardUnread` and `.cardSelected` are mutually exclusive in the DOM (a
- * selected row never carries `.cardUnread`), so their hover/active states can
- * be tuned independently.
+ * Selected tint (neutral-100) is the only background change in the list;
+ * the title/preview/date weight is left as-is so unread stays bold.
  */
 .cardSelected {
   background-color: var(--gieds-color-neutral-100, #e9eaed);
@@ -46,20 +39,12 @@
   background-color: var(--gieds-color-gray-50, #f7f7f8);
 }
 
-.cardUnread:hover {
-  background-color: var(--gieds-color-gray-300, #c9ccd1);
-}
-
 .cardSelected:hover {
   background-color: var(--gieds-color-neutral-200, #d8dadf);
 }
 
 .card:active {
   background-color: var(--gieds-color-gray-100, #eeeff0);
-}
-
-.cardUnread:active {
-  background-color: var(--gieds-color-gray-400, #b9bcc3);
 }
 
 .cardSelected:active {

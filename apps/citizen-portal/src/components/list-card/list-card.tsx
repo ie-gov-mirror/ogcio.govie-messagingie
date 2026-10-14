@@ -50,10 +50,10 @@ export function ListCard({
   checkboxTestId,
   className,
 }: ListCardProps) {
-  // Unread stays bold even while selected — selecting an unread item must not
-  // drop its emphasis (only the background changes to the selected tint).
-  const isEmphasized = isUnread
-  const weightClass = isEmphasized ? styles.emphasized : styles.regular
+  // Bold weight is the only read/unread cue (no grey fill, no dot). Unread
+  // stays bold while selected — only the background changes to the selected
+  // tint, so the weight still tells you whether the item was read.
+  const weightClass = isUnread ? styles.emphasized : styles.regular
   const previewClass = [
     styles.preview,
     previewUnderline ? "" : styles.previewPlain,
@@ -63,7 +63,6 @@ export function ListCard({
 
   const stateClasses = [
     styles.card,
-    isUnread && !isSelected ? styles.cardUnread : "",
     isSelected ? styles.cardSelected : "",
     className,
   ]

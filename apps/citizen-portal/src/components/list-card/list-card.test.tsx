@@ -43,9 +43,7 @@ describe("ListCard", () => {
   })
 
   it("hides the attachment icon when hasAttachment is false", () => {
-    render(
-      <ListCard title='Sender' date='2 Jul 2026' preview='Preview' />,
-    )
+    render(<ListCard title='Sender' date='2 Jul 2026' preview='Preview' />)
 
     expect(screen.queryByLabelText("Has attachment")).not.toBeInTheDocument()
   })
@@ -90,7 +88,8 @@ describe("ListCard", () => {
     // Reads the px fallback out of `var(--token, 0.75rem)`, or a bare number.
     const value = (selector: string, property: string) => {
       const block = css.match(new RegExp(`\\.${selector}\\s*\\{[^}]*\\}`))?.[0]
-      const raw = block?.match(new RegExp(`${property}:\\s*([^;]+);`))?.[1] ?? ""
+      const raw =
+        block?.match(new RegExp(`${property}:\\s*([^;]+);`))?.[1] ?? ""
       const rem = raw.match(/([\d.]+)rem/)
       return rem ? Number(rem[1]) * 16 : Number(raw)
     }

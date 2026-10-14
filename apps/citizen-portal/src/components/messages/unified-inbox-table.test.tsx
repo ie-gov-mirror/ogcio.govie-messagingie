@@ -2,8 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import type { ComponentProps, ReactNode } from "react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { InboxListChromeHeader } from "@/components/messages/inbox-list-chrome-header"
-import tableStyles from "@/components/messages/unified-inbox-table.module.css"
 import { UnifiedInboxTable } from "@/components/messages/unified-inbox-table"
+import tableStyles from "@/components/messages/unified-inbox-table.module.css"
 import { useMessageSelection } from "@/components/messages/use-message-selection"
 import type { Message } from "@/types"
 
@@ -218,7 +218,7 @@ function TableWithSelection(
     onBulkMove?: () => void
     canMove?: boolean
     bulkActionBar?: ReactNode
-} = {},
+  } = {},
 ) {
   const selection = useMessageSelection(messages)
   // The mobile "Select" button (data-testid=mobile-select-button) is
@@ -246,9 +246,7 @@ function TableWithSelection(
   )
 }
 
-function renderInboxTable(
-  props: ComponentProps<typeof UnifiedInboxTable>,
-) {
+function renderInboxTable(props: ComponentProps<typeof UnifiedInboxTable>) {
   return render(
     <InboxListChrome>
       <UnifiedInboxTable {...props} />
@@ -271,7 +269,7 @@ describe("UnifiedInboxTable", () => {
   })
 
   it("renders search input and table", () => {
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     expect(screen.getByTestId("search-input")).toBeInTheDocument()
     expect(screen.getByTestId("unified-inbox-table")).toBeInTheDocument()
@@ -282,7 +280,7 @@ describe("UnifiedInboxTable", () => {
 
   it("preserves the current folder in message detail links", () => {
     currentSearchParams = new URLSearchParams({ folder: "folder-1" })
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     expect(screen.getByTestId("message-row-link-msg-1")).toHaveAttribute(
       "href",
@@ -291,7 +289,7 @@ describe("UnifiedInboxTable", () => {
   })
 
   it("shows all messages regardless of read state", () => {
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     expect(
       screen.getAllByText("Your annual statement is available").length,
@@ -309,7 +307,7 @@ describe("UnifiedInboxTable", () => {
   // whatever's in threadName" implementation would render the subject
   // in this column.
   it("renders the resolved organisation name in the Sender column", () => {
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     const senderTexts = Array.from(
       screen
@@ -335,7 +333,7 @@ describe("UnifiedInboxTable", () => {
       },
     ]
 
-    renderInboxTable({...defaultProps, messages: orphan})
+    renderInboxTable({ ...defaultProps, messages: orphan })
 
     const senderTexts = Array.from(
       screen
@@ -368,7 +366,7 @@ describe("UnifiedInboxTable", () => {
       },
     ]
 
-    renderInboxTable({...defaultProps, messages: systemMessage})
+    renderInboxTable({ ...defaultProps, messages: systemMessage })
 
     const senderTexts = Array.from(
       screen
@@ -384,14 +382,14 @@ describe("UnifiedInboxTable", () => {
   })
 
   it("does not render an unread count below the search header", () => {
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     expect(screen.queryByText("1 unread")).not.toBeInTheDocument()
   })
 
   it("pushes search query after debounce", async () => {
     vi.useFakeTimers()
-    const { rerender } = renderInboxTable({...defaultProps})
+    const { rerender } = renderInboxTable({ ...defaultProps })
 
     const input = screen.getByTestId("search-input")
     fireEvent.change(input, { target: { value: "statement" } })
@@ -420,7 +418,7 @@ describe("UnifiedInboxTable", () => {
   })
 
   it("pushes search query immediately on Enter", () => {
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     const input = screen.getByTestId("search-input")
     fireEvent.change(input, { target: { value: "statement" } })
@@ -435,7 +433,7 @@ describe("UnifiedInboxTable", () => {
     vi.useFakeTimers()
     currentSearchParams = new URLSearchParams("search=available")
     try {
-      renderInboxTable({...defaultProps})
+      renderInboxTable({ ...defaultProps })
 
       const input = screen.getByTestId("search-input")
       fireEvent.change(input, { target: { value: "" } })
@@ -451,7 +449,7 @@ describe("UnifiedInboxTable", () => {
   it("clears the ?search= param when the input clear button is clicked", () => {
     currentSearchParams = new URLSearchParams("search=available")
     try {
-      renderInboxTable({...defaultProps})
+      renderInboxTable({ ...defaultProps })
 
       fireEvent.click(screen.getByRole("button", { name: "Clear input" }))
 
@@ -465,15 +463,13 @@ describe("UnifiedInboxTable", () => {
   it("clears search loaded from the URL after reload and dismisses the spinner", () => {
     currentSearchParams = new URLSearchParams("limit=20&search=payslip")
     try {
-      const { rerender } = renderInboxTable({...defaultProps})
+      const { rerender } = renderInboxTable({ ...defaultProps })
 
       expect(screen.getByTestId("search-input")).toHaveValue("payslip")
 
       fireEvent.click(screen.getByRole("button", { name: "Clear input" }))
 
-      expect(mockReplaceState).toHaveBeenCalledWith(
-        `${MOCK_PATHNAME}?limit=20`,
-      )
+      expect(mockReplaceState).toHaveBeenCalledWith(`${MOCK_PATHNAME}?limit=20`)
 
       rerender(
         <InboxListChrome key='search-cleared'>
@@ -491,7 +487,7 @@ describe("UnifiedInboxTable", () => {
   })
 
   it("pushes status=unread when the unread filter is applied", () => {
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     fireEvent.click(screen.getByTestId("status-filter"))
     fireEvent.click(screen.getByLabelText("Unread"))
@@ -501,7 +497,7 @@ describe("UnifiedInboxTable", () => {
   })
 
   it("pushes status=read when the read filter is applied", () => {
-    renderInboxTable({...defaultProps})
+    renderInboxTable({ ...defaultProps })
 
     fireEvent.click(screen.getByTestId("status-filter"))
     fireEvent.click(screen.getByLabelText("Read"))
@@ -513,7 +509,7 @@ describe("UnifiedInboxTable", () => {
   it("clears status from the URL when filters are cleared", () => {
     currentSearchParams = new URLSearchParams("status=unread")
     try {
-      renderInboxTable({...defaultProps})
+      renderInboxTable({ ...defaultProps })
 
       fireEvent.click(screen.getByTestId("status-filter"))
       fireEvent.click(screen.getByRole("button", { name: "Clear" }))
@@ -535,7 +531,7 @@ describe("UnifiedInboxTable", () => {
   })
 
   it("shows empty state when no messages", () => {
-    renderInboxTable({...defaultProps, messages: [] })
+    renderInboxTable({ ...defaultProps, messages: [] })
 
     expect(screen.getByText("You have no messages")).toBeInTheDocument()
   })
@@ -682,9 +678,7 @@ describe("UnifiedInboxTable", () => {
   it("renders the bulkActionBar slot exactly once when rows are selected", () => {
     render(
       <TableWithSelection
-        bulkActionBar={
-          <div data-testid='bulk-action-bar-slot'>banner</div>
-        }
+        bulkActionBar={<div data-testid='bulk-action-bar-slot'>banner</div>}
       />,
     )
 
@@ -704,6 +698,8 @@ describe("UnifiedInboxTable", () => {
     fireEvent.click(screen.getByTestId("select-row-msg-1"))
 
     expect(screen.getByTestId("bulk-action-bar-slot")).toBeVisible()
-    expect(screen.getByTestId("search-input").closest("[aria-hidden='true']")).not.toBeNull()
+    expect(
+      screen.getByTestId("search-input").closest("[aria-hidden='true']"),
+    ).not.toBeNull()
   })
 })

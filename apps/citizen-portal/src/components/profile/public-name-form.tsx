@@ -12,6 +12,7 @@ import {
 import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { useTranslations } from "next-intl"
 import { type FormEvent, useCallback, useState } from "react"
+import { profileApi } from "@/api/profile"
 import { FullWidthContainer } from "@/components/layout/containers"
 import { writeNavName } from "@/util/nav-snapshot"
 
@@ -30,7 +31,7 @@ export function PublicNameForm({
   const { trigger, isLoading } = useGatewayMutation<
     unknown,
     { publicName: string }
-  >(`/profile/api/v1/profiles/${profileId}`, { method: "PATCH" })
+  >(profileApi.patchPath(profileId), { method: "PATCH" })
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -46,7 +47,7 @@ export function PublicNameForm({
 
       try {
         await trigger({ publicName: trimmed })
-        writeNavName(trimmed)
+        writeNavName(profileId, trimmed)
 
         toaster.create({
           title: t("publicNameUpdatedToast"),
@@ -62,7 +63,7 @@ export function PublicNameForm({
         })
       }
     },
-    [value, t, onUpdated, trigger],
+    [value, t, onUpdated, trigger, profileId],
   )
 
   return (
@@ -71,7 +72,7 @@ export function PublicNameForm({
         <Stack direction='column' gap={6}>
           <Heading
             as='h2'
-            size='md'
+            size='sm'
             id='public-name-heading'
             data-testid='public-name-heading'
           >

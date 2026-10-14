@@ -35,6 +35,7 @@ const authState = vi.hoisted(() => ({
   invalidateSession: vi.fn().mockResolvedValue(undefined),
 }))
 const sagSignIn = vi.hoisted(() => vi.fn())
+const chunkState = vi.hoisted(() => ({ failing: false }))
 
 vi.mock("@ogcio/nextjs-analytics", () => ({
   useAnalytics: () => ({ trackEvent }),
@@ -129,7 +130,9 @@ vi.mock("@/components/analytics-provider", () => ({
   AnalyticsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
 }))
 vi.mock("@/components/feature-flags-provider", () => ({
-  FeatureFlagsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  FeatureFlagsProvider: ({ children }: { children: ReactNode }) => (
+    <>{children}</>
+  ),
 }))
 vi.mock("@/components/consent-banner", () => ({
   ConsentBanner: () => <div>consent banner</div>,
@@ -138,7 +141,9 @@ vi.mock("@/components/layout/application-footer", () => ({
   ApplicationFooter: () => <footer>footer</footer>,
 }))
 vi.mock("@/components/layout/containers", () => ({
-  AppMainContent: ({ children }: { children: ReactNode }) => <main>{children}</main>,
+  AppMainContent: ({ children }: { children: ReactNode }) => (
+    <main>{children}</main>
+  ),
 }))
 vi.mock("@/components/load-material-symbols", () => ({
   LoadMaterialSymbols: () => null,
@@ -159,7 +164,15 @@ vi.mock("@/components/shell-loading-chrome", () => ({
   ShellLoadingChrome: ({ zone }: { zone: string }) => <div>loading {zone}</div>,
 }))
 vi.mock("@/components/messages/unified-inbox", () => ({}))
-vi.mock("@/components/secure-messages/secure-message-page", () => ({}))
+// A throwing factory makes `import()` reject, like a chunk that 404s.
+vi.mock("@/components/secure-messages/secure-message-page", () => {
+  if (chunkState.failing) {
+    throw new Error(
+      "Failed to load chunk /_next/static/chunks/x.js from module 82624",
+    )
+  }
+  return {}
+})
 vi.mock("@/components/dashboard/my-dashboard", () => ({}))
 vi.mock("@/components/submissions/submissions", () => ({}))
 vi.mock("@/components/profile/my-profile", () => ({}))
@@ -243,6 +256,26 @@ describe("ClientShell", () => {
     expect(screen.getByTestId("sag-provider")).toBeInTheDocument()
     expect(sagProvider.appName).toBe("messaging")
     sagProvider.renderChildren = true
+  })
+
+  it("does not leak a failed zone chunk prefetch as an unhandled rejection", async () => {
+    // The prefetch is best-effort: the real load happens on navigation, where
+    // the error boundary reports it. Left unhandled it reaches Faro as an
+    // exception on every shell mount, and no error boundary can recover it.
+    const unhandled = vi.fn()
+    process.on("unhandledRejection", unhandled)
+    chunkState.failing = true
+    vi.resetModules()
+    const { ClientShell: FreshShell } = await import(
+      "@/components/client-shell"
+    )
+
+    render(<FreshShell>content</FreshShell>)
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    process.off("unhandledRejection", unhandled)
+    chunkState.failing = false
+    expect(unhandled).not.toHaveBeenCalled()
   })
 
   it("starts sign-in when authentication resolves without a user", () => {

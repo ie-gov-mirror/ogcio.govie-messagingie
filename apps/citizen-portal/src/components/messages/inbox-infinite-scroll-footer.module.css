@@ -30,7 +30,7 @@
   padding-bottom: max(var(--gieds-space-3), env(safe-area-inset-bottom, 0px));
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .footer {
     display: block;
   }

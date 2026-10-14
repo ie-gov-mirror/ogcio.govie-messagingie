@@ -60,7 +60,15 @@ vi.mock("@/components/navigation/bold-link", () => ({
 }))
 
 vi.mock("@ogcio/design-system-react", () => ({
-  Heading: ({ children }: { children: React.ReactNode }) => <h2>{children}</h2>,
+  Heading: ({
+    as: Tag = "h2",
+    className,
+    children,
+  }: {
+    as?: "h1" | "h2" | "h3"
+    className?: string
+    children: React.ReactNode
+  }) => <Tag className={className}>{children}</Tag>,
   Paragraph: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
   Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
@@ -76,6 +84,7 @@ vi.mock("@/components/dashboard/my-applications", () => ({
 }))
 
 import { MyDashboard } from "@/components/dashboard/my-dashboard"
+import pageTitleStyles from "@/components/page-title.module.css"
 
 describe("MyDashboard", () => {
   beforeEach(() => {
@@ -105,6 +114,9 @@ describe("MyDashboard", () => {
       flagState.lea = lea
       render(<MyDashboard />)
       expect(screen.getByTestId("public-name")).toBeInTheDocument()
+      expect(screen.getByRole("heading", { level: 1 })).toHaveClass(
+        pageTitleStyles.pageTitle,
+      )
     },
   )
 })

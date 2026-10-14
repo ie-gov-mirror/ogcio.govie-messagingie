@@ -80,7 +80,12 @@ const buildTestBed = ({
 
   const app = {
     httpErrors,
-    pg: { query: pgQuery } as unknown as fastifyPostgres.PostgresDb,
+    pg: {
+      query: pgQuery,
+      pool: {
+        connect: () => Promise.resolve({ query: pgQuery, release: () => {} }),
+      },
+    } as unknown as fastifyPostgres.PostgresDb,
     s3Client: { client: { send: s3Send }, bucketName: "test-bucket" },
     avClient: {
       passthrough: vi.fn(() => avPassthrough),

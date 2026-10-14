@@ -4,7 +4,18 @@ import getFilename from "../../../../routes/files/utils/getFilename.js";
 
 describe("getFilename", () => {
   it("should return the provided filename when there is no clash", async () => {
-    const pg = { query: () => Promise.resolve({ rows: [] }) };
+    // `isFilenameAlreadyPresent` now delegates to FileService, which reads via a
+    // Kysely instance built from `pg.pool`; Kysely acquires a client through
+    // `pool.connect()` and releases it afterwards.
+    const pg = {
+      pool: {
+        connect: () =>
+          Promise.resolve({
+            query: () => Promise.resolve({ rows: [] }),
+            release: () => {},
+          }),
+      },
+    };
 
     let value = await getFilename(
       pg as unknown as fastifyPostgres.PostgresDb,
@@ -26,7 +37,15 @@ describe("getFilename", () => {
   it("should return a suffixed filename when the name clashes", async () => {
     // First lookup (input name) clashes, second (random-suffixed) is free.
     const results = [{ rows: [{ fileName: "filename.txt" }] }, { rows: [] }];
-    const pg = { query: () => Promise.resolve(results.shift()) };
+    const pg = {
+      pool: {
+        connect: () =>
+          Promise.resolve({
+            query: () => Promise.resolve(results.shift()),
+            release: () => {},
+          }),
+      },
+    };
 
     const value = await getFilename(
       pg as unknown as fastifyPostgres.PostgresDb,
@@ -44,7 +63,15 @@ describe("getFilename", () => {
       { rows: [{ fileName: "clash-again" }] },
       { rows: [] },
     ];
-    const pg = { query: () => Promise.resolve(results.shift()) };
+    const pg = {
+      pool: {
+        connect: () =>
+          Promise.resolve({
+            query: () => Promise.resolve(results.shift()),
+            release: () => {},
+          }),
+      },
+    };
 
     const value = await getFilename(
       pg as unknown as fastifyPostgres.PostgresDb,

@@ -4,6 +4,8 @@ import type {
   FastifyInstance,
   FastifyRequest,
 } from "fastify";
+import { fileServiceFromPool } from "../../services/file-service.js";
+import { sharingServiceFromPool } from "../../services/sharing-service.js";
 import { PersonalProfileSdkWrapper } from "../../utils/personal-profile-sdk-wrapper.js";
 
 export default async (
@@ -38,30 +40,22 @@ async function canUserAccessFile(
   },
   logger: FastifyBaseLogger,
 ): Promise<boolean> {
+  const fileService = fileServiceFromPool(pg.pool);
+  const sharingService = sharingServiceFromPool(pg.pool);
+
   // If it is a public servant check if the file
   // is owned by the org
   if (userData.organizationId) {
-    const owner = await pg.query<{ id: string }>(
-      `
-    SELECT id FROM files
-    WHERE organization_id = $1 and id = $2 LIMIT 1
-    `,
-      [userData.organizationId, fileId],
+    const ownedByOrg = await fileService.isFileOwnedByOrganization(
+      userData.organizationId,
+      fileId,
     );
-    if (owner.rowCount && owner.rowCount > 0) {
+    if (ownedByOrg) {
       return true;
     }
   }
   // Otherwise check if the file has been shared with the user
-  const sharedWith = await pg.query<{ id: string }>(
-    `
-    SELECT user_id FROM files_users
-    WHERE file_id = $1 and user_id = $2 LIMIT 1
-  `,
-    [fileId, userData.userId],
-  );
-
-  if (sharedWith.rowCount && sharedWith.rowCount > 0) {
+  if (await sharingService.isSharedWithUser(fileId, userData.userId)) {
     return true;
   }
 
@@ -70,15 +64,8 @@ async function canUserAccessFile(
     userData.userId,
   );
 
-  // Otherwise check if the file has been shared with the user
-  const sharedWithMany = await pg.query<{ id: string }>(
-    `
-    SELECT user_id FROM files_users
-    WHERE file_id = $1 and user_id = ANY($2) LIMIT 1
-  `,
-    [fileId, linkedProfilesIds],
-  );
-  if (sharedWithMany.rowCount && sharedWithMany.rowCount > 0) {
+  // Otherwise check if the file has been shared with any linked profile
+  if (await sharingService.isSharedWithAnyUser(fileId, linkedProfilesIds)) {
     return true;
   }
 

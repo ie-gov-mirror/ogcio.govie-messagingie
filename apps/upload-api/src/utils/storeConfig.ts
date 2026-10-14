@@ -1,10 +1,10 @@
 import type { Pool } from "pg";
+import {
+  CONFIG_TYPE,
+  settingsServiceFromPool,
+} from "../services/settings-service.js";
 
-export enum CONFIG_TYPE {
-  STRING = "string",
-  NUMBER = "number",
-  BOOLEAN = "boolean",
-}
+export { CONFIG_TYPE };
 
 export const SCHEDULER_TOKEN = "SCHEDULER_TOKEN";
 export const SCHEDULER_NEXT_RUN_AT = "SCHEDULER_NEXT_RUN_AT";
@@ -80,30 +80,12 @@ const releaseNextRun = (pool: Pool) => {
   );
 };
 
-const getConfigValue = async (pool: Pool, key: string) => {
-  const valueQueryResult = await pool.query<{
-    key: string;
-    value: string;
-    type: string;
-  }>("SELECT key, value, type FROM settings WHERE key = $1", [key]);
-  if (valueQueryResult.rows.length) {
-    const { value, type } = valueQueryResult.rows[0];
-
-    switch (type) {
-      case CONFIG_TYPE.STRING: {
-        return value;
-      }
-      case CONFIG_TYPE.NUMBER: {
-        return parseInt(value, 10);
-      }
-      case CONFIG_TYPE.BOOLEAN: {
-        return Boolean(value);
-      }
-    }
-  }
-
-  return undefined;
-};
+/**
+ * Backward-compatible wrapper delegating to {@link SettingsService} for the
+ * `settings` config read. Route/boot callers keep passing a raw pg {@link Pool}.
+ */
+const getConfigValue = (pool: Pool, key: string) =>
+  settingsServiceFromPool(pool).getConfigValue(key);
 
 export {
   claimNextRun,
