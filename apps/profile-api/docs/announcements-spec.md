@@ -27,14 +27,12 @@ This document defines the backend contract for post-update announcements used by
 ### Support
 
 `POST /api/v1/support/announcements`
-
 - Creates one announcement with mandatory `en` and `ga` translations.
 - Request body includes `applicationId`, `isEnabled`, `publishDate`, and `translations`.
 - `isEnabled` is parsed from the string-backed boolean enum accepted by the shared schema: `true`, `false`, `0`, or `1`.
 - Returns `200` with `{ data: { id } }`.
 
 `GET /api/v1/support/announcements`
-
 - Returns paginated announcement metadata without translations.
 - Supports optional `applicationId` and `isEnabled` filters.
 - Supports the standard `limit` and `offset` pagination query parameters.
@@ -42,12 +40,10 @@ This document defines the backend contract for post-update announcements used by
 - Returns `{ data: Announcement[], metadata }`.
 
 `GET /api/v1/support/announcements/:id`
-
 - Returns the full announcement including translations.
 - Returns `{ data: AnnouncementWithTranslations }`.
 
 `PATCH /api/v1/support/announcements/:id`
-
 - Explicitly sets `isEnabled` to `true` or `false`.
 - Intended for release-time enablement without rewriting content.
 - Accepts the same string-backed boolean enum values as support create.
@@ -56,7 +52,6 @@ This document defines the backend contract for post-update announcements used by
 ### Citizen
 
 `GET /api/v1/citizens/announcements?applicationId=<id>`
-
 - Always paginated using the standard limit and offset rules, with limit constrained to `1..100`.
 - Always filters to announcements where `isEnabled = true` and `publishDate <= now`.
 - If only `applicationId` is provided, returns both acknowledged and unacknowledged announcements for that application.
@@ -69,7 +64,6 @@ This document defines the backend contract for post-update announcements used by
 - Returns `{ data: AnnouncementWithTranslations[], metadata }`.
 
 `POST /api/v1/citizens/announcements/acknowledgements`
-
 - Accepts `applicationId` plus the array of displayed `announcementIds`.
 - Records acknowledgement in one transaction.
 - Persists acknowledgement per `(announcement_id, profile_id)` row. The contract is not "seen up to timestamp/id" and does not include a profile-level latest-acknowledged marker.

@@ -19,10 +19,20 @@ type SetupSdks = DefinedServices<{
     analytics?: {
       baseUrl: string;
     };
-    profile?: { baseUrl: string } | undefined;
+    profile: { baseUrl: string };
   };
   getTokenFn: TokenFunction;
 }>;
+
+const getBaseProfileConfig = (): {
+  logtoOidcEndpoint: string;
+  applicationId: string;
+  applicationSecret: string;
+} => ({
+  logtoOidcEndpoint: process.env.LOGTO_OIDC_ENDPOINT ?? "",
+  applicationId: process.env.LOGTO_M2M_PROFILE_APP_ID ?? "",
+  applicationSecret: process.env.LOGTO_M2M_PROFILE_APP_SECRET ?? "",
+});
 
 const getBaseSchedulerConfig = (): {
   logtoOidcEndpoint: string;
@@ -33,6 +43,13 @@ const getBaseSchedulerConfig = (): {
   applicationId: process.env.LOGTO_M2M_SCHEDULER_APP_ID ?? "",
   applicationSecret: process.env.LOGTO_M2M_SCHEDULER_APP_SECRET ?? "",
 });
+
+export const getM2MProfileSdk = async (
+  logger: FastifyBaseLogger,
+  organizationId: string,
+): Promise<BuildingBlocksSDK["profile"]> => {
+  return loadBuildingBlocksSdk(organizationId, logger).profile;
+};
 
 export const getSchedulerSdk = async (
   organizationId: string,
@@ -74,6 +91,13 @@ const loadBuildingBlocksSdk = (
       },
       getTokenFn: getM2MTokenFn({
         services: {
+          profile: {
+            getOrganizationTokenParams: {
+              ...getBaseProfileConfig(),
+              scopes: ["profile:user:read"],
+              organizationId,
+            },
+          },
           scheduler: {
             getOrganizationTokenParams: {
               ...getBaseSchedulerConfig(),

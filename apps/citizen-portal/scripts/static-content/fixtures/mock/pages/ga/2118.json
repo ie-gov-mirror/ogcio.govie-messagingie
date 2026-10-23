@@ -1,0 +1,25 @@
+{
+  "id": 2118,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "slug": "becoming-a-carer",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 2000
+    }
+  },
+  "title": "Becoming a carer",
+  "highlighted": false,
+  "category": "Health & Care",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Carer's payments and supports for people caring for someone at home.</p>",
+      "id": "le-1118"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 1118
+}

@@ -8,20 +8,17 @@ This document describes the API for the OGCIO MessagingIE Building Block. The AP
 
 Follow these instructions to obtain and use tokens for API access.
 
-Step 1: Receive Your Credentials
---------------------------------
+## Step 1: Receive Your Credentials
 
 To get started, contact our support team to request the credentials to use. These values are required for the authentication process.
 
 Once you have requested access, we will provide you with the following:
-
 - **Basic Authentication Code**: The base64 string you must use to request the tokens.
 - **Token Endpoint URL**: The URL where you can request your tokens.
 - **Department Id**: The identifier assigned to the department you are part of.
 - **List of available scopes**: The available permissions for your application
 
-Step 2: Request Tokens
-----------------------
+## Step 2: Request Tokens
 
 With your credentials in hand, you can now request tokens.
 
@@ -36,15 +33,13 @@ curl -X POST {GET_TOKEN_URL} \
 ### Expected Response
 
 Upon a successful request, you will receive a JSON response containing:
-
 - `access_token`: The token you will use to authenticate API requests.
 - `expires_in`: The number of seconds before the token expires.
 - `scope`: The scope of access granted by the token.
 
-Step 3: Use the Token to Authenticate API Requests
---------------------------------------------------
+## Step 3: Use the Token to Authenticate API Requests
 
-The API uses bearer token authentication. Include a token in the *Authorization* header of your requests.
+The API uses bearer token authentication. Include a token in the _Authorization_ header of your requests.
 
 ```
 Authorization: Bearer <access_token_here>
@@ -65,7 +60,6 @@ GET /api/v1/messages/
 ```
 
 Query Parameters:
-
 - `status` (optional): Filter by status. Possible value: "delivered"
 - `recipientUserId` (optional): Filter by recipient user ID
 - `organisationId` (optional): Filter by organization ID
@@ -153,7 +147,6 @@ GET /api/v1/messages/{messageId}
 ```
 
 Path Parameters:
-
 - `messageId`: UUID of the message
 
 Response (200 OK):
@@ -192,7 +185,6 @@ GET /api/v1/providers/
 ```
 
 Query Parameters:
-
 - `primary` (optional): If set, returns only primary (true) or non-primary (false) providers
 - `type` (required): Provider type. Possible values: "email"
 - `offset` (optional, default: 0): Number of records to skip
@@ -264,11 +256,9 @@ GET /api/v1/providers/{providerId}
 ```
 
 Path Parameters:
-
 - `providerId`: UUID of the provider
 
 Query Parameters:
-
 - `type` (required): Provider type. Possible values: "email"
 
 Response (200 OK):
@@ -345,7 +335,7 @@ Retrieves templates matching the requested query.
 
 ```
 GET /api/v1/templates/
-```
+````
 
 Query Parameters:
 
@@ -370,7 +360,7 @@ Response (200 OK):
     // Similar to GET /api/v1/messages/ metadata
   }
 }
-```
+````
 
 <div style="page-break-after: always;"></div>
 
@@ -427,7 +417,6 @@ GET /api/v1/templates/{templateId}
 ```
 
 Path Parameters:
-
 - `templateId`: UUID of the template
 
 Response (200 OK):
@@ -469,7 +458,6 @@ PUT /api/v1/templates/{templateId}
 ```
 
 Path Parameters:
-
 - `templateId`: UUID of the template
 
 Request Body:
@@ -507,7 +495,6 @@ DELETE /api/v1/templates/{templateId}
 ```
 
 Path Parameters:
-
 - `templateId`: UUID of the template to be deleted
 
 Response (200 OK): No content
@@ -575,7 +562,6 @@ GET /api/v1/organisation-settings/{organisationSettingId}
 ```
 
 Path Parameters:
-
 - `organisationSettingId`: ID of the organisation setting
 
 Response (200 OK):
@@ -602,7 +588,6 @@ PATCH /api/v1/organisation-settings/{organisationSettingId}
 ```
 
 Path Parameters:
-
 - `organisationSettingId`: ID of the organisation setting
 
 Request Body:
@@ -705,11 +690,9 @@ GET /api/v1/user-imports/{importId}
 ```
 
 Path Parameters:
-
 - `importId`: ID of the import batch
 
 Query Parameters:
-
 - `includeImportedData` (required): If true, returns the data of the users sent in the import batch
 
 Response (200 OK):
@@ -785,7 +768,6 @@ GET /api/v1/users/
 ```
 
 Query Parameters:
-
 - `organisationId` (optional): If set, returns users who have an accepted relation with the organization ID
 - `search` (optional): If set, searches for users who contain this value in either the name, surname, or email address
 - `transports` (optional): If set, must contain a list of transports divided by ',' and searches for users who have selected at least one of them as preferred for the organization
@@ -850,11 +832,9 @@ GET /api/v1/users/{userId}
 ```
 
 Path Parameters:
-
 - `userId`: UUID of the user
 
 Query Parameters:
-
 - `activeOnly` (optional): If true, returns active users only
 
 Response (200 OK):
@@ -883,7 +863,6 @@ GET /api/v1/message-events/
 ```
 
 Query Parameters:
-
 - `search` (optional): Filters events for messages containing the set value in subject
 - `offset` (optional, default: 0): Number of records to skip
 - `limit` (optional, default: 20, max: 100): Maximum number of records to return
@@ -920,7 +899,6 @@ GET /api/v1/message-events/{eventId}
 ```
 
 Path Parameters:
-
 - `eventId`: UUID of the event
 
 Response (200 OK):
@@ -953,7 +931,6 @@ POST /api/v1/jobs/{id}
 ```
 
 Path Parameters:
-
 - `id`: ID of the job to execute
 
 Request Body:

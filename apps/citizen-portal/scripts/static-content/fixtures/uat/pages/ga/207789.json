@@ -1,0 +1,221 @@
+{
+  "id": 207789,
+  "meta": {
+    "type": "life_events.LifeEventsLandingPage",
+    "locale": "ga",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/",
+    "slug": "life-events",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-06T11:42:00+01:00",
+    "parent": {
+      "id": 4,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/4/",
+        "html_url": null
+      },
+      "title": "gov.ie"
+    }
+  },
+  "title": "Life Events GA",
+  "body": [],
+  "categories": [
+    {
+      "type": "category",
+      "value": {
+        "title": "Family & Children",
+        "icon": "family_restroom",
+        "life_events": [
+          {
+            "id": 207793,
+            "title": "Birth of a child",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/life-service-page-demo/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207793/"
+          },
+          {
+            "id": 208316,
+            "title": "Child adoption",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/child-adoption/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208316/"
+          }
+        ]
+      },
+      "id": "e119ca91-4ae0-4cb0-a015-3dc7b207b84d"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Education & Learning",
+        "icon": "school",
+        "life_events": [
+          {
+            "id": 208320,
+            "title": "Child starting school",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/child-starting-school/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208320/"
+          },
+          {
+            "id": 208322,
+            "title": "Moving into further or higher education",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/transition-from-secondary-to-tertiary-education/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208322/"
+          }
+        ]
+      },
+      "id": "d31d5eaa-8a78-4dd6-a8be-ec92027366e1"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Travel & Transport",
+        "icon": "directions_car",
+        "life_events": [
+          {
+            "id": 208324,
+            "title": "Learn to drive",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/owningdriving-a-vehicle/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208324/"
+          }
+        ]
+      },
+      "id": "32fe9f6a-b626-44c6-9fe1-ca5b4ad76494"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Home & Housing",
+        "icon": "home",
+        "life_events": [
+          {
+            "id": 208326,
+            "title": "Accessing social housing",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/accessing-social-housing/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208326/"
+          },
+          {
+            "id": 210434,
+            "title": "Buying a home",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/buying-a-home/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/210434/"
+          },
+          {
+            "id": 210432,
+            "title": "Renting a home",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/renting-a-home/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/210432/"
+          }
+        ]
+      },
+      "id": "6fc48153-4b7d-45be-af7c-67319641a1d7"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Work & Money",
+        "icon": "work",
+        "life_events": [
+          {
+            "id": 208334,
+            "title": "Starting work",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/starting-work/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208334/"
+          },
+          {
+            "id": 208336,
+            "title": "Losing a job",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/losing-a-job/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208336/"
+          },
+          {
+            "id": 208338,
+            "title": "Starting a business",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/starting-a-business/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208338/"
+          }
+        ]
+      },
+      "id": "016b6bae-7743-4963-bf05-06d50d692176"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Relationships",
+        "icon": "volunteer_activism",
+        "life_events": [
+          {
+            "id": 208340,
+            "title": "Marriage",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/marriage/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208340/"
+          },
+          {
+            "id": 208344,
+            "title": "Legally ending a marriage, separation and divorce",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/marriage-dissolution-separationdivorce/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208344/"
+          }
+        ]
+      },
+      "id": "2d70fb35-76dd-424c-b76e-4523a3f550c9"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Health & Care",
+        "icon": "medical_services",
+        "life_events": [
+          {
+            "id": 208346,
+            "title": "Developing a life-altering illness",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/developing-a-life-altering-illness/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208346/"
+          },
+          {
+            "id": 208348,
+            "title": "Becoming a carer",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/becoming-a-carer/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208348/"
+          }
+        ]
+      },
+      "id": "82012325-b82d-4a6a-97da-ca41dbe1ed3e"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Later Life",
+        "icon": "elderly",
+        "life_events": [
+          {
+            "id": 208350,
+            "title": "Retirement",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/retirement/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208350/"
+          }
+        ]
+      },
+      "id": "edf9a8f4-5765-473d-a329-840305582769"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Bereavement",
+        "icon": "local_florist",
+        "life_events": [
+          {
+            "id": 208354,
+            "title": "Supporting the bereaved - Death of a loved one",
+            "url": "https://www.uat.beta.gov.ie/ga/life-events/supporting-the-bereaved-death-of-a-loved-one/",
+            "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208354/"
+          }
+        ]
+      },
+      "id": "126a0bf1-3540-45e0-b0d6-12a26dc8a526"
+    }
+  ],
+  "_translation_of": 207788
+}

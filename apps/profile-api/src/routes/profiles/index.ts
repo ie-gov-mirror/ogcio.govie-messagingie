@@ -128,12 +128,18 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       schema: SelectProfilesSchema,
     },
     async (request: FastifyRequestTypebox<typeof SelectProfilesSchema>) => {
+      const includeFullDetails =
+        request.query.includeFullDetails === undefined
+          ? true
+          : parseBooleanEnum(request.query.includeFullDetails);
+
       const profiles = await new ProfileService(fastify.db).select({
         organizationId: withOrganizationId(request),
         profileIds: request.query.ids.split(","),
         consentSubjects: request.query.consentSubjects
           ? request.query.consentSubjects.split(",").filter((s) => s.length > 0)
           : [],
+        includeFullDetails,
       });
 
       return formatAPIResponse<Partial<ProfileWithDetails>>({

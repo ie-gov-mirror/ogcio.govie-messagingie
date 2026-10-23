@@ -30,7 +30,6 @@ const SKIP: PackageRules = {
   scoped: {
     // Example:
     // "@govie-services/profile-api": ["pg"],
-    "messaging-next": ["@ogcio/consent"],
   },
 }
 
@@ -57,7 +56,6 @@ const SEMVER_ONLY: PackageRules = {
     "typescript",
   ],
   scoped: {
-    "messaging-next": ["use-intl"],
     "messaging-admin-next": ["use-intl"],
     // Example:
     // "@govie-services/profile": ["swr"],

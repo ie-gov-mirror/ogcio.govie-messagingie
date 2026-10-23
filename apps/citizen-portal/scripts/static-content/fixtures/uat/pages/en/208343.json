@@ -1,0 +1,200 @@
+{
+  "id": 208343,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "en",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208343/",
+    "html_url": "https://www.uat.beta.gov.ie/en/life-events/legally-ending-a-marriage-separation-and-divorce/",
+    "slug": "legally-ending-a-marriage-separation-and-divorce",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:43:00+01:00",
+    "parent": {
+      "id": 207788,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207788/",
+        "html_url": null
+      },
+      "title": "Life Events"
+    }
+  },
+  "title": "Legally ending a marriage, separation and divorce",
+  "highlighted": false,
+  "category": "Relationships",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">This page outlines where to get information on the different ways relationships can be legally ended in Ireland — including divorce, separation, civil partnership dissolution, and annulments.</p>",
+      "id": "6a1853c6-0b31-46f9-b667-1e02c53dcdb5"
+    },
+    {
+      "type": "heading",
+      "value": "Applying for divorce",
+      "id": "78b0308c-4b37-4155-a0f0-db8480e78ccf"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">A step-by-step guide to applying for divorce, including how to file a Civil Bill and what forms you need, is available on <a href=\"https://www.courts.ie/guides/how-to-apply-for-a-divorce\">the Courts Service website</a>.</p>",
+      "id": "f946c74c-1908-45e2-b3fc-ca9c512461a6"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding divorce",
+      "id": "9af88ed2-7e92-4b10-841c-05e279b26842"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">Get <a href=\"https://www.courts.ie/guides/understanding-divorce\">information on what you need to think about when getting divorced</a>.</p>",
+      "id": "7a024cf0-9b16-42e1-8a8e-9a4f4ef8aa62"
+    },
+    {
+      "type": "heading",
+      "value": "Reply to a Civil Bill",
+      "id": "77440ba2-70cd-4549-a20c-1e6d38dd5334"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">Get <a href=\"https://www.courts.ie/guides/respond-to--divorce-papers\">information on what to do next if you have received divorce papers</a>.</p>",
+      "id": "84a33b05-ea58-4335-ac77-7da5a9c4d5f5"
+    },
+    {
+      "type": "heading",
+      "value": "Judicial separation",
+      "id": "299ae143-a6db-4026-bbf0-5e061ff765f4"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">Learn <a href=\"https://www.courts.ie/guides/judicial-separation\">how to apply for a judicial separation</a>, what the process involves, and where to get legal support.</p>",
+      "id": "dd0cb216-8bc7-401a-8486-5d0811823896"
+    },
+    {
+      "type": "heading",
+      "value": "Separation agreement",
+      "id": "2345e36a-9eb6-45a2-9172-5f167c50cc7e"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">Understand what separation agreements are, when to use them, and how to make one legally binding. More information is available on <a href=\"https://www.courts.ie/guides/separation-agreement\">the Courts Service website</a>.</p>",
+      "id": "2ce7c871-75ac-4e06-92c9-dc40e7108c38"
+    },
+    {
+      "type": "heading",
+      "value": "End a civil partnership",
+      "id": "e53be2b1-c524-4592-9ae7-0129d6ea77ca"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">Find out <a href=\"https://www.courts.ie/guides/end-a-civil-partnership\">how to apply to the court for a Decree of Dissolution</a> and what else you may need to consider.</p>",
+      "id": "b358d4c9-b7dd-4149-94ac-931224a5c8c6"
+    },
+    {
+      "type": "heading",
+      "value": "Annulments",
+      "id": "8d906086-d8d9-445e-a6ce-a3014b86bfcb"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">Annulments are legal declarations by a court that a marriage or civil partnership never existed. They can only be granted in specific circumstances.</p><p data-block-key=\"1cd8k\">More information is available on <a href=\"https://www.courts.ie/guides/annulments-(nullity)\">the Courts Service website</a>.</p>",
+      "id": "a92e6d62-b72b-42f5-9a2c-3de148558091"
+    },
+    {
+      "type": "heading",
+      "value": "Mediation, legal advice and support services",
+      "id": "96abc994-c0ed-4967-9927-e97ce8caaf0a"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"xuabx\">Information about mediation, legal advice and representation, and where to find a mediator or solicitor, is available on <a href=\"https://www.courts.ie/hubs/legal-supports-and-mediation\">the Courts Service website</a>.</p>",
+      "id": "f5d60a2d-cdad-4692-b9c5-0c6598aeab8b"
+    }
+  ],
+  "services": [
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.courts.ie/guides/how-to-apply-for-a-divorce",
+              "link_text": "How to apply for a divorce"
+            },
+            "id": "325b3db0-7113-4688-acb9-ed4b156374b4"
+          }
+        ],
+        "description": "A step-by-step guide to applying for divorce, including how to file a Civil Bill and what forms you need."
+      },
+      "id": "2e05e1bb-3833-4d63-9fd4-5bc2a491a056"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.courts.ie/guides/end-a-civil-partnership",
+              "link_text": "End a civil partnership"
+            },
+            "id": "b50085f1-581e-41a4-9f04-7cc7d4e40517"
+          }
+        ],
+        "description": "Find out how to apply to the court for a Decree of Dissolution and what else you may need to consider."
+      },
+      "id": "c78c0d18-c7e6-42a1-a100-d7b1f22558a5"
+    }
+  ],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.courts.ie/guides/understanding-divorce",
+        "link_text": "Understanding divorce"
+      },
+      "id": "586ff78e-1515-43d0-bb32-09c89d7a55a1"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.courts.ie/guides/respond-to--divorce-papers",
+        "link_text": "Reply to a Civil Bill"
+      },
+      "id": "ea74101a-1657-412b-a798-02e790621477"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.courts.ie/guides/judicial-separation",
+        "link_text": "Judicial separation"
+      },
+      "id": "61ce5986-13c2-4a70-acdd-5ad88460e74f"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.courts.ie/guides/separation-agreement",
+        "link_text": "Separation agreement"
+      },
+      "id": "e86d081f-fa38-420d-887e-37fac2d6b31b"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.courts.ie/guides/annulments-(nullity)",
+        "link_text": "Annulments (nullity)"
+      },
+      "id": "31b13005-855e-4694-9e7c-7185d976b8c4"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.courts.ie/hubs/legal-supports-and-mediation",
+        "link_text": "Support services"
+      },
+      "id": "30982477-dca1-461a-964a-b8c9829f4b46"
+    }
+  ]
+}

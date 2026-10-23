@@ -11,7 +11,6 @@ pnpm monorepo consolidating the messaging platform's backend APIs and citizen/ad
 | `scheduler-api` | Fastify API | 8005 | Task queue: webhook callbacks scheduled/retried via Postgres polling |
 | `upload-api` | Fastify API | 8008 | File uploads to S3 with ClamAV virus scanning |
 | `citizen-portal` | Next.js | 4001 | Unified citizen portal (messages + profile + dashboard zones, one deploy) |
-| `messaging-next` | Next.js | 3002 | Legacy citizen-facing messaging frontend |
 | `messaging-admin-next` | Next.js | 3022 | Public-servant admin frontend for messaging |
 | `messaging-support` | Next.js | 1337 | Internal support/superadmin app |
 
@@ -55,9 +54,9 @@ pnpm db:up          # postgresql, redis, maildev (1080 UI), clamav, ministack (S
 | `pnpm db:reset` | reset all API DBs (with confirmation) |
 | `pnpm env:init` / `pnpm env:update` | create / sync `.env` files from `.env.sample` |
 
-Per-app variants exist (e.g. `pnpm dev:api`, `pnpm dev:api:upload`, `pnpm build:next`). Run every API on its own with `pnpm dev:apis`, or run an app directly with a filter: `pnpm --filter <app> <script>`.
+Per-app variants exist (e.g. `pnpm dev:api`, `pnpm dev:api:upload`, `pnpm build:admin-next`). Run every API on its own with `pnpm dev:apis`, or run an app directly with a filter: `pnpm --filter <app> <script>`.
 
-`pnpm dev` covers the surfaces under active development. The two apps outside that set have their own scripts: `pnpm dev:messaging-next` (:3002, superseded by citizen-portal but still deployed) and `pnpm dev:support` (superadmin, :1337).
+`pnpm dev` covers the surfaces under active development. The app outside that set has its own script: `pnpm dev:support` (superadmin, :1337).
 
 ## Documentation
 

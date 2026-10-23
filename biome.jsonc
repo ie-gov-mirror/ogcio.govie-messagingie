@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.2/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -15,8 +15,25 @@
       "!**/out/**/*",
       "!**/coverage/**/*",
       "!**/playwright-report/**/*",
-      "!**/packages/api-types/src/*.d.ts",
-      "!**/next-env.d.ts"
+      "!**/next-env.d.ts",
+      "!**/CHANGELOG.md",
+
+      // Per-package exclusions: each one is scoped to its package path.
+      // Generated OpenAPI types must stay byte-identical to the
+      // `openapi-typescript` output, so no format run rewrites them.
+      "!packages/api-types/**/*.d.ts",
+      "!packages/bulk-seeder/*.json",
+      "!apps/citizen-portal/**/scripts/static-content/fixtures/**/*",
+      "!apps/citizen-portal/**/public/**/*",
+      "!apps/citizen-portal/**/zones/**/*",
+      "!apps/citizen-portal/**/e2e/**/*",
+      "!apps/citizen-portal/**/k6/**/*",
+      "!apps/citizen-portal/**/*.spec.*",
+      "!apps/messaging-admin-next/**/public/**/*",
+      "!apps/messaging-admin-next/**/test/**/*",
+      "!apps/messaging-admin-next/**/k6/**/*",
+      "!apps/messaging-support/**/public/**/*",
+      "!apps/public-servant-portal/**/public/**/*"
     ]
   },
   "linter": {
@@ -53,5 +70,52 @@
     "formatter": {
       "trailingCommas": "none"
     }
-  }
+  },
+  "overrides": [
+    {
+      // These packages use semicolons; the rest of the repo omits them.
+      "includes": [
+        "apps/messaging-api/**",
+        "apps/profile-api/**",
+        "apps/scheduler-api/**",
+        "apps/upload-api/**",
+        "packages/bulk-seeder/**",
+        "packages/db-core/**"
+      ],
+      "javascript": {
+        "formatter": {
+          "semicolons": "always"
+        }
+      }
+    },
+    {
+      // citizen-portal manages auth (sign-out/session) and locale cookies via
+      // synchronous `document.cookie` writes. The suggested Cookie Store
+      // API is async and unsupported in the browsers we target, so the
+      // rule does not apply here.
+      "includes": ["apps/citizen-portal/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noDocumentCookie": "off"
+          }
+        }
+      }
+    },
+    {
+      // Test doubles mimic third-party markup (Link as `<a href='#'>`,
+      // spinner as `<span aria-label>`, constructor-returning mocks);
+      // a11y rules target shipped UI, not mocks.
+      "includes": [
+        "apps/citizen-portal/**/*.test.*",
+        "apps/citizen-portal/test/**"
+      ],
+      "linter": {
+        "rules": {
+          "a11y": "off",
+          "correctness": { "noConstructorReturn": "off" }
+        }
+      }
+    }
+  ]
 }

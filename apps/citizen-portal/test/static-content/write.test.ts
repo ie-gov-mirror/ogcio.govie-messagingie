@@ -8,6 +8,7 @@ import {
   MOCK_FIXTURES_DIR,
   MOCK_INDEX_PAGE_ID,
   readConfig,
+  UAT_INDEX_PAGE_ID,
 } from "../../scripts/static-content/config.ts"
 import { buildDiscoveryContent } from "../../scripts/static-content/pipeline/index.ts"
 import { createMockTransport } from "../../scripts/static-content/wagtail/index.ts"
@@ -57,7 +58,7 @@ describe("writeStaticContent", () => {
       JSON.parse(await readFile(join(outputDir, "manifest.json"), "utf8")),
     )
     expect(manifest).toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
       mode: "mock",
       generatedAt: "2026-09-30T10:00:00.000Z",
       locales: ["en", "ga"],
@@ -72,7 +73,8 @@ describe("readConfig", () => {
   it("defaults to mock mode and the app's .static-content directory", () => {
     const config = readConfig({})
     expect(config.mode).toBe("mock")
-    expect(config.indexPageId).toBe(MOCK_INDEX_PAGE_ID)
+    // TODO: back to MOCK_INDEX_PAGE_ID once UAT is flagged as stable.
+    expect(config.indexPageId).toBe(UAT_INDEX_PAGE_ID)
     expect(config.outputDir).toBe(resolve(process.cwd(), ".static-content"))
   })
 
@@ -82,12 +84,67 @@ describe("readConfig", () => {
     )
   })
 
-  it("rejects proxy mode until Infomed lands, and unknown modes", () => {
-    expect(() => readConfig({ STATIC_CONTENT_MODE: "proxy" })).toThrow(
-      /not implemented/,
-    )
+  it("rejects unknown modes", () => {
     expect(() => readConfig({ STATIC_CONTENT_MODE: "live" })).toThrow(
       /must be "mock" or "proxy"/,
+    )
+  })
+
+  describe("proxy mode", () => {
+    const env = {
+      STATIC_CONTENT_MODE: "proxy",
+      STATIC_CONTENT_API_URL: "https://api.integration.uat.beta.gov.ie",
+      STATIC_CONTENT_CLIENT_ID: "client",
+      STATIC_CONTENT_CLIENT_SECRET: "secret",
+      STATIC_CONTENT_INDEX_PAGE_ID: "203578",
+    }
+
+    it("reads the API, credentials and index page", () => {
+      expect(readConfig(env)).toMatchObject({
+        mode: "proxy",
+        indexPageId: 203578,
+        api: {
+          baseUrl: "https://api.integration.uat.beta.gov.ie/",
+          tokenUrl: "https://api.integration.uat.beta.gov.ie/o/token/",
+          clientId: "client",
+          clientSecret: "secret",
+        },
+      })
+    })
+
+    it("keeps a path prefix on the API URL", () => {
+      const config = readConfig({
+        ...env,
+        STATIC_CONTENT_API_URL: "https://gateway.example/cms/",
+      })
+      expect(config.mode === "proxy" && config.api).toMatchObject({
+        baseUrl: "https://gateway.example/cms/",
+        tokenUrl: "https://gateway.example/cms/o/token/",
+      })
+    })
+
+    it("names every missing variable", () => {
+      expect(() => readConfig({ STATIC_CONTENT_MODE: "proxy" })).toThrow(
+        "STATIC_CONTENT_MODE=proxy needs STATIC_CONTENT_API_URL, STATIC_CONTENT_CLIENT_ID, STATIC_CONTENT_CLIENT_SECRET, STATIC_CONTENT_INDEX_PAGE_ID",
+      )
+    })
+
+    it.each(["http://api.example", "api.example"])(
+      "rejects the API URL %j",
+      (url) => {
+        expect(() =>
+          readConfig({ ...env, STATIC_CONTENT_API_URL: url }),
+        ).toThrow(/must be an https URL/)
+      },
+    )
+
+    it.each(["0", "-1", "1.5", "home"])(
+      "rejects the index page ID %j",
+      (id) => {
+        expect(() =>
+          readConfig({ ...env, STATIC_CONTENT_INDEX_PAGE_ID: id }),
+        ).toThrow(/must be a page ID/)
+      },
     )
   })
 })

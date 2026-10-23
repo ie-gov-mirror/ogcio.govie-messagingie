@@ -7,12 +7,7 @@ export async function loginAsCitizen(
   citizenName: string,
 ): Promise<void> {
   // Go to the main page which will redirect to auth
-  await page.goto("/")
-
-  if (page.url().includes(urls.authSignIn)) {
-    // Click the MyGovID login button
-    await page.getByRole("button", { name: "Continue with MyGovId" }).click()
-  }
+  await page.goto(urls.messaging)
 
   await page.waitForURL(`${urls.mock}/**`)
 

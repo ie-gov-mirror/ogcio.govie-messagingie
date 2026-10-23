@@ -1,7 +1,7 @@
 {
   "id": 1101,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "birth-of-a-child",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Birth of a Child",
+  "highlighted": false,
+  "category": "Family & Children",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Registering a birth, and the payments and services available to new parents.</p>",
       "id": "le-1101"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

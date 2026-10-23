@@ -1,21 +1,19 @@
 # Mock pages
 
-One Wagtail API v2 page per file, in `en/<id>.json` and `ga/<id>.json`. A GA
-page shares its EN page's ID; `translation_of=<id>&locale=ga` returns it.
+One Integration API page per file, in `en/<id>.json` and `ga/<id>.json`, as
+`GET /v2/pages/<id>/` returns it. GA pages have their own IDs, as in the CMS:
+the EN ID plus 1000. The API doesn't say which page a translation belongs
+to, so each GA page names its EN page in `_translation_of`, which the mock
+transport answers `translation_of` with and leaves out of responses.
 
-Page tree (ID, slug):
+Page tree (EN ID, slug):
 
 ```
 1000  life-events
 ├── 1101  birth-of-a-child
 ├── 1102  child-adoption
 ├── 1103  become-an-adult
-├── 1104  child-starting-school
-│   ├── 1201  apply-for-a-school-place
-│   ├── 1202  apply-for-the-school-transport-scheme
-│   ├── 1203  apply-for-the-back-to-school-clothing-and-footwear-allowance
-│   ├── 1204  request-an-assessment-of-special-educational-needs
-│   └── 1205  appeal-a-refusal-of-admission
+├── 1104  child-starting-school   (5 services, 2 guidance links)
 ├── 1105  transition-from-secondary-to-tertiary-education
 ├── 1106  owning-driving-a-vehicle
 ├── 1107  accessing-social-housing

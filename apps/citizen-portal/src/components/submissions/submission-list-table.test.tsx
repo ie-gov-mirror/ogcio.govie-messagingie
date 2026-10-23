@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { SubmissionListTable } from "@/components/submissions/submission-list-table"
 import type { Submission } from "@/types"
@@ -14,31 +14,35 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
-  useTranslations: (namespace: string) => (key: string) => {
-    const byNamespace: Record<string, Record<string, string>> = {
-      submissions: {
-        "empty.all": "You have no submissions yet.",
-        "empty.search": "No submissions match your search.",
-      },
-      "submissions.table": {
-        "column.id": "ID",
-        "column.submission": "Submission",
-        "column.status": "Status",
-        "column.date": "Date",
-        "aria.submissionList": "Submission list",
-      },
-      "submissions.status": {
-        completed: "Completed",
-      },
-      "home.table": {
-        rowsPerPage: "Rows per page",
-      },
-      search: {
-        "input.placeholder": "Search",
-      },
-    }
-    return byNamespace[namespace]?.[key] ?? key
-  },
+  useTranslations:
+    (namespace: string) => (key: string, values?: Record<string, string>) => {
+      const byNamespace: Record<string, Record<string, string>> = {
+        submissions: {
+          "empty.all": "You have no applications.",
+          "empty.search": "No applications match your search.",
+        },
+        "submissions.table": {
+          "column.title": "Title",
+          "column.status": "Status",
+          "column.date": "Last update",
+          "column.id": "Submission ID",
+          idLabel: "ID {id}",
+          lastUpdate: "Last update {date}",
+          "aria.submissionList": "Application list",
+        },
+        "submissions.status": {
+          completed: "Completed",
+        },
+        "home.table": {
+          rowsPerPage: "Rows per page",
+        },
+        search: {
+          "input.placeholder": "Search",
+        },
+      }
+      const message = byNamespace[namespace]?.[key] ?? key
+      return message.replace(/\{(\w+)\}/g, (_, name) => values?.[name] ?? "")
+    },
 }))
 
 const SUBMISSION: Submission = {
@@ -54,11 +58,9 @@ const SUBMISSION: Submission = {
 }
 
 describe("SubmissionListTable", () => {
-  const onSelect = vi.fn()
   const onPageSizeChange = vi.fn()
 
   beforeEach(() => {
-    onSelect.mockReset()
     onPageSizeChange.mockReset()
     currentSearchParams = new URLSearchParams()
   })
@@ -71,27 +73,45 @@ describe("SubmissionListTable", () => {
         totalPages={1}
         pageSize={10}
         onPageSizeChange={onPageSizeChange}
-        onSelect={onSelect}
       />,
     )
 
     const table = screen.getByTestId("submissions-table")
-    expect(table).toBeInTheDocument()
-    expect(screen.getByRole("columnheader", { name: "ID" })).toBeInTheDocument()
     expect(
-      screen.getByRole("columnheader", { name: "Submission" }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole("columnheader", { name: "Status" }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole("columnheader", { name: "Date" }),
-    ).toBeInTheDocument()
+      within(table)
+        .getAllByRole("columnheader")
+        .map((header) => header.textContent),
+    ).toEqual(["Title", "Status", "Last update", "Submission ID"])
     expect(table).toHaveTextContent("SCH-2025-073296")
     expect(
-      screen.getByRole("link", { name: "Birth registration" }),
+      within(table).getByRole("link", { name: "Birth registration" }),
     ).toHaveAttribute("href", "/en/my-submissions?id=SCH-2025-073296")
     expect(table).toHaveTextContent("Completed")
+    expect(within(table).getByText("18/01/2026")).toHaveAttribute(
+      "datetime",
+      SUBMISSION.updatedAt,
+    )
+  })
+
+  it("renders a mobile card per submission with ID, status, link and last update", () => {
+    render(
+      <SubmissionListTable
+        submissions={[SUBMISSION]}
+        isLoading={false}
+        totalPages={1}
+        pageSize={10}
+        onPageSizeChange={onPageSizeChange}
+      />,
+    )
+
+    const list = screen.getByRole("list", { name: "Application list" })
+    const item = within(list).getByRole("listitem")
+    expect(item).toHaveTextContent("ID SCH-2025-073296")
+    expect(item).toHaveTextContent("Completed")
+    expect(
+      within(item).getByRole("link", { name: "Birth registration" }),
+    ).toHaveAttribute("href", "/en/my-submissions?id=SCH-2025-073296")
+    expect(item).toHaveTextContent("Last update 18/01/2026")
   })
 
   it("renders the empty state when there are no submissions", () => {
@@ -102,10 +122,9 @@ describe("SubmissionListTable", () => {
         totalPages={0}
         pageSize={10}
         onPageSizeChange={onPageSizeChange}
-        onSelect={onSelect}
       />,
     )
 
-    expect(screen.getByText("You have no submissions yet.")).toBeInTheDocument()
+    expect(screen.getByText("You have no applications.")).toBeInTheDocument()
   })
 })

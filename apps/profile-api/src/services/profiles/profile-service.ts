@@ -29,6 +29,7 @@ interface SelectParams {
   organizationId: string;
   profileIds: string[];
   consentSubjects: string[];
+  includeFullDetails?: boolean;
 }
 
 interface FindParams {
@@ -80,6 +81,10 @@ export class ProfileService {
 
   async select(params: SelectParams): Promise<Partial<ProfileWithDetails>[]> {
     const rows = await this.model.selectRows(params);
+    if (params.includeFullDetails === false) {
+      return rows.map((row) => ({ id: row.id }));
+    }
+
     const profileDataMap = await this.model.getProfileDataMap(
       rows.map((row) => row.profileDetailsId),
     );

@@ -286,7 +286,6 @@ class DevSetup {
 
     // Check if all required files exist
     const requiredFiles = [
-      "apps/messaging-next/package.json",
       "apps/messaging-support/package.json",
       ...API_SERVICES.map((service) => `apps/${service.name}/package.json`),
       "package.json",
@@ -301,7 +300,6 @@ class DevSetup {
 
     // Check if environment files exist
     const envFiles = [
-      "apps/messaging-next/.env",
       "apps/messaging-support/.env",
       ...API_SERVICES.map((service) => `apps/${service.name}/.env`),
     ]

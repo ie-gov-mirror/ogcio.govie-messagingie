@@ -573,8 +573,9 @@
       "failed": "Teipthe",
       "scheduled": "Sceidealta",
       "created": "Cruthaithe",
-      "emailDelivered": "Seachadta",
-      "emailFailed": "Teipthe",
+      "inboxDelivered": "Delivered to inbox",
+      "emailDelivered": "Email sent",
+      "emailFailed": "Email failed",
       "seen": "Oscailte",
       "unseen": "Díobháilte"
     },

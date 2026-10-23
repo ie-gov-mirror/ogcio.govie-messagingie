@@ -4,12 +4,18 @@ import {
   type Transporter,
 } from "nodemailer";
 import type { MessageToDeliver } from "../../../types/messages.js";
-import type { EmailProvider } from "../../../types/providers.js";
+import type {
+  EmailProvider,
+  ProviderAcceptance,
+} from "../../../types/providers.js";
 import {
   type EventType,
   type MessageEventData,
   MessagingEventType,
 } from "../../messages/event-logger.js";
+
+// SES acceptance carrying its message ID, e.g. "250 Ok 0100018f2b3c4d5e-...-000000"
+const SES_ACCEPTANCE = /^250 Ok (\S+)$/;
 
 export class EmailSpecificTransport {
   readonly provider: EmailProvider;
@@ -22,13 +28,13 @@ export class EmailSpecificTransport {
   async sendMessage(params: {
     message: MessageToDeliver;
     recipientAddress: string;
-  }) {
+  }): Promise<ProviderAcceptance> {
     const { recipientAddress, message } = params;
     const transporter = await this.getNodemailerTransporter();
     const headers: SendMailOptions["headers"] =
       this.provider.headers ?? undefined;
 
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: `${this.provider.providerName} <${this.provider.fromAddress}>`,
       to: recipientAddress,
       subject: message.subject,
@@ -36,6 +42,8 @@ export class EmailSpecificTransport {
       html: message.richText,
       headers,
     });
+
+    return toAcceptance(info?.response);
   }
 
   private async getNodemailerTransporter(): Promise<Transporter> {
@@ -91,4 +99,18 @@ export class EmailSpecificTransport {
 
     return { canBeSent: true };
   }
+}
+
+// Reads SES's message ID from the SMTP response; other servers carry none
+function toAcceptance(response: unknown): ProviderAcceptance {
+  if (typeof response !== "string") {
+    return {};
+  }
+
+  const providerMessageId = SES_ACCEPTANCE.exec(response)?.[1];
+  if (!providerMessageId) {
+    return {};
+  }
+
+  return { providerMessageId };
 }

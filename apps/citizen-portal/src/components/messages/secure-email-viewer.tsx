@@ -1,62 +1,60 @@
-"use client"
+import sanitizeHtml from "sanitize-html"
+import styles from "./message-detail.module.css"
 
-// frame-ancestors deliberately omitted: per CSP3 spec it is ignored when
-// delivered via <meta>, and the parent app already enforces framing
-// protection via X-Frame-Options/CSP HTTP headers (nginx).
-const CSP_HEADER = `
-  default-src 'none';
-  style-src 'unsafe-inline';
-  img-src https: data:;
-  object-src 'none';
-  base-uri 'none';
-  form-action 'none';
-  frame-src 'none';
-`.replace(/\n/g, "")
+// Same allowlist as messaging-api parseRichText. Applied again here so the
+// innerHTML sink only receives HTML this function just sanitized.
+const RICH_TEXT_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: [
+    "p",
+    "br",
+    "strong",
+    "b",
+    "em",
+    "i",
+    "u",
+    "s",
+    "ul",
+    "ol",
+    "li",
+    "blockquote",
+    "a",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "pre",
+    "code",
+    "hr",
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "th",
+    "td",
+    "img",
+  ],
+  allowedAttributes: {
+    a: ["href", "title"],
+    img: ["src", "alt", "title", "width", "height"],
+    th: ["colspan", "rowspan"],
+    td: ["colspan", "rowspan"],
+  },
+  allowedSchemes: ["http", "https", "mailto", "tel"],
+  allowedSchemesByTag: {
+    img: ["http", "https", "data"],
+  },
+  allowProtocolRelative: false,
+}
 
 export function SecureEmailViewer({ content }: { content: string }) {
-  // Links must escape this sandbox because authentication pages refuse framing.
-  const srcDoc = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="Referrer-Policy" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="${CSP_HEADER}">
-  <base target="_blank">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      max-width: 100%;
-      overflow-x: hidden;
-      font-family: Lato, Arial, sans-serif;
-      font-size: 1rem;
-      line-height: 1.35;
-      color: #0b0c0c;
-      white-space: pre-wrap;
-      overflow-wrap: break-word;
-    }
-    p { margin: 0 0 0.5rem; }
-    p:last-child { margin-bottom: 0; }
-    img { max-width: 100%; height: auto; }
-  </style>
-</head>
-<body>${content}</body>
-</html>`
-
   return (
-    <iframe
-      style={{
-        width: "100%",
-        flex: "1 1 auto",
-        minHeight: "min(30rem, 50vh)",
-        border: "none",
+    <div
+      className={styles.richText}
+      dangerouslySetInnerHTML={{
+        __html: sanitizeHtml(content, RICH_TEXT_OPTIONS),
       }}
-      sandbox='allow-popups allow-popups-to-escape-sandbox'
-      title='Secure email content viewer'
-      referrerPolicy='no-referrer'
-      srcDoc={srcDoc}
     />
   )
 }

@@ -1,3 +1,4 @@
+import { httpErrors } from "@fastify/sensible";
 import type { FastifyRequest } from "fastify";
 import {
   type GenericResponse,
@@ -259,13 +260,20 @@ export const sanitizePagination = (
   const limit = Number(pagination.limit) || PAGINATION_LIMIT_DEFAULT;
   const offset = Number(pagination.offset) || PAGINATION_OFFSET_DEFAULT;
 
-  return {
-    limit: Math.max(
-      Math.min(PAGINATION_MAX_LIMIT, limit),
-      PAGINATION_MIN_LIMIT,
-    ).toString(),
+  if (limit > PAGINATION_MAX_LIMIT || limit < PAGINATION_MIN_LIMIT) {
+    throw httpErrors.unprocessableEntity(
+      `Limit must be between ${PAGINATION_MIN_LIMIT} and ${PAGINATION_MAX_LIMIT}`,
+    );
+  }
+  if (offset < PAGINATION_MIN_OFFSET) {
+    throw httpErrors.unprocessableEntity(
+      `Offset must be greater than or equal to ${PAGINATION_MIN_OFFSET}`,
+    );
+  }
 
-    offset: Math.max(offset, PAGINATION_MIN_OFFSET).toString(),
+  return {
+    limit: limit.toString(),
+    offset: offset.toString(),
   };
 };
 

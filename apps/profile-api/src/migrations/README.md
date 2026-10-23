@@ -10,6 +10,7 @@ This directory contains database migration files for the profile-api service.
 **Rollback:** `001_add_performance_indexes_rollback.sql`
 
 #### Overview
+
 This migration adds composite indexes to optimize the `find-profile-with-enhanced-consent` query performance on large tables.
 
 #### Indexes Added
@@ -42,7 +43,6 @@ This migration adds composite indexes to optimize the `find-profile-with-enhance
 #### Performance Impact
 
 These indexes address the following performance bottlenecks in the `find-profile-with-enhanced-consent` query:
-
 - **Profile Details Subquery:** Eliminates table scans when filtering profile_details by profile_id, organisation_id, and is_latest
 - **Profile Data Aggregation:** Speeds up JOINs between profile_data and profile_details
 - **Consent Lookup:** Provides efficient access to latest consents per subject for a profile

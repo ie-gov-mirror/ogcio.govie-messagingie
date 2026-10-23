@@ -27,7 +27,7 @@ export function SubmissionDetailToolbar({ backHref }: { backHref: string }) {
         aria-label={tBack("back")}
       >
         <Icon
-          icon='chevron_left'
+          icon='arrow_back'
           size='md'
           className={messageDetailStyles.toolbarIcon}
           ariaHidden

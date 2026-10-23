@@ -3,7 +3,6 @@ packages:
   - "apps/messaging-admin-next"
   - "apps/public-servant-portal"
   - "apps/messaging-support"
-  - "apps/messaging-next"
   - "apps/citizen-portal"
   - "apps/upload-api"
   - "apps/scheduler-api"
@@ -12,6 +11,7 @@ packages:
   - "packages/db-core"
   - "packages/api-types"
   - "packages/blacklist-profiles"
+  - "packages/bulk-seeder"
 syncInjectedDepsAfterScripts:
   - build
 injectWorkspacePackages: true

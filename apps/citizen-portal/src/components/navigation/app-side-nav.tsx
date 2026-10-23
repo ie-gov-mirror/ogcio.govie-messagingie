@@ -48,7 +48,7 @@ export function AppSideNav({ placeholder = false }: { placeholder?: boolean }) {
     writeNavSnapshot(unread.count)
   }, [placeholder, showLinks, unread.isLoading, unread.count])
 
-  // ponytail: design-system SideNav stores the selected id on first render
+  // design-system SideNav stores the selected id on first render
   // and ignores later `value` updates. Mirror the selected class onto the
   // anchors so a client navigation can move the highlight without remounting
   // the nav (a remount flashes the unread spinner). Upgrade path: a SideNav

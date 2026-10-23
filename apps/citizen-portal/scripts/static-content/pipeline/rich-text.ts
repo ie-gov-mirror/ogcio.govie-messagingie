@@ -1,7 +1,11 @@
 import { type DefaultTreeAdapterTypes, parseFragment } from "parse5"
-import type { RichTextNode } from "../../../src/lib/discovery/index.ts"
+import {
+  RICH_TEXT_HEADING_LEVELS,
+  type RichTextHeadingLevel,
+  type RichTextNode,
+} from "../../../src/lib/discovery/index.ts"
 import type { IssueCollector } from "./issues.ts"
-import { isHttpsUrl } from "./links.ts"
+import { EXTERNAL_HREF_RULE, isExternalHref, type LinkTarget } from "./links.ts"
 
 type Node = DefaultTreeAdapterTypes.ChildNode
 type Element = DefaultTreeAdapterTypes.Element
@@ -9,7 +13,7 @@ type Element = DefaultTreeAdapterTypes.Element
 export type RichTextContext = {
   document: string
   path: string
-  linkTargets: ReadonlyMap<number, string>
+  linkTargets: ReadonlyMap<number, LinkTarget>
   issues: IssueCollector
 }
 
@@ -21,6 +25,18 @@ const ELEMENTS = {
   i: "emphasis",
   em: "emphasis",
 } as const
+
+// Every HTML heading is accepted, so an editor's choice of level never fails
+// the build: one outside h2–h4 moves to the nearest of them, with a warning.
+const HEADING_TAG = /^h([1-6])$/
+const MIN_HEADING = RICH_TEXT_HEADING_LEVELS[0]
+const MAX_HEADING =
+  RICH_TEXT_HEADING_LEVELS[RICH_TEXT_HEADING_LEVELS.length - 1]
+
+function headingLevel(tag: string): number | undefined {
+  const match = HEADING_TAG.exec(tag)
+  return match ? Number(match[1]) : undefined
+}
 
 // Wagtail 4+ adds `data-block-key` to block-level elements; it carries no
 // meaning, so it's the one attribute accepted outside `<a>`.
@@ -64,7 +80,11 @@ function convertNode(
     fail(context, "rich-text-embed", "<embed> isn't allowed")
     return undefined
   }
-  if (!(tag in ELEMENTS) && !["ul", "ol", "br"].includes(tag)) {
+  if (
+    !(tag in ELEMENTS) &&
+    headingLevel(tag) === undefined &&
+    !["ul", "ol", "br"].includes(tag)
+  ) {
     fail(context, "rich-text-element", `<${tag}> isn't allowed`)
     return undefined
   }
@@ -84,8 +104,21 @@ function convertNode(
   if (tag === "ul" || tag === "ol") {
     return { type: "list", ordered: tag === "ol", children }
   }
+  const level = headingLevel(tag)
+  if (level !== undefined) {
+    return { type: "heading", level: supportedLevel(level, context), children }
+  }
   return { type: ELEMENTS[tag as keyof typeof ELEMENTS], children }
 }
+
+// The API resolves links: `href` is always absolute, a page link adds
+// `data-page-id` and `data-api-url`, a document link `data-document-id`.
+const LINK_ATTRIBUTES = new Set([
+  "href",
+  "data-page-id",
+  "data-api-url",
+  "data-document-id",
+])
 
 function convertLink(
   node: Element,
@@ -93,57 +126,60 @@ function convertLink(
 ): RichTextNode | undefined {
   const attrs = new Map(node.attrs.map((a) => [a.name, a.value]))
   const children = convertChildren(node.childNodes, context)
-  const linktype = attrs.get("linktype")
 
-  if (linktype === undefined) {
-    const href = attrs.get("href")
-    if (href === undefined || attrs.size !== 1) {
-      fail(
-        context,
-        "rich-text-attribute",
-        `<a> must have either only href, or linktype="page" and id (got ${[...attrs.keys()].join(", ") || "none"})`,
-      )
-      return undefined
-    }
-    if (!isHttpsUrl(href)) {
-      fail(
-        context,
-        "external-link-https",
-        `"${href}" isn't an absolute https URL`,
-      )
-      return undefined
-    }
-    return { type: "link", href, internal: false, children }
-  }
-
-  if (linktype !== "page") {
-    fail(
-      context,
-      linktype === "document" ? "rich-text-document-link" : "rich-text-link",
-      `linktype="${linktype}" isn't allowed`,
-    )
-    return undefined
-  }
-
-  const id = Number(attrs.get("id"))
-  if (!Number.isInteger(id)) {
+  const unknown = [...attrs.keys()].filter((name) => !LINK_ATTRIBUTES.has(name))
+  const href = attrs.get("href")
+  if (href === undefined || unknown.length > 0) {
     fail(
       context,
       "rich-text-attribute",
-      `<a linktype="page"> must have a numeric id (got ${attrs.get("id") ?? "none"})`,
+      `<a> must have an href and only ${[...LINK_ATTRIBUTES].join(", ")} (got ${[...attrs.keys()].join(", ") || "none"})`,
     )
     return undefined
   }
-  const href = context.linkTargets.get(id)
-  if (href === undefined) {
-    fail(
-      context,
-      "internal-link-unknown-page",
-      `page ${id} isn't a discovery page`,
-    )
+
+  const pageId = attrs.get("data-page-id")
+  if (pageId !== undefined) {
+    const id = Number(pageId)
+    if (!Number.isInteger(id)) {
+      fail(
+        context,
+        "rich-text-attribute",
+        `data-page-id must be a page ID (got "${pageId}")`,
+      )
+      return undefined
+    }
+    // A discovery page stays in the app; any other page is a gov.ie link.
+    const target = context.linkTargets.get(id)
+    if (target) {
+      return { type: "link", href: target.path, internal: true, children }
+    }
+  }
+
+  if (!isExternalHref(href)) {
+    fail(context, "external-link-https", `"${href}" ${EXTERNAL_HREF_RULE}`)
     return undefined
   }
-  return { type: "link", href, internal: true, children }
+  return { type: "link", href, internal: false, children }
+}
+
+function supportedLevel(
+  level: number,
+  context: RichTextContext,
+): RichTextHeadingLevel {
+  const supported = Math.min(
+    Math.max(level, MIN_HEADING),
+    MAX_HEADING,
+  ) as RichTextHeadingLevel
+  if (supported !== level) {
+    context.issues.warn({
+      document: context.document,
+      path: context.path,
+      rule: "rich-text-heading-level",
+      message: `<h${level}> is shown as <h${supported}>; rich text supports h${MIN_HEADING}–h${MAX_HEADING}`,
+    })
+  }
+  return supported
 }
 
 function fail(context: RichTextContext, rule: string, message: string): void {

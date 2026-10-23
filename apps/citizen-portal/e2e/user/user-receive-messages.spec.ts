@@ -101,12 +101,7 @@ test.describe("Admin Message Sending > Citizen Viewing", () => {
     // loginAsCitizen fills the post-logout IdP form in place (no goto("/")).
     await loginAsCitizen(authenticatedPage, inboxRecipient.email)
     await openNewestTestSubject(authenticatedPage)
-    await expect(
-      authenticatedPage
-        .locator('iframe[title="Secure email content viewer"]')
-        .contentFrame()
-        .getByText("Test rich text"),
-    ).toBeVisible()
+    await expect(authenticatedPage.getByText("Test rich text")).toBeVisible()
   })
 
   test("admin sends message to citizen and they delete email @smoke @regression", async () => {

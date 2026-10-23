@@ -1,0 +1,201 @@
+{
+  "id": 210431,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "en",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/210431/",
+    "html_url": "https://www.uat.beta.gov.ie/en/life-events/renting-a-home/",
+    "slug": "renting-a-home",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-16T17:33:00+01:00",
+    "parent": {
+      "id": 207788,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207788/",
+        "html_url": null
+      },
+      "title": "Life Events"
+    }
+  },
+  "title": "Renting a home",
+  "highlighted": false,
+  "category": "Home & Housing",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"lix0k\">This page explains the process of renting and maintaining a home in clear steps.</p>",
+      "id": "d730a15c-b96a-4029-bcb3-28dc84dc4750"
+    },
+    {
+      "type": "heading",
+      "value": "Check what you can afford to rent",
+      "id": "38023f07-480b-4270-9056-02bbc07d3733"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"lix0k\">Before you begin to look at properties, you need to find out how much you can afford to pay for your rent each month. You will also need to consider the monthly expenses that can come with renting a home, such as gas, electricity and internet bills.</p><p data-block-key=\"4mbo6\">A <a href=\"https://www.ccpc.ie/consumers/money-tools/budget-planner/\">budget planner</a> can be a helpful tool to do this.</p>",
+      "id": "6ef1367a-af93-413a-8a72-e614399c3b22"
+    },
+    {
+      "type": "heading",
+      "value": "Find out what supports are available for renting a home",
+      "id": "edcd8efb-fdfd-4590-af7c-549788160bdf"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"lix0k\">If you’re looking to rent, a number of supports are available.</p><h3 data-block-key=\"loqb\">Rent Supplement</h3><p data-block-key=\"4cvve\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/rent-supplement/\">Rent Supplement</a> is a payment for some people living in private rented housing who cannot provide for the cost of their housing from their own income.</p><h4 data-block-key=\"5g7fs\">Rental Accommodation Scheme</h4><p data-block-key=\"ecqmp\">The <a href=\"https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/rental-accommodation-scheme/\">Rental Accommodation Scheme</a> is a social housing support which caters for the accommodation needs of certain people who are getting long-term <a href=\"https://www.gov.ie/en/department-of-social-protection/services/rent-supplement/\">Rent Supplement.</a> Under the scheme, private rented properties provide an additional source of good quality rental accommodation for eligible people.</p><h3 data-block-key=\"1mhl2\">Housing Assistance Payment (HAP)</h3><p data-block-key=\"dn7lr\"><a href=\"https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/housing-assistance-payment/\">HAP</a> is a form of social housing support provided by your local authority. Local authorities make a monthly rental payment to your landlord, and you pay a weekly contribution towards the rent to the local authority. The Housing Assistance Payment allows you to work full-time, while still receiving housing support.</p><h3 data-block-key=\"1cl8v\">Cost Rental Homes Scheme</h3><p data-block-key=\"t1l4\"><a href=\"https://affordablehomes.ie/cost-rental/about/\">Cost rental housing</a> provides households with long-term, secure, more affordable tenancies with rents which are generally at least 25% below comparable market levels.</p>",
+      "id": "e3aadf85-420e-4ae3-ab00-cbd0cc807037"
+    },
+    {
+      "type": "heading",
+      "value": "Prepare your documents",
+      "id": "647a7235-e03a-4aa3-9011-b6531da44e49"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"lix0k\">Before you begin your property search, prepare the documents you may be asked for during the process. This can include photo ID, proof of income or employment, and your PPS Number.</p><p data-block-key=\"9okpp\">As a renter, you may be asked for references from past landlords or employers.</p>",
+      "id": "996e2f56-a9ec-4c6c-aa49-86fd1f539459"
+    },
+    {
+      "type": "heading",
+      "value": "Search for a property that meets your requirements",
+      "id": "21a8dbd8-1d45-4054-8ab9-6fdbeaebac96"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"lix0k\">You can find homes that are available to rent by searching property websites and contacting estate agents.</p><p data-block-key=\"d1be7\">Be aware of <a href=\"https://www.gov.ie/en/department-of-housing-local-government-and-heritage/publications/your-rights-and-obligations-under-a-tenancy/\">your rights and obligations</a> under a tenancy, and the <a href=\"https://www.gov.ie/en/department-of-housing-local-government-and-heritage/publications/minimum-standards-in-rented-accommodation/\">minimum standards</a> in rented accommodation.</p><p data-block-key=\"54bj4\">Be sure to read your lease carefully, and check the <a href=\"https://rtb.ie/compliance/check-the-register/\">Residential Tenancies Board</a> to make sure that your landlord has registered your tenancy. In the case of a dispute, applications and case tracking are available via the <a href=\"https://rtb.ie/disputes/\">Residential Tenancies Board online</a>.</p>",
+      "id": "5ba74218-e2ff-4c63-ad53-3b646f22b103"
+    },
+    {
+      "type": "heading",
+      "value": "Organise your utilities and bills",
+      "id": "61084b59-9fab-43fb-971b-a5004c5cc436"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"lix0k\">There are a number of <a href=\"https://www.gov.ie/en/department-of-climate-energy-and-the-environment/services/connection-to-utilities-such-as-gas-electricity-water-household-waste-disposal-telecoms-and-the-internet/\">utilities and bills</a> that you will be responsible for as a renter. These can include:</p><ul><li data-block-key=\"3cgdl\">gas</li><li data-block-key=\"5i300\">electricity</li><li data-block-key=\"bhvcn\">water</li><li data-block-key=\"afddd\">household waste disposal</li><li data-block-key=\"f3aiu\">telecoms</li><li data-block-key=\"bdgri\">internet</li></ul><p data-block-key=\"53kkt\">In some cases, you may be able to organise these connections before you move in.</p>",
+      "id": "00b04c5c-e426-4260-ae96-b47c97a9325b"
+    },
+    {
+      "type": "heading",
+      "value": "Supports available for running your home",
+      "id": "f1104c96-7e78-4637-bfab-874906b1bbc1"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"lix0k\">Fuel Allowance</h3><p data-block-key=\"7iicm\">Depending on your situation, you may qualify for <a href=\"https://www.gov.ie/en/department-of-social-protection/services/fuel-allowance/\">Fuel Allowance</a>, which is a payment to help with the cost of heating your home during the winter months.</p><h3 data-block-key=\"71ppl\">Household Benefits Package</h3><p data-block-key=\"em3in\">The <a href=\"https://www.gov.ie/en/department-of-social-protection/services/household-benefits-package/\">Household Benefits Package</a> helps towards the costs of electricity or gas bills for those who qualify. It also includes a free TV licence.</p><h3 data-block-key=\"5sh1a\">Rent Tax Credit</h3><p data-block-key=\"634mv\">The <a href=\"https://www.gov.ie/en/department-of-housing-local-government-and-heritage/publications/rent-tax-credit/\">Rent Tax Credit</a> reduces the amount of income tax you are due to pay for a tax year, and is available for renters for the tax years 2022 to 2028.</p>",
+      "id": "51786b13-8ffb-4f3b-baed-1e442ca72f2b"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.ccpc.ie/manage-your-money/day-to-day-finances/budgeting-resources",
+        "link_text": "Budgeting resources from the CCPC"
+      },
+      "id": "2eeecd0e-1653-4531-9241-55c0c87f37ff"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/rent-supplement/",
+        "link_text": "Rent Supplement"
+      },
+      "id": "879a1ff3-1f64-407b-a624-c916a6c763d7"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/rental-accommodation-scheme/",
+        "link_text": "Rental Accommodation Scheme"
+      },
+      "id": "a3935d89-9969-410e-9cea-cde8828495bc"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/housing-assistance-payment/",
+        "link_text": "Housing Assistance Payment"
+      },
+      "id": "cddc70f6-0db0-40be-8b7a-1bfc8459aa19"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://newstarterhomes.ie/cost-rental/about/",
+        "link_text": "Cost Rental Scheme"
+      },
+      "id": "29663160-ed3e-4205-8483-2cf67b5b3855"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-housing-local-government-and-heritage/publications/your-rights-and-obligations-under-a-tenancy/",
+        "link_text": "Your rights and obligations under a tenancy"
+      },
+      "id": "a3659721-74e8-44d5-93f1-4fb7cbd39e94"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-housing-local-government-and-heritage/publications/minimum-standards-in-rented-accommodation/",
+        "link_text": "Minimum standards in rented accommodation"
+      },
+      "id": "a05ba32a-178f-48bb-827e-81ca8f38ad54"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://rtb.ie/compliance/check-the-register/",
+        "link_text": "Tenancy registration check"
+      },
+      "id": "17fdc5a7-f69c-4be6-ada0-6a753e50fa43"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://rtb.ie/disputes/",
+        "link_text": "Disputes"
+      },
+      "id": "a1432a29-6893-4527-9055-fa4542623f26"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-climate-energy-and-the-environment/services/connection-to-utilities-such-as-gas-electricity-water-household-waste-disposal-telecoms-and-the-internet/",
+        "link_text": "Connection to utilities"
+      },
+      "id": "17f97f68-ac2c-4f8e-94ad-31523a7700a1"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/fuel-allowance/",
+        "link_text": "Fuel Allowance"
+      },
+      "id": "669e200a-ca29-4761-9995-f9bde48742c8"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/household-benefits-package/",
+        "link_text": "Household Benefits Package"
+      },
+      "id": "1b7f1071-8bcf-4033-9c91-8a444b56a49f"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.revenue.ie/en/personal-tax-credits-reliefs-and-exemptions/land-and-property/rent-credit/index.aspx",
+        "link_text": "Rent Tax Credit"
+      },
+      "id": "1dfc878e-5a44-4a5b-8903-32e142e2ae37"
+    }
+  ]
+}

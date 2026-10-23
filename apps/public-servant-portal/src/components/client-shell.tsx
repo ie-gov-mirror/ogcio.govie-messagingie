@@ -9,6 +9,7 @@ import {
   ToastProvider,
 } from "@ogcio/design-system-react"
 import {
+  CONNECTOR_ENTRAID,
   MESSAGING_PUBLIC_SERVANT_ROLE_NAME,
   SagClientProvider,
   useAuth,
@@ -31,55 +32,6 @@ import {
   readLastSelectedOrganization,
 } from "@/util/last-selected-org"
 import { organizationIdsForRole, ZONE_SAG_APP_NAME } from "@/util/zone"
-
-// Logto's sign-in chooser reads this cookie to filter which connector buttons
-// to render. We set it to the admin app's connector id (`ogcio-entraid`) so
-// public servants never see a MyGovID button on the chooser screen. Mirrors
-// the legacy `messaging-admin` behaviour from `@ogcio/authorisation`'s
-// `createSetSocialConnectorCookie`.
-const LOGTO_SOCIAL_CONNECTOR_ID_COOKIE_NAME = "connectorsToShow"
-const SOCIAL_CONNECTOR_COOKIE_MAX_AGE_S = 30
-const ADMIN_CONNECTOR_ID = "ogcio-entraid"
-
-function getSharedParentDomain(hostname: string): string | undefined {
-  if (hostname === "localhost") return undefined
-  const parts = hostname.split(".")
-  // e.g. messaging-admin.dev.services.gov.ie -> .dev.services.gov.ie
-  // e.g. messaging-admin.services.gov.ie     -> .services.gov.ie
-  if (parts.length < 3) return undefined
-  return `.${parts.slice(1).join(".")}`
-}
-
-function setConnectorsToShowCookie(connectorId: string): void {
-  if (typeof window === "undefined") return
-  const hostname = window.location.hostname
-  const isLocal = hostname === "localhost"
-  const sharedDomain = getSharedParentDomain(hostname)
-
-  // Clear any stale host-only and shared-domain values first; legacy admin
-  // cookies are persisted across apps on the shared domain and a citizen app
-  // may have left a `mygovid` value behind.
-  // biome-ignore lint/suspicious/noDocumentCookie: cookie must be readable by Logto on a sibling subdomain
-  document.cookie = `${LOGTO_SOCIAL_CONNECTOR_ID_COOKIE_NAME}=; max-age=0; path=/`
-  if (sharedDomain) {
-    // biome-ignore lint/suspicious/noDocumentCookie: cookie must be readable by Logto on a sibling subdomain
-    document.cookie = `${LOGTO_SOCIAL_CONNECTOR_ID_COOKIE_NAME}=; max-age=0; path=/; domain=${sharedDomain}`
-  }
-
-  const attrs = [
-    `${LOGTO_SOCIAL_CONNECTOR_ID_COOKIE_NAME}=${connectorId}`,
-    "path=/",
-    `max-age=${SOCIAL_CONNECTOR_COOKIE_MAX_AGE_S}`,
-    isLocal ? "samesite=lax" : "samesite=none",
-    isLocal ? null : "secure",
-    sharedDomain ? `domain=${sharedDomain}` : null,
-  ]
-    .filter(Boolean)
-    .join("; ")
-
-  // biome-ignore lint/suspicious/noDocumentCookie: cookie must be readable by Logto on a sibling subdomain
-  document.cookie = attrs
-}
 
 // Unauthorized users never mount `UserProvider`/org context, so the full
 // `PageHeader` (which depends on `useOrganizationContext`) can't be reused. We
@@ -162,21 +114,20 @@ function AuthenticatedShell({
   const organizationSelectionStarted = useRef(false)
   const [organizationSelected, setOrganizationSelected] = useState(false)
 
-  // No `connector` is passed: SAG forwards a plain Logto signIn (no
-  // `direct_sign_in`) so Logto serves its own sign-in chooser, matching the
-  // legacy `messaging-admin` UX. This avoids a silent re-auth through
-  // Microsoft's still-active session immediately after sign-out. The
-  // `connectorsToShow` cookie tells Logto's chooser to render only the
-  // EntraID button — public servants never see MyGovID.
+  // Pass the Entra connector so SAG maps it to Logto `direct_sign_in`.
+  // The connector now sends `prompt=select_account`, so an active Microsoft
+  // session shows the account picker instead of silently reauthenticating.
   useEffect(() => {
     if (forbidden) return
     if (!loading && !user && !signInTriggered.current) {
       signInTriggered.current = true
-      setConnectorsToShowCookie(ADMIN_CONNECTOR_ID)
       // Explicit redirectUrl: Referer is trimmed to origin-only on the
       // cross-subdomain POST to SAG (strict-origin-when-cross-origin), so
       // we pass the full href ourselves to preserve the path.
-      signIn({ redirectUrl: window.location.href })
+      signIn({
+        connector: CONNECTOR_ENTRAID,
+        redirectUrl: window.location.href,
+      })
     }
   }, [loading, user, signIn, forbidden])
 

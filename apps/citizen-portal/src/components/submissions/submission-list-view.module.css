@@ -43,3 +43,18 @@
     margin-right: calc(50% - 50vw);
   }
 }
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gieds-space-2);
+  margin-bottom: var(--gieds-space-6);
+}
+
+.intro > * {
+  margin: 0;
+}
+
+.emptyAlert {
+  max-width: 57rem;
+}

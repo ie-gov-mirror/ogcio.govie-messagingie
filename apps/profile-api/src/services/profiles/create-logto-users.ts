@@ -1,5 +1,9 @@
 import type { FastifyBaseLogger } from "fastify";
 import { buildLogtoClient } from "~/clients/logto.js";
+import {
+  BB_CITIZEN_ROLE_ID,
+  ONBOARDING_CANDIDATE_ROLE_ID,
+} from "~/const/logto.js";
 import type { EnvConfig } from "~/plugins/external/env.js";
 import type { KnownProfileDataDetails } from "~/schemas/profiles/model.js";
 
@@ -46,6 +50,9 @@ export const createLogtoUsers = async (
             onlyPrivateDetails,
           },
         });
+        // Management API creates skip the sign-up hook that assigns these.
+        await client.assignUserRole(result.id, BB_CITIZEN_ROLE_ID);
+        await client.assignUserRole(result.id, ONBOARDING_CANDIDATE_ROLE_ID);
         return { success: true, result };
       } catch (error) {
         logger.error({

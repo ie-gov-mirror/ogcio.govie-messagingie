@@ -54,4 +54,22 @@ test.describe("User Visual Regression - Mobile View", () => {
     )
     await expectSettledScreenshot(page, "user-dashboard-submissions-mobile.png")
   })
+
+  test("dashboard discovery page visual snapshot - Mobile View @visual", async () => {
+    await navigateAndVerifyHeading(
+      page,
+      `${DASHBOARD_URL}/en/discovery`,
+      "Life Events",
+    )
+    await expectSettledScreenshot(page, "user-dashboard-discovery-mobile.png")
+  })         
+  
+  test("dashboard discovery child starting school page visual snapshot - Mobile View @visual", async () => {
+    await navigateAndVerifyHeading(
+      page,
+      `${DASHBOARD_URL}/en/discovery/child-starting-school`,
+      "Child starting school",
+    )
+    await expectSettledScreenshot(page, "user-dashboard-discovery-child-starting-school-mobile.png")
+  })    
 })

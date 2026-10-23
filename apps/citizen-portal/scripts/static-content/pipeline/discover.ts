@@ -10,7 +10,7 @@ import { describePage, type IssueCollector } from "./issues.ts"
 
 export type RawTree = {
   list: PageRef
-  lifeEvents: Array<{ page: PageRef; journeys: PageRef[] }>
+  lifeEvents: PageRef[]
 }
 
 export async function discoverTree(
@@ -18,30 +18,16 @@ export async function discoverTree(
   indexPageId: number,
 ): Promise<RawTree> {
   const list = await client.getPage(indexPageId)
-  // Translations share their EN page's ID, so a parent's children must be
-  // filtered by locale too.
   const lifeEvents = await client.listChildren(
     list.id,
     PAGE_TYPES.lifeEvent,
     SOURCE_LOCALE,
   )
-  const journeys = await mapWithConcurrency(
-    lifeEvents,
-    MAX_CONCURRENT_REQUESTS,
-    (lifeEvent) =>
-      client.listChildren(lifeEvent.id, PAGE_TYPES.journey, SOURCE_LOCALE),
-  )
-  return {
-    list,
-    lifeEvents: lifeEvents.map((page, i) => ({ page, journeys: journeys[i] })),
-  }
+  return { list, lifeEvents }
 }
 
 export function allPages(tree: RawTree): PageRef[] {
-  return [
-    tree.list,
-    ...tree.lifeEvents.flatMap(({ page, journeys }) => [page, ...journeys]),
-  ]
+  return [tree.list, ...tree.lifeEvents]
 }
 
 export async function findTranslations(
@@ -67,23 +53,40 @@ export async function findTranslations(
         rule: "missing-translation",
         message: `has no ${TRANSLATION_LOCALE} page`,
       })
-    } else if (found.length > 1) {
+      return
+    }
+    if (found.length > 1) {
       issues.error({
         document,
         path: "",
         rule: "ambiguous-translation",
         message: `has ${found.length} ${TRANSLATION_LOCALE} pages (${found.map((p) => p.id).join(", ")})`,
       })
-    } else if (found[0].meta.alias_of != null) {
+      return
+    }
+
+    // Wagtail keeps an untranslated page as an alias of its source, so its
+    // content is the EN copy until someone translates it.
+    const translation = found[0]
+    const aliasOf = translation.meta.alias_of?.id
+    if (aliasOf !== undefined && aliasOf !== page.id) {
       issues.error({
         document,
         path: "",
-        rule: "missing-translation",
-        message: `its ${TRANSLATION_LOCALE} page ${found[0].id} is an alias, not a translation`,
+        rule: "translation-alias",
+        message: `its ${TRANSLATION_LOCALE} page ${translation.id} is an alias of page ${aliasOf}, not of this page`,
       })
-    } else {
-      translations.set(page.id, found[0])
+      return
     }
+    if (aliasOf !== undefined) {
+      issues.warn({
+        document,
+        path: "",
+        rule: "translation-alias",
+        message: `isn't translated yet: its ${TRANSLATION_LOCALE} page ${translation.id} is an alias, so it shows the ${SOURCE_LOCALE} content`,
+      })
+    }
+    translations.set(page.id, translation)
   })
   return translations
 }

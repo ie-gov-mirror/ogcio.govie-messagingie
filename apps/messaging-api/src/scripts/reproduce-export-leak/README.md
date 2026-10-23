@@ -1,12 +1,12 @@
 # reproduce-export-leak
 
 A one-shot operator task that reproduces (and later verifies the fix for) a
-**cross-user data-export leak** in the *user data export* feature.
+**cross-user data-export leak** in the _user data export_ feature.
 
 ## The bug it reproduces
 
 The profile "export my data" lifecycle task builds a zip of the requesting
-user's data. A buggy version scoped the exported **files** to *every* file
+user's data. A buggy version scoped the exported **files** to _every_ file
 shared with the user via the upload `files_users` table. Because a bad migration
 cross-joined shares, users ended up with `files_users` rows for files that were
 never theirs — so their export leaked other users' documents.
@@ -42,17 +42,17 @@ All configuration is via environment variables (see `.env.sample` for the full
 list of names). You can either export them in your shell or create a local
 `.env` and run with `tsx --env-file`.
 
-| Variable | Required by | Purpose |
-|---|---|---|
-| `REPRO_ENV` | all (or use explicit URLs) | `dev` or `uat`; maps to known hosts |
-| `REPRO_UPLOAD_BASE_URL` / `REPRO_MESSAGING_BASE_URL` / `REPRO_PROFILE_BASE_URL` / `REPRO_LOGTO_OIDC_ENDPOINT` | all (alternative to `REPRO_ENV`) | explicit base URLs (take precedence) |
-| `REPRO_ORGANIZATION_ID` | seed, cleanup | org id for org-scoped M2M tokens |
-| `REPRO_MESSAGING_M2M_APP_ID` / `_SECRET` | seed | scope `messaging:message:*` |
-| `REPRO_UPLOAD_M2M_APP_ID` / `_SECRET` | seed, cleanup | scope `upload:file:*` |
-| `REPRO_PROFILE_M2M_APP_ID` / `_SECRET` | seed, cleanup | scope `profile:user:read` (or `profile:user.admin:*` to resolve a recipient given as an email) |
-| `REPRO_USER1` | seed, cleanup | exporter / leak recipient (default: **andrea** — dev `86yzcekv9bte`, uat `ybogyi9hneb7`) |
-| `REPRO_USER2` | seed | owner of the leaked file (default `e2e-cit-2`, i.e. `e2e_citizen_user_2`) |
-| `REPRO_CONFIRM` | mutating cmds | set to `yes` instead of passing `--yes` |
+| Variable                                                                                                      | Required by                      | Purpose                                                                                        |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `REPRO_ENV`                                                                                                   | all (or use explicit URLs)       | `dev` or `uat`; maps to known hosts                                                            |
+| `REPRO_UPLOAD_BASE_URL` / `REPRO_MESSAGING_BASE_URL` / `REPRO_PROFILE_BASE_URL` / `REPRO_LOGTO_OIDC_ENDPOINT` | all (alternative to `REPRO_ENV`) | explicit base URLs (take precedence)                                                           |
+| `REPRO_ORGANIZATION_ID`                                                                                       | seed, cleanup                    | org id for org-scoped M2M tokens                                                               |
+| `REPRO_MESSAGING_M2M_APP_ID` / `_SECRET`                                                                      | seed                             | scope `messaging:message:*`                                                                    |
+| `REPRO_UPLOAD_M2M_APP_ID` / `_SECRET`                                                                         | seed, cleanup                    | scope `upload:file:*`                                                                          |
+| `REPRO_PROFILE_M2M_APP_ID` / `_SECRET`                                                                        | seed, cleanup                    | scope `profile:user:read` (or `profile:user.admin:*` to resolve a recipient given as an email) |
+| `REPRO_USER1`                                                                                                 | seed, cleanup                    | exporter / leak recipient (default: **andrea** — dev `86yzcekv9bte`, uat `ybogyi9hneb7`)       |
+| `REPRO_USER2`                                                                                                 | seed                             | owner of the leaked file (default `e2e-cit-2`, i.e. `e2e_citizen_user_2`)                      |
+| `REPRO_CONFIRM`                                                                                               | mutating cmds                    | set to `yes` instead of passing `--yes`                                                        |
 
 Values containing `@` are resolved to a profileId via `profile.findProfile`
 (which needs `profile:user.admin:*`); otherwise the value is used directly as a
@@ -64,10 +64,10 @@ profileId. The defaults are profile ids, so the happy path never calls
 The seed sends as the **first-testing** organization using the **M2M E2E
 Tester** app in both dev and uat.
 
-| Setting | Value |
-|---|---|
-| Organization | `first-testing` |
-| Sending app | M2M E2E Tester — app id `treftr21fgbvsdjwlol9` (dev/uat/testing; local seed uses `qrtllp45fgbvsdjyasd5`) |
+| Setting          | Value                                                                                                                              |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Organization     | `first-testing`                                                                                                                    |
+| Sending app      | M2M E2E Tester — app id `treftr21fgbvsdjwlol9` (dev/uat/testing; local seed uses `qrtllp45fgbvsdjyasd5`)                           |
 | Org token scopes | `messaging:message:*` `upload:file:*` `profile:user:read` (the E2E Tester also carries `profile:user.admin:*` and `upload:file:*`) |
 
 A single E2E Tester app fills all three org-credential slots
@@ -78,11 +78,11 @@ account (**andrea**) so the leak can be confirmed by logging into the citizen
 portal and downloading a data export manually. user2 is the clean **owner** of
 the leaked file.
 
-| Role | Account | profileId | email / login | PPSN |
-|---|---|---|---|---|
-| user1 (exporter / leak recipient) — dev | andrea | `86yzcekv9bte` | `andrea.pregnolato+testdev@nearform.com` (MyGovID) | — |
-| user1 (exporter / leak recipient) — uat | andrea | `ybogyi9hneb7` | `andrea.pregnolato@pm.me` (MyGovID) | — |
-| user2 (owner of the leaked file) | `e2e_citizen_user_2` | `e2e-cit-2` | `e2e_citizen_2@user.com` | `E2E_CITIZEN_USER_2` |
+| Role                                    | Account              | profileId      | email / login                                      | PPSN                 |
+| --------------------------------------- | -------------------- | -------------- | -------------------------------------------------- | -------------------- |
+| user1 (exporter / leak recipient) — dev | andrea               | `86yzcekv9bte` | `andrea.pregnolato+testdev@nearform.com` (MyGovID) | —                    |
+| user1 (exporter / leak recipient) — uat | andrea               | `ybogyi9hneb7` | `andrea.pregnolato@pm.me` (MyGovID)                | —                    |
+| user2 (owner of the leaked file)        | `e2e_citizen_user_2` | `e2e-cit-2`    | `e2e_citizen_2@user.com`                           | `E2E_CITIZEN_USER_2` |
 
 **Why these accounts.** user1 (andrea) is a real MyGovID account (confirmed
 active, not suspended, in dev and uat), so the exporter can log into the citizen
@@ -95,7 +95,6 @@ associated to the sending org only on send.)
 
 **Where to get the E2E Tester secret** (never commit it — use a placeholder in
 `.env`):
-
 - **dev**: profile repo Bruno env file
   `@ogcio/govie-services-profile/apps/profile-api/e2e/.env.dev`.
 - **uat**: the UAT block in
@@ -106,8 +105,8 @@ associated to the sending org only on send.)
 
 ### Known environment hosts
 
-| Env | upload | messaging | profile | logto oidc |
-|---|---|---|---|---|
+| Env | upload                                   | messaging                                   | profile                                   | logto oidc                                        |
+| --- | ---------------------------------------- | ------------------------------------------- | ----------------------------------------- | ------------------------------------------------- |
 | dev | `https://upload-api.dev.services.gov.ie` | `https://messaging-api.dev.services.gov.ie` | `https://profile-api.dev.services.gov.ie` | `https://authorization.dev.services.gov.ie/oidc/` |
 | uat | `https://upload-api.uat.services.gov.ie` | `https://messaging-api.uat.services.gov.ie` | `https://profile-api.uat.services.gov.ie` | `https://authorization.uat.services.gov.ie/oidc/` |
 
@@ -151,7 +150,6 @@ Required scopes: `upload:file:*`, `messaging:message:*`, `profile:user:read`
 Verification is manual: user1 (**andrea**) is a real MyGovID account, so the
 leak is confirmed by logging into the citizen portal and downloading a data
 export. After `seed`:
-
 1. Log into the **citizen portal** for the target environment as **andrea**
    (dev `andrea.pregnolato+testdev@nearform.com`, uat `andrea.pregnolato@pm.me`)
    via MyGovID.

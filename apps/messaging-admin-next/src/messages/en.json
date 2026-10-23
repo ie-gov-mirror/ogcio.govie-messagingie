@@ -572,8 +572,9 @@
       "failed": "Failed",
       "scheduled": "Scheduled",
       "created": "Created",
-      "emailDelivered": "Delivered",
-      "emailFailed": "Failed",
+      "inboxDelivered": "Delivered to inbox",
+      "emailDelivered": "Email sent",
+      "emailFailed": "Email failed",
       "seen": "Opened",
       "unseen": "Unopened"
     },

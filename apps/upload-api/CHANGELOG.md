@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.3.0](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.2.0...upload-api-v1.3.0) (2026-10-23)
+
+
+### Features
+
+* reject upload shares for missing profiles AB[#35012](https://github.com/ogcio/govie-services-messaging/issues/35012) ([#1050](https://github.com/ogcio/govie-services-messaging/issues/1050)) ([7786c24](https://github.com/ogcio/govie-services-messaging/commit/7786c244190e8b06f7092a6e3289b894a412b6c4))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1063](https://github.com/ogcio/govie-services-messaging/issues/1063)) ([d0139ae](https://github.com/ogcio/govie-services-messaging/commit/d0139ae46dd1a53f189e836f8975219e9e4ec864))
+* use typed selectProfiles includeFullDetails AB[#35012](https://github.com/ogcio/govie-services-messaging/issues/35012) ([#1055](https://github.com/ogcio/govie-services-messaging/issues/1055)) ([ff20495](https://github.com/ogcio/govie-services-messaging/commit/ff20495dc7269473f575d2aa8c2c5f545094487d))
+
+
+### Miscellaneous Chores
+
+* **messaging-api:** log denied requests AB[#44650](https://github.com/ogcio/govie-services-messaging/issues/44650) ([#1060](https://github.com/ogcio/govie-services-messaging/issues/1060)) ([df5f833](https://github.com/ogcio/govie-services-messaging/commit/df5f83346d6dba3c881e7719463e55fc04603091))
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1072](https://github.com/ogcio/govie-services-messaging/issues/1072)) ([efeca5b](https://github.com/ogcio/govie-services-messaging/commit/efeca5b4db6131c6b9c943e7de4683e32dfde58b))
+* update deps AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1078](https://github.com/ogcio/govie-services-messaging/issues/1078)) ([2b9558e](https://github.com/ogcio/govie-services-messaging/commit/2b9558ecb07b14b472f20d988f7f1b2d71ac4440))
+* use a single Biome config AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1081](https://github.com/ogcio/govie-services-messaging/issues/1081)) ([496f24c](https://github.com/ogcio/govie-services-messaging/commit/496f24c426219ef23c6cda31fb11408cc40bef6c))
+
 ## [1.2.0](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.1.4...upload-api-v1.2.0) (2026-10-12)
 
 

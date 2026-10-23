@@ -16,7 +16,6 @@ lives under `ops/` instead, which Postgrator does not scan.
 ## What it checks
 
 `verify.sql` prints, with `\echo` section headers:
-
 1. Total rows in `attachments_messages`.
 2. Distinct `(message_id, attachment_id)` pairs.
 3. Number of duplicate **groups** (pairs with `count > 1`).
@@ -25,8 +24,8 @@ lives under `ops/` instead, which Postgrator does not scan.
    - `total rows − distinct pairs` (set arithmetic), and
    - the exact predicate of the `028` `DELETE` (`a.id > b.id`, i.e. keep the
      lowest `id` per pair).
-   The printed `delta_should_be_zero` proves the number is identical to what the
-   migration deletes.
+     The printed `delta_should_be_zero` proves the number is identical to what the
+     migration deletes.
 5. The max duplication factor and a sample of the top 20 offending pairs.
 6. A **verdict**: whether `UNIQUE (message_id, attachment_id)` would currently be
    violated — i.e. whether `028` is actually needed.

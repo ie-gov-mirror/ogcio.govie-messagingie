@@ -1,0 +1,139 @@
+{
+  "id": 208347,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "en",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208347/",
+    "html_url": "https://www.uat.beta.gov.ie/en/life-events/becoming-a-carer/",
+    "slug": "becoming-a-carer",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:43:00+01:00",
+    "parent": {
+      "id": 207788,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207788/",
+        "html_url": null
+      },
+      "title": "Life Events"
+    }
+  },
+  "title": "Becoming a carer",
+  "highlighted": false,
+  "category": "Health & Care",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">This page explains how to become a carer in Ireland.</p><p data-block-key=\"1e6hm\">It covers both family (unpaid) carers and professional (paid) carers, and outlines the supports, training and steps involved.</p>",
+      "id": "d7d76ec6-1b4b-4bf0-8d79-c6747ca8f74b"
+    },
+    {
+      "type": "heading",
+      "value": "Decide what type of carer you want to be",
+      "id": "c74075c0-b8f3-4615-b9cf-3d9b985609ef"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">There are two main types of carers in Ireland:</p><ul><li data-block-key=\"1a2gm\">family or unpaid carers – people who provide full-time care to a relative, partner, friend or neighbour who needs support due to age, illness or disability</li><li data-block-key=\"bk6ju\">professional or paid carers – people who work as carers or healthcare assistants in homes, community services, nursing homes or healthcare settings</li></ul><p data-block-key=\"3tvil\">The steps and requirements differ depending on which path you choose.</p>",
+      "id": "ab05cf27-ddd8-4acc-93ea-2696ffabfd39"
+    },
+    {
+      "type": "heading",
+      "value": "Understand the role of a carer",
+      "id": "55b9f35f-075d-4b7e-bf76-0286b330e6fa"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">A carer provides support to someone who needs help because of age, illness, or disability. This can include:</p><ul><li data-block-key=\"8qpsa\">personal care (washing, dressing and eating)</li><li data-block-key=\"cdsq1\">helping with mobility and daily routines</li><li data-block-key=\"8srs5\">emotional support and companionship</li><li data-block-key=\"4v2rl\">supporting independence and wellbeing</li></ul><p data-block-key=\"9no4t\">Family carers do not need formal qualifications. Professional carers usually require recognised training.</p>",
+      "id": "69932e99-8a67-49f0-b73e-597e41f675bb"
+    },
+    {
+      "type": "heading",
+      "value": "Check eligibility for carer payments and supports (family carers)",
+      "id": "c62c73f7-cf8c-4aa7-bf70-0a3a216d28b4"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">If you provide full-time care, you may qualify for financial supports from the <a href=\"https://www.gov.ie/en/department-of-social-protection/\">Department of Social Protection</a>.</p><h3 data-block-key=\"5nt9e\">Carer's Allowance</h3><p data-block-key=\"3mca7\">A weekly, means-tested payment for people on low income who provide full-time care and attention.</p><p data-block-key=\"4sec3\">You must:</p><ul><li data-block-key=\"9bp4v\">be 18 or over</li><li data-block-key=\"a8mp4\">provide full-time care and attention (at least ~35 hours per week)</li><li data-block-key=\"d05gd\">meet residency and means test conditions</li></ul><p data-block-key=\"96cun\">More information: <a href=\"https://www.gov.ie/en/department-of-social-protection/services/carers-allowance/\">Carer's Allowance</a></p><h3 data-block-key=\"7otmm\">Carer's Benefit</h3><p data-block-key=\"3stq4\">A payment for people who leave work or reduce hours to care for someone full-time. This is not means-tested but requires sufficient PRSI contributions.</p><p data-block-key=\"9gagb\">More information: <a href=\"https://www.gov.ie/en/department-of-social-protection/services/carers-benefit/\">Carer's Benefit</a></p><h3 data-block-key=\"62a6l\">Carer's Support Grant</h3><p data-block-key=\"d68q1\">An annual lump sum payment for full-time carers who meet certain qualifying conditions.</p><p data-block-key=\"3hcm2\">More information: <a href=\"https://www.gov.ie/en/department-of-social-protection/services/carers-support-grant/\">Carer's Support Grant</a></p>",
+      "id": "c6781f38-d258-4ed3-916d-dd9b81c73dca"
+    },
+    {
+      "type": "heading",
+      "value": "Get the right training (professional carers)",
+      "id": "037bc89f-4a28-4ff2-aba4-84f5550320f4"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">If you want to work professionally as a carer, most employers and public services expect you to have a QQI-accredited qualification.</p><h3 data-block-key=\"3unfm\">Recommended qualification</h3><p data-block-key=\"bqhtv\">The qualification you should get is a QQI Level 5 Certificate in Healthcare Support (Major Award).</p><p data-block-key=\"1g039\">This qualification is awarded by <a href=\"https://www.qqi.ie/\">Quality and Qualifications Ireland</a>. It is the standard qualification for many professional carer roles, including Health Care Assistant jobs throughout Ireland.</p><p data-block-key=\"9a9kc\">The QQI Level 5 award includes training in:</p><ul><li data-block-key=\"7g04b\">care skills and personal support</li><li data-block-key=\"cv9it\">health and safety</li><li data-block-key=\"c6j9n\">communication</li><li data-block-key=\"etf5e\">work experience</li></ul><p data-block-key=\"dk2vq\">Many employers – including the <a href=\"https://www.hse.ie/\">Health Service Executive</a> (HSE) – list this qualification as essential or highly desirable.</p><p data-block-key=\"h286\">You can take this course at further education colleges or approved training providers across Ireland.</p><p data-block-key=\"1v99t\">Get more information on <a href=\"https://careerhub.hse.ie/pathways_hca/\">the HSE healthcare assistant pathway</a>.</p>",
+      "id": "249dfdc8-4369-43b9-8441-6f483249cd8b"
+    },
+    {
+      "type": "heading",
+      "value": "Complete required checks (professional carers)",
+      "id": "b8d8539f-83fc-4ce3-8973-1093f994de18"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">Professional carer roles typically require:</p><ul><li data-block-key=\"bvfmk\">Garda Vetting / Garda clearance (essential for working with vulnerable adults)</li><li data-block-key=\"2jtia\">proof of the right to work in Ireland (legal work status)</li><li data-block-key=\"cmm40\">good spoken and written English</li></ul><p data-block-key=\"aeok5\">These checks help protect people receiving care and are standard for professional carer jobs.</p>",
+      "id": "2321f02b-ec81-42c4-9b03-81400eacf4b0"
+    },
+    {
+      "type": "heading",
+      "value": "Apply for carer or healthcare assistant roles",
+      "id": "0e3f0db6-2cfa-4e57-b8dd-61523d931229"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">Once you have the appropriate training and checks, you can apply for roles such as:</p><ul><li data-block-key=\"fkqqd\">Health Care Assistant (HCA)</li><li data-block-key=\"e451\">Home Support Worker</li><li data-block-key=\"6fe31\">Community Carer</li><li data-block-key=\"6nhk7\">Residential Care Worker</li></ul><p data-block-key=\"bkbp1\">Jobs are available through:</p><ul><li data-block-key=\"2524i\">the HSE and HSE-funded services</li><li data-block-key=\"5avpa\">nursing homes and residential care settings</li><li data-block-key=\"7hccb\">home-care providers</li></ul><p data-block-key=\"5kofa\">Public-sector and funded roles are advertised through <a href=\"https://careerhub.hse.ie/\">official HSE recruitment channels</a>.</p>",
+      "id": "516c2756-49c4-49f2-8607-188a14ae0eae"
+    },
+    {
+      "type": "heading",
+      "value": "Continue learning and developing your skills",
+      "id": "a0ff4d69-8404-4aa5-8229-a94047fbd40e"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"sxqqm\">Many carers continue to develop their skills through:</p><ul><li data-block-key=\"cole\">additional training (for example: in dementia care, palliative care, or disability care)</li><li data-block-key=\"2ath4\">on-the-job training provided by employers</li><li data-block-key=\"1ee9q\">courses in manual handling and infection prevention</li></ul><p data-block-key=\"arail\">Ongoing learning improves career progression and quality of care.</p>",
+      "id": "d46ca96a-c5ca-4f47-bd2d-648d8015f96f"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/carers-allowance/",
+        "link_text": "Carer's Allowance"
+      },
+      "id": "2421e784-40f5-439b-b972-087aaf034a27"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/carers-benefit/",
+        "link_text": "Carer's Benefit"
+      },
+      "id": "b9645d6e-8808-4699-bc27-32adb4877f03"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/carers-support-grant/",
+        "link_text": "Carer's Support Grant"
+      },
+      "id": "888671f0-cbaa-4640-815f-e653b9184aab"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://careerhub.hse.ie/",
+        "link_text": "HSE CareerHub"
+      },
+      "id": "0c911c49-4a1b-4bdc-a0c5-f983b6d3f39b"
+    }
+  ]
+}

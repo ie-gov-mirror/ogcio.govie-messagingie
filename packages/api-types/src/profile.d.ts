@@ -3933,10 +3933,11 @@ export interface operations {
                                     /** Format: uuid */
                                     consent_statement_id: string;
                                 };
-                            } | null;
+                            } | (never | null);
                             /** @default active */
                             status: "active" | "disabled" | "deleted";
                             details?: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -4105,10 +4106,11 @@ export interface operations {
                                     /** Format: uuid */
                                     consent_statement_id: string;
                                 };
-                            } | null;
+                            } | (never | null);
                             /** @default active */
                             status: "active" | "disabled" | "deleted";
                             details?: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -4221,6 +4223,8 @@ export interface operations {
                 ids: string;
                 /** @description Write subjects split by comma, if set will return consent statuses for those subjects, otherwise consent statuses will be null */
                 consentSubjects?: string;
+                /** @description When omitted or true, return the full profile. When false, return only the profile id. */
+                includeFullDetails?: "true" | "false" | "0" | "1";
             };
             header?: never;
             path?: never;
@@ -4268,10 +4272,11 @@ export interface operations {
                                     /** Format: uuid */
                                     consent_statement_id: string;
                                 };
-                            } | null;
+                            } | (never | null);
                             /** @default active */
                             status: "active" | "disabled" | "deleted";
                             details?: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -4288,6 +4293,8 @@ export interface operations {
                                 preferredLanguage: "en" | "ga";
                                 externalId?: string;
                             };
+                        }[] | {
+                            id: string;
                         }[];
                         metadata?: {
                             /** @description Object containing the links to the related endpoints */
@@ -4437,10 +4444,11 @@ export interface operations {
                                     /** Format: uuid */
                                     consent_statement_id: string;
                                 };
-                            } | null;
+                            } | (never | null);
                             /** @default active */
                             status: "active" | "disabled" | "deleted";
                             details?: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -4603,10 +4611,11 @@ export interface operations {
                                     /** Format: uuid */
                                     consent_statement_id: string;
                                 };
-                            } | null;
+                            } | (never | null);
                             /** @default active */
                             status: "active" | "disabled" | "deleted";
                             details?: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -4626,9 +4635,9 @@ export interface operations {
                             /** @description Linked profiles that have the current profile as primary profile */
                             linkedProfiles?: {
                                 id: string;
+                                publicName: string;
                                 /** Format: email */
                                 email: string;
-                                publicName: string;
                             }[];
                         };
                         metadata?: {
@@ -4791,10 +4800,11 @@ export interface operations {
                                     /** Format: uuid */
                                     consent_statement_id: string;
                                 };
-                            } | null;
+                            } | (never | null);
                             /** @default active */
                             status: "active" | "disabled" | "deleted";
                             details?: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -4973,10 +4983,11 @@ export interface operations {
                                     /** Format: uuid */
                                     consent_statement_id: string;
                                 };
-                            } | null;
+                            } | (never | null);
                             /** @default active */
                             status: "active" | "disabled" | "deleted";
                             details?: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -5097,6 +5108,7 @@ export interface operations {
             content: {
                 "application/json": {
                     profiles?: {
+                        /** Format: email */
                         email: string;
                         firstName: string;
                         lastName: string;
@@ -5123,6 +5135,7 @@ export interface operations {
                 };
                 "multipart/form-data": {
                     profiles?: {
+                        /** Format: email */
                         email: string;
                         firstName: string;
                         lastName: string;
@@ -5149,6 +5162,7 @@ export interface operations {
                 };
                 "text/csv": {
                     profiles?: {
+                        /** Format: email */
                         email: string;
                         firstName: string;
                         lastName: string;
@@ -5383,6 +5397,7 @@ export interface operations {
             content: {
                 "application/json": {
                     profiles?: {
+                        /** Format: email */
                         email: string;
                         firstName: string;
                         lastName: string;
@@ -5409,6 +5424,7 @@ export interface operations {
                 };
                 "multipart/form-data": {
                     profiles?: {
+                        /** Format: email */
                         email: string;
                         firstName: string;
                         lastName: string;
@@ -5435,6 +5451,7 @@ export interface operations {
                 };
                 "text/csv": {
                     profiles?: {
+                        /** Format: email */
                         email: string;
                         firstName: string;
                         lastName: string;
@@ -5554,6 +5571,7 @@ export interface operations {
                             /** Format: date-time */
                             createdAt?: string;
                             details: {
+                                /** Format: email */
                                 email: string;
                                 firstName: string;
                                 lastName: string;
@@ -5750,6 +5768,7 @@ export interface operations {
                             createdAt: string;
                             /** Format: date-time */
                             updatedAt: string;
+                            /** Format: date-time */
                             deletedAt: string | null;
                             /** @description The preferred language of the user, in ISO 639-1 format */
                             preferredLanguage: string;
@@ -5894,7 +5913,7 @@ export interface operations {
                                 details: {
                                     email?: string | null;
                                     rawData: {
-                                        [key: string]: string | null | number | boolean | (string | null | boolean | number)[];
+                                        [key: string]: string | (never | null) | number | boolean | (string | (never | null) | boolean | number)[];
                                     };
                                 };
                             };

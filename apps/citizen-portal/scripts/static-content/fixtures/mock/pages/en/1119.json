@@ -1,7 +1,7 @@
 {
   "id": 1119,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "retirement",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Retirement",
+  "highlighted": false,
+  "category": "Later Life",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Planning for retirement and what to do when you stop working.</p>",
       "id": "le-1119"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

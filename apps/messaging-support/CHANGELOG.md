@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.9](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.8...messaging-support-v0.1.9) (2026-10-23)
+
+
+### Miscellaneous Chores
+
+* update deps AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1078](https://github.com/ogcio/govie-services-messaging/issues/1078)) ([2b9558e](https://github.com/ogcio/govie-services-messaging/commit/2b9558ecb07b14b472f20d988f7f1b2d71ac4440))
+* use a single Biome config AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1081](https://github.com/ogcio/govie-services-messaging/issues/1081)) ([496f24c](https://github.com/ogcio/govie-services-messaging/commit/496f24c426219ef23c6cda31fb11408cc40bef6c))
+
+## [0.1.8](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.7...messaging-support-v0.1.8) (2026-10-20)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1063](https://github.com/ogcio/govie-services-messaging/issues/1063)) ([d0139ae](https://github.com/ogcio/govie-services-messaging/commit/d0139ae46dd1a53f189e836f8975219e9e4ec864))
+
+
+### Miscellaneous Chores
+
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1072](https://github.com/ogcio/govie-services-messaging/issues/1072)) ([efeca5b](https://github.com/ogcio/govie-services-messaging/commit/efeca5b4db6131c6b9c943e7de4683e32dfde58b))
+
 ## [0.1.7](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.6...messaging-support-v0.1.7) (2026-10-13)
 
 

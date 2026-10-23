@@ -3,21 +3,21 @@
 import { Heading, Icon, Paragraph, Stack } from "@ogcio/design-system-react"
 import { useLocale, useTranslations } from "next-intl"
 import type { ComponentProps, ReactNode } from "react"
+import { hasMaterialSymbol } from "@/components/load-material-symbols"
 import { AppLink } from "@/components/navigation/app-link"
 import pageTitleStyles from "@/components/page-title.module.css"
 import type {
-  ContentBlock,
+  ContentLink,
   DiscoveryContent,
-  Journey,
   LifeEvent,
-  RichTextNode,
+  ServiceDetail,
 } from "@/lib/discovery"
-import { ContentBlocks, LeadParagraph } from "./content-blocks"
+import { ContentBlocks, contentHref, opensInNewTab } from "./content-blocks"
 import styles from "./discovery-views.module.css"
 
 /**
- * LEA discovery section (AB#43539): the three page types from the
- * school-place prototype, rendered from the build-time model.
+ * LEA discovery section (AB#43539): the life events overview and a page
+ * per life event, rendered from the build-time model.
  */
 
 const discoveryListClass =
@@ -49,11 +49,11 @@ function PageColumn({ children }: { children: ReactNode }) {
 function PageIntro({
   title,
   eyebrow,
-  lead,
+  children,
 }: {
   title: string
   eyebrow?: string
-  lead: RichTextNode[] | null
+  children?: ReactNode
 }) {
   return (
     <Stack direction='column' gap={2}>
@@ -68,78 +68,24 @@ function PageIntro({
       <Heading as='h1' className={pageTitleStyles.pageTitle}>
         {title}
       </Heading>
-      {lead ? <LeadParagraph nodes={lead} /> : null}
+      {children}
     </Stack>
   )
-}
-
-/** Pull the page's first paragraph out so it can sit in the intro stack. */
-function splitLead(blocks: ContentBlock[]): {
-  lead: RichTextNode[] | null
-  rest: ContentBlock[]
-} {
-  const [first, ...tail] = blocks
-  if (first?.type !== "richText") return { lead: null, rest: blocks }
-  const [head, ...nodes] = first.nodes
-  if (head?.type !== "paragraph") return { lead: null, rest: blocks }
-  const rest =
-    nodes.length > 0 ? [{ type: "richText" as const, nodes }, ...tail] : tail
-  return { lead: head.children, rest }
-}
-
-function plainText(nodes: readonly RichTextNode[]): string {
-  let text = ""
-  for (const node of nodes) {
-    switch (node.type) {
-      case "text":
-        text += node.value
-        break
-      case "lineBreak":
-        text += " "
-        break
-      case "paragraph":
-      case "listItem":
-      case "strong":
-      case "emphasis":
-      case "link":
-      case "list":
-        text += plainText(node.children)
-        break
-      default: {
-        const _exhaustive: never = node
-        return _exhaustive
-      }
-    }
-  }
-  return text
-}
-
-/** CMS summary when the life event has one; otherwise its intro paragraph. */
-function overviewDescription(lifeEvent: LifeEvent): string | undefined {
-  const summary = lifeEvent.summary?.trim()
-  if (summary) return summary
-  for (const block of lifeEvent.body) {
-    if (block.type !== "richText") continue
-    for (const node of block.nodes) {
-      if (node.type !== "paragraph") continue
-      const text = plainText(node.children).trim()
-      if (text) return text
-    }
-  }
-  return undefined
 }
 
 function DiscoveryCard({
   href,
   title,
   description,
+  external = false,
 }: {
   href: string
   title: ReactNode
   description?: string
+  external?: boolean
 }) {
   const link = (
-    <AppLink className='gi-font-bold' href={href} size='md'>
+    <AppLink className='gi-font-bold' external={external} href={href} size='md'>
       {title}
     </AppLink>
   )
@@ -165,7 +111,6 @@ export function LifeEventsIndexView({
   const t = useTranslations("discovery")
   const locale = useLocale()
   const lifeEvents = new Map(discovery.lifeEvents.map((le) => [le.slug, le]))
-  const { lead, rest } = splitLead(discovery.body)
 
   return (
     <PageColumn>
@@ -173,7 +118,7 @@ export function LifeEventsIndexView({
         <Heading as='h1' className={pageTitleStyles.pageTitle}>
           {discovery.title}
         </Heading>
-        {lead ? <LeadParagraph nodes={lead} /> : null}
+        <ContentBlocks blocks={discovery.body} />
         <Paragraph
           className='gi-text-color-text-system-neutral-muted'
           size='md'
@@ -184,7 +129,6 @@ export function LifeEventsIndexView({
           })}
         </Paragraph>
       </Stack>
-      {rest.length > 0 ? <ContentBlocks blocks={rest} /> : null}
       <Stack direction='column' gap={{ base: 6, md: 8 }}>
         {discovery.categories.map((category) => (
           <section
@@ -196,7 +140,11 @@ export function LifeEventsIndexView({
               <Stack direction='row' gap={2} itemsAlignment='center'>
                 <Icon
                   className={styles.categoryIcon}
-                  icon={category.icon as ComponentProps<typeof Icon>["icon"]}
+                  icon={
+                    (hasMaterialSymbol(category.icon)
+                      ? category.icon
+                      : "info") as ComponentProps<typeof Icon>["icon"]
+                  }
                 />
                 <Heading as='h2' id={`category-${category.key}`} size='sm'>
                   {category.title}
@@ -208,9 +156,6 @@ export function LifeEventsIndexView({
                   return (
                     <DiscoveryCard
                       key={slug}
-                      description={
-                        lifeEvent ? overviewDescription(lifeEvent) : undefined
-                      }
                       href={`/${locale}/discovery/${slug}`}
                       title={lifeEvent?.title}
                     />
@@ -234,17 +179,21 @@ export function LifeEventView({
 }) {
   const t = useTranslations("discovery")
   const locale = useLocale()
-  const { lead, rest } = splitLead(lifeEvent.body)
+  const cardLink = (link: ContentLink) => ({
+    href: contentHref(link, locale),
+    title: link.text,
+    external: opensInNewTab(link),
+  })
 
   return (
     <PageColumn>
       <BackLink href={`/${locale}/discovery`} />
       <PageIntro
         eyebrow={t("lifeEventLabel", { category: categoryTitle })}
-        lead={lead}
         title={lifeEvent.title}
-      />
-      {rest.length > 0 ? <ContentBlocks blocks={rest} /> : null}
+      >
+        <ContentBlocks blocks={lifeEvent.body} />
+      </PageIntro>
       <section aria-labelledby='services' className='gi-w-full'>
         <Stack direction='column' gap={{ base: 6, md: 8 }}>
           <Stack direction='column' gap={2}>
@@ -255,42 +204,54 @@ export function LifeEventView({
               className='gi-text-color-text-system-neutral-muted'
               size='md'
             >
-              {t("servicesCount", { count: lifeEvent.journeys.length })}
+              {t("servicesCount", { count: lifeEvent.services.length })}
             </Paragraph>
           </Stack>
-          {lifeEvent.journeys.length > 0 ? (
+          {lifeEvent.services.length > 0 ? (
             <ul className={discoveryListClass}>
-              {lifeEvent.journeys.map((journey) => (
+              {lifeEvent.services.map((service, i) => (
                 <DiscoveryCard
-                  key={journey.slug}
-                  description={journey.summary}
-                  href={`/${locale}/discovery/${lifeEvent.slug}/${journey.slug}`}
-                  title={journey.title}
+                  key={i}
+                  description={service.description}
+                  {...cardLink(service.link)}
                 />
               ))}
             </ul>
           ) : null}
         </Stack>
       </section>
+      {lifeEvent.guidance.length > 0 ? (
+        <section aria-labelledby='guidance' className='gi-w-full'>
+          <Stack direction='column' gap={{ base: 6, md: 8 }}>
+            <Heading as='h2' id='guidance' size='sm'>
+              {t("guidance")}
+            </Heading>
+            <ul className={discoveryListClass}>
+              {lifeEvent.guidance.map((link, i) => (
+                <DiscoveryCard key={i} {...cardLink(link)} />
+              ))}
+            </ul>
+          </Stack>
+        </section>
+      ) : null}
     </PageColumn>
   )
 }
 
-export function JourneyView({
+export function ServiceView({
   lifeEvent,
-  journey,
+  service,
 }: {
-  lifeEvent: Pick<LifeEvent, "slug">
-  journey: Journey
+  lifeEvent: Pick<LifeEvent, "slug" | "title">
+  service: ServiceDetail
 }) {
   const locale = useLocale()
-  const { lead, rest } = splitLead(journey.body)
-
   return (
     <PageColumn>
       <BackLink href={`/${locale}/discovery/${lifeEvent.slug}`} />
-      <PageIntro lead={lead} title={journey.title} />
-      {rest.length > 0 ? <ContentBlocks blocks={rest} /> : null}
+      <PageIntro eyebrow={lifeEvent.title} title={service.title}>
+        <ContentBlocks blocks={service.body} />
+      </PageIntro>
     </PageColumn>
   )
 }

@@ -1,7 +1,0 @@
-{
-  "root": false,
-  "extends": ["../../biome.jsonc"],
-  "files": {
-    "includes": ["./src/**/*", "!**/dist/**/*"]
-  }
-}

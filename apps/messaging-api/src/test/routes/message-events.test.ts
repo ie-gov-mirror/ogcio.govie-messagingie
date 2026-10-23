@@ -55,6 +55,18 @@ describe("/api/v1/message-events", {}, () => {
       );
     });
 
+    it("should fail when limit is above the maximum", async () => {
+      app = await getServer();
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/v1/message-events?limit=200",
+      });
+
+      const body = await res.json();
+      expect(res.statusCode).toBe(422);
+      expect(body.detail).toBe("Limit must be between 1 and 100");
+    });
+
     it("should fail with illegal offset query params", async () => {
       app = await getServer();
       const res = await app.inject({

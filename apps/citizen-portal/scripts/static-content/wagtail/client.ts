@@ -77,9 +77,12 @@ function describeRequest(path: string, query?: Query): string {
   return `GET ${path}${search ? `?${search}` : ""}`
 }
 
+// Wagtail's API errors carry `message`; DRF's, such as a rejected token,
+// carry `detail`.
 function describeBody(body: unknown): string {
-  if (body && typeof body === "object" && "message" in body) {
-    return `: ${String(body.message)}`
+  if (body && typeof body === "object") {
+    if ("message" in body) return `: ${String(body.message)}`
+    if ("detail" in body) return `: ${String(body.detail)}`
   }
   return ""
 }

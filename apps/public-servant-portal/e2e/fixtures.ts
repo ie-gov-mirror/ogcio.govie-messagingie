@@ -59,12 +59,8 @@ const profileAdminRoot =
   "https://profile-admin.dev.services.gov.ie"
 
 export const urls = Object.freeze({
+  messaging: process.env.MESSAGING_URL || "http://localhost:3001",
   admin: process.env.ADMIN_URL || "http://localhost:3001",
-  auth: process.env.AUTH_URL || "http://localhost:3001",
-  authSignIn:
-    process.env.E2E_AUTH_URL?.trim() ||
-    process.env.AUTH_URL?.trim() ||
-    "https://authorization.dev.services.gov.ie/sign-in",
   mock:
     process.env.MOCK_URL || "https://mock-login-service.dev.services.gov.ie",
   profileAdminRoot,

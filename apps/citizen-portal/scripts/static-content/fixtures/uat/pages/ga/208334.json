@@ -1,0 +1,130 @@
+{
+  "id": 208334,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208333,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208333/",
+        "html_url": null
+      },
+      "title": "Starting work"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208334/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/starting-work/",
+    "slug": "starting-work",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:42:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Starting work",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"f610o\">There are many important steps to take if you get a new job. It's important to have everything in order, so that you get paid on time and are not paying emergency tax.</p>",
+      "id": "254c9047-4b83-40e7-8b8b-dd687ce8b593"
+    },
+    {
+      "type": "heading",
+      "value": "Contact Revenue as soon as you accept the job",
+      "id": "dbf3b59b-df9e-4851-ab05-cded64dec49c"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"f610o\">Give your employer your PPS number as soon as possible, so you don’t get put on emergency tax.</p><p data-block-key=\"d1d76\">Register the job with Revenue in myAccount <a href=\"https://www.revenue.ie/en/jobs-and-pensions/index.aspx\">under the Jobs and Pensions section.</a> This gets your Tax Credit Certificate (TCC) and your employer gets an RPN so the right tax is taken.</p><p data-block-key=\"7r5vn\">You may need to <a href=\"https://www.ros.ie/myaccount-web/sign_in.html?execution=e1s1\">register for myAccount</a> if you have never used it before.</p>",
+      "id": "cdeabfc1-0980-45f9-b2e1-f4a0cfb72c0c"
+    },
+    {
+      "type": "heading",
+      "value": "Tell the Department of Social Protection that you've started work",
+      "id": "2e91df7c-d5e3-4afd-a1d0-e6bd122e8a81"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"f610o\">This matters if you’re <a href=\"https://www.gov.ie/en/department-of-social-protection/policies/social-protection/#working-age-income-supports\">currently on (or recently on) a payment</a> like Jobseeker’s Allowance/Benefit, One-Parent Family Payment and so on.</p><p data-block-key=\"9v063\">Close/sign off your Jobseeker’s claim when you start work (Doing this online is usually quickest).</p><p data-block-key=\"1uogs\">If you can’t do it online, contact your <a data-api-url=\"https://api.integration.uat.beta.gov.ie/v2/pages/138980/\" data-page-id=\"138980\" href=\"https://www.uat.beta.gov.ie/en/department-of-social-protection/collections/intreo-centres/\">local Intreo Centre</a> or Social Welfare Branch Office.</p><p data-block-key=\"4rv82\">If you’re not sure what else changes when you start working (secondary benefits, means tests), use the “changes that can affect your payment” guidance as your checklist.</p>",
+      "id": "551b9426-ac8d-4cf7-b360-ab8ecbd0dda9"
+    },
+    {
+      "type": "heading",
+      "value": "Check for in-work welfare supports",
+      "id": "3a3b06ed-f65a-49e2-8158-b1d121151599"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"f610o\">You may be eligible for <a data-api-url=\"https://api.integration.uat.beta.gov.ie/v2/pages/5856/\" data-page-id=\"5856\" href=\"https://www.uat.beta.gov.ie/ga/an-roinn-coimirce-s%C3%B3isialai/seirbhisi/an-d%C3%ADbhinn-teaghlaigh-um-fhilleadh-ar-obair/\">Back to Work Family Dividend</a> if you have children and you are moving off certain payments.</p><p data-block-key=\"3cop9\">If you have qualified children and you’re moving from an eligible payment into work/self-employment, check Back to Work Family Dividend and apply via DSP/MyWelfare/Intreo route.</p><p data-block-key=\"3m39l\">If you’re an employee with children and under the income limits, apply for Working Family Payment online via MyWelfare.</p>",
+      "id": "eb81f4d1-43ae-4f9f-96d7-7f0925a4c2c8"
+    },
+    {
+      "type": "heading",
+      "value": "Make sure you can access online services",
+      "id": "f2c029bf-4d28-4724-9b8a-a180dd9400c1"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"f610o\">A lot of Department of Social Protection services (including closing claims and some applications) rely on MyGovID or MyWelfare access:</p><ol><li data-block-key=\"15h04\">Create a basic MyGovID (email-based) if you don’t have one.</li><li data-block-key=\"8ivon\">If you need full access for more services, you may need a verified MyGovID, which is linked to SAFE/PSC processes.</li><li data-block-key=\"u9ur\">If you need a PSC/SAFE appointment, use the PSC centres list/guidance.</li></ol>",
+      "id": "738d62dc-cb3c-4ea7-ab4f-4cbf724c2a9e"
+    },
+    {
+      "type": "heading",
+      "value": "Update any health supports with the HSE if your income changes",
+      "id": "84393696-0fb2-4432-99c6-347cfba7388a"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"f610o\">When you start work your eligibility might change, but you may still qualify depending on income and circumstances:</p><ol><li data-block-key=\"3ameu\">Check whether you still qualify for a medical card.</li><li data-block-key=\"c23ck\">If you don’t qualify for a medical card, check if you can get a GP Visit Card.</li><li data-block-key=\"db7pt\">If you don’t have a medical card, apply for a Drugs Payment Scheme (DPS) card.</li></ol>",
+      "id": "72623932-2e4f-46b4-92c5-294afcae9d8d"
+    },
+    {
+      "type": "heading",
+      "value": "Tell your local authority/housing supports that your income has changed",
+      "id": "2c0a4f08-02ea-4dd4-8e08-72998a066bf8"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"f610o\">If you’re in local authority housing or receiving HAP, starting work usually means you must report income changes quickly so rent/support is recalculated:</p><ol><li data-block-key=\"55qcq\">If you’re on <b>HAP</b>: notify your local authority about income/household changes.</li><li data-block-key=\"12u80\">If you’re a <b>local authority tenant</b>: report income changes to your council.</li><li data-block-key=\"7fvu2\">Find the right council contact details vis the “Find my Local Authority” tool or this list of local authorities.</li></ol>",
+      "id": "5e67c1f3-ed45-4062-9926-a48c5eadbb84"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.revenue.ie/en/jobs-and-pensions/index.aspx",
+        "link_text": "Jobs and pensions"
+      },
+      "id": "709eef92-d7b3-4da9-a93c-1c1949a935ba"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/find-your-local-intreo-centre/",
+        "link_text": "Find your local Intreo Centre"
+      },
+      "id": "211c5656-45c1-470c-a565-c6a0da1633ae"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/back-to-work-family-dividend/",
+        "link_text": "Back to Work Family Dividend"
+      },
+      "id": "21c78221-c24a-44c2-9639-d64c901b0821"
+    }
+  ],
+  "_translation_of": 208333
+}

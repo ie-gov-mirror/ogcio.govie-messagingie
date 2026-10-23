@@ -20,9 +20,9 @@ vi.mock("@ogcio/design-system-react", () => ({
 
 describe("SubmissionStatusTag", () => {
   it.each([
-    ["initiated", "info"],
+    ["initiated", "warning"],
     ["submitted", "info"],
-    ["processing", "warning"],
+    ["processing", "info"],
     ["completed", "success"],
     ["cancelled", "error"],
   ] as const)("renders %s with its semantic tag type", (status, type) => {

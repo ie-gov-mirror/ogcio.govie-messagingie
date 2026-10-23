@@ -8,20 +8,17 @@ This document describes the API for the OGCIO Profile Building Block. The API ve
 
 Follow these instructions to obtain and use tokens for API access.
 
-Step 1: Receive Your Credentials
---------------------------------
+## Step 1: Receive Your Credentials
 
 To get started, contact our support team to request the credentials to use. These values are required for the authentication process.
 
 Once you have requested access, we will provide you with the following:
-
 -   **Basic Authentication Code**: The base64 string you must use to request the tokens.
 -   **Token Endpoint URL**: The URL where you can request your tokens.
 -   **Department Id**: The identifier assigned to the department you are part of.
 -   **List of available scopes**: The available permissions for your application
 
-Step 2: Request Tokens
-----------------------
+## Step 2: Request Tokens
 
 With your credentials in hand, you can now request tokens.
 
@@ -36,15 +33,13 @@ curl -X POST {GET_TOKEN_URL} \
 ### Expected Response
 
 Upon a successful request, you will receive a JSON response containing:
-
 -   `access_token`: The token you will use to authenticate API requests.
 -   `expires_in`: The number of seconds before the token expires.
 -   `scope`: The scope of access granted by the token.
 
-Step 3: Use the Token to Authenticate API Requests
---------------------------------------------------
+## Step 3: Use the Token to Authenticate API Requests
 
-The API uses bearer token authentication. Include a token in the *Authorization* header of your requests.
+The API uses bearer token authentication. Include a token in the _Authorization_ header of your requests.
 
 ```
 Authorization: Bearer <access_token_here>

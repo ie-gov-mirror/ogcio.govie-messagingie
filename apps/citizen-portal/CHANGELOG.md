@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.1.8](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.7...citizen-portal-v0.1.8) (2026-10-23)
+
+
+### Features
+
+* **citizen-portal:** handle static content mailto href type AB[#43543](https://github.com/ogcio/govie-services-messaging/issues/43543) ([#1067](https://github.com/ogcio/govie-services-messaging/issues/1067)) ([9ea49b9](https://github.com/ogcio/govie-services-messaging/commit/9ea49b9a51b2cc550075442447233ed69d96f1d6))
+* **citizen-portal:** LEA static content transport AB[#43541](https://github.com/ogcio/govie-services-messaging/issues/43541) ([#1059](https://github.com/ogcio/govie-services-messaging/issues/1059)) ([e76b338](https://github.com/ogcio/govie-services-messaging/commit/e76b338cef2bdd0195a118c73e4cf0772c83f533))
+* **citizen-portal:** redesign the citizen portal applications pages AB[#44217](https://github.com/ogcio/govie-services-messaging/issues/44217) ([#1041](https://github.com/ogcio/govie-services-messaging/issues/1041)) ([4ee949c](https://github.com/ogcio/govie-services-messaging/commit/4ee949c96c2dcd5a107a1c73773651b6ea789b18))
+* **citizen-portal:** restore LEA service detail page AB[#43541](https://github.com/ogcio/govie-services-messaging/issues/43541) ([#1061](https://github.com/ogcio/govie-services-messaging/issues/1061)) ([6bd3766](https://github.com/ogcio/govie-services-messaging/commit/6bd37664361233e53803d070d8269b2b5fdac334))
+
+
+### Bug Fixes
+
+* **citizen-portal:** align LEA index and CMS prose with gov.ie AB[#43539](https://github.com/ogcio/govie-services-messaging/issues/43539) ([#1066](https://github.com/ogcio/govie-services-messaging/issues/1066)) ([c962bf3](https://github.com/ogcio/govie-services-messaging/commit/c962bf3408fbcebd053be31e3814869632e5f8e5))
+* **citizen-portal:** fall back for unknown LEA category icons AB[#44669](https://github.com/ogcio/govie-services-messaging/issues/44669) ([#1062](https://github.com/ogcio/govie-services-messaging/issues/1062)) ([01c0d52](https://github.com/ogcio/govie-services-messaging/commit/01c0d5230edf495ad3e871148234ae2334438488))
+* **deps:** bump @ogcio/sag-client to 0.8.5 AB[#44872](https://github.com/ogcio/govie-services-messaging/issues/44872) ([#1076](https://github.com/ogcio/govie-services-messaging/issues/1076)) ([24c8a20](https://github.com/ogcio/govie-services-messaging/commit/24c8a20659a304fd72a1ade218ede508d981f293))
+* **deps:** update all non-major dependencies ([#1063](https://github.com/ogcio/govie-services-messaging/issues/1063)) ([d0139ae](https://github.com/ogcio/govie-services-messaging/commit/d0139ae46dd1a53f189e836f8975219e9e4ec864))
+* gate header unread fetch on onboarding AB[#44566](https://github.com/ogcio/govie-services-messaging/issues/44566) ([#1045](https://github.com/ogcio/govie-services-messaging/issues/1045)) ([e79fc87](https://github.com/ogcio/govie-services-messaging/commit/e79fc87cd182149c2f3029b96ba09c04462ce84c))
+* run the safe-level upgrade re-login in a fresh session AB[#44491](https://github.com/ogcio/govie-services-messaging/issues/44491) ([#1038](https://github.com/ogcio/govie-services-messaging/issues/1038)) ([0c8bbcf](https://github.com/ogcio/govie-services-messaging/commit/0c8bbcf236f3a3db369a0adba43f48bc396d2431))
+* wait for onboarding before the level-2 zone hops AB[#44492](https://github.com/ogcio/govie-services-messaging/issues/44492) ([#1040](https://github.com/ogcio/govie-services-messaging/issues/1040)) ([35cab9e](https://github.com/ogcio/govie-services-messaging/commit/35cab9e3bcb1adf7b5ebaa4de826456b49103c95))
+
+
+### Miscellaneous Chores
+
+* **citizen-portal:** add a script to re-record the UAT fixtures AB[#43541](https://github.com/ogcio/govie-services-messaging/issues/43541) ([#1073](https://github.com/ogcio/govie-services-messaging/issues/1073)) ([714f57b](https://github.com/ogcio/govie-services-messaging/commit/714f57b27ad1dfcc12622ec2e1de6ed3ac6028c8))
+* first e2e tests for life events discovery AB[#43547](https://github.com/ogcio/govie-services-messaging/issues/43547) ([#1070](https://github.com/ogcio/govie-services-messaging/issues/1070)) ([eee6813](https://github.com/ogcio/govie-services-messaging/commit/eee6813cac0e59687fcff5f95776b0b201245ede))
+* **messaging-api:** log denied requests AB[#44650](https://github.com/ogcio/govie-services-messaging/issues/44650) ([#1060](https://github.com/ogcio/govie-services-messaging/issues/1060)) ([df5f833](https://github.com/ogcio/govie-services-messaging/commit/df5f83346d6dba3c881e7719463e55fc04603091))
+* Update admin login for e2e tests AB[#44576](https://github.com/ogcio/govie-services-messaging/issues/44576) ([#1054](https://github.com/ogcio/govie-services-messaging/issues/1054)) ([35e7e39](https://github.com/ogcio/govie-services-messaging/commit/35e7e39abfc87acaa5fa1737a3f25685f8ac2b1c))
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1072](https://github.com/ogcio/govie-services-messaging/issues/1072)) ([efeca5b](https://github.com/ogcio/govie-services-messaging/commit/efeca5b4db6131c6b9c943e7de4683e32dfde58b))
+* update deps AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1078](https://github.com/ogcio/govie-services-messaging/issues/1078)) ([2b9558e](https://github.com/ogcio/govie-services-messaging/commit/2b9558ecb07b14b472f20d988f7f1b2d71ac4440))
+* use a single Biome config AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1081](https://github.com/ogcio/govie-services-messaging/issues/1081)) ([496f24c](https://github.com/ogcio/govie-services-messaging/commit/496f24c426219ef23c6cda31fb11408cc40bef6c))
+
 ## [0.1.7](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.6...citizen-portal-v0.1.7) (2026-10-13)
 
 

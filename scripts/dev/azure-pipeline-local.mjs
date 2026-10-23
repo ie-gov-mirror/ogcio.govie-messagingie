@@ -111,7 +111,6 @@ class AzurePipelineLocal {
         name: "Unit Tests",
         commands: [
           "pnpm test",
-          "pnpm --filter messaging-next test",
           "pnpm --filter messaging-admin-next test",
           "pnpm --filter public-servant-portal test",
           "pnpm --filter messaging-api test",
@@ -121,7 +120,6 @@ class AzurePipelineLocal {
         name: "Build Services",
         commands: [
           "pnpm build:api",
-          "pnpm build:next",
           "pnpm build:admin-next",
           "pnpm build:public-servant-portal",
         ],
@@ -129,7 +127,6 @@ class AzurePipelineLocal {
       {
         name: "Docker Builds",
         commands: [
-          "docker build -f apps/messaging-next/Dockerfile -t messaging-next .",
           "docker build -f apps/messaging-admin-next/Dockerfile -t messaging-admin-next .",
           "docker build -f apps/public-servant-portal/Dockerfile -t public-servant-portal .",
           "docker build -f apps/messaging-api/Dockerfile -t messaging-api .",
@@ -203,19 +200,6 @@ jobs:
       - run: pnpm install
       - run: pnpm build
 
-  unit-tests-messaging:
-    runs-on: ubuntu-latest
-    needs: build-dependencies
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: \${{ env.NODE_VERSION }}
-          cache: 'npm'
-      - run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm --filter messaging-next test
-
   unit-tests-messaging-api:
     runs-on: ubuntu-latest
     needs: build-dependencies
@@ -228,20 +212,6 @@ jobs:
       - run: npm install -g pnpm
       - run: pnpm install
       - run: pnpm --filter messaging-api test
-
-  build-messaging:
-    runs-on: ubuntu-latest
-    needs: unit-tests-messaging
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: \${{ env.NODE_VERSION }}
-          cache: 'npm'
-      - run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm build:next
-      - run: docker build -f apps/messaging-next/Dockerfile -t messaging-next .
 
   build-messaging-api:
     runs-on: ubuntu-latest
@@ -259,13 +229,13 @@ jobs:
 
   security-scan-images:
     runs-on: ubuntu-latest
-    needs: [build-messaging, build-messaging-api]
+    needs: build-messaging-api
     steps:
       - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'messaging-next:latest'
+          image-ref: 'messaging-api:latest'
           format: 'sarif'
           output: 'trivy-results.sarif'
       - name: Upload Trivy scan results to GitHub Security tab
@@ -356,13 +326,12 @@ jobs:
 
     console.log("\n📦 Services:")
     console.log("- messaging-api")
-    console.log("- messaging-next")
     console.log("- messaging-admin-next")
     console.log("- public-servant-portal")
 
     console.log("\n🔧 Local Equivalents:")
     console.log("- Security: pnpm lint, pnpm test")
-    console.log("- Build: pnpm build, pnpm build:api, pnpm build:next")
+    console.log("- Build: pnpm build, pnpm build:api")
     console.log("- Docker: docker build -f apps/*/Dockerfile")
     console.log("- Tests: pnpm test, pnpm --filter * test")
   }

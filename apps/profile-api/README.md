@@ -9,7 +9,6 @@ Fastify-based API for the Gov-IE Profile service. Provides health checks, OpenAP
   - `pnpm --filter @govie-services/profile-api dev` – start the API on `http://localhost:8003`
 
 Or inside this folder:
-
 - `pnpm dev` – run with `tsx` and watch mode
 - `pnpm build` – compile to `dist/`
 - `pnpm start` – run compiled server
@@ -25,7 +24,6 @@ Or inside this folder:
 ## Environment
 
 Copy `.env.sample` to `.env`. Important variables:
-
 - Database: `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB_NAME`
 - External services: `PROFILE_BACKEND_URL`, `UPLOAD_BACKEND_URL`, `SCHEDULER_BACKEND_URL`
 - Auth (Logto): `LOGTO_*` variables including resource indicators and M2M app IDs/secrets
@@ -33,19 +31,16 @@ Copy `.env.sample` to `.env`. Important variables:
 - Observability/analytics: `OTEL_*`, `ANALYTICS_*`
 
 Notes:
-
 - The server listens on port `8003` (configured in code).
 - Use the root scripts to spin up a local PostgreSQL via Docker.
 
 ## Database Tasks
 
 From repo root (recommended):
-
 - Prepare DB: `pnpm db:prepare` (compose up + create + migrate + sync)
 - Reset DB (with confirmation): `pnpm db:reset`
 
 From this folder:
-
 - `pnpm db:create` / `pnpm db:migrate` / `pnpm db:drop`
 - `pnpm sync-profile-consents` (with `:full-resync` option)
 - `pnpm seed-consent-statements`
@@ -53,7 +48,6 @@ From this folder:
 ## Docker
 
 From repo root:
-
 - Build base image: `pnpm docker:build:base` (uses `Dockerfile`)
 - Build Profile API image: `pnpm docker:build:api` (uses `apps/profile-api/Dockerfile`)
 - Run: `docker run -p 8003:8003 profile-api`
@@ -86,7 +80,6 @@ pnpm --filter @govie-services/profile-api test:e2e     # bruno e2e (dev env)
 ## Seeding the PII Hasher Pepper Secret
 
 To seed the PII hasher pepper secret in AWS Secrets Manager, set the following environment variables in your `.env` file:
-
 - `AWS_SECRETS_MANAGER_ENDPOINT` – the Secrets Manager endpoint URL
 - `AWS_SECRETS_MANAGER_REGION` – the AWS region
 - `PII_HASHER_SECRET_NAME` – the name of the secret to create

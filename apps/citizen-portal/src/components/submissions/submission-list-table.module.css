@@ -1,7 +1,67 @@
 .idCell {
-  font-weight: var(--gieds-font-weight-500, 500);
   color: var(--gieds-color-gray-900, #252526);
   display: block;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+/* Long titles stay on one line in the table and end in an ellipsis. */
+.titleText {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  font-weight: inherit;
+}
+
+.mobileList {
+  margin: 0;
+  padding: 0 var(--gieds-space-3);
+  list-style: none;
+}
+
+.mobileItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gieds-space-2);
+  padding: var(--gieds-space-5) 0;
+  border-bottom: var(--gieds-border-width-100, 1px) solid
+    var(--gieds-color-border-system-neutral-subtle, #e1e2e5);
+}
+
+.mobileItem:last-child {
+  border-bottom: none;
+}
+
+.mobileItem .lastUpdateDate {
+  color: var(--gieds-color-text-system-neutral-muted, #686d78);
+}
+
+.mobileItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gieds-space-3);
+}
+
+.mobileItemHeader .idCell {
+  flex: 1 1 auto;
+}
+
+.mobileItemHeader > :last-child {
+  flex: none;
+}
+
+.mobileItemLink {
+  align-self: flex-start;
+  color: var(--gieds-color-text-tone-convention-default, #2c55a2);
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
+  overflow-wrap: anywhere;
+}
+
+.mobileItemLink:focus-visible {
+  outline: var(--gieds-border-width-200) solid var(--gieds-color-primary-700);
+  outline-offset: 2px;
 }

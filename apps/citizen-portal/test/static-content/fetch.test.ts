@@ -55,6 +55,17 @@ describe("fetch:static-content", () => {
     expect(stdout).toContain("skipped")
   })
 
+  it("fails proxy mode without its API settings, writing nothing", async () => {
+    const error = await fetchStaticContent({
+      NEXT_PUBLIC_ENABLE_LEA: "true",
+      STATIC_CONTENT_MODE: "proxy",
+    }).catch((e: { stderr: string }) => e)
+    expect(error.stderr).toContain(
+      "static-content: failed: STATIC_CONTENT_MODE=proxy needs STATIC_CONTENT_API_URL",
+    )
+    expect(await readdir(root)).toEqual([])
+  })
+
   it("writes the content when NEXT_PUBLIC_ENABLE_LEA is on", async () => {
     await fetchStaticContent({ NEXT_PUBLIC_ENABLE_LEA: "true" })
     expect((await readdir(outputDir)).sort()).toEqual([

@@ -225,6 +225,12 @@ export interface paths {
                                 } | {
                                     /** @description Unique id of the related message */
                                     messageId: string;
+                                    /** @description Reason of a failure, e.g. failedToSend or noProvider */
+                                    messageKey?: string;
+                                    /** @description Technical details of a failure */
+                                    details?: string;
+                                    /** @description Email provider's ID of an accepted email */
+                                    providerMessageId?: string;
                                 };
                                 /**
                                  * Format: date-time
@@ -380,9 +386,10 @@ export interface paths {
                                 fromAddress: string;
                                 /** @description Is connection to the SMTP server secure? */
                                 ssl: boolean;
-                                headers?: null | {
+                                /** @description Optional field to add custom headers to all emails sent with this provider */
+                                headers?: {
                                     [key: string]: string | string[];
-                                };
+                                } | null;
                             };
                             metadata?: {
                                 /** @description Object containing the links to the related endpoints */
@@ -765,6 +772,12 @@ export interface paths {
                                 } | {
                                     /** @description Unique id of the related message */
                                     messageId: string;
+                                    /** @description Reason of a failure, e.g. failedToSend or noProvider */
+                                    messageKey?: string;
+                                    /** @description Technical details of a failure */
+                                    details?: string;
+                                    /** @description Email provider's ID of an accepted email */
+                                    providerMessageId?: string;
                                 };
                                 /**
                                  * Format: date-time
@@ -1160,6 +1173,7 @@ export interface operations {
                             subject: string;
                             /** @description Creation date time */
                             createdAt: string;
+                            /** @description Thread Name used to group messages */
                             threadName: string | null;
                             /** @description Organisation sender id */
                             organisationId: string;
@@ -1473,6 +1487,7 @@ export interface operations {
                             subject: string;
                             /** @description Creation date time */
                             createdAt: string;
+                            /** @description Thread Name used to group messages */
                             threadName: string | null;
                             /** @description Organisation sender id */
                             organisationId: string;
@@ -1597,14 +1612,17 @@ export interface operations {
                             subject: string;
                             /** @description Creation date time */
                             createdAt: string;
+                            /** @description Thread Name used to group messages */
                             threadName: string | null;
                             /** @description Organisation sender id */
                             organisationId: string;
                             /** @description Unique id of the recipient */
                             recipientUserId: string;
+                            /** @description Brief description of the message */
                             excerpt: string | null;
                             /** @description Plain text version of the message */
                             plainText: string;
+                            /** @description Rich text version of the message */
                             richText: string | null;
                             /** @description True if the message has already been seen by the recipient */
                             isSeen: boolean;
@@ -1615,6 +1633,7 @@ export interface operations {
                             security: "confidential" | "public";
                             /** @description Ids of the related attachments (maximum 3) */
                             attachments: string[];
+                            /** @description External id to link the message to an external system */
                             externalId: string | null;
                         };
                         metadata?: {
@@ -1755,6 +1774,10 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /**
+                     * Format: uuid
+                     * @description Tag id to assign
+                     */
                     tagId: string | null;
                     messageIds: string[];
                 };
@@ -1769,6 +1792,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: {
+                            /** Format: uuid */
                             tagId: string | null;
                             messageIds: string[];
                         };
@@ -2019,9 +2043,10 @@ export interface operations {
                     fromAddress: string;
                     /** @description Is connection to the SMTP server secure? */
                     ssl: boolean;
-                    headers?: null | {
+                    /** @description Optional field to add custom headers to all emails sent with this provider */
+                    headers?: {
                         [key: string]: string | string[];
-                    };
+                    } | null;
                 };
             };
         };
@@ -2157,9 +2182,11 @@ export interface operations {
                     fromAddress: string;
                     /** @description Is connection to the SMTP server secure? */
                     ssl: boolean;
-                    headers?: null | {
+                    /** @description Optional field to add custom headers to all emails sent with this provider */
+                    headers?: {
                         [key: string]: string | string[];
-                    };
+                    } | null;
+                    /** @description Password to use to log into the SMTP server */
                     password?: string | null;
                 };
             };
@@ -3051,11 +3078,13 @@ export interface operations {
                             organisationId: string;
                             /** @description Unique id of the recipient */
                             recipientUserId: string;
+                            /** @description Thread Name used to group messages */
                             threadName: string | null;
                             /** @description Whether the message has been seen */
                             isSeen: boolean;
                             /** @description Subject */
                             subject: string;
+                            /** @description Rich text content of the message */
                             richText: string | null;
                             /** @description Plain text content of the message */
                             plainText: string;
@@ -3335,6 +3364,10 @@ export interface operations {
                             userId: string;
                             /** @description Display name of the tag */
                             label: string;
+                            /**
+                             * Format: uuid
+                             * @description Parent tag id
+                             */
                             parentTagId: string | null;
                             /** @description Materialized ltree path */
                             path: string;
@@ -3792,6 +3825,10 @@ export interface operations {
                 "application/json": {
                     /** @description New display name */
                     label?: string;
+                    /**
+                     * Format: uuid
+                     * @description New parent tag id
+                     */
                     parentTagId?: string | null;
                 };
             };

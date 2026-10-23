@@ -1,6 +1,6 @@
 {
   "name": "public-servant-portal",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "scripts": {
     "dev": "PORT=4002 next dev",
@@ -17,46 +17,46 @@
     "test:e2e:lighthouse": "playwright test e2e/lighthouse --workers 1",
     "test:e2e:local:messaging": "BASE_URL=http://messaging-admin.local.test:8080 playwright test",
     "test:e2e:local:profile": "BASE_URL=http://profile-admin.local.test:8080 playwright test",
-    "test:e2e:dev": "BASE_URL=https://messaging-admin.dev.services.gov.ie ADMIN_URL=https://messaging-admin.dev.services.gov.ie AUTH_URL=https://authorization.dev.services.gov.ie/sign-in playwright test  --workers 1",
+    "test:e2e:dev": "BASE_URL=https://messaging-admin.dev.services.gov.ie ADMIN_URL=https://messaging-admin.dev.services.gov.ie MESSAGING_URL=https://messaging.dev.services.gov.ie playwright test  --workers 1",
     "test:e2e:dev:ui": "npm run test:e2e:dev -- --ui",
-    "test:smoke:e2e": "BASE_URL=https://messaging-admin.dev.services.gov.ie ADMIN_URL=https://messaging-admin.dev.services.gov.ie AUTH_URL=https://authorization.dev.services.gov.ie/sign-in playwright test --grep '@smoke' --workers 1",
-    "test:regression:e2e": "BASE_URL=https://messaging-admin.dev.services.gov.ie ADMIN_URL=https://messaging-admin.dev.services.gov.ie AUTH_URL=https://authorization.dev.services.gov.ie/sign-in playwright test --grep '@regression|@smoke|@visual' --workers 1"
+    "test:smoke:e2e": "BASE_URL=https://messaging-admin.dev.services.gov.ie ADMIN_URL=https://messaging-admin.dev.services.gov.ie MESSAGING_URL=https://messaging.dev.services.gov.ie playwright test --grep '@smoke' --workers 1",
+    "test:regression:e2e": "BASE_URL=https://messaging-admin.dev.services.gov.ie ADMIN_URL=https://messaging-admin.dev.services.gov.ie MESSAGING_URL=https://messaging.dev.services.gov.ie playwright test --grep '@regression|@smoke|@visual' --workers 1"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.9.0",
     "@grafana/faro-web-sdk": "2.12.1",
-    "@ogcio/analytics-sdk": "0.2.19",
+    "@ogcio/analytics-sdk": "0.2.20",
     "@ogcio/design-system-react": "1.42.0",
-    "@ogcio/nextjs-analytics": "1.1.4",
+    "@ogcio/nextjs-analytics": "1.1.5",
     "@ogcio/o11y-sdk-react": "0.12.4",
-    "@ogcio/sag-client": "0.8.4",
+    "@ogcio/sag-client": "0.8.5",
     "@ogcio/theme-govie": "1.21.7",
     "@t3-oss/env-nextjs": "0.13.11",
     "@tanstack/react-table": "8.21.3",
     "@unleash/proxy-client-react": "6.0.1",
     "dayjs": "1.11.23",
-    "next": "16.4.0",
+    "next": "16.4.2",
     "next-intl": "4.14.9",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "swr": "2.5.1",
-    "zod": "4.6.5"
+    "zod": "4.6.7"
   },
   "devDependencies": {
-    "@playwright/test": "1.64.0",
+    "@playwright/test": "1.64.1",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
-    "@testing-library/user-event": "14.6.7",
+    "@testing-library/user-event": "14.6.8",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
-    "@vitest/coverage-v8": "5.0.3",
+    "@vitest/coverage-v8": "5.0.5",
     "axe-html-reporter": "2.2.11",
     "gmail-getter": "2.4.0",
-    "jsdom": "30.1.2",
+    "jsdom": "30.1.3",
     "lighthouse": "13.5.0",
-    "playwright": "1.64.0",
+    "playwright": "1.64.1",
     "playwright-lighthouse": "4.0.0",
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   }
 }

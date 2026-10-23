@@ -1,0 +1,25 @@
+{
+  "id": 2112,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "slug": "losing-a-job",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 2000
+    }
+  },
+  "title": "Losing a job",
+  "highlighted": false,
+  "category": "Work & Money",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Jobseeker payments, redundancy and help finding new work.</p>",
+      "id": "le-1112"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 1112
+}

@@ -1,7 +1,7 @@
 {
   "id": 1106,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "owning-driving-a-vehicle",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Owning/Driving a Vehicle",
+  "highlighted": false,
+  "category": "Travel & Transport",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Learner permits, driving licences, motor tax and vehicle registration.</p>",
       "id": "le-1106"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

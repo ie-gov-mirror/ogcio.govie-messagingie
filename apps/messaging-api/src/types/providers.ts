@@ -120,6 +120,9 @@ const EmailProviderSchema = Type.Evaluate(
 
 export type EmailProvider = Static<typeof EmailProviderSchema>;
 
+// A provider's acceptance of an email; SES's carries the email's message ID
+export type ProviderAcceptance = { providerMessageId?: string };
+
 const NoPasswordEmailProviderSchema = Type.Omit(EmailProviderSchema, [
   "password",
 ]);

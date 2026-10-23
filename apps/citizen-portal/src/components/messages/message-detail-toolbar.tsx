@@ -47,7 +47,7 @@ export function MessageDetailToolbar({
         }
       >
         <Icon
-          icon='chevron_left'
+          icon='arrow_back'
           size='md'
           className={styles.toolbarIcon}
           ariaHidden

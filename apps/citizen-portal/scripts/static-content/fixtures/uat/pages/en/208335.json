@@ -1,0 +1,163 @@
+{
+  "id": 208335,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "en",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208335/",
+    "html_url": "https://www.uat.beta.gov.ie/en/life-events/losing-a-job/",
+    "slug": "losing-a-job",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:42:00+01:00",
+    "parent": {
+      "id": 207788,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207788/",
+        "html_url": null
+      },
+      "title": "Life Events"
+    }
+  },
+  "title": "Losing a job",
+  "highlighted": false,
+  "category": "Work & Money",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ucts0\">There are a number of steps to take if you become unemployed.</p>",
+      "id": "350ccc0e-2956-4971-b9b0-817f50cc96cd"
+    },
+    {
+      "type": "heading",
+      "value": "Start with Intreo or the Department of Social Protection (DSP)",
+      "id": "1ee16eff-c2da-42eb-a407-cba7b4264b5d"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"vz5lb\">Intreo or the Department of Social Protection (DSP) is the main entry point for <a href=\"https://www.gov.ie/en/department-of-social-protection/publications/jobseekers-payments/\">jobseeker payments</a> and employment supports.</p><ol><li data-block-key=\"kh7u\">Apply online for a jobseeker’s payment on <a href=\"https://www.mywelfare.ie\">MyWelfare.ie</a> (you’ll most likely need a verified <a href=\"https://www.mygovid.ie\">MyGovID</a>).</li><li data-block-key=\"8ojdl\">If you can’t apply online, you can:</li></ol><ul><li data-block-key=\"5n3sv\">Apply in person at your <a href=\"https://www.gov.ie/en/department-of-social-protection/services/find-your-local-intreo-centre/\">Intreo Centre</a></li><li data-block-key=\"7l10m\">Request a paper form (UP1) by emailing <a href=\"mailto:jobseekersforms@welfare.ie\">jobseekersforms@welfare.ie</a>.</li></ul><p data-block-key=\"70u5m\">It's important to note that <a href=\"https://www.gov.ie/en/department-of-social-protection/services/jobseekers-benefit/\">Jobseeker’s Benefit</a> is based on PRSI contributions, while <a href=\"https://www.gov.ie/en/department-of-social-protection/services/jobseekers-allowance/\">Jobseeker’s Allowance</a> is means-tested.</p>",
+      "id": "fce9b4bc-ae4e-4289-9676-c0af1e58fdac"
+    },
+    {
+      "type": "heading",
+      "value": "If you’re in immediate financial difficulty, contact Community Welfare Service (CWS)",
+      "id": "1f28d82e-3d2e-40f4-8afe-977bb005d199"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"vz5lb\">The <a href=\"https://www.gov.ie/en/department-of-social-protection/publications/how-to-access-community-welfare-services/\">Community Welfare Service (CWS)</a> can handle urgent/short-term supports under the <a href=\"https://www.gov.ie/en/department-of-social-protection/services/supplementary-welfare-allowance-swa-supplements/\">Supplementary Welfare Allowance system</a>, including Additional Needs Payments, which help with essentials like bills, clothing and so on, depending on circumstances).</p><p data-block-key=\"5nbaf\">Check how ton access CWS (you may not need an appointment; forms can be posted/dropped into Intreo offices and local CWS emails are listed per office).</p><p data-block-key=\"m0ui\">If you need help with essential costs, look at <a href=\"https://www.gov.ie/en/department-of-social-protection/services/additional-needs-payment/\">Additional Needs Payment</a> and apply online via <a href=\"https://www.mywelfare.ie\">MyWelfare</a> or by post.</p><p data-block-key=\"d941q\">If you need housing cost support short-term, see <a href=\"https://www.gov.ie/en/department-of-social-protection/services/rent-supplement/\">Rent Supplement</a> (where it applies).</p>",
+      "id": "b4c11500-b320-45c1-8c99-0f706323b6b4"
+    },
+    {
+      "type": "heading",
+      "value": "Contact Revenue and sort out your tax if you stop working",
+      "id": "1333215e-0051-4c99-8ec5-d7cdda2f962b"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"vz5lb\">You may be owed a tax/USC refund if you’re unemployed, and you can manage/close old employments if needed.</p><ol><li data-block-key=\"eh5ip\">Sign into <a href=\"https://www.ros.ie/myaccount-web/sign_in.html?execution=e1s1\">Revenue's myAccount</a> and use “Claim unemployment repayment” (PAYE Services).</li><li data-block-key=\"do8ve\">If your old employer hasn’t updated that you left, you can use myAccount to cease your old job.</li><li data-block-key=\"d77h9\">If you can’t do it online, Revenue notes you can use <a href=\"https://www.revenue.ie/en/jobs-and-pensions/documents/form-p50.pdf\">Form P50</a> via your Revenue office for unemployment repayment claims.</li></ol>",
+      "id": "6748e86a-e557-4e52-a0e4-5697a516508a"
+    },
+    {
+      "type": "heading",
+      "value": "Look to housing support if needed",
+      "id": "95ed5817-579d-47c7-a596-986e8d91fcd3"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"vz5lb\">For longer-term rent support like <a href=\"https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/housing-assistance-payment/\">Housing Assistance Payment (HAP)</a>, you generally need to be qualified for social housing and on the housing list. This is handled by your local authority.</p><ol><li data-block-key=\"7a8c3\">If you need support with rent, check HAP rules and process.</li><li data-block-key=\"egds2\">If you’re not already on the council housing list, start with applying for social housing through your local authority.</li><li data-block-key=\"b9l2i\">Then pursue HAP through your local authority.</li></ol>",
+      "id": "eb419512-3e16-461e-a647-4c5c17c7e87d"
+    },
+    {
+      "type": "heading",
+      "value": "Check health supports from the Health Service Executive (HSE)",
+      "id": "3cc49520-9e44-47ba-8583-27e1706f656d"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"vz5lb\">If your income drops, you may qualify for a medical card (or GP visit card), and <a href=\"https://www.hse.ie/\">the HSE</a> provides the application routes and support line.</p><ol><li data-block-key=\"8tpco\">Apply online (where available) or use the HSE’s application options.</li><li data-block-key=\"ds9m9\">If you need a form posted out or have questions, HSE lists a phone contact for medical card applications.</li></ol>",
+      "id": "979aad64-3a91-41ee-9cf9-2168e6e31d34"
+    },
+    {
+      "type": "heading",
+      "value": "Get free guidance and advocacy help",
+      "id": "5e82f364-9940-43f9-afc5-dc85ca3b1345"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"vz5lb\">Free guidance and advocacy help is very useful if forms get complicated.</p><p data-block-key=\"8g7vd\">For example, the <a href=\"https://www.mabs.ie/en/?msclkid=a5d04ee892d110712882278566bde8ed\">Money Advice and Budgeting Service (MABS)</a> offers free help with debt/budgeting if money is getting tight.</p>",
+      "id": "add7e0c4-e2db-484e-8008-2b74617ddaa9"
+    },
+    {
+      "type": "heading",
+      "value": "If you’re refused a payment, you can appeal",
+      "id": "52962598-2e95-405b-a4c7-b448e2137c0f"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"vz5lb\">Contact the <a data-api-url=\"https://api.integration.uat.beta.gov.ie/v2/pages/26936/\" data-page-id=\"26936\" href=\"https://www.uat.beta.gov.ie/en/social-welfare-appeals-office/campaigns/social-welfare-appeals-office/\">Social Welfare Appeals Office,</a> which is independent of the Department of Social Protection.</p>",
+      "id": "e4a0d36f-c264-4586-b5b1-26f885610b30"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/publications/jobseekers-payments/",
+        "link_text": "Jobseeker's Payments"
+      },
+      "id": "9dda2b93-937e-4a18-a33f-7a6b3735493e"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/find-your-local-intreo-centre/",
+        "link_text": "Find your local Intreo Centre"
+      },
+      "id": "e24deb66-f2df-4b9b-a836-dbb9c8e92c99"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/publications/how-to-access-community-welfare-services/",
+        "link_text": "How to access Community Welfare Services"
+      },
+      "id": "44f5be21-1215-42aa-b706-e598236d4a6e"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/supplementary-welfare-allowance-swa-supplements/",
+        "link_text": "Supplementary Welfare Allowance (SWA) Supplements"
+      },
+      "id": "bc56d80c-c3ab-4d1c-a512-1c1c1c74cc34"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/additional-needs-payment/",
+        "link_text": "Additional Needs Payment"
+      },
+      "id": "a6b4b1d1-bacd-4526-9287-fb572a164a89"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/rent-supplement/",
+        "link_text": "Rent Supplement"
+      },
+      "id": "41afc789-d22d-4ef9-a170-63490df7f03b"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/housing-assistance-payment/",
+        "link_text": "Housing Assistance Payment"
+      },
+      "id": "81b370b2-3342-4bee-ac86-2568cc6f2cfd"
+    }
+  ]
+}

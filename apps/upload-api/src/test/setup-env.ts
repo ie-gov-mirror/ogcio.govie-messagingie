@@ -41,6 +41,8 @@ const TEST_ENV_DEFAULTS: Record<string, string> = {
   PROFILE_BACKEND_URL: "http://localhost:0",
   LOGTO_M2M_SCHEDULER_APP_SECRET: "test-secret",
   LOGTO_M2M_SCHEDULER_APP_ID: "test-app-id",
+  LOGTO_M2M_PROFILE_APP_SECRET: "test-secret",
+  LOGTO_M2M_PROFILE_APP_ID: "test-app-id",
   SCHEDULER_BACKEND_URL: "http://localhost:0",
   SCHEDULED_JOBS_HOURS_INTERVAL: "1",
   ORGANIZATION_ID: "test-org",

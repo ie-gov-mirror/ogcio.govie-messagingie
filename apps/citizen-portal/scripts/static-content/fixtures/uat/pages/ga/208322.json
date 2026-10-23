@@ -1,0 +1,134 @@
+{
+  "id": 208322,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208321,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208321/",
+        "html_url": null
+      },
+      "title": "Moving into further or higher education"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208322/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/transition-from-secondary-to-tertiary-education/",
+    "slug": "transition-from-secondary-to-tertiary-education",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:40:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Moving into further or higher education",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"dlzu4\">Starting college or a Post-Leaving Certificate (PLC) course is a big step — there's a lot to organise before September comes around.</p><p data-block-key=\"erupr\">This page breaks it down into clear steps: choosing your course, applying, sorting out money and accommodation, and getting set up once you start.</p>",
+      "id": "8945a2fb-bcf5-4292-b3cc-4abec40bbce9"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding your options",
+      "id": "5ae973ad-6740-456b-93cf-c6def7689261"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dlzu4\"><b>Further Education (FE):</b> PLCs, apprenticeships, vocational training – usually <a href=\"https://www.qqi.ie/what-we-do/the-qualifications-system/national-framework-of-qualifications\">National Framework of Qualifications</a> (NFQ) Levels 5–6</li><li data-block-key=\"at9t8\"><b>Higher Education (HE):</b> Universities, technological universities, institutes of technology – NFQ Levels 6–10 (undergrad and postgrad)</li></ul><p data-block-key=\"9task\">It's important to consider what qualification level you want and whether you might use FE as a stepping stone to HE later.</p>",
+      "id": "7c8b214e-d5be-47ba-8cd5-097e1a1554a7"
+    },
+    {
+      "type": "heading",
+      "value": "Choosing your course",
+      "id": "86fc184d-c9fa-4a11-8663-2fd49fed3658"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"dlzu4\">Undergraduate</h3><ul><li data-block-key=\"9cdjm\">apply through the <a href=\"https://www.cao.ie/\">Central Applications Office</a> (CAO). This opens every November</li><li data-block-key=\"css1p\">check entry requirements, points history, and any specific subject requirements</li><li data-block-key=\"8srdd\">consider <a href=\"https://accesscollege.ie/dare/\">DARE</a> (disability) or <a href=\"https://accesscollege.ie/hear/\">HEAR</a> (socio-economic) schemes if eligible</li></ul><h3 data-block-key=\"2q6dk\">PLC/FE</h3><p data-block-key=\"6b8qr\">Apply directly to the college. This is a good option if you want a year to build skills, improve CAO points, or try a new area.</p><h3 data-block-key=\"9qgmd\">Postgrad</h3><p data-block-key=\"cf5lj\">Apply directly to the college/university (deadlines vary by course).</p>",
+      "id": "5d0303f9-d61b-4bb6-9ea7-0a301801a744"
+    },
+    {
+      "type": "heading",
+      "value": "Key dates",
+      "id": "ff1b833a-c2ae-48b6-ac53-0a979c9b7607"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dlzu4\"><b>Autumn/early Winter:</b> Research courses, attend open days, register for CAO</li><li data-block-key=\"2fnnm\"><b>January:</b> CAO closes for normal applications (late applications cost extra)</li><li data-block-key=\"neqr\"><b>Spring:</b> Interviews for PLCs, CAO Change-of-Mind opens</li><li data-block-key=\"daacd\"><b>Summer:</b> Offers (Round 1 CAO in August), PLC offers too. Accept place, pay deposit, start looking for accommodation</li><li data-block-key=\"7nb5n\"><b>September:</b> Registration, orientation, classes start</li></ul>",
+      "id": "a1315428-bbed-41ec-9842-52e59641d5a4"
+    },
+    {
+      "type": "heading",
+      "value": "Finances",
+      "id": "9887ab63-1d92-48fc-9c90-0b0b5c42793b"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dlzu4\"><b>Student Contribution:</b> Around €3,000 per year for undergrads (covered by SUSI grant if eligible)</li><li data-block-key=\"5l7a3\"><b>SUSI Grant:</b> Apply early (opens April) — you’ll need PPS numbers, income documents, and course details</li><li data-block-key=\"28gm4\"><b>Budgeting:</b> Don’t forget rent and rent deposit, utilities, Leap Card for travel, food, books, and a bit of social life</li></ul>",
+      "id": "35da67f4-c347-430e-b8c1-17d9aeea3a8f"
+    },
+    {
+      "type": "heading",
+      "value": "Accommodation",
+      "id": "ff8d4cf2-87ba-489a-94ca-df6144ae93ec"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dlzu4\"><b>on-campus:</b> Apply as soon as the portal opens (often very competitive)</li><li data-block-key=\"bmajo\"><b>private rental:</b> Watch for scams, always view in person or through a trusted source, get a written lease, and keep proof of your deposit</li><li data-block-key=\"12lqu\"><b>other options:</b> Digs or house share can be cheaper and easier to get</li></ul>",
+      "id": "6b0b5ad8-71d9-4bf6-b947-50e560090364"
+    },
+    {
+      "type": "heading",
+      "value": "Getting set up",
+      "id": "6961d697-41a7-4893-b1fa-b0338dc8911f"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dlzu4\"><b>register with your college:</b> Get your student card and email</li><li data-block-key=\"fej3j\"><b>get a Leap Card:</b> Student version for cheaper travel</li><li data-block-key=\"53enq\"><b>open a student bank account</b> if you don’t already have one</li><li data-block-key=\"eqgnj\"><b>get your timetable sorted</b> and download any college apps for attendance and assignments</li></ul>",
+      "id": "33c3aea7-0475-4aca-a6e1-3ef829cd4819"
+    },
+    {
+      "type": "heading",
+      "value": "Making the most of college life",
+      "id": "913cad02-a3a7-4390-8e09-8ffdc40ff9a4"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dlzu4\"><b>attend orientation:</b> it's a great way to meet people and get admin done</li><li data-block-key=\"5a4da\"><b>join a club or society:</b> it's a great way to make friends and try new things</li><li data-block-key=\"977kv\"><b>use supports:</b> careers office, student union, counselling, academic supports — all included in your fees</li><li data-block-key=\"e1lte\"><b>learn the system:</b> get familiar with deadlines, how exams work, and where to get grinds or help if you need it</li></ul>",
+      "id": "27672e77-bcc5-4da6-8a69-01802710b77a"
+    },
+    {
+      "type": "heading",
+      "value": "Checklist for starting out",
+      "id": "7444df00-2094-4284-8d9c-a23a35a034a9"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dlzu4\">CAO number/offer letter or PLC acceptance</li><li data-block-key=\"b7h2b\">PPS Number</li><li data-block-key=\"1lg75\">SUSI grant confirmation (if applicable)</li><li data-block-key=\"dmrr0\">proof of address for bank account/landlord</li><li data-block-key=\"9g98r\">rent deposit</li><li data-block-key=\"8qn91\">Student Leap Card</li><li data-block-key=\"3fpma\">student card/enrolment confirmation</li><li data-block-key=\"9t5qb\">timetable and module choices sorted</li></ul>",
+      "id": "4d91dbe3-44e1-4e80-aacc-038f4e27813f"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.qqi.ie/what-we-do/the-qualifications-system/national-framework-of-qualifications",
+        "link_text": "National Framework of Qualifications"
+      },
+      "id": "f67468e8-2502-432c-a12e-03553913f0ea"
+    }
+  ],
+  "_translation_of": 208321
+}

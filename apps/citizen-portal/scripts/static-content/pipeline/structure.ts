@@ -12,13 +12,7 @@ export function checkStructure(
 }
 
 function checkAliases(tree: ContentTree, issues: IssueCollector): void {
-  const pages = [
-    tree.list.en,
-    ...tree.lifeEvents.flatMap(({ page, journeys }) => [
-      page.en,
-      ...journeys.map((journey) => journey.en),
-    ]),
-  ]
+  const pages = [tree.list.en, ...tree.lifeEvents.map((page) => page.en)]
   for (const page of pages) {
     if (page.meta.alias_of !== null) {
       issues.error({
@@ -31,39 +25,42 @@ function checkAliases(tree: ContentTree, issues: IssueCollector): void {
   }
 }
 
+// A category's key is its block ID, which Wagtail keeps when the landing
+// page is translated.
 function checkCategories(tree: ContentTree, issues: IssueCollector): void {
   const list = tree.list.en
   const document = describePage(list)
-  const lifeEventIds = new Set(tree.lifeEvents.map(({ page }) => page.en.id))
+  const lifeEventIds = new Set(tree.lifeEvents.map((page) => page.en.id))
   const membership = new Map<number, string[]>()
   const keys = new Set<string>()
 
   list.categories.forEach((category, i) => {
-    if (keys.has(category.key)) {
+    const { title, life_events } = category.value
+    if (keys.has(category.id)) {
       issues.error({
         document,
-        path: `categories[${i}].key`,
+        path: `categories[${i}].id`,
         rule: "category-key-unique",
-        message: `category key "${category.key}" is used more than once`,
+        message: `category ID "${category.id}" is used more than once`,
       })
     }
-    keys.add(category.key)
+    keys.add(category.id)
 
-    category.life_events.forEach((id, j) => {
+    life_events.forEach(({ id }, j) => {
       if (!lifeEventIds.has(id)) {
         issues.error({
           document,
-          path: `categories[${i}].life_events[${j}]`,
+          path: `categories[${i}].value.life_events[${j}]`,
           rule: "category-unknown-life-event",
           message: `page ${id} isn't a life event under the list page`,
         })
         return
       }
-      membership.set(id, [...(membership.get(id) ?? []), category.key])
+      membership.set(id, [...(membership.get(id) ?? []), title])
     })
   })
 
-  for (const { page } of tree.lifeEvents) {
+  for (const page of tree.lifeEvents) {
     const categories = membership.get(page.en.id) ?? []
     if (categories.length !== 1) {
       issues.error({
@@ -75,7 +72,7 @@ function checkCategories(tree: ContentTree, issues: IssueCollector): void {
     }
   }
 
-  const gaKeys = new Set(tree.list.ga.categories.map((c) => c.key))
+  const gaKeys = new Set(tree.list.ga.categories.map((c) => c.id))
   const gaDocument = describePage(tree.list.ga)
   for (const key of keys) {
     if (!gaKeys.has(key)) {
@@ -100,21 +97,16 @@ function checkCategories(tree: ContentTree, issues: IssueCollector): void {
 }
 
 function checkSlugs(tree: ContentTree, issues: IssueCollector): void {
-  const lifeEventSlugs = new Set<string>()
-  for (const { page, journeys } of tree.lifeEvents) {
-    checkSlug(page.en, lifeEventSlugs, "life events", issues)
-
-    if (journeys.length === 0) {
+  const slugs = new Set<string>()
+  for (const page of tree.lifeEvents) {
+    checkSlug(page.en, slugs, "life events", issues)
+    if (page.en.services.length === 0) {
       issues.warn({
         document: describePage(page.en),
-        path: "",
-        rule: "life-event-no-journeys",
-        message: "has no journeys; its page shows an empty state",
+        path: "services",
+        rule: "life-event-no-services",
+        message: "has no services; its page shows an empty state",
       })
-    }
-    const journeySlugs = new Set<string>()
-    for (const journey of journeys) {
-      checkSlug(journey.en, journeySlugs, "journeys of its life event", issues)
     }
   }
 }

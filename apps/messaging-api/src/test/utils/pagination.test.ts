@@ -171,17 +171,37 @@ describe("sanitizePagination", () => {
     });
   });
 
-  it("clamps the limit to the maximum", () => {
-    expect(sanitizePagination({ limit: "99999", offset: "0" }).limit).toBe(
-      PAGINATION_MAX_LIMIT.toString(),
+  it("accepts the maximum limit", () => {
+    expect(
+      sanitizePagination({
+        limit: PAGINATION_MAX_LIMIT.toString(),
+        offset: "0",
+      }),
+    ).toEqual({
+      limit: PAGINATION_MAX_LIMIT.toString(),
+      offset: "0",
+    });
+  });
+
+  it("rejects a limit outside the allowed range", () => {
+    expect(() => sanitizePagination({ limit: "99999", offset: "0" })).toThrow(
+      expect.objectContaining({
+        statusCode: 422,
+        message: `Limit must be between ${PAGINATION_MIN_LIMIT} and ${PAGINATION_MAX_LIMIT}`,
+      }),
+    );
+    expect(() => sanitizePagination({ limit: "-5", offset: "0" })).toThrow(
+      expect.objectContaining({ statusCode: 422 }),
     );
   });
 
-  it("clamps the limit and offset to their minimums", () => {
-    const result = sanitizePagination({ limit: "-5", offset: "-10" });
-
-    expect(result.limit).toBe(PAGINATION_MIN_LIMIT.toString());
-    expect(result.offset).toBe(PAGINATION_MIN_OFFSET.toString());
+  it("rejects an offset below the minimum", () => {
+    expect(() => sanitizePagination({ limit: "10", offset: "-10" })).toThrow(
+      expect.objectContaining({
+        statusCode: 422,
+        message: `Offset must be greater than or equal to ${PAGINATION_MIN_OFFSET}`,
+      }),
+    );
   });
 
   it("uses defaults for invalid numbers", () => {

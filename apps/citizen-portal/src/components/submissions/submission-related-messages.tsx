@@ -1,7 +1,7 @@
 "use client"
 
 import { useCrossZoneLink } from "@citizen-portal/shared"
-import { Heading, Paragraph } from "@ogcio/design-system-react"
+import { Alert, Heading, Paragraph } from "@ogcio/design-system-react"
 import { useGatewayFetch } from "@ogcio/sag-client/react"
 import { useLocale, useTranslations } from "next-intl"
 import { useCallback, useMemo } from "react"
@@ -117,7 +117,13 @@ export function SubmissionRelatedMessages({
           </div>
         </>
       ) : (
-        <Paragraph className={styles.relatedEmpty}>{t("empty")}</Paragraph>
+        <div className={styles.relatedEmpty}>
+          <Alert
+            variant='info'
+            title={t("empty")}
+            className={styles.emptyAlert}
+          />
+        </div>
       )}
     </section>
   )

@@ -1,5 +1,5 @@
 /*
- * ponytail: no Heading preset matches Figma Heading-600 (32/40 from 768px,
+ * no Heading preset matches Figma Heading-600 (32/40 from 768px,
  * 24/30 below). Ceiling: citizen-portal page h1s. Upgrade path: delete
  * .pageTitle when Heading ships that size. size-600 is 1.5rem (24px),
  * size-800 is 2rem (32px); line-height-700 is 1.25, so 30px then 40px.

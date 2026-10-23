@@ -17,7 +17,6 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/en/my-submissions",
 }))
 vi.mock("next-intl", () => ({
-  useLocale: () => "en",
   useTranslations: () => (key: string, values?: { message?: string }) =>
     values?.message ? `${key}:${values.message}` : key,
 }))
@@ -35,28 +34,38 @@ vi.mock("@/components/messages/inbox-list-chrome-header", () => ({
   }) => <div>{searchChrome}</div>,
 }))
 vi.mock("@/components/messages/messages-data-table-header", () => ({
-  MessagesDataTableHeader: () => <div>search header</div>,
+  MessagesDataTableHeader: ({
+    searchPlaceholder,
+  }: {
+    searchPlaceholder?: string
+  }) => <div>search header:{searchPlaceholder}</div>,
 }))
 vi.mock("./submission-list-table", () => ({
   SubmissionListTable: ({
-    onSelect,
     onPageSizeChange,
   }: {
-    onSelect: (id: string) => void
     onPageSizeChange: (size: number) => void
   }) => (
-    <>
-      <button type='button' onClick={() => onSelect("submission-1")}>
-        open submission
-      </button>
-      <button type='button' onClick={() => onPageSizeChange(20)}>
-        show 20
-      </button>
-    </>
+    <button type='button' onClick={() => onPageSizeChange(20)}>
+      show 20
+    </button>
   ),
 }))
 vi.mock("@ogcio/design-system-react", () => ({
   Paragraph: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
+  Heading: ({ children }: { children: React.ReactNode }) => <h1>{children}</h1>,
+  Alert: ({
+    title,
+    children,
+  }: {
+    title: string
+    children: React.ReactNode
+  }) => (
+    <div role='alert'>
+      {title}
+      {children}
+    </div>
+  ),
 }))
 
 import { SubmissionListView } from "./submission-list-view"
@@ -73,10 +82,49 @@ describe("SubmissionListView", () => {
     }
   })
 
-  it("opens the selected submission", () => {
+  it("renders the page heading, description and search placeholder", () => {
     render(<SubmissionListView />)
-    fireEvent.click(screen.getByRole("button", { name: "open submission" }))
-    expect(mockPush).toHaveBeenCalledWith("/en/my-submissions?id=submission-1")
+    expect(
+      screen.getByRole("heading", { level: 1, name: "heading" }),
+    ).toBeInTheDocument()
+    expect(screen.getByText("description")).toBeInTheDocument()
+    expect(
+      screen.getByText("search header:search.placeholder"),
+    ).toBeInTheDocument()
+  })
+
+  it("replaces search and table with a banner when there are no applications", () => {
+    state.params = new URLSearchParams()
+    render(<SubmissionListView />)
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "empty.titleempty.description",
+    )
+    expect(screen.queryByText(/search header/)).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole("button", { name: "show 20" }),
+    ).not.toBeInTheDocument()
+  })
+
+  it("keeps the banner while an empty list revalidates", () => {
+    state.params = new URLSearchParams()
+    const { rerender } = render(<SubmissionListView />)
+    state.result = { ...state.result, isLoading: true }
+    rerender(<SubmissionListView />)
+    expect(screen.getByRole("alert")).toBeInTheDocument()
+  })
+
+  it("keeps the list chrome when a search matches nothing", () => {
+    render(<SubmissionListView />)
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+    expect(screen.getByText(/search header/)).toBeInTheDocument()
+  })
+
+  it("does not claim there are no applications when the fetch failed", () => {
+    state.params = new URLSearchParams()
+    state.result.error = new Error("service unavailable")
+    render(<SubmissionListView />)
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+    expect(screen.getByText("error:service unavailable")).toBeInTheDocument()
   })
 
   it("changes the page size while preserving filters and resetting the page", () => {

@@ -8,6 +8,7 @@ import { allPages, discoverTree, findTranslations } from "./discover.ts"
 import { IssueCollector } from "./issues.ts"
 import { buildLinkTargets } from "./links.ts"
 import { mapContent } from "./map.ts"
+import { loadServicePages } from "./services.ts"
 import { checkStructure } from "./structure.ts"
 import { validateTree } from "./validate.ts"
 
@@ -31,7 +32,10 @@ export async function buildDiscoveryContent(options: {
   checkStructure(tree, issues)
   if (issues.hasErrors) return { issues }
 
-  const content = mapContent(tree, buildLinkTargets(tree), issues)
+  const servicePages = await loadServicePages(client, tree, issues)
+  if (issues.hasErrors) return { issues }
+
+  const content = mapContent(tree, buildLinkTargets(tree), servicePages, issues)
   if (issues.hasErrors) return { issues }
 
   // A failure here is a bug in the mapping, not a content error.

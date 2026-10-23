@@ -52,6 +52,58 @@ describe("authentication-factory", () => {
     expect(returnedScheduler?.sayHello).toBe("Hello");
   });
 
+  it("getM2MProfileSdk requests an org token with profile:user:read", async () => {
+    let tokenConfig:
+      | {
+          services?: {
+            profile?: {
+              getOrganizationTokenParams?: {
+                scopes?: string[];
+                organizationId?: string;
+              };
+            };
+          };
+        }
+      | undefined;
+
+    vi.doMock("@ogcio/building-blocks-sdk", () => ({
+      getBuildingBlockSDK: () =>
+        ({
+          profile: { name: "profile" },
+        }) as unknown as BuildingBlocksSDK,
+      getM2MTokenFn: (params: typeof tokenConfig) => {
+        tokenConfig = params;
+        return async () => "token";
+      },
+    }));
+
+    const { getM2MProfileSdk } = await import(
+      "../../utils/authentication-factory.js"
+    );
+    const mockLogger = {
+      info: () => {},
+      error: () => {},
+      warn: () => {},
+      debug: () => {},
+      fatal: () => {},
+      trace: () => {},
+      child: () => mockLogger,
+    } as unknown as FastifyBaseLogger;
+
+    const sdk = (await getM2MProfileSdk(mockLogger, "organizationId")) as {
+      name?: string;
+    };
+
+    expect(sdk.name).toBe("profile");
+    expect(
+      tokenConfig?.services?.profile?.getOrganizationTokenParams?.scopes,
+    ).toEqual(["profile:user:read"]);
+    expect(
+      tokenConfig?.services?.profile?.getOrganizationTokenParams
+        ?.organizationId,
+    ).toBe("organizationId");
+  });
+
   it("ensureUserIdIsSet returns user id", () => {
     expect(
       ensureUserIdIsSet({ userData: { userId: "userId" } }, "DUMMY_PROCESS"),

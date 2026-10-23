@@ -1,0 +1,136 @@
+{
+  "id": 208354,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208353,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208353/",
+        "html_url": null
+      },
+      "title": "Supporting the bereaved - Death of a loved one"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208354/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/supporting-the-bereaved-death-of-a-loved-one/",
+    "slug": "supporting-the-bereaved-death-of-a-loved-one",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:50:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Supporting the bereaved - Death of a loved one",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"zl6ix\">This page will guide you through the legal requirements that need to be fulfilled from the moment someone dies in Ireland.</p><p data-block-key=\"8lfes\">It also directs you to guidance on what to do when an Irish citizen dies while abroad.</p>",
+      "id": "3354a84d-fa60-4d07-86d3-c81eb6431dcf"
+    },
+    {
+      "type": "heading",
+      "value": "Contact relevant authorities",
+      "id": "d75d1bca-1a38-496a-85fe-7af64e939f70"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"zl6ix\">Expected death</h3><p data-block-key=\"fanuf\">If the death occurs at home or elsewhere, such as a hospital or nursing home, a doctor must be contacted to confirm the death and issue a Medical Certificate of Cause of Death (MCDD). This certificate is ordered by the registered medical practitioner.</p><p data-block-key=\"fkeq1\">If the death occurs in a hospital or nursing home, staff usually handle first steps and contact the family.</p><p data-block-key=\"7u6bk\">The MCDD is given to a relative or civil partner of the deceased, or if there are none, to another qualified informant.</p><p data-block-key=\"bl1r9\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/register-a-death-in-ireland/#qualified-informant\">Access a list of qualified informants</a>.</p><h3 data-block-key=\"2essb\">Sudden or unexpected death</h3><p data-block-key=\"9dkka\">If the death is sudden or unexpected, <a href=\"https://www.garda.ie\">An Garda Síochána</a> and <a data-api-url=\"https://api.integration.uat.beta.gov.ie/v2/pages/121119/\" data-page-id=\"121119\" href=\"https://www.uat.beta.gov.ie/ga/an-roinn-dl%C3%AD-agus-cirt-gn%C3%B3tha%C3%AD-baile-agus-imirce/seirbhisi/register-a-death-with-the-coroner/\">the Coroner</a> must be notified.</p><h3 data-block-key=\"494n2\">Death of an Irish citizen abroad</h3><p data-block-key=\"3mg51\">Where an Irish citizen dies abroad and they were ordinarily resident in Ireland within 5 years of their death, it is possible to <a href=\"https://gov.ie/en/department-of-social-protection/services/record-of-death-abroad/\">have the death recorded in the record of deaths abroad</a>.</p>",
+      "id": "281c66d6-9083-4522-9543-f7ac17fc8cee"
+    },
+    {
+      "type": "heading",
+      "value": "Contact a funeral director",
+      "id": "1baa5eae-cbe3-4ff5-8cdc-9cb2cd12d730"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"zl6ix\">Funeral directors are usually contacted soon after the death occurs. They can help collect the body once legally permitted.</p><p data-block-key=\"6rgqt\">They also guide the family through:</p><ul><li data-block-key=\"5nval\">transport of the deceased</li><li data-block-key=\"690he\">care and preparation of the body</li><li data-block-key=\"3vftn\">choosing burial versus cremation</li><li data-block-key=\"dc0pd\">planning the funeral service</li></ul>",
+      "id": "ad16d15f-eb83-43c6-a0a0-db8f4514a8fd"
+    },
+    {
+      "type": "heading",
+      "value": "Register the death",
+      "id": "b75dfd22-df39-447c-94b7-1ff787b5c13c"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"zl6ix\">It is a legal requirement to register the death within three months, but this is usually done much sooner.</p><p data-block-key=\"1q7ni\">The death must be registered at a local Civil Registration Office (CRO).</p><p data-block-key=\"4296a\"><a href=\"https://www2.hse.ie/services/births-deaths-and-marriages/find-a-civil-registration-service/\">Make an appointment at the CRO through the HSE</a>.</p><p data-block-key=\"v1hn\">You need:</p><ul><li data-block-key=\"8210h\">the Medical Certificate of Cause of Death (MCCD)</li><li data-block-key=\"dfs7j\">personal details (full name, date of birth, PPS number, occupation, marital status)</li></ul><p data-block-key=\"bqsgm\">You receive a Death Certificate, which is needed for probate, pensions, banks, and insurance.</p>",
+      "id": "5fbfc106-c534-49c9-a85f-a7ef2da32604"
+    },
+    {
+      "type": "heading",
+      "value": "Order a death certificate",
+      "id": "abc4f003-a9af-41cb-a4a0-3f4df11369a4"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"zl6ix\">While it is free to register a death, ordering a death certificate costs €20.</p><p data-block-key=\"cj32a\"><a href=\"https://forms.uat.services.gov.ie/en/68dced09fd03e507fcdecee0-order-a-death-certificate\">Order a death certificate online</a>.</p><p data-block-key=\"e38f8\">You can also order one from the <a href=\"https://gov.ie/en/department-of-social-protection/campaigns/general-register-office/\">General Register Office</a> by downloading and emailing the below form to <a href=\"mailto:GROonlinepayments@welfare.ie\">GROonlinepayments@welfare.ie</a>.</p><p data-block-key=\"5du8i\"><a data-document-id=\"127008\" href=\"https://assets.uat.beta.gov.ie/static/documents/iarratas-ar-dheimhniu-breithebaispostauchtaithepairtneireachta-sibhialta-r-phoist.pdf\">Application for certificate of Birth/Death/Marriage/Adoption/Civil Partnership (by email)</a></p><p data-block-key=\"a0d18\"><a href=\"https://www.gov.ie/en/department-of-social-protection/campaigns/general-register-office/\">More information on ordering certificates</a>.</p>",
+      "id": "8486a750-d416-41f6-bbf3-f2f136b18ec1"
+    },
+    {
+      "type": "heading",
+      "value": "Settle legal and financial matters",
+      "id": "70c5bc1f-d213-4fa1-b4ce-26686185b776"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"zl6ix\">After the funeral, you need to notify the relevant institutions, such as banks, insurance companies and <a href=\"https://www.revenue.ie\">Revenue</a> connected to the person who has died.</p><p data-block-key=\"54v47\">You need to do this so you can:</p><ul><li data-block-key=\"3i230\">stop or transfer pensions and benefits</li><li data-block-key=\"a0fnd\">close or transfer utilities, property matters and tenancy agreements</li></ul><p data-block-key=\"5i22r\">An executor or solicitor handles the estate.</p><p data-block-key=\"f7fdv\">If no will exists, the estate is distributed under intestacy law.</p>",
+      "id": "6b3c8a7c-35e5-4895-a670-ae22a4c7fce9"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/register-a-death-in-ireland/",
+        "link_text": "Register a death in Ireland"
+      },
+      "id": "529c476d-33c8-47b3-bb22-19f22bd9148e"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-justice-home-affairs-and-migration/services/register-a-death-with-the-coroner/",
+        "link_text": "Register a death with the Coroner"
+      },
+      "id": "a4a02332-73aa-4462-84c9-453a70855feb"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/record-of-death-abroad/",
+        "link_text": "Record of Death Abroad"
+      },
+      "id": "da9bb746-360e-4f5c-a221-811b0d69bec4"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www2.hse.ie/services/civil-registration-services/",
+        "link_text": "Find a civil registration service"
+      },
+      "id": "96a8eecb-0ad7-4d6f-9911-cfc3c74a6b5b"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/campaigns/general-register-office/",
+        "link_text": "General Register Office"
+      },
+      "id": "e9025aee-2823-4c0d-a1be-320af4467daf"
+    }
+  ],
+  "_translation_of": 208353
+}

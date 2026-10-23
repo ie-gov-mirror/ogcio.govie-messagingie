@@ -44,8 +44,8 @@ User Request → Server Component → API Route → Database/Mock Data → Serve
 ```tsx
 // Page Component
 export default function Page({ params }: PageProps<"/[locale]/messages">) {
-  const { locale } = use(params);
-  setRequestLocale(locale);
+  const { locale } = use(params)
+  setRequestLocale(locale)
 
   return (
     <>
@@ -53,26 +53,26 @@ export default function Page({ params }: PageProps<"/[locale]/messages">) {
       <Suspense fallback={<MessagesLoading />}>
         <MessagesComponent
           messages={getMessagesWithAPI()}
-          basePath="/messages"
+          basePath='/messages'
         />
       </Suspense>
     </>
-  );
+  )
 }
 
 // Service Function
 export async function getMessagesWithAPI() {
-  "use cache";
-  cacheTag("messages");
+  "use cache"
+  cacheTag("messages")
   const response = await fetch(`http://localhost:3000/api/messages`, {
     cache: "force-cache",
-  });
-  
+  })
+
   if (!response.ok) {
-    throw new Error(`Failed to fetch messages: ${response.statusText}`);
+    throw new Error(`Failed to fetch messages: ${response.statusText}`)
   }
-  
-  return response.json();
+
+  return response.json()
 }
 ```
 
@@ -126,9 +126,11 @@ User Request → Server Component → Data Source → Server Component → Rende
 
 ```tsx
 // Page Component
-export default function Page({ params }: PageProps<"/[locale]/messages-no-api">) {
-  const { locale } = use(params);
-  setRequestLocale(locale);
+export default function Page({
+  params,
+}: PageProps<"/[locale]/messages-no-api">) {
+  const { locale } = use(params)
+  setRequestLocale(locale)
 
   return (
     <>
@@ -136,19 +138,19 @@ export default function Page({ params }: PageProps<"/[locale]/messages-no-api">)
       <Suspense fallback={<MessagesLoading />}>
         <MessagesComponent
           messages={getMessages()}
-          basePath="/messages-no-api"
+          basePath='/messages-no-api'
         />
       </Suspense>
     </>
-  );
+  )
 }
 
 // Service Function
 export async function getMessages() {
-  "use cache";
-  cacheTag("messages");
-  await simulateWork(); // Simulates database query
-  return { data: (await import("@/mock/messages.json")).default };
+  "use cache"
+  cacheTag("messages")
+  await simulateWork() // Simulates database query
+  return { data: (await import("@/mock/messages.json")).default }
 }
 ```
 
@@ -206,37 +208,36 @@ User Request → Server Component (Shell) → HTML → Client → SWR Hook → A
 ```tsx
 // Page Component (Server)
 export default function Page({ params }: PageProps<"/[locale]/messages-swr">) {
-  const { locale } = use(params);
-  setRequestLocale(locale);
+  const { locale } = use(params)
+  setRequestLocale(locale)
 
   return (
     <>
       <h1>{t("title")}</h1>
       <MessagesComponentSWR />
     </>
-  );
+  )
 }
 
-// Client Component
-"use client";
+// Client Component ("use client")
 export const MessagesComponentSWR = () => {
-  const { data, error, isLoading } = useFetch<Message[]>(`/api/messages`);
+  const { data, error, isLoading } = useFetch<Message[]>(`/api/messages`)
 
   if (isLoading) {
     return (
-      <output aria-label="Loading messages" role="status">
+      <output aria-label='Loading messages' role='status'>
         <div>Loading messages...</div>
       </output>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div role="alert" aria-live="polite">
+      <div role='alert' aria-live='polite'>
         <h2>Error loading messages</h2>
         <p>{error.message}</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -245,8 +246,8 @@ export const MessagesComponentSWR = () => {
         <MessageListView key={message.id} message={message} />
       ))}
     </ul>
-  );
-};
+  )
+}
 ```
 
 ### Key Features
@@ -276,17 +277,17 @@ export const MessagesComponentSWR = () => {
 
 ## Comparison Table
 
-| Feature | SSR with API Routes | SSR without API Routes | Client-Side (SWR) |
-|---------|-------------------|----------------------|------------------|
-| **Initial Load** | Fast (pre-rendered) | Fastest (pre-rendered) | Slower (shell first) |
-| **SEO** | ✅ Excellent | ✅ Excellent | ⚠️ Limited |
-| **API Reusability** | ✅ Yes | ❌ No | ✅ Yes |
-| **Server Load** | High | High | Low |
-| **Interactivity** | Static | Static | ✅ Dynamic |
-| **Caching** | Server cache | Server cache | Client cache (SWR) |
-| **Error Handling** | Server-side | Server-side | Client-side |
-| **Complexity** | Medium | Low | Medium |
-| **Use Case** | Public pages, SEO | Internal pages, speed | Dashboards, real-time |
+| Feature             | SSR with API Routes | SSR without API Routes | Client-Side (SWR)     |
+| ------------------- | ------------------- | ---------------------- | --------------------- |
+| **Initial Load**    | Fast (pre-rendered) | Fastest (pre-rendered) | Slower (shell first)  |
+| **SEO**             | ✅ Excellent        | ✅ Excellent           | ⚠️ Limited            |
+| **API Reusability** | ✅ Yes              | ❌ No                  | ✅ Yes                |
+| **Server Load**     | High                | High                   | Low                   |
+| **Interactivity**   | Static              | Static                 | ✅ Dynamic            |
+| **Caching**         | Server cache        | Server cache           | Client cache (SWR)    |
+| **Error Handling**  | Server-side         | Server-side            | Client-side           |
+| **Complexity**      | Medium              | Low                    | Medium                |
+| **Use Case**        | Public pages, SEO   | Internal pages, speed  | Dashboards, real-time |
 
 ---
 

@@ -18,6 +18,11 @@ type InputTextChangeEvent = React.ChangeEvent<HTMLInputElement> & {
 export interface InboxListSearchFieldProps {
   searchInputTestId?: string
   inputId?: string
+  /** Defaults to the generic "Search" copy. */
+  placeholder?: string
+  ariaLabel?: string
+  /** Shows a trailing magnifier while the field is idle and empty. */
+  showSearchIcon?: boolean
 }
 
 /**
@@ -28,6 +33,9 @@ export interface InboxListSearchFieldProps {
 export const InboxListSearchField = memo(function InboxListSearchField({
   searchInputTestId = "search-input",
   inputId = "inbox-list-search",
+  placeholder,
+  ariaLabel,
+  showSearchIcon = false,
 }: InboxListSearchFieldProps) {
   const tSearch = useTranslations("search")
   const router = useRouter()
@@ -120,9 +128,9 @@ export const InboxListSearchField = memo(function InboxListSearchField({
       data-testid={searchInputTestId}
       id={inputId}
       type='text'
-      placeholder={tSearch("input.placeholder")}
+      placeholder={placeholder ?? tSearch("input.placeholder")}
       value={inputSearch}
-      aria-label={tSearch("button.search")}
+      aria-label={ariaLabel ?? tSearch("button.search")}
       aria-busy={isSearchPending}
       clearButtonEnabled={showClearButton}
       iconEnd={
@@ -133,6 +141,8 @@ export const InboxListSearchField = memo(function InboxListSearchField({
           >
             <CssSpinner size='sm' />
           </span>
+        ) : showSearchIcon && !showClearButton ? (
+          "search"
         ) : undefined
       }
       className={styles.searchInput}

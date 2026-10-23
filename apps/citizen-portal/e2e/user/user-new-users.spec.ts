@@ -1,14 +1,33 @@
-import { expect, test } from "@playwright/test"
+import { type Browser, expect, test } from "@playwright/test"
 import { urls } from "../fixtures"
+import { createPageWithVideo } from "../helpers/browser-context"
 import {
   setSafeLevel,
   setSafeLevelAndUser,
   waitForMockLoginForm,
 } from "../helpers/user-auth.helper"
-import { generateTestData, logout } from "../utils/functions"
+import { generateTestData } from "../utils/functions"
 
 const PROFILE_URL = urls.profile
 const DASHBOARD_URL = urls.dashboard
+
+/**
+ * Signs the same identity back in at level 2 from a new browser session, the
+ * way a citizen returns after upgrading MyGovID.
+ *
+ * Do not reuse the gated tab. Its sessionStorage keeps `sag_onboarding_ts`
+ * from the first login, so the onboarding guard holds the re-login on a
+ * loading shell until 30s after that first redirect (traced on dev: 12s of a
+ * 25s dialog wait). Logging out does not clear sessionStorage; a new
+ * context does.
+ */
+async function signInUpgradedInFreshSession(browser: Browser, email: string) {
+  const page = await createPageWithVideo(browser)
+  await page.goto("/")
+  await waitForMockLoginForm(page)
+  await setSafeLevelAndUser(page, "2", email)
+  return page
+}
 
 test.describe("User Messaging page", () => {
   test.beforeEach(async ({ page }) => {
@@ -47,6 +66,7 @@ test.describe("User Messaging page", () => {
 
   test("a user with safe level 1 can upgrade to safe level 2 to gain full access @regression", async ({
     page,
+    browser,
   }) => {
     const { uuid } = generateTestData()
     const userEmail = `testAccount+${uuid}@mail.ie`
@@ -56,15 +76,14 @@ test.describe("User Messaging page", () => {
         name: "Complete Your MyGovID Account Verification to Proceed",
       }),
     ).toBeVisible()
-    await logout(page)
-    await page.goto("/")
-    await waitForMockLoginForm(page)
-    await setSafeLevelAndUser(page, "2", userEmail)
-    await expect(page.getByRole("dialog")).toBeVisible()
+    const upgraded = await signInUpgradedInFreshSession(browser, userEmail)
+    await expect(upgraded.getByRole("dialog")).toBeVisible()
+    await upgraded.context().close()
   })
 
   test("a user with safe level 0 can upgrade to safe level 2 to gain full access @regression", async ({
     page,
+    browser,
   }) => {
     const { uuid } = generateTestData()
     const userEmail = `testAccount+${uuid}@mail.ie`
@@ -74,17 +93,16 @@ test.describe("User Messaging page", () => {
         name: "Complete Your MyGovID Account Verification to Proceed",
       }),
     ).toBeVisible()
-    await logout(page)
-    await page.goto("/")
-    await waitForMockLoginForm(page)
-    await setSafeLevelAndUser(page, "2", userEmail)
-    await expect(page.getByRole("dialog")).toBeVisible()
+    const upgraded = await signInUpgradedInFreshSession(browser, userEmail)
+    await expect(upgraded.getByRole("dialog")).toBeVisible()
+    await upgraded.context().close()
   })
 
   test("a user with safe level 2 can access the dashboard @regression", async ({
     page,
   }) => {
     await setSafeLevel(page, "2")
+    await expect(page.getByRole("dialog")).toBeVisible()
     await page.goto(`${DASHBOARD_URL}`)
     await expect(page.getByText("Your recent messages")).toBeVisible()
     // locator for dashboard when LEA is disabled  
@@ -119,6 +137,7 @@ test.describe("User Messaging page", () => {
     page,
   }) => {
     await setSafeLevel(page, "2")
+    await expect(page.getByRole("dialog")).toBeVisible()
     await page.goto(`${PROFILE_URL}`)
     await expect(
       page.getByText(

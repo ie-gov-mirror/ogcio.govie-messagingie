@@ -264,23 +264,16 @@ describe("GET - /api/v1/organisations/consent-statements", async () => {
     expect(higherLimitBody.data[49].id).toBe(insertedIds[49]);
     expect(higherLimitBody.metadata.totalCount).toBe(numberOfConsentStatements);
 
-    // Limit is set to higher than max
+    // Limit above the maximum is rejected
     const overflowLimitResponse = await app.inject({
       method: "GET",
       url: "/api/v1/organisations/consent-statements",
       query: { subject: randomSubject, limit: "200" },
     });
 
-    expect(overflowLimitResponse.statusCode).toBe(200);
-    const overflowLimitBody = JSON.parse(overflowLimitResponse.body);
-    expect(overflowLimitBody.data).toBeDefined();
-    expect(overflowLimitBody.data.length).toBe(100);
-    expect(overflowLimitBody.data[0].id).toBe(insertedIds[0]);
-    expect(overflowLimitBody.data[1].id).toBe(insertedIds[1]);
-    expect(overflowLimitBody.data[98].id).toBe(insertedIds[98]);
-    expect(overflowLimitBody.data[99].id).toBe(insertedIds[99]);
-    expect(overflowLimitBody.metadata.totalCount).toBe(
-      numberOfConsentStatements,
+    expect(overflowLimitResponse.statusCode).toBe(422);
+    expect(JSON.parse(overflowLimitResponse.body).detail).toBe(
+      "Limit must be between 1 and 100",
     );
 
     // Smaller pages - First page

@@ -1,7 +1,7 @@
 {
   "id": 1115,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "civil-partnership",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Civil partnership",
+  "highlighted": false,
+  "category": "Relationships",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Civil partnership in Ireland and how it is recognised.</p>",
       "id": "le-1115"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

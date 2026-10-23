@@ -1,0 +1,170 @@
+{
+  "id": 208320,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208319,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208319/",
+        "html_url": null
+      },
+      "title": "Child starting school"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208320/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/child-starting-school/",
+    "slug": "child-starting-school",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:40:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Child starting school",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"buhbh\">To enrol your child in school, there are a number of steps to take. These include gathering documents and filling out applications.</p>",
+      "id": "7364189d-b73f-4d91-bac0-676bf7c1cb4d"
+    },
+    {
+      "type": "heading",
+      "value": "Decide which school you want your child to go to",
+      "id": "6e6d6556-247e-4cdd-adf4-6b6e869aa6a3"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"27xqv\">Search local schools (public, denominational, Gaelscoil, ETB, private/independent) and check distance, ethos, special classes and capacity.</p><p data-block-key=\"793h9\">You can do this through <a href=\"https://www.gov.ie/en/department-of-education/services/find-a-school/\">Find a school</a>.</p><p data-block-key=\"1fnm6\">Then, visit school websites or phone the school office to obtain their admissions policy and the current year’s admissions notice.</p>",
+      "id": "895a287d-671b-4bbf-8cc3-f1ff2f154f9d"
+    },
+    {
+      "type": "heading",
+      "value": "Understand timelines/where to apply",
+      "id": "97b41e60-e586-48d5-92c6-eb33a4a173fc"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"27xqv\">Primary (Junior Infants/Primary 1)</h3><p data-block-key=\"405ci\">Schools typically open applications in the October of the year before your child would start. Check each school’s admissions notice for exact dates. Schools cannot start the formal admission process earlier than 1 October of the year preceding the school year applied for.</p><h3 data-block-key=\"a4k7r\">Post-primary (First Year)</h3><p data-block-key=\"a8boi\">Many areas are piloting a single online application (applytoschool.ie) for first-year places. In the pilot areas applications open 1 October (for next September intake). You need to check whether your local schools are participating.</p><p data-block-key=\"alqcb\">If you are enrolling mid-year or after the admissions period, contact the school directly; some have open enrolment or waiting lists.</p>",
+      "id": "d248cefd-8ee6-4cc1-9592-ad6699050610"
+    },
+    {
+      "type": "heading",
+      "value": "Gather required documents",
+      "id": "bf3e4ad0-171d-4f52-bdbb-501237e01dc6"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"27xqv\">Schools will usually request:</p><ul><li data-block-key=\"fubgu\">child’s full birth certificate</li><li data-block-key=\"2c7rr\">proof of your address</li><li data-block-key=\"9v3i0\">child’s passport / immigration documents if relevant</li><li data-block-key=\"2ona1\">child’s previous school reports (if transferring)</li><li data-block-key=\"ed82h\">PPS Number is sometimes requested</li><li data-block-key=\"5fm6\">any professional assessments/NCSE recommendations for special class placements</li></ul><p data-block-key=\"9j0e3\">Remember, specific document lists vary by school, so always check the school’s admissions form or website.</p>",
+      "id": "431c4222-ad17-4fef-a502-603549ee6cb4"
+    },
+    {
+      "type": "heading",
+      "value": "Complete and submit the application",
+      "id": "a3be2303-dd44-4fe6-84d2-fff0d5011af3"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"27xqv\">Get the official application form</h3><p data-block-key=\"b2mqg\">Download this from the school website or collect from the school office. If your area is in the post-primary pilot, apply via the pilot site for participating schools:</p><ol><li data-block-key=\"9dv3p\">Fill it in carefully and attach the required documents.</li><li data-block-key=\"1vnns\">Submit by the exact closing date stated in the admissions notice (late or early submissions may not be accepted). Schools normally will not accept applications outside their formal admissions application period unless places remain or for mid-year admissions.</li></ol>",
+      "id": "65190343-774a-4d53-bfae-8e720f9a14ba"
+    },
+    {
+      "type": "heading",
+      "value": "After you apply",
+      "id": "f6007f26-61e6-4ff2-a476-f96e1ac7e397"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"27xqv\">Schools will process applications according to their published admission criteria (for example, siblings, proximity, baptism for some denominational schools, and so on). These criteria are set out in each school’s policy.</p><p data-block-key=\"fejg9\">If the school is oversubscribed, your child may be placed on a waiting list. The school must publish how it manages waiting lists.</p>",
+      "id": "bff39c71-3eaf-42b9-a3a3-b7e3d7af0324"
+    },
+    {
+      "type": "heading",
+      "value": "Appealing a decision",
+      "id": "d848c06a-5ed6-417d-b7f3-1a57e2dce074"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"27xqv\">If your child is refused a place, the school will issue a refusal letter explaining the decision and the right to appeal.</p><p data-block-key=\"3k0ck\">You can appeal under the Education (Admission to Schools) Act procedures. Check the refusal letter and the department/government guidance for exact steps and time limits. You can contact the <a href=\"https://www.gov.ie/en/department-of-education/\">Department of Education and Youth</a> for help with appeals.</p>",
+      "id": "48965748-86d1-453d-a939-8aa56caa6d13"
+    },
+    {
+      "type": "heading",
+      "value": "Enrolling to special/additional needs classes",
+      "id": "d411f3af-a39e-4307-a544-98c62a2d8195"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"27xqv\">If applying for a special class (for example, an ASD class), schools will require professional reports and NCSE recommendations.</p><p data-block-key=\"11c1q\">These places are allocated by schools using their published criteria and supporting documentation.</p><p data-block-key=\"2musl\">Make sure to include up-to-date assessment reports with the application.</p>",
+      "id": "188b81be-ded2-4dc9-9f66-8913eea7f3c4"
+    },
+    {
+      "type": "heading",
+      "value": "Mid-year enrolment or arriving after the start of term",
+      "id": "d58479d3-ee7e-4ee2-9714-6abd67f3388a"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"27xqv\">You will need to contact several local schools to ask about available places and waiting lists. Schools sometimes have places available mid-year. Citizens Information has <a href=\"https://www.citizensinformation.ie/en/returning-to-ireland/education-and-schooling/enrolling-your-child-in-a-primary-school-after-returning-to-ireland/\">specific guidance for families returning to Ireland</a>.</p>",
+      "id": "6d3c9146-40b9-45ba-a027-7aa1f4064b29"
+    }
+  ],
+  "services": [
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "internal_link",
+            "value": {
+              "page": 195047,
+              "link_text": "",
+              "url": "https://www.uat.beta.gov.ie/en/govie-team/publications/apply-for-a-school-place/",
+              "api_url": "https://api.integration.uat.beta.gov.ie/v2/pages/195047/"
+            },
+            "id": "05312e1a-6df7-4334-8c42-5dd77b60f238"
+          }
+        ],
+        "description": ""
+      },
+      "id": "805f6fa2-10f1-4065-b2ed-01a2a1ba955b"
+    }
+  ],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-education/services/find-a-school/",
+        "link_text": "Find a school"
+      },
+      "id": "0142d69f-4c02-43fe-8346-aa3ef8bbf853"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-education/publications/apply-to-school---post-primary-pilot/",
+        "link_text": "Apply to school pilot"
+      },
+      "id": "cc71d01f-fc0b-4400-9001-8c75de005249"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.citizensinformation.ie/en/returning-to-ireland/education-and-schooling/enrolling-your-child-in-a-primary-school-after-returning-to-ireland/",
+        "link_text": "Enrol your child in primary school when you return to Ireland"
+      },
+      "id": "336a5bcd-4962-41a3-a209-1f0a8cd57552"
+    }
+  ],
+  "_translation_of": 208319
+}

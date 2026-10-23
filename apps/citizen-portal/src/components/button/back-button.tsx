@@ -15,7 +15,7 @@ export function BackButton() {
     <Link
       noColor
       noUnderline
-      iconStart='chevron_left'
+      iconStart='arrow_back'
       href='#'
       aria-label={t("back")}
       onClick={(e: React.MouseEvent) => {

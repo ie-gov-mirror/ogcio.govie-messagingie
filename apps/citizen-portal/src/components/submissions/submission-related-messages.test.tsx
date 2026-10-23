@@ -34,6 +34,11 @@ vi.mock("@ogcio/design-system-react", async () => {
     Paragraph: ({ children }: { children: React.ReactNode }) => (
       <p>{children}</p>
     ),
+    Alert: ({ title, variant }: { title: string; variant: string }) => (
+      <div role='alert' data-variant={variant}>
+        {title}
+      </div>
+    ),
   }
 })
 vi.mock("@/components/messages/unified-inbox-table", () => ({
@@ -71,9 +76,9 @@ describe("SubmissionRelatedMessages", () => {
     expect(gateway.path).toBe(
       "/messaging-public-api/api/v1/citizens/messages?submissionId=submission+1&limit=50&offset=0",
     )
-    expect(
-      screen.getByText("submissions.detail.related.empty"),
-    ).toBeInTheDocument()
+    const empty = screen.getByRole("alert")
+    expect(empty).toHaveTextContent("submissions.detail.related.empty")
+    expect(empty).toHaveAttribute("data-variant", "info")
     const heading = screen.getByRole("heading", {
       name: "submissions.detail.related.title",
     })

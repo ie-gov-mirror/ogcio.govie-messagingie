@@ -1,0 +1,25 @@
+{
+  "id": 2111,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "slug": "starting-work",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 2000
+    }
+  },
+  "title": "Starting work",
+  "highlighted": false,
+  "category": "Work & Money",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Getting a PPS number, registering for tax and your rights at work.</p>",
+      "id": "le-1111"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 1111
+}

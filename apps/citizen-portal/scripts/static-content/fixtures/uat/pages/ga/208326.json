@@ -1,0 +1,150 @@
+{
+  "id": 208326,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208325,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208325/",
+        "html_url": null
+      },
+      "title": "Accessing social housing"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208326/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/accessing-social-housing/",
+    "slug": "accessing-social-housing",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:41:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Accessing social housing",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"r1l2e\">Local authorities provide social housing support for people who cannot afford to buy their own homes.</p>",
+      "id": "a9b4bd14-0a83-4afa-a7ee-ecc2b8274dc7"
+    },
+    {
+      "type": "heading",
+      "value": "Check if you qualify",
+      "id": "fb098906-56f8-459a-b99c-f0949b34276e"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"r1l2e\">Before applying, you need to meet the basic requirements for social housing support in Ireland. Some of the common eligibility criteria are:</p><ul><li data-block-key=\"3mj4a\">you must have a legal right to reside in Ireland long-term (not just temporary or short-term stay)</li><li data-block-key=\"cjj3e\">your net household income must be below certain thresholds. These thresholds differ by household size and by local authority</li><li data-block-key=\"b0il\">you must demonstrate housing need and that you do not have suitable alternative accommodation</li><li data-block-key=\"3qhdp\">you must be aged 18 or over (or have someone apply on your behalf)</li><li data-block-key=\"bmkmh\">you can only apply to one local authority at a time (the one in the area where you want to live)</li><li data-block-key=\"4pblo\">if the area you want to live in is different from where you currently live, you may need to show a local connection (through family, work, education, medical reasons and so on)</li></ul>",
+      "id": "532f138c-810a-4881-ae82-5993fb17b688"
+    },
+    {
+      "type": "heading",
+      "value": "Identify your local authority and get the right application form",
+      "id": "d299dfa4-f2ff-4e32-aae6-c9ec15e63e40"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"r1l2e\">Online applications</h3><p data-block-key=\"9d8sp\">You can now apply for social housing online through <a href=\"https://forms.uat.services.gov.ie/en/68d2aeea4b6823719dfa81f6-application-form-for-social-ho\">this universal application</a> form that covers all local authorities.</p><h3 data-block-key=\"1aqn\">Offline applications</h3><p data-block-key=\"79vin\">If you would prefer to fill out the application by hand, you can:</p><ul><li data-block-key=\"9gbop\">determine which local authority covers the area in which you want to live (or where your connection is)</li><li data-block-key=\"3ij6h\">get the social housing support application form from that local authority’s website or from their housing department (in person)</li><li data-block-key=\"b8cn\">make sure it is the correct form for that authority. If you use a form for the wrong authority, your application may be returned</li></ul>",
+      "id": "d78016cb-fa23-4d05-80c0-6829780f6e90"
+    },
+    {
+      "type": "heading",
+      "value": "Fill in the application form and gather supporting documents",
+      "id": "0daaa327-f337-4005-8ac2-e265341e8290"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"r1l2e\">When completing the application:</p><ul><li data-block-key=\"b2cff\">fill in all sections that apply. On the paper form, if something does not apply, mark it “N/A” rather than leaving blank</li><li data-block-key=\"f06hr\">you will need to provide PPS numbers for all persons in your household (including children)</li><li data-block-key=\"evo3d\">provide proof of identity, proof of address, proof of income (for example, payslips, social welfare statements, tax statements and so on)</li><li data-block-key=\"8occp\">if applying due to disability or medical circumstances, you should also complete HMD Form 1, parts 1, 2 and 3 (to be completed by you and healthcare professionals)</li><li data-block-key=\"dr4s5\">use the <b>checklist</b> on the front of the application form to ensure you include <i>all</i> required documents</li></ul><p data-block-key=\"bsl6p\">Some local authorities provide tailored checklists, so even if you are applying online, checking the checklist that relates to the correct local authority is a good idea.</p>",
+      "id": "de0dd807-6d58-4058-98d5-d42755c2fbb6"
+    },
+    {
+      "type": "heading",
+      "value": "Submit your application",
+      "id": "d66dc191-7aee-45a0-842b-8670e53c2331"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"r1l2e\">If you are not applying online, submit the completed application form with all supporting documents to the housing section of the local authority (by post or in person):</p><ul><li data-block-key=\"d5u80\">some local authorities strictly do not accept incomplete applications. Incomplete or missing documentation can cause delays or a return of the application</li><li data-block-key=\"dblc0\">keep copies of everything you submit (forms and documents) in case you need to follow up</li></ul>",
+      "id": "7db13ea5-2c6f-4a80-85a5-4af85e3d7de9"
+    },
+    {
+      "type": "heading",
+      "value": "Application assessment by the local authority",
+      "id": "b050342d-aef3-4c36-bb13-9ff3de0b79b2"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"r1l2e\">Once your application is submitted:</p><ul><li data-block-key=\"3os87\">the local authority has 12 weeks (from date they receive a valid, complete application) to assess whether you qualify</li><li data-block-key=\"eh6cs\">if more information or documents are needed, they will contact you. You must respond promptly or your application may be refused</li><li data-block-key=\"63t86\">they will check your eligibility, your income, your housing need and whether you hold a valid connection to the area</li><li data-block-key=\"amvbl\">if approved, you will be placed on the social housing waiting list</li><li data-block-key=\"abjq7\">if refused, they must provide you with the reasons. You may ask for an internal review or appeal the decision</li></ul>",
+      "id": "d36adfcd-5de8-464e-b46d-ed92ffc1b2be"
+    },
+    {
+      "type": "heading",
+      "value": "Allocation of housing",
+      "id": "396f3e0e-f7a8-4ecd-9bfb-3277f0dab258"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"r1l2e\">each local authority has its allocation scheme (often based on points, priority, length of time waiting) to decide who is offered houses first</li><li data-block-key=\"9dev7\">as you wait, your circumstances may change (for example, new child, change in income). You must notify the local authority so they can update your application</li><li data-block-key=\"8cclj\">some local authorities use “Choice Based Letting” systems: you can “express interest” in particular available units</li><li data-block-key=\"711dt\">when a suitable property becomes available, the local authority will offer it to you. You can accept or refuse it. But if you refuse more than one reasonable offer in 12 months, you may be suspended from the list for 12 months</li><li data-block-key=\"4ak7i\">before offering, they will re-check that you still qualify and that the offer is suitable (for example, correct size, accessibility, location and so on)</li></ul>",
+      "id": "3de55372-ab02-4702-8130-f9b77a73424f"
+    },
+    {
+      "type": "heading",
+      "value": "Optional: apply for HAP, if needed, while waiting",
+      "id": "9c3059a6-b920-4f72-890f-451b101c7def"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"r1l2e\">If you're waiting for social housing, you may be eligible for the <a href=\"https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/housing-assistance-payment/\">Housing Assistance Payment (HAP)</a>. This is a support to help with rent in the private sector:</p><ul><li data-block-key=\"7jmn3\">to apply for HAP, you must first be on the local authority’s housing list (for example, have your social housing support application approved)</li><li data-block-key=\"hi0q\">then you fill out the HAP application and submit it to your local authority along with required documents</li><li data-block-key=\"1lf51\">under HAP, your local authority pays the rent to the landlord, and you pay a weekly contribution (differential rent) based on your income</li></ul><p data-block-key=\"94p28\"><b>Note:</b> if you are using HAP, you can still remain on the social housing list (depending on local authority rules).</p>",
+      "id": "dfba5e18-79e1-41b3-a03f-ca22da12f1aa"
+    }
+  ],
+  "services": [
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://forms.uat.services.gov.ie/en/68d2aeea4b6823719dfa81f6-application-form-for-social-ho",
+              "link_text": "Application form for social housing support"
+            },
+            "id": "6f785291-e222-43d1-a606-ac2f4ca286c2"
+          }
+        ],
+        "description": "You can now apply for social housing online through this universal application form that covers all local authorities."
+      },
+      "id": "550228f1-f4ba-4122-8bb1-ceb8e123f654"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-housing-local-government-and-heritage/services/housing-assistance-payment/",
+              "link_text": "Housing Assistance Payment"
+            },
+            "id": "3a691715-3127-46cb-8862-398c12dc7f13"
+          }
+        ],
+        "description": "HAP is a form of social housing support provided by all local authorities. Under HAP, local authorities can provide housing assistance to households with a long-term housing need, including many long-term Rent Supplement recipients."
+      },
+      "id": "8bc75d06-9024-4a0d-adc3-45983fdb0ba3"
+    }
+  ],
+  "guidance": [],
+  "_translation_of": 208325
+}

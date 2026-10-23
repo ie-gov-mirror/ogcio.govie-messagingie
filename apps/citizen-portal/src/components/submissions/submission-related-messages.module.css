@@ -40,6 +40,18 @@
   display: none;
 }
 
+/*
+ * DS fluid columns have a 400px floor, which pushes the four-column grid past
+ * the detail column at narrow desktop widths. Let Details shrink instead.
+ */
+.desktopGrid :global(.gi-table-th-fluid) {
+  min-width: 0;
+}
+
+.emptyAlert {
+  max-width: 57rem;
+}
+
 @media (min-width: 1024px) {
   .desktopGrid {
     display: block;

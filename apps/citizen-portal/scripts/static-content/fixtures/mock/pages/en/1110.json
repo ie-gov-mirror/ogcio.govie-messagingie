@@ -1,7 +1,7 @@
 {
   "id": 1110,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "finding-and-maintaining-a-home",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Finding and Maintaining a Home",
+  "highlighted": false,
+  "category": "Home & Housing",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Grants and supports for keeping your home safe and warm.</p>",
       "id": "le-1110"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

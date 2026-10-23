@@ -1,5 +1,6 @@
 import type { FastifyBaseLogger } from "fastify";
 import type { Pool } from "pg";
+import type { ProviderAcceptance } from "../../types/providers.js";
 import type { SecurityLevels } from "../../types/security-levels.js";
 import { getCurrentUTCDate } from "../../utils/date-times.js";
 import { syncSummaryForMessage } from "./summary-event-logger.js";
@@ -96,6 +97,11 @@ export namespace MessagingEventType {
     key: EventKey.EMAIL_DELIVERY,
     status: EventStatus.FAILED,
   };
+
+  export const emailAccepted: EventType = {
+    key: EventKey.EMAIL_DELIVERY,
+    status: EventStatus.SUCCESSFUL,
+  };
 }
 
 type MessageUpsertEvent = {
@@ -133,14 +139,23 @@ type MessageErrorEvent = {
   details?: string;
 };
 
+// Provider's ID of an accepted email, which bounces and complaints refer to
+type EmailAcceptedEvent = ProviderAcceptance;
+
 type Required = { messageId: string };
 export type MessageEventData = Required &
-  (MessageUpsertEvent | MessageScheduleEvent | MessageErrorEvent);
+  (
+    | MessageUpsertEvent
+    | MessageScheduleEvent
+    | MessageErrorEvent
+    | EmailAcceptedEvent
+  );
 
 export type EventDataAggregation = Required &
   MessageUpsertEvent &
   MessageScheduleEvent &
-  MessageErrorEvent;
+  MessageErrorEvent &
+  EmailAcceptedEvent;
 
 export class MessagingEventLogger {
   private events: {

@@ -1,0 +1,359 @@
+{
+  "id": 207793,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 207792,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207792/",
+        "html_url": null
+      },
+      "title": "Birth of a child"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207793/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/life-service-page-demo/",
+    "slug": "life-service-page-demo",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-06T12:23:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Birth of a child",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"dc0ct\">This page breaks it down into clear steps: before the birth, immediately after giving birth, health and care in the early weeks, employment rights, financial and childcare supports, and other steps you should take.</p>",
+      "id": "441fc003-758d-4a45-a102-c696201e40ba"
+    },
+    {
+      "type": "heading",
+      "value": "Before giving birth",
+      "id": "2ede0190-2de5-4de6-ac73-5b54a258dbee"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"dc0ct\">Sort out work leave</h3><p data-block-key=\"72p9\">Confirm maternity, paternity, or parent's leave dates with your employer.</p><p data-block-key=\"a1put\">You are entitled to paid time-off work to attend any medical visits (also known as <a href=\"https://www2.hse.ie/pregnancy-birth/pregnancy-care/care-appointments/\">antenatal visits or appointments</a>) associated with the pregnancy and to attend a certain number of <a href=\"https://www2.hse.ie/pregnancy-birth/pregnancy-care/antenatal-classes/\">antenatal classes</a>.</p><p data-block-key=\"6htpn\">You may be eligible for <a href=\"https://www.gov.ie/en/department-of-social-protection/services/maternity-benefit/\">Maternity Benefit</a> or <a href=\"https://www.gov.ie/en/department-of-social-protection/services/paternity-benefit/\">Paternity Benefit</a> - but this depends on your previous social insurance (PRSI) contributions.</p><h3 data-block-key=\"k285\">Get baby essentials ready at home</h3><p data-block-key=\"1414m\">These include a cot or bassinet, car seat (this is legally required to bring your baby home), clothes, nappies, and feeding supplies.</p><h3 data-block-key=\"60jv5\">Have a hospital bag ready</h3><p data-block-key=\"89v9b\">This should include clothes for you and your baby, nappies, maternity pads, toiletries, hospital notes, and proof of ID.</p><p data-block-key=\"ap283\"><a href=\"https://www2.hse.ie/pregnancy-birth/labour/preparing/hospital-bag/\">Guidance on hospital bags from the HSE</a>.</p><h3 data-block-key=\"8dgp8\">Plan your hospital trip</h3><p data-block-key=\"6alvf\">Decide how you'll get to the hospital, for example, by car or taxi. Make sure you can access transport whenever you'll need it.</p><p data-block-key=\"7krpv\">Save phone numbers for the hospital.</p>",
+      "id": "73d73042-5376-47cf-b97a-026e2f6aee2d"
+    },
+    {
+      "type": "heading",
+      "value": "Immediately after birth",
+      "id": "f06c13bf-216f-44d1-96cc-88abe4e54ef0"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"dc0ct\">Register the birth</h3><p data-block-key=\"6766s\">The hospital gives you a Birth Notification Form.</p><p data-block-key=\"6652k\">You should register the birth of your baby within 3 months of their birth. If you meet <a href=\"https://www.gov.ie/en/department-of-social-protection/services/register-a-birth-in-ireland/#how-to-register-a-birth-online\">certain criteria</a>, you can <a href=\"https://civilregistration.mywelfare.ie/\">register the birth online</a>. Otherwise, you should register the birth at <a href=\"https://www2.hse.ie/services/births-deaths-and-marriages/find-a-civil-registration-service/\">your local Civil Registration Service</a>.</p><p data-block-key=\"1b8it\">You should also <a href=\"https://forms.uat.services.gov.ie/en/67dbe89f14f22400128523b2-order-a-birth-certificate\">order copies of the birth certificate</a>.</p><h3 data-block-key=\"ava6r\">Get your baby's PPS Number</h3><p data-block-key=\"b31m8\">This is automatically issued after you register the birth.</p><p data-block-key=\"2j1p\">You'll need this for benefits, health services, and childcare supports.</p><h3 data-block-key=\"eatvi\">Apply for Child Benefit</h3><p data-block-key=\"9qcrr\">This is <a href=\"https://www.gov.ie/en/department-of-social-protection/services/child-benefit/\">a monthly payment of €140 per child</a>.</p><p data-block-key=\"29qjf\">To apply, you'll need your baby's PPS Number.</p>",
+      "id": "682c4d30-bf3f-453a-9988-8bc7c9344efd"
+    },
+    {
+      "type": "heading",
+      "value": "Health and care in the first weeks",
+      "id": "f7b5b27e-6ec1-433c-9b91-1805eca1e325"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"dc0ct\">Register with a GP</h3><p data-block-key=\"2b1h2\">Let your GP know about your new baby.</p><p data-block-key=\"ajs33\">Register online for a <a href=\"https://www2.hse.ie/services/schemes-allowances/gp-visit-cards/under-8s/\">GP Visit Card</a>. This covers free GP visits for children under 8 years old.</p><h3 data-block-key=\"99ick\">Public Health Nurse visit</h3><p data-block-key=\"83h8u\">A nurse will call to check on feeding, development, and your recovery.</p><h3 data-block-key=\"a28tu\">Vaccinations</h3><p data-block-key=\"donb9\">These start at 2 months old.</p><p data-block-key=\"ckid1\">Appointments are arranged through your GP or HSE clinic.</p><p data-block-key=\"1nesu\"><a href=\"https://www2.hse.ie/babies-children/vaccines-your-child/\">Information on vaccines from the HSE</a>.</p>",
+      "id": "ec2d1475-e108-40c7-b348-c093b14ce58b"
+    },
+    {
+      "type": "heading",
+      "value": "Employment rights",
+      "id": "deb8936c-cad6-4fa8-88a3-ca7d23b1afde"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"dc0ct\">Maternity leave</h3><p data-block-key=\"8l8k0\">Paid maternity leave last for 26 weeks, and you can have another 16 weeks unpaid.</p><p data-block-key=\"19kd2\">If you have enough PRSI contributions, you can claim <a href=\"https://www.gov.ie/en/department-of-social-protection/services/maternity-benefit/\">Maternity Benefit</a>.</p><h3 data-block-key=\"dq0ic\">Paternity leave</h3><p data-block-key=\"1teem\">Paternity leave lasts for 2 weeks within the first 6 months.</p><p data-block-key=\"2gvnb\">If you meet certain PRSI conditions, you can claim paid <a href=\"https://www.gov.ie/en/department-of-social-protection/services/paternity-benefit/\">Paternity Benefit</a>.</p><h3 data-block-key=\"alg88\">Parent's leave</h3><p data-block-key=\"a9tv5\">Parent's leave lasts 9 weeks per parent. This can be taken any time in the first 2 years.</p><p data-block-key=\"1vuoi\">You may be eligible for <a href=\"https://www.gov.ie/en/department-of-social-protection/services/parents-benefit/\">Parent's Benefit</a>.</p><h3 data-block-key=\"20lkl\">Parental leave (unpaid)</h3><p data-block-key=\"81lbm\">As a parent, you are entitled to up to 26 weeks per parent, per child, before your child turns 12.</p>",
+      "id": "626f4b80-46ff-4c06-ba18-aad102cbc640"
+    },
+    {
+      "type": "heading",
+      "value": "Financial supports",
+      "id": "d074abdc-fb80-4505-9ccf-0e881d6a7a48"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"dc0ct\">Child Benefit</h3><p data-block-key=\"8a2l2\">This is a ‘universal’ payment. This means you can get it regardless of your income and PRSI record.</p><p data-block-key=\"89kr3\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/child-benefit/\">More information on Child Benefit</a>.</p><h3 data-block-key=\"11p8e\">Working Family Payment</h3><p data-block-key=\"48oct\">This is for families on low to middle incomes.</p><p data-block-key=\"3g6q0\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/working-family-payment-wfp/\">More information on the Working Family Payment</a>.</p><h3 data-block-key=\"apfqg\">Back to School Clothing and Footwear Allowance</h3><p data-block-key=\"7qquh\">This is a payment to help you meet the costs of uniforms and footwear for when your child is going to school.</p><p data-block-key=\"5q60i\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/back-to-school-clothing-and-footwear-allowance/\">More information on the Back to School Clothing and Footwear Allowance</a>.</p><h3 data-block-key=\"3sfil\">Other supports</h3><p data-block-key=\"16dk2\">Depending on family circumstances, you may be eligible for other payments such as the <a href=\"https://www.gov.ie/en/department-of-social-protection/services/one-parent-family-payment/\">One-Parent Family Payment</a> and <a href=\"https://www.gov.ie/en/department-of-social-protection/services/basic-supplementary-welfare-allowance/\">Supplementary Welfare Allowance</a>.</p>",
+      "id": "f034d001-b131-4d3c-b4d7-3078508a9589"
+    },
+    {
+      "type": "heading",
+      "value": "Childcare supports",
+      "id": "76594b7c-ebbe-47f7-9d71-873073ee1fb8"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"dc0ct\">National Childcare Scheme (NCS)</h3><p data-block-key=\"3s8o\">The <a href=\"https://www.ncs.gov.ie/en/\">NCS</a> provides financial support to help you with early learning and childcare costs.</p><h3 data-block-key=\"bk5af\">Early Childhood Care and Education (ECCE) Scheme</h3><p data-block-key=\"1gb8t\">The <a href=\"https://www.gov.ie/en/department-of-children-disability-and-equality/publications/early-childhood-care-and-education-programme-ecce/\">ECCE Scheme</a> provides two free preschool years from age 2 years 8 months until primary school.</p><h3 data-block-key=\"cq8qe\">Local community schemes</h3><p data-block-key=\"e10gs\">Some <a href=\"https://www.gov.ie/en/department-of-children-disability-and-equality/publications/city-and-county-childcare-committees/\">councils and centres</a> provide additional supports depending on income and location.</p>",
+      "id": "886068ec-add7-417a-a8e3-f174f6ef1a70"
+    },
+    {
+      "type": "heading",
+      "value": "Other practical steps",
+      "id": "907998fb-b91c-4413-91fc-f1ef08cdd6f0"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"dc0ct\">add your baby to any private health insurance policy</li><li data-block-key=\"8t50\"><a href=\"https://www.ireland.ie/en/dfa/passports/how-to-apply-for-a-passport/first-child-passport/\">apply for a passport</a> if you plan to travel</li></ul>",
+      "id": "e5e6fc15-a9f9-445a-a055-fcbb3e38030f"
+    }
+  ],
+  "services": [
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/maternity-benefit/",
+              "link_text": "Maternity Benefit"
+            },
+            "id": "58cce5c1-a271-4e44-b824-19d2f3f57475"
+          }
+        ],
+        "description": "A payment for employed and self-employed people who are on maternity leave from work and covered by social insurance (PRSI). On full-rate Maternity Benefit, you get €262 a week for 26 weeks."
+      },
+      "id": "4c9dd9dd-d78e-443c-9406-454347c6278f"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/paternity-benefit/",
+              "link_text": "Paternity Benefit"
+            },
+            "id": "589517cc-98b6-40a3-a6f2-2b5a2e70415d"
+          }
+        ],
+        "description": "Paternity Benefit is a payment to people who are on paternity leave from work and covered by social insurance. It is €262 a week, for two weeks."
+      },
+      "id": "894d7689-93a9-45d9-afff-30b87b508c40"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www2.hse.ie/services/births-deaths-and-marriages/order/birth-certificate/",
+              "link_text": "Order a birth certificate"
+            },
+            "id": "c5290819-9b36-4dc7-af74-a79ceaa8d749"
+          }
+        ],
+        "description": "You can order a long-form birth certificate online and the HSE will post it to you. This is a certified copy of an entry in the register. You can use it for legal and administrative purposes."
+      },
+      "id": "9e40e05d-b1e2-44fb-a83d-e56c02ba064a"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/child-benefit/",
+              "link_text": "Child Benefit"
+            },
+            "id": "16b6e901-b854-403a-a986-57da520b00b0"
+          }
+        ],
+        "description": "Child Benefit is €140 paid monthly to help parents and guardians. It is paid for each child who lives with you, is under 16, or under 18 in full-time education. Twins or multiple births get a higher rate."
+      },
+      "id": "9428156b-17a9-4090-a2c3-73bacf88fb6f"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www2.hse.ie/services/schemes-allowances/gp-visit-cards/under-8s/",
+              "link_text": "Under 8s GP visit card"
+            },
+            "id": "a9e98e94-3534-4caa-bf7b-ce1c5909f261"
+          }
+        ],
+        "description": "All children under 8 years of age living in Ireland can get a GP visit card."
+      },
+      "id": "d7cad099-807a-493c-bd77-66e814fe1879"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/parents-benefit/",
+              "link_text": "Parent's Benefit"
+            },
+            "id": "0ba2b3ba-f536-40da-a095-793eab6fde32"
+          }
+        ],
+        "description": "Parent’s Benefit is currently €274 a week for seven weeks. Parent’s Benefit can be paid in weekly blocks or over a consecutive 7 week period. Parents can take 7 weeks together or separately."
+      },
+      "id": "aae74819-5371-487b-8f8c-5c3c99708982"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/working-family-payment-wfp/",
+              "link_text": "Working Family Payment (WFP)"
+            },
+            "id": "41a31afd-1eee-48a2-adc9-fba3256b9298"
+          }
+        ],
+        "description": "The Working Family Payment is a weekly, tax-free payment available to employees with children. It gives extra financial support to families with children with rates depending on their incomes."
+      },
+      "id": "43f5d712-8b7c-486e-a467-11e3772877b9"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/back-to-school-clothing-and-footwear-allowance/",
+              "link_text": "Back to School Clothing and Footwear Allowance"
+            },
+            "id": "df812857-2e43-40f1-80e0-b222d3aa289d"
+          }
+        ],
+        "description": "This is a once-off payment to help with the costs of clothing and footwear when school starts each autumn."
+      },
+      "id": "b6db4400-7919-4cc9-8a55-504eb428cb1c"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/one-parent-family-payment/",
+              "link_text": "One-Parent Family Payment"
+            },
+            "id": "e87137cd-53bd-4680-aad8-3d6a9e0dad6e"
+          }
+        ],
+        "description": "One-Parent Family Payment is a payment for parents under 66 who are not cohabiting, and whose youngest child is under 7. The maximum weekly rate for One-Parent Family Payment is €220."
+      },
+      "id": "4fc42706-a5b0-4110-89fe-4ca85d88a2f8"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/basic-supplementary-welfare-allowance/",
+              "link_text": "Basic Supplementary Welfare Allowance"
+            },
+            "id": "aac82a23-dc94-414d-8c56-da74c6e4af8a"
+          }
+        ],
+        "description": "Basic Supplementary Welfare Allowance is a weekly allowance paid to people who do not have enough income to meet their needs and those of their families. The maximum personal rate is €218 a week."
+      },
+      "id": "75b35117-8dfd-45ca-8497-d16893df93c9"
+    }
+  ],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www2.hse.ie/pregnancy-birth/pregnancy-care/antenatal-classes/",
+        "link_text": "Antenatal classes"
+      },
+      "id": "a1449b25-bfb6-4d36-8c17-9c436e4d4a01"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www2.hse.ie/pregnancy-birth/pregnancy-care/care-appointments/",
+        "link_text": "Antenatal and maternity care appointments"
+      },
+      "id": "71bf292e-148d-49fe-8b86-d54161276794"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www2.hse.ie/pregnancy-birth/labour/preparing/hospital-bag/",
+        "link_text": "Hospital bag for labour and birth"
+      },
+      "id": "f978fc90-7f55-4daa-9dc2-200305e1c2ff"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/register-a-birth-in-ireland/#how-to-register-a-birth-online",
+        "link_text": "How to register a birth online"
+      },
+      "id": "51e89205-a2d4-4d38-bf14-5a2bfa60487f"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www2.hse.ie/services/civil-registration-services/",
+        "link_text": "Find a civil registration service"
+      },
+      "id": "9fed2ec3-4e63-40bf-b691-5a7a8b600686"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www2.hse.ie/babies-children/vaccines-your-child/",
+        "link_text": "Vaccines for your child"
+      },
+      "id": "cf4d9109-a049-44ba-86ef-735f48ac1f8e"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.ncs.gov.ie/en/",
+        "link_text": "National Childcare Scheme (NCS)"
+      },
+      "id": "5c5394fd-1777-430f-a460-21229a49c883"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-children-disability-and-equality/publications/early-childhood-care-and-education-programme-ecce/",
+        "link_text": "Early Childhood Care and Education Programme (ECCE)"
+      },
+      "id": "a645868d-09c7-4ec3-999a-aa4186335811"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.ireland.ie/en/dfa/passports/how-to-apply-for-a-passport/first-child-passport/",
+        "link_text": "Getting first passport for a child"
+      },
+      "id": "905689a0-9cdb-4215-84d9-c1bc009c8eda"
+    }
+  ],
+  "_translation_of": 207792
+}

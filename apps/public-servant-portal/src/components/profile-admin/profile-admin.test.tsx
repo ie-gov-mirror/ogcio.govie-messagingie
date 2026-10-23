@@ -97,6 +97,7 @@ vi.mock("@unleash/proxy-client-react", () => ({
 }))
 
 vi.mock("@ogcio/sag-client/react", () => ({
+  CONNECTOR_ENTRAID: "social:OGCIO EntraID",
   PROFILE_PUBLIC_SERVANT_ROLE_NAME: "Profile Public Servant",
   SagClientProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
@@ -281,9 +282,10 @@ describe("profile-admin root components", () => {
 
     await waitFor(() => expect(authState.signIn).toHaveBeenCalledOnce())
     expect(authState.signIn).toHaveBeenCalledWith({
+      connector: "social:OGCIO EntraID",
       redirectUrl: window.location.href,
     })
-    expect(document.cookie).toContain("connectorsToShow=ogcio-entraid")
+    expect(document.cookie).not.toContain("connectorsToShow")
   })
 
   it("restores the saved eligible organization", async () => {

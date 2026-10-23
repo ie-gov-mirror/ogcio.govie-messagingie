@@ -9,6 +9,7 @@ import {
   AddPermissionsRequestBodySchema,
 } from "./schema.js";
 import addFileSharing from "./utils/addFileSharing.js";
+import { ensureShareTargetProfilesExist } from "./utils/ensureShareTargetProfilesExist.js";
 import getFileSharings from "./utils/getFileSharings.js";
 import removeFileSharing from "./utils/removeFileSharing.js";
 
@@ -44,6 +45,11 @@ export default async function routes(app: FastifyInstance) {
       // DELETE and GET handlers below already perform, closing the write-side
       // gap where any `upload:file:write` caller could share an arbitrary file.
       await userCanAccessFileOrThrow(app, request, fileId);
+      await ensureShareTargetProfilesExist({
+        organizationId: request.userData?.organizationId,
+        userIds: sharedWith,
+        logger: request.log,
+      });
 
       await addFileSharing(app.pg, request.body);
 

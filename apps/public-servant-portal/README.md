@@ -16,10 +16,11 @@ two `server_name`s, per-zone `ClientShell` picked at runtime by
 
 - Client-side auth only, via `@ogcio/sag-client/react` (no server-side
   auth, no middleware).
-- Public-servant sign-in: `signIn()` runs with no connector, so SAG
-  forwards a plain Logto sign-in. The shell writes a
-  `connectorsToShow=ogcio-entraid` cookie so Logto's chooser only shows
-  the EntraID button.
+- Public-servant sign-in: both zones call
+  `signIn({ connector: CONNECTOR_ENTRAID, redirectUrl })`. SAG maps that
+  to Logto `direct_sign_in`. The Entra connector sends
+  `prompt=select_account`, so the account picker appears instead of a
+  silent Microsoft reauth. The portal does not set `connectorsToShow`.
 - Per-zone `SagClientProvider` is mounted by the
   `AuthenticatedShellDispatcher` (see `components/authenticated-shell-dispatcher.tsx`)
   once JS reads `window.location.hostname`, so each zone talks to SAG
@@ -93,7 +94,6 @@ curl -H "Host: profile-admin.local.test"   http://localhost:8080/health
 ```
 
 And in a browser:
-
 - http://messaging-admin.local.test:8080/
 - http://profile-admin.local.test:8080/
 

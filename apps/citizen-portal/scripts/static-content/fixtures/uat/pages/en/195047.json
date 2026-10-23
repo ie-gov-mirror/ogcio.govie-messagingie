@@ -1,0 +1,86 @@
+{
+  "id": 195047,
+  "title": "Apply for a school place",
+  "meta": {
+    "type": "publication.PublicationPage",
+    "locale": "en",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/195047/",
+    "html_url": "https://www.uat.beta.gov.ie/en/govie-team/publications/apply-for-a-school-place/",
+    "slug": "apply-for-a-school-place",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-07-14T16:11:00+01:00",
+    "parent": {
+      "id": 3119,
+      "meta": {
+        "type": "publication.PublicationIndex",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/3119/",
+        "html_url": null
+      },
+      "title": "Publications"
+    }
+  },
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"v8xgm\">Use this service to apply for a post-primary school place for your child in one of the five pilot regions for the 2026/27 school year.</p>",
+      "id": "e680413c-acc3-4c86-9dff-e734be54c36f"
+    },
+    {
+      "type": "heading",
+      "value": "Getting ready to apply",
+      "id": "4c333e26-4c1b-4afc-bb39-fdeabab14287"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"v8xgm\">Before you start, you will need:</p><ul><li data-block-key=\"arco8\">Your child's PPS number and date of birth</li><li data-block-key=\"190hl\">Your child's birth certificate (JPG, PDF, PNG or TIFF · max 10MB)</li><li data-block-key=\"d7k8q\">Two proofs of address dated within the last 30 days (utility bills, bank statements)</li><li data-block-key=\"djh10\">If applying for a Special Class place: a professional diagnosis report and NCSE confirmation letter</li></ul>",
+      "id": "0a11c02c-8882-4e97-bba8-c2fee54d4589"
+    },
+    {
+      "type": "button_link",
+      "value": [
+        {
+          "type": "external_link",
+          "value": {
+            "link_url": "https://journey.uat.services.gov.ie/journey/72aedb34-b95a-4fd8-8e7d-2ad749e2a8e5",
+            "link_text": "Start application"
+          },
+          "id": "0ad3f7d2-5e57-44eb-9e07-655ef96dfaaf"
+        }
+      ],
+      "id": "bb25543a-dbc2-45a2-bde8-be9b86c52c95"
+    },
+    {
+      "type": "heading",
+      "value": "How long it takes:",
+      "id": "612c6140-64e7-4ce9-ae4f-83b165ffb524"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"v8xgm\">This application takes approximately 20–25 minutes to complete. You cannot save and return, have everything ready before you begin.</p>",
+      "id": "1fa9b009-4bec-4b47-bfaf-2df5eaf32473"
+    },
+    {
+      "type": "heading",
+      "value": "Application window:",
+      "id": "cfb719b9-eb24-4636-ba56-12f08e269b23"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"v8xgm\">Applications for the 2026/27 school year open 1 October and close 22 October 2026. Applications submitted after this date will not be accepted.</p>",
+      "id": "de46e331-8ad1-4cd6-9281-b9fffdd0601e"
+    },
+    {
+      "type": "heading",
+      "value": "What happens next:",
+      "id": "d3ff0ded-93df-49d4-9350-55ee5ee7e46b"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"guszv\">Round 1 offers will be issued on 12 November 2026</li><li data-block-key=\"4lde9\">Round 2 offers will be issued on 4 December 2026</li></ul><p data-block-key=\"cs46v\">You'll receive an email when a decision is available. Follow the link in the email to read your decision securely in your Digital Postbox.</p>",
+      "id": "653c040c-1cb7-4018-bdda-ecf9e03003ee"
+    }
+  ]
+}

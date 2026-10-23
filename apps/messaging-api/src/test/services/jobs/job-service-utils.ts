@@ -68,16 +68,18 @@ export async function insertMockMessage({
   organizationId,
   transports,
   securityLevel,
+  subject,
 }: {
   pool: Pool;
   organizationId: string;
   transports: AvailableTransports[];
   securityLevel?: SecurityLevels;
+  subject?: string;
 }): Promise<{ id: string; user_id: string; organisation_id: string }> {
   const valueArray = [
     false,
     randomUUID().substring(0, 11),
-    "subject",
+    subject ?? "subject",
     "Exc",
     "plain",
     "rich",

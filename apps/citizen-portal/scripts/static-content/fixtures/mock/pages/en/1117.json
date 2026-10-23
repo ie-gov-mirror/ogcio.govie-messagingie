@@ -1,7 +1,7 @@
 {
   "id": 1117,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "developing-a-life-altering-illness",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Developing a Life-Altering Illness",
+  "highlighted": false,
+  "category": "Health & Care",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Medical cards, illness payments and care supports.</p>",
       "id": "le-1117"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

@@ -1,7 +1,7 @@
 {
   "id": 1104,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "child-starting-school",
     "locale": "en",
     "alias_of": null,
@@ -10,13 +10,127 @@
     }
   },
   "title": "Child starting school",
-  "summary": "Enrolling a child in primary school, the supports available, and what to do if you do not get a place.",
   "highlighted": true,
+  "category": "Education & Learning",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Enrolling a child in primary school, the supports available, and what to do if you do not get a place. Most families start this in the year before their child starts school.</p>",
       "id": "le-1104"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p>For older children moving on from secondary school, see <a href=\"https://www.gov.ie/en/life-events/transition-from-secondary-to-tertiary-education/\" data-page-id=\"1105\" data-api-url=\"https://api.example.gov.ie/v2/pages/1105/\">Transition from Secondary to Tertiary Education</a>.</p>",
+      "id": "le-1104-p2"
+    }
+  ],
+  "services": [
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://journey.uat.services.gov.ie/journey/d48b8b19-7c36-4f90-b9a0-94daaf9e73a4",
+              "link_text": "Apply for a school place"
+            },
+            "id": "le-1104-s1201-link"
+          }
+        ],
+        "description": "Apply for a primary school place in one of the five pilot regions. Takes 20 to 25 minutes and cannot be saved part-way."
+      },
+      "id": "le-1104-s1201"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/service/school-transport-scheme/",
+              "link_text": "Apply for the School Transport Scheme"
+            },
+            "id": "le-1104-s1202-link"
+          }
+        ],
+        "description": "Bus transport to the nearest school, where your child is eligible."
+      },
+      "id": "le-1104-s1202"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/service/back-to-school-clothing-and-footwear-allowance/",
+              "link_text": "Apply for the Back to School Clothing and Footwear Allowance"
+            },
+            "id": "le-1104-s1203-link"
+          }
+        ],
+        "description": "A payment towards uniforms and shoes for the school year."
+      },
+      "id": "le-1104-s1203"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/service/assessment-of-special-educational-needs/",
+              "link_text": "Request an assessment of special educational needs"
+            },
+            "id": "le-1104-s1204-link"
+          }
+        ],
+        "description": "Arrange support before your child starts school."
+      },
+      "id": "le-1104-s1204"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "internal_link",
+            "value": {
+              "page": 3001,
+              "link_text": "",
+              "url": "https://www.gov.ie/en/publication/appeal-a-refusal-of-admission/",
+              "api_url": "https://api.example.gov.ie/v2/pages/3001/"
+            },
+            "id": "le-1104-s1205-link"
+          }
+        ],
+        "description": "If a school has refused your child a place under section 29."
+      },
+      "id": "le-1104-s1205"
+    }
+  ],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/publication/choosing-a-primary-school/",
+        "link_text": "Choosing a primary school"
+      },
+      "id": "le-1104-g1"
+    },
+    {
+      "type": "internal_link",
+      "value": {
+        "page": 1105,
+        "link_text": "",
+        "url": "https://www.gov.ie/en/life-events/transition-from-secondary-to-tertiary-education/",
+        "api_url": "https://api.example.gov.ie/v2/pages/1105/"
+      },
+      "id": "le-1104-g2"
     }
   ]
 }

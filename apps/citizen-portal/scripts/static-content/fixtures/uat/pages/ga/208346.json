@@ -1,0 +1,115 @@
+{
+  "id": 208346,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208345,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208345/",
+        "html_url": null
+      },
+      "title": "Developing a life-altering illness"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208346/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/developing-a-life-altering-illness/",
+    "slug": "developing-a-life-altering-illness",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:43:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Developing a life-altering illness",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ycu29\">There are a number of government services available to anyone who faces an illness that will change their life.</p>",
+      "id": "f9cedf89-c4b3-4682-8177-497afe693011"
+    },
+    {
+      "type": "heading",
+      "value": "Start a medical paper trail",
+      "id": "83ea1682-1299-4b93-b4b9-d1256dc7a718"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ycu29\">Contact your general practitioner (GP) and ask for:</p><ul><li data-block-key=\"2v5bd\">diagnosis/summary letter (or referral letters)</li><li data-block-key=\"andtd\">medical certificates (“certified unfit for work”) if you’re stopping work</li></ul><p data-block-key=\"eiq88\">If you have been referred to the hospital, ask your consultant or clinic for:</p><ul><li data-block-key=\"d0r3n\">consultant letters</li><li data-block-key=\"3c5kk\">treatment plan</li><li data-block-key=\"2mvuc\">expected duration</li><li data-block-key=\"6lheg\">functional impact</li></ul><p data-block-key=\"1jq37\">Most government supports require medical evidence (Illness Benefit, Disability Allowance, medical card assessments and so on).</p>",
+      "id": "aea0bb51-f4cd-461c-88d7-6127b6cd9165"
+    },
+    {
+      "type": "heading",
+      "value": "If you’re working and need income support, start with employer",
+      "id": "73d5fae7-823d-459d-9e11-453baf31cbbd"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ycu29\">Ask your employer or HR department about:</p><ul><li data-block-key=\"bk24g\">company sick pay</li><li data-block-key=\"1pal4\">occupational schemes</li><li data-block-key=\"brves\">income protection insurance</li></ul><p data-block-key=\"13jh3\">If you think your workplace isn’t following the rules, look to the Workplace Relations Commission (WRC) for guidance on sick leave.</p>",
+      "id": "c8e2aeca-6b8d-4231-aa1d-3365f475faa3"
+    },
+    {
+      "type": "heading",
+      "value": "Apply to the Department of Social Protection for the right payment",
+      "id": "98ff218b-6ce9-4fc6-a0bb-466d643f92ed"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ycu29\">In Ireland, most illness/disability payments run through the Department of Social Protection (DSP), usually via MyWelfare and MyGovID or your local Intreo Centre.</p><p data-block-key=\"8sshd\">If you have a short-term illness and you’re temporarily unfit for work, you need to apply for Illness Benefit. You can apply online or request forms.</p><p data-block-key=\"4cika\">If you need in-person or local help, contact your local Intreo Centre.</p><p data-block-key=\"12atu\">If your illness has a long-term or permanent impact and you can’t work, you need to check:</p><ul><li data-block-key=\"beord\">Invalidity Pension (PRSI-based, long-term)</li><li data-block-key=\"d7krr\">Disability Allowance (means-tested; also available to people who may not have enough PRSI)</li></ul><p data-block-key=\"d4eio\">If you can return to work but are not at full capacity, you can apply for Partial Capacity Benefit.</p><p data-block-key=\"ct2pt\">If your illness creates extra costs or you’re stuck waiting on a decision, contact the Community Welfare Service for Supplementary Welfare Allowance.</p><p data-block-key=\"59ttm\">This is often the fastest route for emergency/exceptional expenses (rent issues, travel costs, essential once-off needs, and so on).</p>",
+      "id": "65b960ee-9e96-4116-b3d4-c9db09453094"
+    },
+    {
+      "type": "heading",
+      "value": "Reduce healthcare costs",
+      "id": "52a7b1a4-f4f6-43c2-bac0-49ee462bc4f7"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"ycu29\">Apply for a Medical Card (or GP Visit Card)</h3><p data-block-key=\"d0prh\">You can apply online through the HSE portal but there are also phone and postal options.</p><h3 data-block-key=\"cdg70\">Drugs Payment Scheme (DPS)</h3><p data-block-key=\"asr0p\">If you don’t have a medical card, you can apply for the Drugs Payment Scheme (DPS). The DPS caps what you pay per month for approved prescribed drugs and medicine.</p><h3 data-block-key=\"6cqkl\">Long-Term Illness (LTI) Scheme</h3><p data-block-key=\"301lb\">If your condition is on the approved list, you can apply for the Long-Term Illness (LTI) Scheme. It provides certain medicines and appliances free for specific long-term conditions.</p>",
+      "id": "56007eed-5562-4a94-97de-22af3960654f"
+    },
+    {
+      "type": "heading",
+      "value": "Contact Revenue to claim tax relief for medical expenses",
+      "id": "43d3edbe-89e5-4d64-a3e7-f86b9fa8f1c1"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ycu29\">If you’ve paid tax, you may be able to claim tax relief on qualifying health expenses.</p>",
+      "id": "45353654-8310-4595-ae53-f6a92fe75cfa"
+    },
+    {
+      "type": "heading",
+      "value": "Practical help and advocacy (public bodies)",
+      "id": "1262c0a8-a5a0-4f3c-bbcf-95753b69a90b"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"ycu29\">Citizens Information (illness/disability payments and how to apply)</h3><p data-block-key=\"1g9ai\">Get guided, case-by-case help (forms + what you qualify for).</p><h3 data-block-key=\"22rsq\">MABS (Money Advice and Budgeting Service) contact routes</h3><p data-block-key=\"7iu5j\">If money/debt becomes an issue.</p><h3 data-block-key=\"an9j0\">Carer’s Allowance (DSP)</h3><p data-block-key=\"ejkpe\">If you’re caring for someone (or will need a carer)</p>",
+      "id": "9504ddc7-9b99-4a58-8055-74d10c408f17"
+    },
+    {
+      "type": "heading",
+      "value": "Set up access to online services through MyGovID and MyWelfare",
+      "id": "8925f803-c416-4ea5-b562-3744a8f94c74"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ycu29\">Many DSP applications are easier/quicker online:</p><ul><li data-block-key=\"dhbj2\">how to sign up for MyGovID</li><li data-block-key=\"csfle\">how to verify your MyGovID (needed for many applications)</li><li data-block-key=\"2bbdb\">MyWelfare health/disability/illness services area</li></ul>",
+      "id": "84d53311-b7e2-4738-aa44-9da4a7cda126"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 208345
+}

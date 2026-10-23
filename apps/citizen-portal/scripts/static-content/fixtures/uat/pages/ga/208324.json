@@ -1,0 +1,154 @@
+{
+  "id": 208324,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208323,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208323/",
+        "html_url": null
+      },
+      "title": "Learn to drive"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208324/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/owningdriving-a-vehicle/",
+    "slug": "owningdriving-a-vehicle",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:40:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Learn to drive",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"hmws3\">Everything you need to know about learning to drive in Ireland, including:</p><ul><li data-block-key=\"21cbj\">types of licence</li><li data-block-key=\"2buoe\">the theory test</li><li data-block-key=\"6jjan\">getting a learner permit</li><li data-block-key=\"f42b1\">the driving test</li></ul>",
+      "id": "146e3b3f-22f3-45b2-9a84-4219b0153306"
+    },
+    {
+      "type": "heading",
+      "value": "Types of licence",
+      "id": "b5ed079f-31bf-4d47-8f97-b3b1cf4f6143"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"hmws3\">There are 15 different licence categories covering all vehicle types and these fall into two main groups:</p><ul><li data-block-key=\"8i1ck\"><b>Group 1 licence categories</b> (cars, motorcycles and works vehicles) can be licensed for up to 10 years, subject to age and medical requirements</li><li data-block-key=\"4ph93\"><b>Group 2</b> <b>licence categories</b> (buses and trucks) must be renewed every 5 years</li></ul><p data-block-key=\"5lfrs\">The most common licence issued is a Category B licence, which can be held by anyone over 17. The category B licence covers cars and light vans.</p><p data-block-key=\"bcdfj\">The category W licence covers work vehicles, like tractors, and can be held by anyone over 16.</p>",
+      "id": "7bdf9d7e-5de0-4eec-b207-4a2e8e0ba48a"
+    },
+    {
+      "type": "heading",
+      "value": "Theory test",
+      "id": "f49f9421-a83b-445c-ad44-cf083aefc39c"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"hmws3\">Before you can take lessons or start practicing driving, you must pass the official driver's theory test. The test covers the Rules of the Road, risk perception, eco-driving, hazard awareness, and safe driving behaviour.</p><p data-block-key=\"d7hl8\">You can book an appointment to sit your driver theory test at one of <a href=\"https://theorytest.ie/wp-content/uploads/theory-test-ireland-test-centre-location-map-051017.pdf\">40 test centre locations</a> nationwide. Before sitting the test, you should familiarise yourself with the <a href=\"https://theorytest.ie/revision-material/\">official RSA material</a>.</p><p data-block-key=\"b69eu\">On the day of your test, you must bring one of the following forms of photo identification:</p><ul><li data-block-key=\"f728r\">Public Services Card (with photograph)</li><li data-block-key=\"7oj89\">Passports (valid for international use only or up to maximum 12 months expired)</li><li data-block-key=\"bd37g\">Irish Passport Cards (in good condition)</li><li data-block-key=\"238jr\">National Identity Card from EU/EEA Member States or Switzerland</li><li data-block-key=\"fqdlr\">a valid Irish Category B (Car) or Category A (Motorcycle) Learner Permit or Full Driving Licence</li><li data-block-key=\"32f8t\">Irish Travel Document</li><li data-block-key=\"23bfq\">current Ukraine driving licence</li></ul><p data-block-key=\"9r077\">If you need special assistance, you can contact the Driver Theory Test Service on 0818 606 106 (English) or 0818 606 806 (Irish).</p>",
+      "id": "34c7df44-0b1d-4af4-86d2-7b2a83fc7e54"
+    },
+    {
+      "type": "heading",
+      "value": "Learner permit",
+      "id": "1f23eab7-0eb3-4b57-a5f0-a1f8c067f70e"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"hmws3\">Upon passing your theory test, you can apply for a learner permit.</p><p data-block-key=\"c9kq0\">With a learner permit, you can drive on all public roads, except motorways, provided you:</p><ul><li data-block-key=\"eh82d\">are accompanied by an Approved Driving Instructor (ADI)</li><li data-block-key=\"4a8rt\">are someone who has held a valid driving licence in the same category for more than two years</li><li data-block-key=\"o090\">display L-plates at all times</li></ul><p data-block-key=\"4krn\">If you are a first-time learner permit holder, you must wait six months and complete <a href=\"https://www.rsa.ie/services/learner-drivers/driving-lessons/car-driving-lessons-(edt)\">Essential Driver Training (EDT)</a> or <a href=\"https://www.rsa.ie/services/learner-drivers/driving-lessons/motorcycling-lessons-(ibt)\">Initial Basic Training (IBT)</a> before applying for a driving test.</p><p data-block-key=\"9f42a\">A first and second learner permit are normally valid for two years. You must have booked or sat and failed the driving test before you can apply for a third permit.</p><p data-block-key=\"b168r\">If you have sat and failed a driving test in the previous two years, you will be issued with a two-year learner permit.</p><p data-block-key=\"8qkta\">If you have booked or have an upcoming driving test, you will be issued with a one-year learner permit.</p>",
+      "id": "4f6a5360-758e-428a-a8ab-7d6c8972f27f"
+    },
+    {
+      "type": "heading",
+      "value": "Driving lessons and practice",
+      "id": "9c66d187-bf96-4098-8b4d-3f582b82dd57"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"hmws3\">Essential Driver Training (EDT) is a training programme that car learner drivers have to complete. It involves 12 one-hour sessions with an Approved Driving Instructor (ADI), or 6 sessions if you're eligible for reduced EDT. You must hold a first-time learner permit for at least six months and complete all EDT sessions before you can take the driving test.</p><p data-block-key=\"9gis\"><a href=\"https://www.rsa.ie/services/learner-drivers/driving-lessons/car-driving-lessons-(edt)\">Learn more about EDT</a>.</p>",
+      "id": "9c60afae-f93c-4145-ba8e-8b32d8217680"
+    },
+    {
+      "type": "heading",
+      "value": "Driving test",
+      "id": "81d13d24-7d91-4535-9a2e-9ccd1b29f2c1"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"hmws3\">Your driving test will be held at one of many driving test centres across Ireland. It typically takes about 65 minutes to complete, and costs €85.</p><p data-block-key=\"3e7ge\">For the test, you will:</p><ul><li data-block-key=\"dloud\">drive approximately 8km</li><li data-block-key=\"bks5q\">answer questions on the Rules of the Road</li><li data-block-key=\"9iofi\">identify road signs</li><li data-block-key=\"8597c\">demonstrate hand signals</li><li data-block-key=\"bld2g\">make manoeuvres like reversing around a corner, turnabouts and hill starts</li><li data-block-key=\"87cmn\">road positioning, overtaking and passing</li><li data-block-key=\"3n083\">use of mirrors and signals</li><li data-block-key=\"63gmg\">compliance with traffic lights, road signs and markings</li><li data-block-key=\"9gn68\">vehicle controls (accelerator, clutch, gears, brakes and steering), and secondary controls (wipers, de-misters)</li></ul><p data-block-key=\"5f274\"><a href=\"https://www.rsa.ie/services/learner-drivers/the-driving-test\">Learn more about the driving test</a>.</p>",
+      "id": "f96dd893-cf8c-49c5-9991-bffff3683015"
+    },
+    {
+      "type": "heading",
+      "value": "Driving Licence",
+      "id": "91ca4250-34f6-4709-9092-db3d8c9ec092"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"hmws3\">When you pass the driving test you're issued with a certificate of competency. This is valid for up to two years. You must apply for a driving licence within that time. This allows you to drive on all public roads, including motorways. You can apply for your driving licence online or in person at any National Driving Licence Service (NDLS) centre.</p><p data-block-key=\"eijet\">After passing your test and getting your first driving licence, you are considered a novice driver and must display N plates for 2 years.</p><p data-block-key=\"d61nf\">As a novice driver, you:</p><ul><li data-block-key=\"rc2\">must display N-plates</li><li data-block-key=\"8daq4\">cannot act an accompanying driver for a learner driver</li><li data-block-key=\"41o1g\">have a lower threshold of blood alcohol concentration (20mg) and a lower threshold of seven penalty points leading to disqualification</li></ul><p data-block-key=\"22fks\"><a href=\"https://www.rsa.ie/services/licensed-drivers/driving-licence\">Learn more about the driving licence</a>.</p>",
+      "id": "f28f680b-4c89-432b-a769-da246f0977a1"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://theorytest.ie/revision-material/",
+        "link_text": "Official Driver Theory Test Revision Material"
+      },
+      "id": "211eba0d-d3b7-418b-a325-1ce149685c9c"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://theorytest.ie/book-your-theory-test/",
+        "link_text": "Book your Theory Test"
+      },
+      "id": "77fcf576-0d6a-4ef6-aa0b-7b5a509fa9af"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.rsa.ie/services/learner-drivers/driving-lessons/car-driving-lessons-(edt)",
+        "link_text": "Car driving lessons (EDT)"
+      },
+      "id": "0cbcad03-fa04-45cf-b01e-30c414521b5e"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.rsa.ie/services/learner-drivers/driving-lessons/motorcycling-lessons-(ibt)",
+        "link_text": "Motorcycle Riding Lessons (IBT)"
+      },
+      "id": "c4470fe2-ffdf-4f21-947b-6cf3dd398e09"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.rsa.ie/services/learner-drivers/the-driving-test",
+        "link_text": "Driving test"
+      },
+      "id": "3fac31fd-554d-4c23-93f8-ba38064d3a1a"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.rsa.ie/services/licensed-drivers/driving-licence",
+        "link_text": "Driving licence"
+      },
+      "id": "b9621d02-578d-442a-851b-1f8b63e921bc"
+    }
+  ],
+  "_translation_of": 208323
+}

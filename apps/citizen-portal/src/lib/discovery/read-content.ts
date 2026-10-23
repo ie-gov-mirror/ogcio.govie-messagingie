@@ -5,6 +5,8 @@ import {
   discoveryContentSchema,
   discoveryLocaleSchema,
   type LifeEvent,
+  type Service,
+  type ServiceDetail,
   STATIC_CONTENT_FILES,
 } from "./content-model.ts"
 
@@ -29,4 +31,15 @@ export function getLifeEvent(
   const lifeEvent = discovery.lifeEvents.find((le) => le.slug === slug)
   if (!lifeEvent) throw new Error(`Unknown life event "${slug}"`)
   return lifeEvent
+}
+
+export function getService(
+  lifeEvent: LifeEvent,
+  slug: string,
+): Service & { detail: ServiceDetail } {
+  const service = lifeEvent.services.find((item) => item.detail?.slug === slug)
+  if (!service?.detail) {
+    throw new Error(`Unknown service "${lifeEvent.slug}/${slug}"`)
+  }
+  return { ...service, detail: service.detail }
 }

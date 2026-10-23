@@ -1,7 +1,7 @@
 {
   "id": 1109,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "buying-or-renting",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Buying or renting",
+  "highlighted": false,
+  "category": "Home & Housing",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Schemes and rights for buyers and tenants.</p>",
       "id": "le-1109"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

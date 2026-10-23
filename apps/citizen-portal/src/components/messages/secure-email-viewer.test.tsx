@@ -3,34 +3,30 @@ import { describe, expect, it } from "vitest"
 import { SecureEmailViewer } from "./secure-email-viewer"
 
 describe("SecureEmailViewer", () => {
-  it("isolates email HTML in a sandboxed, no-referrer document", () => {
+  it("renders message HTML in the page", () => {
     render(<SecureEmailViewer content='<p>Account update</p>' />)
-    const iframe = screen.getByTitle("Secure email content viewer")
-    const srcDoc = iframe.getAttribute("srcdoc")
 
-    expect(iframe).toHaveAttribute("sandbox")
-    expect(iframe).toHaveAttribute("referrerpolicy", "no-referrer")
-    expect((iframe as HTMLIFrameElement).style.flex).toBe("1 1 auto")
-    expect((iframe as HTMLIFrameElement).style.minHeight).toBe(
-      "min(30rem, 50vh)",
-    )
-    expect((iframe as HTMLIFrameElement).style.height).toBe("")
-    expect(srcDoc).toContain("<p>Account update</p>")
-    expect(srcDoc).toContain("default-src 'none'")
-    expect(srcDoc).toContain("form-action 'none'")
-    expect(srcDoc).not.toContain("<script")
+    expect(screen.getByText("Account update").tagName).toBe("P")
+    expect(document.querySelector("iframe")).toBeNull()
   })
 
-  it("opens message links outside the sandboxed document", () => {
+  it("strips script markup before rendering", () => {
+    const { container } = render(
+      <SecureEmailViewer content='<p>Hi</p><script>alert(1)</script><img src=x onerror=alert(1)>' />,
+    )
+
+    expect(screen.getByText("Hi").tagName).toBe("P")
+    expect(container.innerHTML).not.toContain("<script")
+    expect(container.innerHTML).not.toContain("onerror")
+  })
+
+  it("leaves message links to navigate in the page", () => {
     render(
       <SecureEmailViewer content='<a href="https://forms.example/download">Download</a>' />,
     )
-    const iframe = screen.getByTitle("Secure email content viewer")
+    const link = screen.getByRole("link", { name: "Download" })
 
-    expect(iframe).toHaveAttribute(
-      "sandbox",
-      "allow-popups allow-popups-to-escape-sandbox",
-    )
-    expect(iframe.getAttribute("srcdoc")).toContain('<base target="_blank">')
+    expect(link).toHaveAttribute("href", "https://forms.example/download")
+    expect(link).not.toHaveAttribute("target")
   })
 })

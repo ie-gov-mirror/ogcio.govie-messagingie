@@ -31,26 +31,35 @@
     }
   },
   "submissions": {
-    "heading": "D'aighneachtaí",
+    "heading": "Aighneachtaí",
+    "description": "Rianaigh d'aighneachtaí agus féach ar nuashonruithe ó na heagraíochtaí atá ag plé leo.",
     "loading": "Ag lódáil aighneachtaí",
     "error": "Earráid agus aighneachtaí á lódáil: {message}",
+    "search": {
+      "placeholder": "Cuardaigh de réir Aitheantais nó Teidil",
+      "ariaLabel": "Cuardaigh aighneachtaí"
+    },
     "empty": {
-      "all": "Níl aon aighneacht agat go fóill.",
+      "title": "Níl aon aighneacht agat",
+      "description": "Nuair a dhéanann tú iarratas ar sheirbhís trí gov.ie, beidh d'aighneacht le feiceáil anseo.",
+      "all": "Níl aon aighneacht agat.",
       "search": "Níl aon aighneacht a mheaitseálann do chuardach."
     },
     "table": {
       "column": {
-        "id": "Aitheantas",
-        "submission": "Aighneacht",
+        "title": "Teideal",
         "status": "Stádas",
-        "date": "Dáta"
+        "date": "Nuashonrú deireanach",
+        "id": "Aitheantas aighneachta"
       },
+      "idLabel": "Aitheantas {id}",
+      "lastUpdate": "Nuashonrú deireanach {date}",
       "aria": {
         "submissionList": "Liosta aighneachtaí"
       }
     },
     "status": {
-      "initiated": "Tosaithe",
+      "initiated": "Dréacht",
       "submitted": "Curtha isteach",
       "processing": "Á phróiseáil",
       "completed": "Críochnaithe",
@@ -64,19 +73,16 @@
       "link": "Féach ar gach aighneacht"
     },
     "detail": {
-      "heading": "Sonraí na haighneachta",
       "loading": "Ag lódáil aighneachta",
       "notFound": "Aighneacht gan aimsiú",
       "toolbarAriaLabel": "Gníomhartha aighneachta",
-      "submissionFor": "Aighneacht le haghaidh",
-      "description": "Cur síos",
-      "id": "Aitheantas",
-      "startDate": "Dáta tosaithe",
+      "applicationStatus": "Stádas na haighneachta",
+      "lastUpdate": "Nuashonrú deireanach",
       "submittedDate": "Dáta a cuireadh isteach",
-      "status": "Stádas",
+      "id": "Aitheantas aighneachta",
       "related": {
         "title": "Teachtaireachtaí gaolmhara",
-        "empty": "Níl aon teachtaireacht a bhaineann leis an aighneacht seo.",
+        "empty": "Níl aon teachtaireacht agat faoin aighneacht seo",
         "attachment": "Tá ceangaltán ann",
         "read": "Léite",
         "unread": "Gan léamh"
@@ -477,6 +483,7 @@
     "summary": "Catagóirí: {categories} · Imeachtaí saoil: {lifeEvents}",
     "lifeEventLabel": "Imeacht saoil · {category}",
     "services": "Seirbhísí",
+    "guidance": "Treoir",
     "servicesCount": "{count, plural, =0 {Níl aon seirbhísí san imeacht saoil seo fós} other {Seirbhísí san imeacht saoil seo: #}}"
   }
 }

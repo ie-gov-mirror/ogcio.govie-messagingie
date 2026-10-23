@@ -1,0 +1,25 @@
+{
+  "id": 2106,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "slug": "owning-driving-a-vehicle",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 2000
+    }
+  },
+  "title": "Owning/Driving a Vehicle",
+  "highlighted": false,
+  "category": "Travel & Transport",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Learner permits, driving licences, motor tax and vehicle registration.</p>",
+      "id": "le-1106"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 1106
+}

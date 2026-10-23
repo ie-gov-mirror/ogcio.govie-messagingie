@@ -1,0 +1,237 @@
+{
+  "id": 2000,
+  "meta": {
+    "type": "life_events.LifeEventsLandingPage",
+    "slug": "life-events",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": null
+  },
+  "title": "Life events",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Choose the moment you are dealing with. Each one lists the services, guidance and payments involved.</p>",
+      "id": "list-intro"
+    }
+  ],
+  "categories": [
+    {
+      "type": "category",
+      "value": {
+        "title": "Family & Children",
+        "icon": "child_care",
+        "life_events": [
+          {
+            "id": 2101,
+            "title": "Birth of a Child",
+            "url": "https://www.gov.ie/ga/life-events/birth-of-a-child/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2101/"
+          },
+          {
+            "id": 2102,
+            "title": "Child Adoption",
+            "url": "https://www.gov.ie/ga/life-events/child-adoption/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2102/"
+          },
+          {
+            "id": 2103,
+            "title": "Become an Adult",
+            "url": "https://www.gov.ie/ga/life-events/become-an-adult/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2103/"
+          }
+        ]
+      },
+      "id": "category-family"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Education & Learning",
+        "icon": "school",
+        "life_events": [
+          {
+            "id": 2104,
+            "title": "Child starting school",
+            "url": "https://www.gov.ie/ga/life-events/child-starting-school/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2104/"
+          },
+          {
+            "id": 2105,
+            "title": "Transition from Secondary to Tertiary Education",
+            "url": "https://www.gov.ie/ga/life-events/transition-from-secondary-to-tertiary-education/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2105/"
+          }
+        ]
+      },
+      "id": "category-education"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Travel & Transport",
+        "icon": "directions_car",
+        "life_events": [
+          {
+            "id": 2106,
+            "title": "Owning/Driving a Vehicle",
+            "url": "https://www.gov.ie/ga/life-events/owning-driving-a-vehicle/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2106/"
+          }
+        ]
+      },
+      "id": "category-transport"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Home & Housing",
+        "icon": "home",
+        "life_events": [
+          {
+            "id": 2107,
+            "title": "Accessing Social Housing",
+            "url": "https://www.gov.ie/ga/life-events/accessing-social-housing/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2107/"
+          },
+          {
+            "id": 2108,
+            "title": "Moving home",
+            "url": "https://www.gov.ie/ga/life-events/moving-home/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2108/"
+          },
+          {
+            "id": 2109,
+            "title": "Buying or renting",
+            "url": "https://www.gov.ie/ga/life-events/buying-or-renting/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2109/"
+          },
+          {
+            "id": 2110,
+            "title": "Finding and Maintaining a Home",
+            "url": "https://www.gov.ie/ga/life-events/finding-and-maintaining-a-home/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2110/"
+          }
+        ]
+      },
+      "id": "category-housing"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Work & Money",
+        "icon": "work",
+        "life_events": [
+          {
+            "id": 2111,
+            "title": "Starting work",
+            "url": "https://www.gov.ie/ga/life-events/starting-work/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2111/"
+          },
+          {
+            "id": 2112,
+            "title": "Losing a job",
+            "url": "https://www.gov.ie/ga/life-events/losing-a-job/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2112/"
+          },
+          {
+            "id": 2113,
+            "title": "Starting a business",
+            "url": "https://www.gov.ie/ga/life-events/starting-a-business/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2113/"
+          }
+        ]
+      },
+      "id": "category-work"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Relationships",
+        "icon": "person_check",
+        "life_events": [
+          {
+            "id": 2114,
+            "title": "Marriage",
+            "url": "https://www.gov.ie/ga/life-events/marriage/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2114/"
+          },
+          {
+            "id": 2115,
+            "title": "Civil partnership",
+            "url": "https://www.gov.ie/ga/life-events/civil-partnership/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2115/"
+          },
+          {
+            "id": 2116,
+            "title": "Marriage Dissolution - Separation/Divorce",
+            "url": "https://www.gov.ie/ga/life-events/marriage-dissolution-separation-divorce/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2116/"
+          }
+        ]
+      },
+      "id": "category-relationships"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Health & Care",
+        "icon": "health_and_safety",
+        "life_events": [
+          {
+            "id": 2117,
+            "title": "Developing a Life-Altering Illness",
+            "url": "https://www.gov.ie/ga/life-events/developing-a-life-altering-illness/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2117/"
+          },
+          {
+            "id": 2118,
+            "title": "Becoming a carer",
+            "url": "https://www.gov.ie/ga/life-events/becoming-a-carer/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2118/"
+          }
+        ]
+      },
+      "id": "category-health"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Later Life",
+        "icon": "blind",
+        "life_events": [
+          {
+            "id": 2119,
+            "title": "Retirement",
+            "url": "https://www.gov.ie/ga/life-events/retirement/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2119/"
+          },
+          {
+            "id": 2120,
+            "title": "Pension",
+            "url": "https://www.gov.ie/ga/life-events/pension/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2120/"
+          }
+        ]
+      },
+      "id": "category-later-life"
+    },
+    {
+      "type": "category",
+      "value": {
+        "title": "Bereavement",
+        "icon": "local_florist",
+        "life_events": [
+          {
+            "id": 2121,
+            "title": "Supporting the bereaved - Death of a loved one",
+            "url": "https://www.gov.ie/ga/life-events/supporting-the-bereaved-death-of-a-loved-one/",
+            "api_url": "https://api.example.gov.ie/v2/pages/2121/"
+          }
+        ]
+      },
+      "id": "category-bereavement"
+    }
+  ],
+  "_translation_of": 1000
+}

@@ -1,7 +1,0 @@
-# k6 test artifacts
-*.json
-*.html
-!package.json
-summary.txt
-run-*/**/*
-benchmark-*/**/*

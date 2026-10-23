@@ -32,12 +32,7 @@ test.describe("User Messages page", () => {
     await expect(
       page.getByRole("heading", { name: "Test Subject" }),
     ).toBeVisible()
-    await expect(
-      page
-        .locator('iframe[title="Secure email content viewer"]')
-        .contentFrame()
-        .getByText("Test rich text"),
-    ).toBeVisible()
+    await expect(page.getByText("Test rich text")).toBeVisible()
   })
 
   test("a user can open a message attachment @smoke @regression", async () => {

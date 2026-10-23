@@ -9,14 +9,14 @@ in this PR touches it).
 Facts the build pipeline already commits to (do not change on the k8s side without changing the
 pipeline too):
 
-| Thing | Value | Source |
-| --- | --- | --- |
-| Image name | `bb-messaging-public-servant-portal` | `.azure/pipeline-public-servant-portal.yml` (`services[].imageName`) |
-| ECR registry | `428528001781.dkr.ecr.eu-west-1.amazonaws.com` | `.azure/pipeline-variables/*.yml` (`ecrEndpoint`) |
-| Overlays path | `public-servant-portal/overlays/$(clusterName)/$(overlaysDirectory)` → `…/non-prod-02/dev`, `…/non-prod-02/uat`, `…/prod-02/prod` | `services[].overlaysPath` |
-| Container port | `8080` (nginx, unprivileged) | `apps/public-servant-portal/Dockerfile` (`PORT` default) |
-| Release tag (prod image tag) | `public-servant-portal-v<version>` | `release-please/public-servant-portal.config.json` |
-| Served hostnames | `messaging-admin.<env>.services.gov.ie` **and** `profile-admin.<env>.services.gov.ie` | `MESSAGING_ADMIN_HOST` / `PROFILE_ADMIN_HOST` build args (`publicServantPortalMessagingAdminHost` / `publicServantPortalProfileAdminHost`) |
+| Thing                        | Value                                                                                                                             | Source                                                                                                                                     |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Image name                   | `bb-messaging-public-servant-portal`                                                                                              | `.azure/pipeline-public-servant-portal.yml` (`services[].imageName`)                                                                       |
+| ECR registry                 | `428528001781.dkr.ecr.eu-west-1.amazonaws.com`                                                                                    | `.azure/pipeline-variables/*.yml` (`ecrEndpoint`)                                                                                          |
+| Overlays path                | `public-servant-portal/overlays/$(clusterName)/$(overlaysDirectory)` → `…/non-prod-02/dev`, `…/non-prod-02/uat`, `…/prod-02/prod` | `services[].overlaysPath`                                                                                                                  |
+| Container port               | `8080` (nginx, unprivileged)                                                                                                      | `apps/public-servant-portal/Dockerfile` (`PORT` default)                                                                                   |
+| Release tag (prod image tag) | `public-servant-portal-v<version>`                                                                                                | `release-please/public-servant-portal.config.json`                                                                                         |
+| Served hostnames             | `messaging-admin.<env>.services.gov.ie` **and** `profile-admin.<env>.services.gov.ie`                                             | `MESSAGING_ADMIN_HOST` / `PROFILE_ADMIN_HOST` build args (`publicServantPortalMessagingAdminHost` / `publicServantPortalProfileAdminHost`) |
 
 ## 1. New `public-servant-portal/base/` (copy `citizen-portal/base/`, not `admin-next/base/`)
 
@@ -25,7 +25,6 @@ pipeline too):
 HTTP `/api/health` probes — its probe and port conventions do **not** apply here.
 
 Create:
-
 - `base/deployment.yaml` — name `public-servant-portal`, container `public-servant-portal`,
   `image: public-servant-portal` (placeholder replaced by the overlay `images:` entry),
   `containerPort: 8080` named `http`, `envFrom` configMap `public-servant-portal`,
@@ -48,14 +47,13 @@ Create:
 
 Three overlays, mirroring `citizen-portal/overlays/`:
 
-| Overlay dir | Namespace | Image tag |
-| --- | --- | --- |
-| `public-servant-portal/overlays/non-prod-02/dev` | `messaging-public-servant-portal-dev` | build-id sentinel, rewritten by the pipeline GitOps step |
-| `public-servant-portal/overlays/non-prod-02/uat` | `messaging-public-servant-portal-uat` | build-id sentinel, rewritten by the pipeline GitOps step |
-| `public-servant-portal/overlays/prod-02/prod` | `messaging-public-servant-portal-prod` | `public-servant-portal-v0.1.0` (release tag) |
+| Overlay dir                                      | Namespace                              | Image tag                                                |
+| ------------------------------------------------ | -------------------------------------- | -------------------------------------------------------- |
+| `public-servant-portal/overlays/non-prod-02/dev` | `messaging-public-servant-portal-dev`  | build-id sentinel, rewritten by the pipeline GitOps step |
+| `public-servant-portal/overlays/non-prod-02/uat` | `messaging-public-servant-portal-uat`  | build-id sentinel, rewritten by the pipeline GitOps step |
+| `public-servant-portal/overlays/prod-02/prod`    | `messaging-public-servant-portal-prod` | `public-servant-portal-v0.1.0` (release tag)             |
 
 Each overlay needs:
-
 - `kustomization.yaml` with:
   - `namespace:` from the table, `resources: [../../../base]`
   - label block: `instance: public-servant-portal-<env>` plus the base label pairs
@@ -93,16 +91,16 @@ add an opt-in canary clause **above** the default route in
 `admin-next/overlays/non-prod-02/{dev,uat}/virtual-service.yaml`:
 
 ```yaml
-  - match:
-      - port: 443
-        headers:
-          x-canary:
-            exact: "public-servant-portal"
-    route:
-      - destination:
-          host: public-servant-portal.messaging-public-servant-portal-<env>.svc.cluster.local
-          port:
-            number: 8080
+- match:
+    - port: 443
+      headers:
+        x-canary:
+          exact: "public-servant-portal"
+  route:
+    - destination:
+        host: public-servant-portal.messaging-public-servant-portal-<env>.svc.cluster.local
+        port:
+          number: 8080
 ```
 
 The existing default clause keeps sending live traffic to
@@ -153,14 +151,12 @@ Nothing was removed. When the product decision to retire `messaging-admin-next` 
 every remaining reference (as of this branch):
 
 **Pipelines / release**
-
 - `.azure/pipeline-messaging-admin-next.yml` (whole file; also delete the ADO pipeline definition)
 - `.azure/azure_pipelines_nightly.yml:14` — `services:` list still contains `messaging-admin-next`
 - `release-please/messaging-admin-next.config.json`, `release-please/messaging-admin-next.manifest.json`
 - `sonar-project.properties:15` — `sonar.junit.reportPaths` entry `apps/messaging-admin-next/`
 
 **Repo config / scripts**
-
 - `pnpm-workspace.yaml:3` — `apps/messaging-admin-next` workspace entry
 - `package.json` — `dev:admin-next`, `dev` / `dev:next` (both compose `pnpm dev:admin-next`),
   `build:admin-next`, `format:admin-next`, `lint:admin-next`, `test:admin-next`,
@@ -174,7 +170,6 @@ every remaining reference (as of this branch):
 - `apps/messaging-admin-next/**` — the app itself
 
 **k8s (`messaging-k8s-apps`, separate repo)**
-
 - `admin-next/base/**` and `admin-next/overlays/{non-prod-02/dev,non-prod-02/uat,prod-02/prod}/**`
 - `istio/admin-next/base/**` and `istio/admin-next/overlays/non-prod-02/{dev,uat}/**`
   (gateway + cert for `messaging-admin.<env>.services.gov.ie` — **keep these**, the new app needs

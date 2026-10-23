@@ -60,11 +60,6 @@ export const urls = Object.freeze({
   messaging: process.env.BASE_URL || "http://localhost:3001",
   localMessaging: process.env.BASE_URL ?? "http://localhost:4001",
   admin: process.env.ADMIN_URL || "http://localhost:3001",
-  auth: process.env.AUTH_URL || "http://localhost:3002",
-  authSignIn:
-    process.env.E2E_AUTH_URL?.trim() ||
-    process.env.AUTH_URL?.trim() ||
-    "https://authorization.dev.services.gov.ie/sign-in",
   mock: process.env.MOCK_URL || "http://localhost:3005",
   profile: process.env.PROFILE_URL || "http://localhost:3003",
   profileVisual: process.env.PROFILE_URL || "http://localhost:3004",

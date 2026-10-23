@@ -1,0 +1,25 @@
+{
+  "id": 2120,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "slug": "pension",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 2000
+    }
+  },
+  "title": "Pension",
+  "highlighted": false,
+  "category": "Later Life",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>State pensions and how to apply for them.</p>",
+      "id": "le-1120"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 1120
+}

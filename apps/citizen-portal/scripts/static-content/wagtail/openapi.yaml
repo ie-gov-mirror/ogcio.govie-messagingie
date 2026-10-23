@@ -1,0 +1,2478 @@
+openapi: 3.0.3
+info:
+  title: Gov.IE Integration API
+  version: 1.0.0
+  description:
+    The Gov.IE Integration API helps government departments and bodies
+    to manage their content.
+paths:
+  /v1/education/colaiste-gaeilge-centres/:
+    get:
+      operationId: v1_education_colaiste_gaeilge_centres_retrieve
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ColaisteGaeilge"
+          description: ""
+    post:
+      operationId: v1_education_colaiste_gaeilge_centres_create
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ColaisteGaeilge"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ColaisteGaeilge"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ColaisteGaeilge"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ColaisteGaeilge"
+          description: ""
+  /v1/education/colaiste-gaeilge-centres/{institution_pk}/reports/:
+    get:
+      operationId: v1_education_colaiste_gaeilge_centres_reports_retrieve
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ColaisteGaeilgeReport"
+          description: ""
+    post:
+      operationId: v1_education_colaiste_gaeilge_centres_reports_create
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ColaisteGaeilgeReport"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ColaisteGaeilgeReport"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ColaisteGaeilgeReport"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ColaisteGaeilgeReport"
+          description: ""
+  /v1/education/colaiste-gaeilge-centres/{id}/:
+    get:
+      operationId: v1_education_colaiste_gaeilge_centres_retrieve_2
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ColaisteGaeilge"
+          description: ""
+    patch:
+      operationId: v1_education_colaiste_gaeilge_centres_partial_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedColaisteGaeilge"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedColaisteGaeilge"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedColaisteGaeilge"
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ColaisteGaeilge"
+          description: ""
+  /v1/education/early-years-centres/:
+    get:
+      operationId: v1_education_early_years_centres_retrieve
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EarlyYearsService"
+          description: ""
+    post:
+      operationId: v1_education_early_years_centres_create
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EarlyYearsService"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/EarlyYearsService"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/EarlyYearsService"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EarlyYearsService"
+          description: ""
+  /v1/education/early-years-centres/{institution_pk}/reports/:
+    get:
+      operationId: v1_education_early_years_centres_reports_retrieve
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EarlyYearsServiceReport"
+          description: ""
+    post:
+      operationId: v1_education_early_years_centres_reports_create
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EarlyYearsServiceReport"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/EarlyYearsServiceReport"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/EarlyYearsServiceReport"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EarlyYearsServiceReport"
+          description: ""
+  /v1/education/early-years-centres/{id}/:
+    get:
+      operationId: v1_education_early_years_centres_retrieve_2
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EarlyYearsService"
+          description: ""
+    patch:
+      operationId: v1_education_early_years_centres_partial_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedEarlyYearsService"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedEarlyYearsService"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedEarlyYearsService"
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EarlyYearsService"
+          description: ""
+  /v1/education/schools/:
+    get:
+      operationId: v1_education_schools_retrieve
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/School"
+          description: ""
+    post:
+      operationId: v1_education_schools_create
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/School"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/School"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/School"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/School"
+          description: ""
+  /v1/education/schools/{institution_pk}/reports/:
+    get:
+      operationId: v1_education_schools_reports_retrieve
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchoolReport"
+          description: ""
+    post:
+      operationId: v1_education_schools_reports_create
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SchoolReport"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/SchoolReport"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/SchoolReport"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchoolReport"
+          description: ""
+  /v1/education/schools/{id}/:
+    get:
+      operationId: v1_education_schools_retrieve_2
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/School"
+          description: ""
+    patch:
+      operationId: v1_education_schools_partial_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedSchool"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedSchool"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedSchool"
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/School"
+          description: ""
+  /v1/education/youth-reach-centres/:
+    get:
+      operationId: v1_education_youth_reach_centres_retrieve
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YouthreachCentre"
+          description: ""
+    post:
+      operationId: v1_education_youth_reach_centres_create
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/YouthreachCentre"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/YouthreachCentre"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/YouthreachCentre"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YouthreachCentre"
+          description: ""
+  /v1/education/youth-reach-centres/{institution_pk}/reports/:
+    get:
+      operationId: v1_education_youth_reach_centres_reports_retrieve
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YouthreachCentreReport"
+          description: ""
+    post:
+      operationId: v1_education_youth_reach_centres_reports_create
+      parameters:
+        - in: path
+          name: institution_pk
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/YouthreachCentreReport"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/YouthreachCentreReport"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/YouthreachCentreReport"
+        required: true
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YouthreachCentreReport"
+          description: ""
+  /v1/education/youth-reach-centres/{id}/:
+    get:
+      operationId: v1_education_youth_reach_centres_retrieve_2
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YouthreachCentre"
+          description: ""
+    patch:
+      operationId: v1_education_youth_reach_centres_partial_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      tags:
+        - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedYouthreachCentre"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedYouthreachCentre"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedYouthreachCentre"
+      security:
+        - oauth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YouthreachCentre"
+          description: ""
+  /v2/pages/:
+    get:
+      operationId: pages_list
+      description: |
+        Published pages, filtered and paged. Pass `type` to request a page type's own fields, e.g. `?type=life_events.LifeEventPage&fields=highlighted,category`.
+
+        StreamField content (`body`, `services`, `guidance`, `categories`) is a list of
+        `{"type", "value", "id"}` blocks in Wagtail's shape, with links resolved:
+
+        - `heading`: plain string; `sub_heading`: `{"text"}`
+        - `paragraph` and other rich text: one HTML string. Links are absolute;
+          internal links also carry `data-page-id` and `data-api-url`, documents
+          `data-document-id`
+        - `button_link` and other links: a list holding one link block.
+          `internal_link` values are `{"page", "link_text", "url", "api_url"}`,
+          `external_link` values `{"link_url", "link_text"}`
+        - `image`: `{"image": {"id", "title", "url", "width", "height", "original_url"},
+          "alt", "alt_text", "image_is_decorative", "caption", "caption_alignment"}`;
+          `url` is a 960px-wide rendition
+        - page choosers (e.g. a category's `life_events`): `{"id", "title", "url", "api_url"}`
+
+        Links to pages that aren't published are left out.
+      summary: List pages
+      parameters:
+        - in: query
+          name: child_of
+          schema:
+            type: integer
+          description: Only children of this page ID, e.g. the landing page's ID.
+        - in: query
+          name: descendant_of
+          schema:
+            type: integer
+          description: Only descendants of this page ID.
+        - in: query
+          name: fields
+          schema:
+            type: string
+          description:
+            "Comma-separated fields to include, or `*` for all. Life event
+            pages: `highlighted`, `category`, `body`, `services`, `guidance`. Landing
+            page: `body`, `categories`. Publication pages: `body`. Prefix with `-` to
+            remove a default field."
+        - in: query
+          name: highlighted
+          schema:
+            type: boolean
+          description:
+            "Life event pages only (needs `type=life_events.LifeEventPage`):
+            filter by the highlighted flag."
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Page size (default 20).
+        - in: query
+          name: locale
+          schema:
+            type: string
+            enum:
+              - en
+              - ga
+          description: "Language code: `en` or `ga`."
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: Number of results to skip.
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: Field to order by, e.g. `title` or `-first_published_at`.
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Full-text search.
+        - in: query
+          name: slug
+          schema:
+            type: string
+          description: Exact page slug.
+        - in: query
+          name: type
+          schema:
+            type: string
+          description:
+            Page type as `app_label.ModelName`, e.g. `life_events.LifeEventPage`,
+            `life_events.LifeEventsLandingPage` or `publication.PublicationPage`. Required
+            to request or filter on that type's own fields.
+          examples:
+            LifeEvents:
+              value: life_events.LifeEventPage
+              summary: Life events
+            LifeEventsLandingPage:
+              value: life_events.LifeEventsLandingPage
+              summary: Life events landing page
+            Publications:
+              value: publication.PublicationPage
+      tags:
+        - Pages (read-only)
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      total_count:
+                        type: integer
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        meta:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: life_events.LifeEventPage
+                            detail_url:
+                              type: string
+                              format: uri
+                              description: This page's entry in the API.
+                            html_url:
+                              type: string
+                              format: uri
+                              description: The page on gov.ie.
+                            slug:
+                              type: string
+                            first_published_at:
+                              type: string
+                              format: date-time
+                            locale:
+                              type: string
+                              example: en
+                        title:
+                          type: string
+                      additionalProperties:
+                        description:
+                          The fields requested with `fields`, depending
+                          on the page type.
+              examples:
+                LifeEvents:
+                  value:
+                    meta:
+                      total_count: 1
+                    items:
+                      - id: 203580
+                        meta:
+                          type: life_events.LifeEventPage
+                          detail_url: https://api.example.gov.ie/v2/pages/203580/
+                          html_url: https://www.gov.ie/en/life-events/child-starting-school/
+                          slug: child-starting-school
+                          first_published_at: "2026-10-02T11:18:16+01:00"
+                          locale: en
+                        title: Child starting school
+                        highlighted: true
+                        category: Education & Learning
+                        body:
+                          - type: heading
+                            value: Getting ready to apply
+                            id: 768a998c-d66f-4c5a-b5b8-421aa0a92587
+                          - type: paragraph
+                            value:
+                              <p>Most families start this in the year before their
+                              child starts school. Read the <a data-api-url="https://api.example.gov.ie/v2/pages/203578/"
+                              data-page-id="203578" href="https://www.gov.ie/en/life-events/">life
+                              events overview</a>.</p><ul><li>your PPSN</li><li>your child's
+                              birth certificate</li></ul>
+                            id: b2a5a4be-9fcd-4fad-a3e3-500022d07b5d
+                          - type: button_link
+                            value:
+                              - type: internal_link
+                                value:
+                                  page: 190505
+                                  link_text: Start application
+                                  url: https://www.gov.ie/en/school-places/
+                                  api_url: https://api.example.gov.ie/v2/pages/190505/
+                                id: ccbd2d7f-db51-4bfd-9b6e-5c8badd8070c
+                            id: fff3b920-1324-4662-aa61-26dd02f99e39
+                        services:
+                          - type: service
+                            value:
+                              link:
+                                - type: external_link
+                                  value:
+                                    link_url: https://www.gov.ie/
+                                    link_text: Apply for a school place
+                                  id: 41901d70-b72f-4ba7-9dc2-093a1967ea09
+                              description:
+                                Apply for a primary school place. Takes 20
+                                to 25 minutes.
+                            id: a2682c21-23f3-4540-a0a2-359e329f672b
+                        guidance:
+                          - type: external_link
+                            value:
+                              link_url: https://www.gov.ie/
+                              link_text: Choosing a primary school
+                            id: 8747ac50-b497-435e-b02f-e3dcc45a43d1
+                  summary: Life events
+          description: ""
+        "400":
+          description: Unknown field or filter, e.g. a type's field without `type`.
+        "401":
+          description: Missing or expired access token.
+  /v2/pages/{id}/:
+    get:
+      operationId: pages_retrieve
+      description: |
+        A published page with all its fields.
+
+        StreamField content (`body`, `services`, `guidance`, `categories`) is a list of
+        `{"type", "value", "id"}` blocks in Wagtail's shape, with links resolved:
+
+        - `heading`: plain string; `sub_heading`: `{"text"}`
+        - `paragraph` and other rich text: one HTML string. Links are absolute;
+          internal links also carry `data-page-id` and `data-api-url`, documents
+          `data-document-id`
+        - `button_link` and other links: a list holding one link block.
+          `internal_link` values are `{"page", "link_text", "url", "api_url"}`,
+          `external_link` values `{"link_url", "link_text"}`
+        - `image`: `{"image": {"id", "title", "url", "width", "height", "original_url"},
+          "alt", "alt_text", "image_is_decorative", "caption", "caption_alignment"}`;
+          `url` is a 960px-wide rendition
+        - page choosers (e.g. a category's `life_events`): `{"id", "title", "url", "api_url"}`
+
+        Links to pages that aren't published are left out.
+      summary: Get one page
+      parameters:
+        - in: query
+          name: fields
+          schema:
+            type: string
+          description:
+            "Comma-separated fields to include, or `*` for all. Life event
+            pages: `highlighted`, `category`, `body`, `services`, `guidance`. Landing
+            page: `body`, `categories`. Publication pages: `body`. Prefix with `-` to
+            remove a default field."
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: Page ID.
+          required: true
+      tags:
+        - Pages (read-only)
+      security:
+        - oauth2:
+            - read
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  meta:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: life_events.LifeEventPage
+                      detail_url:
+                        type: string
+                        format: uri
+                        description: This page's entry in the API.
+                      html_url:
+                        type: string
+                        format: uri
+                        description: The page on gov.ie.
+                      slug:
+                        type: string
+                      first_published_at:
+                        type: string
+                        format: date-time
+                      locale:
+                        type: string
+                        example: en
+                  title:
+                    type: string
+                additionalProperties:
+                  description:
+                    The fields requested with `fields`, depending on the
+                    page type.
+              examples:
+                LifeEvent:
+                  value:
+                    id: 203580
+                    meta:
+                      type: life_events.LifeEventPage
+                      detail_url: https://api.example.gov.ie/v2/pages/203580/
+                      html_url: https://www.gov.ie/en/life-events/child-starting-school/
+                      slug: child-starting-school
+                      first_published_at: "2026-10-02T11:18:16+01:00"
+                      locale: en
+                    title: Child starting school
+                    highlighted: true
+                    category: Education & Learning
+                    body:
+                      - type: heading
+                        value: Getting ready to apply
+                        id: 768a998c-d66f-4c5a-b5b8-421aa0a92587
+                      - type: paragraph
+                        value:
+                          <p>Most families start this in the year before their
+                          child starts school. Read the <a data-api-url="https://api.example.gov.ie/v2/pages/203578/"
+                          data-page-id="203578" href="https://www.gov.ie/en/life-events/">life
+                          events overview</a>.</p><ul><li>your PPSN</li><li>your child's
+                          birth certificate</li></ul>
+                        id: b2a5a4be-9fcd-4fad-a3e3-500022d07b5d
+                      - type: button_link
+                        value:
+                          - type: internal_link
+                            value:
+                              page: 190505
+                              link_text: Start application
+                              url: https://www.gov.ie/en/school-places/
+                              api_url: https://api.example.gov.ie/v2/pages/190505/
+                            id: ccbd2d7f-db51-4bfd-9b6e-5c8badd8070c
+                        id: fff3b920-1324-4662-aa61-26dd02f99e39
+                    services:
+                      - type: service
+                        value:
+                          link:
+                            - type: external_link
+                              value:
+                                link_url: https://www.gov.ie/
+                                link_text: Apply for a school place
+                              id: 41901d70-b72f-4ba7-9dc2-093a1967ea09
+                          description:
+                            Apply for a primary school place. Takes 20 to
+                            25 minutes.
+                        id: a2682c21-23f3-4540-a0a2-359e329f672b
+                    guidance:
+                      - type: external_link
+                        value:
+                          link_url: https://www.gov.ie/
+                          link_text: Choosing a primary school
+                        id: 8747ac50-b497-435e-b02f-e3dcc45a43d1
+                  summary: Life event
+                LifeEventsLandingPage:
+                  value:
+                    id: 203578
+                    meta:
+                      type: life_events.LifeEventsLandingPage
+                      detail_url: https://api.example.gov.ie/v2/pages/203578/
+                      html_url: https://www.gov.ie/en/life-events/
+                      slug: life-events
+                      first_published_at: "2026-10-01T09:00:00+01:00"
+                      locale: en
+                    title: Life events
+                    body:
+                      - type: paragraph
+                        value: <p>Choose the moment you are dealing with.</p>
+                        id: abc50a5e-bb29-4338-a44b-3c2ceb4d2a69
+                    categories:
+                      - type: category
+                        value:
+                          title: Education & Learning
+                          icon: school
+                          life_events:
+                            - id: 203580
+                              title: Child starting school
+                              url: https://www.gov.ie/en/life-events/child-starting-school/
+                              api_url: https://api.example.gov.ie/v2/pages/203580/
+                        id: 5e5f8645-e839-4cf7-96fa-169af58bc9e7
+                  summary: Life events landing page
+          description: ""
+        "401":
+          description: Missing or expired access token.
+        "404":
+          description: No published page with this ID.
+  /v2/pages/find/:
+    get:
+      operationId: pages_find
+      description: Redirects to the page's detail URL.
+      summary: Find a page by its gov.ie path
+      parameters:
+        - in: query
+          name: html_path
+          schema:
+            type: string
+          description: The page's path on gov.ie, e.g. `/en/life-events/child-starting-school/`.
+          required: true
+      tags:
+        - Pages (read-only)
+      security:
+        - oauth2:
+            - read
+      responses:
+        "302":
+          description: Redirect to the page's detail URL.
+        "401":
+          description: Missing or expired access token.
+        "404":
+          description: No published page at this path.
+components:
+  schemas:
+    ColaisteGaeilge:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+      required:
+        - contents
+        - county
+        - id
+        - reports
+        - roll_number
+    ColaisteGaeilgeReport:
+      type: object
+      description: Serializer for education_institutions.models.SchoolReportPage
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        report_id:
+          type: string
+        subject:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SubjectEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        inspection_type:
+          $ref: "#/components/schemas/ColaisteGaeilgeReportInspectionTypeEnum"
+        published_at:
+          type: string
+          format: date
+        school_id:
+          type: integer
+          readOnly: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolReportContent"
+      required:
+        - contents
+        - id
+        - inspection_type
+        - report_id
+        - school_id
+    ColaisteGaeilgeReportInspectionTypeEnum:
+      enum:
+        - Coláistí Gaeilge
+      type: string
+      description: "* `Coláistí Gaeilge` - Coláistí Gaeilge"
+    CountyEnum:
+      enum:
+        - CARLOW
+        - CAVAN
+        - CLARE
+        - CORK
+        - DONEGAL
+        - DUBLIN
+        - GALWAY
+        - KERRY
+        - KILDARE
+        - KILKENNY
+        - LAOIS
+        - LEITRIM
+        - LIMERICK
+        - LONGFORD
+        - LOUTH
+        - MAYO
+        - MEATH
+        - MONAGHAN
+        - OFFALY
+        - ROSCOMMON
+        - SLIGO
+        - TIPPERARY
+        - WATERFORD
+        - WESTMEATH
+        - WEXFORD
+        - WICKLOW
+      type: string
+      description: |-
+        * `CARLOW` - Carlow
+        * `CAVAN` - Cavan
+        * `CLARE` - Clare
+        * `CORK` - Cork
+        * `DONEGAL` - Donegal
+        * `DUBLIN` - Dublin
+        * `GALWAY` - Galway
+        * `KERRY` - Kerry
+        * `KILDARE` - Kildare
+        * `KILKENNY` - Kilkenny
+        * `LAOIS` - Laois
+        * `LEITRIM` - Leitrim
+        * `LIMERICK` - Limerick
+        * `LONGFORD` - Longford
+        * `LOUTH` - Louth
+        * `MAYO` - Mayo
+        * `MEATH` - Meath
+        * `MONAGHAN` - Monaghan
+        * `OFFALY` - Offaly
+        * `ROSCOMMON` - Roscommon
+        * `SLIGO` - Sligo
+        * `TIPPERARY` - Tipperary
+        * `WATERFORD` - Waterford
+        * `WESTMEATH` - Westmeath
+        * `WEXFORD` - Wexford
+        * `WICKLOW` - Wicklow
+    EarlyYearsService:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+      required:
+        - contents
+        - county
+        - id
+        - reports
+        - roll_number
+    EarlyYearsServiceReport:
+      type: object
+      description: Serializer for education_institutions.models.SchoolReportPage
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        report_id:
+          type: string
+        subject:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SubjectEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        inspection_type:
+          $ref: "#/components/schemas/EarlyYearsServiceReportInspectionTypeEnum"
+        published_at:
+          type: string
+          format: date
+        school_id:
+          type: integer
+          readOnly: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolReportContent"
+      required:
+        - contents
+        - id
+        - inspection_type
+        - report_id
+        - school_id
+    EarlyYearsServiceReportInspectionTypeEnum:
+      enum:
+        - Early Years Education Focused Inspection (EYEI)
+        - Early Years Follow Through Inspection
+        - Early Years Inspection
+      type: string
+      description: |-
+        * `Early Years Education Focused Inspection (EYEI)` - Early Years Education Focused Inspection (EYEI)
+        * `Early Years Follow Through Inspection` - Early Years Follow Through Inspection
+        * `Early Years Inspection` - Early Years Inspection
+    EthosEnum:
+      enum:
+        - INTER DENOMINATIONAL
+        - MULTI DENOMINATIONAL
+        - CATHOLIC
+        - PRESBYTERIAN
+        - QUAKER
+        - CHURCH OF IRELAND
+        - MUSLIM
+        - METHODIST
+        - JEWISH
+        - OTHER/UNKNOWN
+      type: string
+      description: |-
+        * `INTER DENOMINATIONAL` - Inter Denominational
+        * `MULTI DENOMINATIONAL` - Multi Denominational
+        * `CATHOLIC` - Catholic
+        * `PRESBYTERIAN` - Presbyterian
+        * `QUAKER` - Quaker
+        * `CHURCH OF IRELAND` - Church of Ireland
+        * `MUSLIM` - Muslim
+        * `METHODIST` - Methodist
+        * `JEWISH` - Jewish
+        * `OTHER/UNKNOWN` - Other/Unknown
+    GenderEnum:
+      enum:
+        - BOYS
+        - GIRLS
+        - MIXED
+      type: string
+      description: |-
+        * `BOYS` - Boys
+        * `GIRLS` - Girls
+        * `MIXED` - Mixed
+    LanguageEnum:
+      enum:
+        - en
+        - ga
+      type: string
+      description: |-
+        * `en` - English
+        * `ga` - Gaeilge
+    LanguageOfInstructionEnum:
+      enum:
+        - NO SUBJECTS TAUGHT THROUGH IRISH
+        - ALL PUPILS TAUGHT ALL SUBJECTS THROUGH IRISH
+        - SOME PUPILS TAUGHT ALL SUBJECTS THROUGH IRISH
+        - ENGLISH
+        - SOME PUPILS TAUGHT SOME SUBJECTS THROUGH IRISH
+        - ALL IRISH
+        - IRISH AND ENGLISH
+      type: string
+      description: |-
+        * `NO SUBJECTS TAUGHT THROUGH IRISH` - No Subjects Taught Through Irish
+        * `ALL PUPILS TAUGHT ALL SUBJECTS THROUGH IRISH` - All Pupils Taught All Subjects Through Irish
+        * `SOME PUPILS TAUGHT ALL SUBJECTS THROUGH IRISH` - Some Pupils Taught All Subjects Through Irish
+        * `ENGLISH` - English
+        * `SOME PUPILS TAUGHT SOME SUBJECTS THROUGH IRISH` - Some Pupils Taught Some Subjects Through Irish
+        * `ALL IRISH` - All Irish
+        * `IRISH AND ENGLISH` - Irish and English
+    NullEnum:
+      enum:
+        - null
+    PatchedColaisteGaeilge:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+    PatchedEarlyYearsService:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+    PatchedSchool:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+    PatchedYouthreachCentre:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+    School:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+      required:
+        - contents
+        - county
+        - id
+        - reports
+        - roll_number
+    SchoolContent:
+      type: object
+      description: Serializer for content part of education_institutions.models.SchoolPage.
+      properties:
+        title:
+          type: string
+        language:
+          $ref: "#/components/schemas/LanguageEnum"
+        slug:
+          type: string
+          nullable: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        seo:
+          type: string
+          nullable: true
+        summary:
+          type: string
+          nullable: true
+        url:
+          type: string
+          format: uri
+          nullable: true
+        local_name:
+          type: string
+      required:
+        - language
+        - local_name
+        - title
+    SchoolLevelEnum:
+      enum:
+        - POST PRIMARY
+        - PRIMARY
+        - OTHER
+        - SPECIAL EDUCATION
+      type: string
+      description: |-
+        * `POST PRIMARY` - Post Primary
+        * `PRIMARY` - Primary
+        * `OTHER` - Other
+        * `SPECIAL EDUCATION` - Special Education
+    SchoolReport:
+      type: object
+      description: Serializer for education_institutions.models.SchoolReportPage
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        report_id:
+          type: string
+        subject:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SubjectEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        inspection_type:
+          $ref: "#/components/schemas/SchoolReportInspectionTypeEnum"
+        published_at:
+          type: string
+          format: date
+        school_id:
+          type: integer
+          readOnly: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolReportContent"
+      required:
+        - contents
+        - id
+        - inspection_type
+        - report_id
+        - school_id
+    SchoolReportContent:
+      type: object
+      description: Serializer for content part of education_institutions.models.SchoolReportPage.
+      properties:
+        title:
+          type: string
+        language:
+          type: string
+        slug:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        seo:
+          type: string
+        summary:
+          type: string
+        base_64_file:
+          type: string
+        file_name:
+          type: string
+      required:
+        - language
+        - title
+    SchoolReportInspectionTypeEnum:
+      enum:
+        - Curriculum Evaluations in Primary Schools
+        - Child Protection and Safeguarding Inspection (CPSI)
+        - DEIS - Learning and planning for improvement
+        - Evaluation Report
+        - Evaluation of Action Planning for Improvement in DEIS Schools
+        - Evaluations of Special Education Needs (SEN)
+        - Evaluation of strategies to improve attendance
+        - Final Child Protection and Safeguarding Inspection
+        - Final Child Protection and Safeguarding Inspection - Boarding Facility
+        - Focused SEN-PP
+        - Follow Through Curriculum Evaluation
+        - Follow Through DEIS
+        - Follow Through Programme Evaluation
+        - Follow Through Evaluations of Special Educational Needs in Post Primary
+        - Follow Through Evaluations of Special Educational Needs in Primary
+        - Follow Through Subject Inspection
+        - Follow Through WSE-MLL
+        - Inclusion and access focused inspections
+        - Inspection of Schools at High Support Units, Special Care Units and Children
+          Detention Schools
+        - Inspection of High Support Units (HSU)
+        - Initial Child Protection and Safeguarding Inspection
+        - Initial Child Protection and Safeguarding Inspection - Boarding Facility
+        - Programme Evaluation
+        - Promotion of Wellbeing in Schools Evaluation
+        - Supporting the Safe Provision of Schooling (SSPS)
+        - Subject Inspection
+        - Thematic Inspection
+        - Whole College Evaluation
+        - Whole College Inspection (Teagasc)
+        - Whole School Evaluation
+      type: string
+      description: |-
+        * `Curriculum Evaluations in Primary Schools` - Curriculum Evaluations in Primary Schools
+        * `Child Protection and Safeguarding Inspection (CPSI)` - Child Protection and Safeguarding Inspection (CPSI)
+        * `DEIS - Learning and planning for improvement` - DEIS - Learning and planning for improvement
+        * `Evaluation Report` - Evaluation Report
+        * `Evaluation of Action Planning for Improvement in DEIS Schools` - Evaluation of Action Planning for Improvement in DEIS Schools
+        * `Evaluations of Special Education Needs (SEN)` - Evaluations of Special Education Needs (SEN)
+        * `Evaluation of strategies to improve attendance` - Evaluation of strategies to improve attendance
+        * `Final Child Protection and Safeguarding Inspection` - Final Child Protection and Safeguarding Inspection
+        * `Final Child Protection and Safeguarding Inspection - Boarding Facility` - Final Child Protection and Safeguarding Inspection - Boarding Facility
+        * `Focused SEN-PP` - Focused SEN-PP
+        * `Follow Through Curriculum Evaluation` - Follow Through Curriculum Evaluation
+        * `Follow Through DEIS` - Follow Through DEIS
+        * `Follow Through Programme Evaluation` - Follow Through Programme Evaluation
+        * `Follow Through Evaluations of Special Educational Needs in Post Primary` - Follow Through Evaluations of Special Educational Needs in Post Primary
+        * `Follow Through Evaluations of Special Educational Needs in Primary` - Follow Through Evaluations of Special Educational Needs in Primary
+        * `Follow Through Subject Inspection` - Follow Through Subject Inspection
+        * `Follow Through WSE-MLL` - Follow Through WSE-MLL
+        * `Inclusion and access focused inspections` - Inclusion and access focused inspections
+        * `Inspection of Schools at High Support Units, Special Care Units and Children Detention Schools` - Inspection of Schools at High Support Units, Special Care Units and Children Detention Schools
+        * `Inspection of High Support Units (HSU)` - Inspection of High Support Units (HSU)
+        * `Initial Child Protection and Safeguarding Inspection` - Initial Child Protection and Safeguarding Inspection
+        * `Initial Child Protection and Safeguarding Inspection - Boarding Facility` - Initial Child Protection and Safeguarding Inspection - Boarding Facility
+        * `Programme Evaluation` - Programme Evaluation
+        * `Promotion of Wellbeing in Schools Evaluation` - Promotion of Wellbeing in Schools Evaluation
+        * `Supporting the Safe Provision of Schooling (SSPS)` - Supporting the Safe Provision of Schooling (SSPS)
+        * `Subject Inspection` - Subject Inspection
+        * `Thematic Inspection` - Thematic Inspection
+        * `Whole College Evaluation` - Whole College Evaluation
+        * `Whole College Inspection (Teagasc)` - Whole College Inspection (Teagasc)
+        * `Whole School Evaluation` - Whole School Evaluation
+    SubjectEnum:
+      enum:
+        - Accounting
+        - Agricultural Science
+        - Applied Technology
+        - Applied Technology and Technology
+        - Arabic
+        - Art
+        - Art, Craft and Design
+        - Biology
+        - Business
+        - Business and Accounting
+        - Business and Economics
+        - Business Studies
+        - Business Subjects (Business, Economics, Accounting)
+        - Civic Social & Political Education (CSPE)
+        - Chemistry
+        - Classics (Classical Studies, Latin, Ancient Greek)
+        - Computer Science
+        - Construction Studies & Materials Technology
+        - Construction Studies, Materials Technology (Wood) & Technical Graphics (CSMTWTG)
+        - Construction Studies & Materials Technology (Wood)
+        - Construction Studies
+        - Civic, Social & Political Education (CSPE)
+        - Design & Communication Graphics & Construction Studies (DCGCS)
+        - Design & Communication Graphics
+        - Design and Communication Graphics & Technical Graphics
+        - Design, Communication Graphics & Technical Graphics & Materials Technology
+          (Wood) (DCGTGMTW)
+        - Engineering
+        - English
+        - English & English and Communication
+        - French
+        - Gaeilge
+        - Gaeilge & Gaeilge Chumarsáideach
+        - Geography
+        - German
+        - Graphics
+        - Graphics and Design and Communication Graphics
+        - Guidance
+        - Hebrew Studies
+        - History
+        - Home Economics
+        - Irish
+        - Italian
+        - Japanese
+        - Junior Certificate School Programme (JCSP)
+        - Jewish Studies
+        - Junior cycle short courses
+        - Latin
+        - Leaving Certificate Applied (LCA)
+        - Leaving Certificate Vocational Programme (LCVP)
+        - Materials Technology (Wood) & Construction Studies (MTWCS)
+        - Materials Technology (Wood) & Construction Studies
+        - Materials Technology (Wood) & Technical Graphics (MTWTG)
+        - Mathematics
+        - Mathematics & Mathematical Applications
+        - Mathematics & Applied Mathematics
+        - Metalwork
+        - Metalwork and Engineering
+        - Modern Foreign Languages
+        - Music
+        - Other (curriculum)
+        - Other (non-curriculum)
+        - Physical Education
+        - Physics
+        - Physics & Chemistry
+        - Politics and Society
+        - Religious Education
+        - Russian
+        - Science
+        - Science and Agricultural Science
+        - Science & Biology
+        - Science & Biology & Agricultural Science
+        - Science & Biology & Physics
+        - Science & Chemistry
+        - Science & Chemistry & Physics
+        - Science & Physics
+        - Special Educational Needs (SEN)
+        - Spanish
+        - Social Personal and Health Education (SPHE)
+        - Technical Drawing & Technical Graphics
+        - Technical Graphics and Design and Communication Graphics
+        - Technical Graphics, Design & Communication Graphics (TGDCG)
+        - Technology
+        - Technology & Engineering
+        - Transition Year Option (TY)
+        - Visual Art
+        - Visual Art and Art
+        - Wood Technology
+        - Wood Technology and Construction Studies
+      type: string
+      description: |-
+        * `Accounting` - Accounting
+        * `Agricultural Science` - Agricultural Science
+        * `Applied Technology` - Applied Technology
+        * `Applied Technology and Technology` - Applied Technology and Technology
+        * `Arabic` - Arabic
+        * `Art` - Art
+        * `Art, Craft and Design` - Art, Craft and Design
+        * `Biology` - Biology
+        * `Business` - Business
+        * `Business and Accounting` - Business and Accounting
+        * `Business and Economics` - Business and Economics
+        * `Business Studies` - Business Studies
+        * `Business Subjects (Business, Economics, Accounting)` - Business Subjects (Business, Economics, Accounting)
+        * `Civic Social & Political Education (CSPE)` - Civic Social & Political Education (CSPE)
+        * `Chemistry` - Chemistry
+        * `Classics (Classical Studies, Latin, Ancient Greek)` - Classics (Classical Studies, Latin, Ancient Greek)
+        * `Computer Science` - Computer Science
+        * `Construction Studies & Materials Technology` - Construction Studies & Materials Technology
+        * `Construction Studies, Materials Technology (Wood) & Technical Graphics (CSMTWTG)` - Construction Studies, Materials Technology (Wood) & Technical Graphics (CSMTWTG)
+        * `Construction Studies & Materials Technology (Wood)` - Construction Studies & Materials Technology (Wood)
+        * `Construction Studies` - Construction Studies
+        * `Civic, Social & Political Education (CSPE)` - Civic, Social & Political Education (CSPE)
+        * `Design & Communication Graphics & Construction Studies (DCGCS)` - Design & Communication Graphics & Construction Studies (DCGCS)
+        * `Design & Communication Graphics` - Design & Communication Graphics
+        * `Design and Communication Graphics & Technical Graphics` - Design and Communication Graphics & Technical Graphics
+        * `Design, Communication Graphics & Technical Graphics & Materials Technology (Wood) (DCGTGMTW)` - Design, Communication Graphics & Technical Graphics & Materials Technology (Wood) (DCGTGMTW)
+        * `Engineering` - Engineering
+        * `English` - English
+        * `English & English and Communication` - English & English and Communication
+        * `French` - French
+        * `Gaeilge` - Gaeilge
+        * `Gaeilge & Gaeilge Chumarsáideach` - Gaeilge & Gaeilge Chumarsáideach
+        * `Geography` - Geography
+        * `German` - German
+        * `Graphics` - Graphics
+        * `Graphics and Design and Communication Graphics` - Graphics and Design and Communication Graphics
+        * `Guidance` - Guidance
+        * `Hebrew Studies` - Hebrew Studies
+        * `History` - History
+        * `Home Economics` - Home Economics
+        * `Irish` - Irish
+        * `Italian` - Italian
+        * `Japanese` - Japanese
+        * `Junior Certificate School Programme (JCSP)` - Junior Certificate School Programme (JCSP)
+        * `Jewish Studies` - Jewish Studies
+        * `Junior cycle short courses` - Junior cycle short courses
+        * `Latin` - Latin
+        * `Leaving Certificate Applied (LCA)` - Leaving Certificate Applied (LCA)
+        * `Leaving Certificate Vocational Programme (LCVP)` - Leaving Certificate Vocational Programme (LCVP)
+        * `Materials Technology (Wood) & Construction Studies (MTWCS)` - Materials Technology (Wood) & Construction Studies (MTWCS)
+        * `Materials Technology (Wood) & Construction Studies` - Materials Technology (Wood) & Construction Studies
+        * `Materials Technology (Wood) & Technical Graphics (MTWTG)` - Materials Technology (Wood) & Technical Graphics (MTWTG)
+        * `Mathematics` - Mathematics
+        * `Mathematics & Mathematical Applications` - Mathematics & Mathematical Applications
+        * `Mathematics & Applied Mathematics` - Mathematics & Applied Mathematics
+        * `Metalwork` - Metalwork
+        * `Metalwork and Engineering` - Metalwork and Engineering
+        * `Modern Foreign Languages` - Modern Foreign Languages
+        * `Music` - Music
+        * `Other (curriculum)` - Other (curriculum)
+        * `Other (non-curriculum)` - Other (non-curriculum)
+        * `Physical Education` - Physical Education
+        * `Physics` - Physics
+        * `Physics & Chemistry` - Physics & Chemistry
+        * `Politics and Society` - Politics and Society
+        * `Religious Education` - Religious Education
+        * `Russian` - Russian
+        * `Science` - Science
+        * `Science and Agricultural Science` - Science and Agricultural Science
+        * `Science & Biology` - Science & Biology
+        * `Science & Biology & Agricultural Science` - Science & Biology & Agricultural Science
+        * `Science & Biology & Physics` - Science & Biology & Physics
+        * `Science & Chemistry` - Science & Chemistry
+        * `Science & Chemistry & Physics` - Science, Chemistry & Physics
+        * `Science & Physics` - Science & Physics
+        * `Special Educational Needs (SEN)` - Special Educational Needs (SEN)
+        * `Spanish` - Spanish
+        * `Social Personal and Health Education (SPHE)` - Social Personal and Health Education (SPHE)
+        * `Technical Drawing & Technical Graphics` - Technical Drawing & Technical Graphics
+        * `Technical Graphics and Design and Communication Graphics` - Technical Graphics and Design and Communication Graphics
+        * `Technical Graphics, Design & Communication Graphics (TGDCG)` - Technical Graphics, Design & Communication Graphics (TGDCG)
+        * `Technology` - Technology
+        * `Technology & Engineering` - Technology & Engineering
+        * `Transition Year Option (TY)` - Transition Year Option (TY)
+        * `Visual Art` - Visual Art
+        * `Visual Art and Art` - Visual Art and Art
+        * `Wood Technology` - Wood Technology
+        * `Wood Technology and Construction Studies` - Wood Technology and Construction Studies
+    YouthreachCentre:
+      type: object
+      description: Serializer for education_institutions.models.SchoolPage.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+        closed:
+          type: boolean
+          default: false
+        day_boarding:
+          type: string
+          nullable: true
+        deis_indicator:
+          type: boolean
+          default: false
+        county:
+          $ref: "#/components/schemas/CountyEnum"
+        eircode:
+          type: string
+          nullable: true
+        dublin_postcode:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        enrolment_female:
+          type: integer
+          nullable: true
+        enrolment_male:
+          type: integer
+          nullable: true
+        ethos:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/EthosEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        fax_number:
+          type: string
+          nullable: true
+        fee_paying_indicator:
+          type: boolean
+          default: false
+        free_education_indicator:
+          type: boolean
+          default: false
+        gender:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/GenderEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        language_of_instruction:
+          $ref: "#/components/schemas/LanguageOfInstructionEnum"
+        phone_number:
+          type: string
+          nullable: true
+        principals_name:
+          type: string
+          nullable: true
+        roll_number:
+          type: string
+          nullable: true
+        school_level:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SchoolLevelEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        school_level_detail:
+          type: string
+          nullable: true
+        transition_year_indicator:
+          type: boolean
+          default: false
+        website:
+          type: string
+          format: uri
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longtitude:
+          type: number
+          format: double
+          nullable: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolContent"
+        reports:
+          type: string
+          readOnly: true
+        tusla_id:
+          type: string
+          nullable: true
+        setting_name:
+          type: string
+          nullable: true
+        skip_page:
+          type: boolean
+          default: false
+      required:
+        - contents
+        - county
+        - id
+        - reports
+        - roll_number
+    YouthreachCentreReport:
+      type: object
+      description: Serializer for education_institutions.models.SchoolReportPage
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        report_id:
+          type: string
+        subject:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/SubjectEnum"
+            - $ref: "#/components/schemas/NullEnum"
+        inspection_type:
+          $ref: "#/components/schemas/YouthreachCentreReportInspectionTypeEnum"
+        published_at:
+          type: string
+          format: date
+        school_id:
+          type: integer
+          readOnly: true
+        contents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchoolReportContent"
+      required:
+        - contents
+        - id
+        - inspection_type
+        - report_id
+        - school_id
+    YouthreachCentreReportInspectionTypeEnum:
+      enum:
+        - Evaluations of Centres of Education (Youthreach)
+        - Evaluation Report
+        - Final Child Protection and Safeguarding Inspection
+        - Follow Through Subject Inspection
+        - Follow Through WSE-MLL
+        - Inspection of High Support Units (HSU)
+        - Initial Child Protection and Safeguarding Inspection
+        - Supporting the Safe Provision of Schooling (SSPS)
+        - Subject Inspection
+        - Whole School Evaluation
+      type: string
+      description: |-
+        * `Evaluations of Centres of Education (Youthreach)` - Evaluations of Centres of Education (Youthreach)
+        * `Evaluation Report` - Evaluation Report
+        * `Final Child Protection and Safeguarding Inspection` - Final Child Protection and Safeguarding Inspection
+        * `Follow Through Subject Inspection` - Follow Through Subject Inspection
+        * `Follow Through WSE-MLL` - Follow Through WSE-MLL
+        * `Inspection of High Support Units (HSU)` - Inspection of High Support Units (HSU)
+        * `Initial Child Protection and Safeguarding Inspection` - Initial Child Protection and Safeguarding Inspection
+        * `Supporting the Safe Provision of Schooling (SSPS)` - Supporting the Safe Provision of Schooling (SSPS)
+        * `Subject Inspection` - Subject Inspection
+        * `Whole School Evaluation` - Whole School Evaluation
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.integration.uat.beta.gov.ie/o/token/
+          scopes:
+            read: read content
+            write: Write content

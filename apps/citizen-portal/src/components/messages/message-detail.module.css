@@ -76,6 +76,31 @@
   white-space: pre-line;
 }
 
+.richText {
+  margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  font-family: Lato, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.35;
+  color: var(--gieds-color-gray-950, #0b0c0c);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.richText p {
+  margin: 0 0 0.5rem;
+}
+
+.richText p:last-child {
+  margin-bottom: 0;
+}
+
+.richText img {
+  max-width: 100%;
+  height: auto;
+}
+
 .fallbackText {
   color: var(--gieds-color-gray-700, #505050);
 }

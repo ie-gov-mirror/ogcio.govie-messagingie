@@ -1,7 +1,7 @@
 {
   "id": 1103,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "become-an-adult",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Become an Adult",
+  "highlighted": false,
+  "category": "Family & Children",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>What changes when you turn 18, from voting to your own PPS services.</p>",
       "id": "le-1103"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

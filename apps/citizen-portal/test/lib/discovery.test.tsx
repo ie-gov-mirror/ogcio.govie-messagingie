@@ -7,13 +7,14 @@ import type { ReactNode } from "react"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import { ContentBlocks } from "@/components/discovery/content-blocks"
 import {
-  JourneyView,
   LifeEventsIndexView,
   LifeEventView,
+  ServiceView,
 } from "@/components/discovery/discovery-views"
 import styles from "@/components/discovery/discovery-views.module.css"
+import { LoadMaterialSymbols } from "@/components/load-material-symbols"
 import pageTitleStyles from "@/components/page-title.module.css"
-import type { ContentBlock, DiscoveryContent, LifeEvent } from "@/lib/discovery"
+import type { ContentBlock } from "@/lib/discovery"
 import { getDiscovery, getLifeEvent } from "@/lib/discovery"
 import en from "@/messages/en.json"
 import ga from "@/messages/ga.json"
@@ -59,20 +60,6 @@ afterAll(async () => {
   await rm(join(outDir, ".."), { recursive: true, force: true })
 })
 
-function patchLifeEvents(
-  discovery: DiscoveryContent,
-  patches: Record<string, Partial<LifeEvent>>,
-): DiscoveryContent {
-  return {
-    ...discovery,
-    lifeEvents: discovery.lifeEvents.map((lifeEvent) =>
-      patches[lifeEvent.slug]
-        ? { ...lifeEvent, ...patches[lifeEvent.slug] }
-        : lifeEvent,
-    ),
-  }
-}
-
 function renderIn(locale: "en" | "ga", ui: ReactNode) {
   return render(
     <NextIntlClientProvider
@@ -113,51 +100,160 @@ describe("getDiscovery", () => {
 })
 
 describe("ContentBlocks", () => {
+  it("opens email links in the mail app, not a new tab", () => {
+    renderIn(
+      "en",
+      <ContentBlocks
+        blocks={[
+          {
+            type: "richText",
+            nodes: [
+              {
+                type: "paragraph",
+                children: [
+                  {
+                    type: "link",
+                    href: "mailto:jobseekersforms@welfare.ie",
+                    internal: false,
+                    children: [
+                      { type: "text", value: "jobseekersforms@welfare.ie" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "buttonLinks",
+            links: [
+              {
+                text: "Email us",
+                href: "mailto:jobseekersforms@welfare.ie",
+                internal: false,
+              },
+            ],
+          },
+        ]}
+      />,
+    )
+    for (const name of ["jobseekersforms@welfare.ie", "Email us"]) {
+      const link = screen.getByRole("link", { name })
+      expect(link).toHaveAttribute("href", "mailto:jobseekersforms@welfare.ie")
+      expect(link).not.toHaveAttribute("target", "_blank")
+    }
+  })
+
   it("renders headings, lists and CTAs", () => {
-    const journey = getLifeEvent(
-      getDiscovery("en", outDir),
-      "child-starting-school",
-    ).journeys.find((j) => j.slug === "apply-for-a-school-place")
+    const blocks: ContentBlock[] = [
+      {
+        type: "richText",
+        nodes: [
+          {
+            type: "paragraph",
+            children: [{ type: "text", value: "Before you start" }],
+          },
+          {
+            type: "list",
+            ordered: false,
+            children: [
+              { type: "listItem", children: [{ type: "text", value: "PPSN" }] },
+              {
+                type: "listItem",
+                children: [{ type: "text", value: "Birth certificate" }],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "buttonLinks",
+        links: [
+          {
+            text: "Start application",
+            href: SCHOOL_PLACE_JOURNEY_URL,
+            internal: false,
+          },
+        ],
+      },
+      { type: "heading", text: "How long it takes" },
+      {
+        type: "richText",
+        nodes: [
+          {
+            type: "heading",
+            level: 3,
+            children: [{ type: "text", value: "Sort out work leave" }],
+          },
+        ],
+      },
+    ]
 
-    renderIn("en", <ContentBlocks blocks={journey?.body ?? []} />)
+    renderIn("en", <ContentBlocks blocks={blocks} />)
 
-    expect(
-      screen.queryByRole("heading", { name: "Getting ready to apply" }),
-    ).not.toBeInTheDocument()
+    const article = screen
+      .getByRole("heading", { level: 2, name: "How long it takes" })
+      .closest("article")
+    expect(article).toHaveClass("gi-prose")
     expect(
       screen.getByRole("heading", { level: 2, name: "How long it takes" }),
-    ).toHaveClass("gi-text-lg", "xl:gi-text-xl")
+    ).not.toHaveAttribute("class")
     expect(
-      screen.getByText(/Before you start, you will need/).closest("p"),
-    ).toHaveClass("gi-text-md")
-    expect(screen.getAllByRole("listitem")).toHaveLength(6)
+      screen.getByRole("heading", { level: 3, name: "Sort out work leave" }),
+    ).not.toHaveAttribute("class")
     expect(
-      screen.getByRole("link", { name: "Start application" }),
-    ).toHaveAttribute("href", SCHOOL_PLACE_JOURNEY_URL)
+      screen.getByText("Before you start").closest("p"),
+    ).not.toHaveAttribute("class")
+    expect(screen.getAllByRole("listitem")).toHaveLength(2)
+    const start = screen.getByRole("link", { name: "Start application" })
+    expect(start).toHaveAttribute("href", SCHOOL_PLACE_JOURNEY_URL)
+    expect(start).toHaveAttribute("target", "_blank")
   })
 
   it.each(["en", "ga"] as const)(
     "prefixes internal links with the current locale (%s)",
     (locale) => {
-      const journey = getLifeEvent(
+      const school = getLifeEvent(
         getDiscovery(locale, outDir),
         "child-starting-school",
-      ).journeys.find((j) => j.slug === "appeal-a-refusal-of-admission")
+      )
 
-      renderIn(locale, <ContentBlocks blocks={journey?.body ?? []} />)
+      renderIn(locale, <ContentBlocks blocks={school.body} />)
 
       expect(
-        screen.getByRole("link", { name: "Apply for a school place" }),
+        screen.getByRole("link", {
+          name: "Transition from Secondary to Tertiary Education",
+        }),
       ).toHaveAttribute(
         "href",
-        `/${locale}/discovery/child-starting-school/apply-for-a-school-place`,
+        `/${locale}/discovery/transition-from-secondary-to-tertiary-education`,
       )
     },
   )
 })
 
 describe("discovery views", () => {
-  it("renders the index, life event and journey pages", () => {
+  it("loads the CMS category icons and falls back for an unknown name", () => {
+    const { container } = render(<LoadMaterialSymbols />)
+    const stylesheet = container.querySelector('link[rel="stylesheet"]')
+    for (const icon of [
+      "elderly",
+      "family_restroom",
+      "medical_services",
+      "volunteer_activism",
+    ]) {
+      expect(stylesheet).toHaveAttribute("href", expect.stringContaining(icon))
+    }
+    cleanup()
+
+    const discovery = getDiscovery("en", outDir)
+    discovery.categories[0].icon = "not_a_material_symbol"
+    renderIn("en", <LifeEventsIndexView discovery={discovery} />)
+
+    expect(screen.queryByText("not_a_material_symbol")).not.toBeInTheDocument()
+    expect(screen.getByTestId("info")).toHaveClass(styles.categoryIcon)
+  })
+
+  it("renders the index and life event pages", () => {
     const discovery = getDiscovery("en", outDir)
     const school = getLifeEvent(discovery, "child-starting-school")
 
@@ -169,7 +265,7 @@ describe("discovery views", () => {
     expect(
       screen.getByRole("link", { name: "Child starting school" }),
     ).toHaveAttribute("href", "/en/discovery/child-starting-school")
-    document.body.innerHTML = ""
+    cleanup()
 
     renderIn(
       "en",
@@ -179,16 +275,10 @@ describe("discovery views", () => {
       "gi-text-md",
       "gi-text-color-text-system-neutral-muted",
     )
-    expect(
-      screen.getByRole("link", { name: "Apply for a school place" }),
-    ).toHaveAttribute(
-      "href",
-      "/en/discovery/child-starting-school/apply-for-a-school-place",
-    )
     const back = screen.getByRole("link", { name: "Back" })
     expect(back).toHaveAttribute("href", "/en/discovery")
     expect(back).not.toHaveClass("gi-link-no-visited")
-    document.body.innerHTML = ""
+    cleanup()
 
     renderIn(
       "en",
@@ -200,109 +290,121 @@ describe("discovery views", () => {
     expect(
       screen.getByText("There are no services in this life event yet"),
     ).toBeInTheDocument()
-    document.body.innerHTML = ""
+    expect(
+      screen.queryByRole("heading", { name: "Guidance" }),
+    ).not.toBeInTheDocument()
+  })
+
+  it("opens services and guidance on their own site, unless they're discovery pages", () => {
+    const school = getLifeEvent(
+      getDiscovery("en", outDir),
+      "child-starting-school",
+    )
 
     renderIn(
       "en",
-      <JourneyView lifeEvent={school} journey={school.journeys[0]} />,
+      <LifeEventView lifeEvent={school} categoryTitle='Education & Learning' />,
     )
-    expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute(
+    const apply = screen.getByRole("link", { name: "Apply for a school place" })
+    expect(apply).toHaveAttribute("href", SCHOOL_PLACE_JOURNEY_URL)
+    expect(apply).toHaveAttribute("target", "_blank")
+    expect(apply.closest("li")).toHaveTextContent(
+      "Apply for a primary school place in one of the five pilot regions.",
+    )
+    expect(
+      screen.getByRole("link", {
+        name: "https://www.gov.ie/en/publication/appeal-a-refusal-of-admission/",
+      }),
+    ).toHaveAttribute(
       "href",
-      "/en/discovery/child-starting-school",
+      "https://www.gov.ie/en/publication/appeal-a-refusal-of-admission/",
     )
+
+    const guidance = screen.getByRole("heading", { level: 2, name: "Guidance" })
+    const section = guidance.closest("section")
+    expect(section).toHaveClass("gi-w-full")
+    const choosing = screen.getByRole("link", {
+      name: "Choosing a primary school",
+    })
+    expect(choosing).toHaveAttribute("target", "_blank")
+    expect(section).toContainElement(choosing)
+    const transition = screen.getAllByRole("link", {
+      name: "Transition from Secondary to Tertiary Education",
+    })
+    const inGuidance = transition.find((link) => section?.contains(link))
+    expect(inGuidance).toHaveAttribute(
+      "href",
+      "/en/discovery/transition-from-secondary-to-tertiary-education",
+    )
+    expect(inGuidance).not.toHaveAttribute("target", "_blank")
+  })
+
+  it("renders a service page and links back to its life event", () => {
+    renderIn(
+      "en",
+      <ServiceView
+        lifeEvent={{
+          slug: "child-starting-school",
+          title: "Child starting school",
+        }}
+        service={{
+          slug: "apply-for-a-school-place",
+          title: "Apply for a school place",
+          body: [
+            {
+              type: "richText",
+              nodes: [
+                {
+                  type: "paragraph",
+                  children: [
+                    { type: "text", value: "Use this service to apply." },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "buttonLinks",
+              links: [
+                {
+                  text: "Start application",
+                  href: SCHOOL_PLACE_JOURNEY_URL,
+                  internal: false,
+                },
+              ],
+            },
+          ],
+        }}
+      />,
+    )
+
     expect(
       screen.getByRole("heading", {
         level: 1,
         name: "Apply for a school place",
       }),
     ).toBeInTheDocument()
-    expect(
-      screen.getByRole("link", { name: "Start application" }),
-    ).toHaveAttribute("href", SCHOOL_PLACE_JOURNEY_URL)
-  })
-
-  it("opens the in-app school-place page and keeps the forms URL on Start application", () => {
-    const discovery = getDiscovery("en", outDir)
-    const school = getLifeEvent(discovery, "child-starting-school")
-    const journey = school.journeys.find(
-      (item) => item.slug === "apply-for-a-school-place",
+    expect(screen.getByText("Child starting school")).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute(
+      "href",
+      "/en/discovery/child-starting-school",
     )
-    if (!journey) throw new Error("missing school-place journey")
-    const inApp = "/en/discovery/child-starting-school/apply-for-a-school-place"
-
-    renderIn(
-      "en",
-      <LifeEventView lifeEvent={school} categoryTitle='Education & Learning' />,
-    )
-    const apply = screen.getByRole("link", { name: "Apply for a school place" })
-    expect(apply).toHaveAttribute("href", inApp)
-    expect(apply).not.toHaveAttribute("target", "_blank")
-    cleanup()
-
-    renderIn("en", <JourneyView lifeEvent={school} journey={journey} />)
     const start = screen.getByRole("link", { name: "Start application" })
     expect(start).toHaveAttribute("href", SCHOOL_PLACE_JOURNEY_URL)
     expect(start).toHaveAttribute("target", "_blank")
   })
 
-  it("renders the CMS start button when the external forms href is absent", () => {
-    const discovery = getDiscovery("en", outDir)
-    const school = getLifeEvent(discovery, "child-starting-school")
-    const journey = school.journeys.find(
-      (item) => item.slug === "apply-for-a-school-place",
-    )
-    if (!journey) throw new Error("missing school-place journey")
-    const cmsHref = "/from-the-cms"
-    const withoutExternalHref = {
-      ...journey,
-      body: journey.body.map((block) =>
-        block.type === "buttonLinks"
-          ? {
-              ...block,
-              links: block.links.map((link) => ({
-                ...link,
-                href: cmsHref,
-                internal: true,
-              })),
-            }
-          : block,
-      ),
-    }
-    const inApp = "/en/discovery/child-starting-school/apply-for-a-school-place"
-
-    renderIn(
-      "en",
-      <LifeEventView lifeEvent={school} categoryTitle='Education & Learning' />,
-    )
-    const apply = screen.getByRole("link", { name: "Apply for a school place" })
-    expect(apply).toHaveAttribute("href", inApp)
-    expect(apply).not.toHaveAttribute("target", "_blank")
-    cleanup()
-
-    renderIn(
-      "en",
-      <JourneyView lifeEvent={school} journey={withoutExternalHref} />,
-    )
-    const start = screen.getByRole("link", { name: "Start application" })
-    expect(start).toHaveAttribute("href", `/en${cmsHref}`)
-    expect(start).not.toHaveAttribute("target", "_blank")
-  })
-
-  it("renders a description under each life event on the overview", () => {
+  it("lists life events by title, without a synthesised description", () => {
     const discovery = getDiscovery("en", outDir)
     renderIn("en", <LifeEventsIndexView discovery={discovery} />)
 
     const school = screen.getByRole("link", { name: "Child starting school" })
-    expect(school.closest("li")).toHaveTextContent(
-      "Enrolling a child in primary school, the supports available, and what to do if you do not get a place.",
+    expect(school.closest("li")?.querySelector("p")).toBeNull()
+    expect(school.closest("li")).not.toHaveTextContent(
+      "Enrolling a child in primary school",
     )
-    expect(school.closest("li")?.querySelector("p")).toHaveClass("gi-text-sm")
-
     expect(
       screen.getByRole("link", { name: "Birth of a Child" }).closest("li"),
-    ).toHaveTextContent(
-      "Registering a birth, and the payments and services available to new parents.",
-    )
+    ).not.toHaveTextContent("Registering a birth")
   })
 
   it("uses the life-events type scale, muted eyebrow, and card divider", () => {
@@ -313,9 +415,9 @@ describe("discovery views", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveClass(
       pageTitleStyles.pageTitle,
     )
-    expect(
-      screen.getByText(/Choose the moment you are dealing with/),
-    ).toHaveClass("gi-text-lg")
+    const intro = screen.getByText(/Choose the moment you are dealing with/)
+    expect(intro.closest("p")).not.toHaveAttribute("class")
+    expect(intro.closest("article")).toHaveClass("gi-prose")
     expect(
       screen.getByRole("heading", { level: 2, name: "Education & Learning" }),
     ).toHaveClass("gi-text-lg", "xl:gi-text-xl")
@@ -349,152 +451,24 @@ describe("discovery views", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "Child starting school" }),
     ).toHaveClass(pageTitleStyles.pageTitle)
-    expect(screen.getByText(/Enrolling a child in primary school/)).toHaveClass(
-      "gi-text-lg",
+    const lead = screen.getByText(/Enrolling a child in primary school/)
+    expect(lead.closest("p")).not.toHaveAttribute("class")
+    expect(lead.closest("article")).toHaveClass("gi-prose")
+    for (const name of ["Services", "Guidance"]) {
+      expect(screen.getByRole("heading", { level: 2, name })).toHaveClass(
+        "gi-text-lg",
+        "xl:gi-text-xl",
+      )
+    }
+    const apply = screen.getByRole("link", { name: "Apply for a school place" })
+    expect(apply).toHaveClass("gi-font-bold", "gi-text-md")
+    expect(apply.closest("li")).toHaveClass(
+      "gi-border-b",
+      "gi-border-color-border-system-neutral-muted",
     )
-    expect(
-      screen.getByRole("heading", { level: 2, name: "Services" }),
-    ).toHaveClass("gi-text-lg", "xl:gi-text-xl")
-    expect(
-      screen
-        .getByRole("link", { name: "Apply for a school place" })
-        .closest("li"),
-    ).toHaveClass("gi-border-b", "gi-border-color-border-system-neutral-muted")
-    for (const el of [
-      screen
-        .getByRole("link", { name: "Apply for a school place" })
-        .closest("ul"),
-      screen
-        .getByRole("link", { name: "Apply for a school place" })
-        .closest("section"),
-    ]) {
+    for (const el of [apply.closest("ul"), apply.closest("section")]) {
       expect(el).toHaveClass("gi-w-full")
     }
-    cleanup()
-
-    renderIn(
-      "en",
-      <JourneyView lifeEvent={school} journey={school.journeys[0]} />,
-    )
-    expect(
-      screen.getByRole("heading", {
-        level: 1,
-        name: "Apply for a school place",
-      }),
-    ).toHaveClass(pageTitleStyles.pageTitle)
-    expect(screen.queryByText(/Life event ·/)).not.toBeInTheDocument()
-    expect(
-      screen.getByText(/Use this service to apply for a primary school place/),
-    ).toHaveClass("gi-text-lg")
-    expect(
-      screen.queryByRole("heading", { name: "Getting ready to apply" }),
-    ).not.toBeInTheDocument()
-    expect(
-      screen.getByRole("heading", { level: 2, name: "How long it takes" }),
-    ).toHaveClass("gi-text-lg", "xl:gi-text-xl")
-  })
-
-  it("uses a summary, otherwise the first plain-text paragraph", () => {
-    const discovery = getDiscovery("en", outDir)
-    const fallback: ContentBlock = {
-      type: "richText",
-      nodes: [
-        {
-          type: "list",
-          ordered: false,
-          children: [
-            { type: "listItem", children: [{ type: "text", value: "skip" }] },
-          ],
-        },
-        { type: "paragraph", children: [{ type: "text", value: "   " }] },
-        {
-          type: "paragraph",
-          children: [
-            { type: "text", value: "Apply " },
-            { type: "strong", children: [{ type: "text", value: "now" }] },
-            { type: "text", value: " " },
-            { type: "emphasis", children: [{ type: "text", value: "today" }] },
-            { type: "lineBreak" },
-            {
-              type: "link",
-              href: "https://www.gov.ie/en/",
-              internal: false,
-              children: [{ type: "text", value: "here" }],
-            },
-            { type: "text", value: " " },
-            {
-              type: "list",
-              ordered: true,
-              children: [
-                {
-                  type: "listItem",
-                  children: [{ type: "text", value: "one" }],
-                },
-                {
-                  type: "paragraph",
-                  children: [{ type: "text", value: " two" }],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    }
-
-    renderIn(
-      "en",
-      <LifeEventsIndexView
-        discovery={patchLifeEvents(discovery, {
-          "child-starting-school": {
-            summary: "Explicit CMS summary",
-            body: [
-              {
-                type: "richText",
-                nodes: [
-                  {
-                    type: "paragraph",
-                    children: [
-                      { type: "text", value: "Body that must not show" },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          "birth-of-a-child": {
-            summary: undefined,
-            body: [{ type: "heading", text: "Skipped heading" }, fallback],
-          },
-          pension: {
-            summary: undefined,
-            body: [
-              { type: "heading", text: "Only a heading" },
-              {
-                type: "richText",
-                nodes: [{ type: "paragraph", children: [] }],
-              },
-            ],
-          },
-        })}
-      />,
-    )
-
-    const school = screen
-      .getByRole("link", { name: "Child starting school" })
-      .closest("li")
-    expect(school).toHaveTextContent("Explicit CMS summary")
-    expect(school).not.toHaveTextContent("Body that must not show")
-
-    expect(
-      screen.getByRole("link", { name: "Birth of a Child" }).closest("li"),
-    ).toHaveTextContent("Apply now today here one two")
-
-    expect(
-      screen
-        .getByRole("link", { name: "Pension" })
-        .closest("li")
-        ?.querySelector("p"),
-    ).toBeNull()
   })
 
   it("renders no intro lead when the first block is not a paragraph", () => {
@@ -550,10 +524,9 @@ describe("discovery views", () => {
 
     renderIn(
       "en",
-      <JourneyView
-        lifeEvent={school}
-        journey={{
-          ...school.journeys[0],
+      <LifeEventView
+        lifeEvent={{
+          ...school,
           body: [
             {
               type: "richText",
@@ -570,9 +543,17 @@ describe("discovery views", () => {
             },
           ],
         }}
+        categoryTitle='Education & Learning'
       />,
     )
-    expect(screen.getByText("Lead sentence.")).toHaveClass("gi-text-lg")
-    expect(screen.getByText("Following paragraph.")).toHaveClass("gi-text-md")
+    expect(screen.getByText("Lead sentence.").closest("p")).not.toHaveAttribute(
+      "class",
+    )
+    expect(
+      screen.getByText("Following paragraph.").closest("p"),
+    ).not.toHaveAttribute("class")
+    expect(screen.getByText("Lead sentence.").closest("article")).toHaveClass(
+      "gi-prose",
+    )
   })
 })

@@ -1,7 +1,7 @@
 {
   "id": 1108,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "moving-home",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Moving home",
+  "highlighted": false,
+  "category": "Home & Housing",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Updating your address with government services when you move.</p>",
       "id": "le-1108"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

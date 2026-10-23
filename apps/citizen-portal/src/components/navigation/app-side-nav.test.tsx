@@ -146,7 +146,7 @@ describe("AppSideNav", () => {
       "http://messaging.local.test:8080/en/messages",
     )
 
-    nav.path = "/en/discovery/child-starting-school/apply-for-a-school-place"
+    nav.path = "/en/discovery/child-starting-school"
     rerender(<AppSideNav />)
     expect(screen.getByTestId("unread-badge")).toBe(badge)
   })

@@ -18,7 +18,6 @@ This document explains the comprehensive caching strategy implemented in the mes
 ## Overview
 
 The messaging-next application uses multiple caching layers to optimize performance:
-
 - **Server-Side Caching**: Next.js Cache Components with `cacheTag()` and `cacheLife()`
 - **Client-Side Caching**: SWR (stale-while-revalidate) for dynamic data
 - **Fetch Caching**: HTTP fetch requests with `force-cache` strategy
@@ -81,8 +80,8 @@ The messaging-next application uses multiple caching layers to optimize performa
 **How It Works**:
 ```typescript
 export async function getMessages() {
-  "use cache"           // Enables caching for this function
-  cacheTag("messages")  // Tags cache for invalidation
+  "use cache" // Enables caching for this function
+  cacheTag("messages") // Tags cache for invalidation
   // ... function logic
 }
 ```
@@ -102,9 +101,9 @@ export async function getMessages() {
 ```typescript
 "use cache"
 cacheLife({
-  stale: 5 * 60 * 1000,    // 5 minutes - cache is fresh
-  revalidate: 10 * 60 * 1000,  // 10 minutes - background revalidation
-  expire: 15 * 60 * 1000,  // 15 minutes - cache expires
+  stale: 5 * 60 * 1000, // 5 minutes - cache is fresh
+  revalidate: 10 * 60 * 1000, // 10 minutes - background revalidation
+  expire: 15 * 60 * 1000, // 15 minutes - cache expires
 })
 ```
 
@@ -121,7 +120,7 @@ cacheLife({
 **Configuration**:
 ```typescript
 const response = await fetch(`http://localhost:3000/api/messages`, {
-  cache: "force-cache",  // Uses Next.js fetch cache
+  cache: "force-cache", // Uses Next.js fetch cache
 })
 ```
 
@@ -161,7 +160,7 @@ Cache tags are used to group related cache entries for invalidation. The applica
 ```typescript
 export async function getMessages() {
   "use cache"
-  cacheTag("messages")  // Tagged for invalidation
+  cacheTag("messages") // Tagged for invalidation
   await simulateWork()
   return { data: (await import("@/mock/messages.json")).default }
 }
@@ -184,7 +183,7 @@ export async function getMessages() {
 ```typescript
 export async function getMessage(id: string) {
   "use cache"
-  cacheTag("message")  // Tagged for invalidation
+  cacheTag("message") // Tagged for invalidation
   // ... fetch logic
 }
 ```
@@ -194,24 +193,28 @@ export async function getMessage(id: string) {
 The layout component uses a three-stage cache lifecycle:
 
 #### Stage 1: Fresh (0-5 minutes)
+
 - Cache is considered **fresh**
 - Requests return cached data immediately
 - No revalidation occurs
 - **Duration**: 5 minutes
 
 #### Stage 2: Stale (5-10 minutes)
+
 - Cache is considered **stale** but still usable
 - Requests return cached data immediately
 - Background revalidation may occur
 - **Duration**: 5 minutes (from 5 to 10 minutes)
 
 #### Stage 3: Revalidation (10-15 minutes)
+
 - Cache is **revalidating** in the background
 - Requests return stale data while revalidating
 - New data is fetched and cached
 - **Duration**: 5 minutes (from 10 to 15 minutes)
 
 #### Stage 4: Expired (15+ minutes)
+
 - Cache has **expired**
 - Next request triggers fresh data fetch
 - New cache entry is created
@@ -392,11 +395,11 @@ revalidateTag("message")
 // In an API route or Server Action
 export async function POST(request: Request) {
   // ... create/update message logic
-  
+
   // Invalidate cache
   revalidateTag("messages")
   revalidateTag("message")
-  
+
   return Response.json({ success: true })
 }
 ```
@@ -460,7 +463,7 @@ mutate("/api/messages")
 
 ```typescript
 const nextConfig: NextConfig = {
-  cacheComponents: true,  // Enables Cache Components API
+  cacheComponents: true, // Enables Cache Components API
   // ... other config
 }
 ```
@@ -471,9 +474,9 @@ const nextConfig: NextConfig = {
 
 ```typescript
 cacheLife({
-  stale: 5 * 60 * 1000,        // 5 minutes
-  revalidate: 10 * 60 * 1000,  // 10 minutes
-  expire: 15 * 60 * 1000,      // 15 minutes
+  stale: 5 * 60 * 1000, // 5 minutes
+  revalidate: 10 * 60 * 1000, // 10 minutes
+  expire: 15 * 60 * 1000, // 15 minutes
 })
 ```
 
@@ -519,19 +522,19 @@ import { SWRConfig } from "swr"
 
 ### Server-Side
 
-| Resource | Cache Tag | Duration | Invalidation |
-|----------|-----------|----------|--------------|
-| Layout component | N/A | 15 minutes | Automatic expiration |
-| All messages list | `"messages"` | Indefinite | Manual (`revalidateTag`) |
-| Single message | `"message"` | Indefinite | Manual (`revalidateTag`) |
-| API route responses | N/A | Indefinite | Manual or deployment |
+| Resource            | Cache Tag    | Duration   | Invalidation             |
+| ------------------- | ------------ | ---------- | ------------------------ |
+| Layout component    | N/A          | 15 minutes | Automatic expiration     |
+| All messages list   | `"messages"` | Indefinite | Manual (`revalidateTag`) |
+| Single message      | `"message"`  | Indefinite | Manual (`revalidateTag`) |
+| API route responses | N/A          | Indefinite | Manual or deployment     |
 
 ### Client-Side
 
-| Resource | Cache Key | Duration | Invalidation |
-|----------|-----------|----------|--------------|
-| `/api/messages` | URL | Until revalidation | Window focus, network reconnect |
-| `/api/messages/[id]` | URL | Until revalidation | Window focus, network reconnect |
+| Resource             | Cache Key | Duration           | Invalidation                    |
+| -------------------- | --------- | ------------------ | ------------------------------- |
+| `/api/messages`      | URL       | Until revalidation | Window focus, network reconnect |
+| `/api/messages/[id]` | URL       | Until revalidation | Window focus, network reconnect |
 
 ---
 
@@ -578,6 +581,7 @@ import { SWRConfig } from "swr"
 ### Server-Side Caching
 
 1. **Use Cache Tags Strategically**
+
    ```typescript
    // Group related data
    cacheTag("messages")      // All messages
@@ -586,15 +590,16 @@ import { SWRConfig } from "swr"
    ```
 
 2. **Set Appropriate Cache Life**
+
    ```typescript
    // For frequently changing data
    cacheLife({ stale: 1 * 60 * 1000, revalidate: 5 * 60 * 1000 })
-   
-   // For rarely changing data
+      // For rarely changing data
    cacheLife({ stale: 60 * 60 * 1000, revalidate: 120 * 60 * 1000 })
    ```
 
 3. **Invalidate on Mutations**
+
    ```typescript
    // Always invalidate after mutations
    await createMessage(data)
@@ -602,6 +607,7 @@ import { SWRConfig } from "swr"
    ```
 
 4. **Use Fetch Cache for API Routes**
+
    ```typescript
    // Cache API responses
    fetch(url, { cache: "force-cache" })
@@ -610,24 +616,25 @@ import { SWRConfig } from "swr"
 ### Client-Side Caching (SWR)
 
 1. **Use Consistent Cache Keys**
+
    ```typescript
    // Good: Consistent keys
    useFetch("/api/messages")
-   
-   // Bad: Dynamic keys without memoization
+      // Bad: Dynamic keys without memoization
    useFetch(`/api/messages?page=${page}`)  // Creates new cache entry each time
    ```
 
 2. **Handle Loading and Error States**
+
    ```typescript
    const { data, error, isLoading } = useFetch(url)
-   
-   if (isLoading) return <Loading />
+      if (isLoading) return <Loading />
    if (error) return <Error />
    return <Data data={data} />
    ```
 
 3. **Use Optimistic Updates**
+
    ```typescript
    // Update UI immediately, then sync with server
    mutate("/api/messages", newData, false)
@@ -636,6 +643,7 @@ import { SWRConfig } from "swr"
    ```
 
 4. **Configure Revalidation Intervals**
+
    ```typescript
    // For real-time data
    useSWR(url, fetcher, { refreshInterval: 1000 })
@@ -679,7 +687,6 @@ import { SWRConfig } from "swr"
 ## Summary
 
 The messaging-next application implements a comprehensive multi-layer caching strategy:
-
 - **Server-Side**: Next.js Cache Components with tags and lifecycle management
 - **Client-Side**: SWR for dynamic, interactive data fetching
 - **Duration**: Varies by cache type (5-15 minutes for layout, indefinite for data until invalidated)

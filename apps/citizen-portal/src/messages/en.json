@@ -31,26 +31,35 @@
     }
   },
   "submissions": {
-    "heading": "Your submissions",
-    "loading": "Loading submissions",
-    "error": "Error loading submissions: {message}",
+    "heading": "Applications",
+    "description": "Track your applications and see updates from the organisations handling them.",
+    "loading": "Loading applications",
+    "error": "Error loading applications: {message}",
+    "search": {
+      "placeholder": "Search by ID or Title",
+      "ariaLabel": "Search applications"
+    },
     "empty": {
-      "all": "You have no submissions yet.",
-      "search": "No submissions match your search."
+      "title": "You have no applications",
+      "description": "When you apply for a service through gov.ie, your application will appear here.",
+      "all": "You have no applications.",
+      "search": "No applications match your search."
     },
     "table": {
       "column": {
-        "id": "ID",
-        "submission": "Submission",
+        "title": "Title",
         "status": "Status",
-        "date": "Date"
+        "date": "Last update",
+        "id": "Submission ID"
       },
+      "idLabel": "ID {id}",
+      "lastUpdate": "Last update {date}",
       "aria": {
-        "submissionList": "Submission list"
+        "submissionList": "Application list"
       }
     },
     "status": {
-      "initiated": "Started",
+      "initiated": "Draft",
       "submitted": "Submitted",
       "processing": "Processing",
       "completed": "Completed",
@@ -64,19 +73,16 @@
       "link": "View all submissions"
     },
     "detail": {
-      "heading": "Submission details",
-      "loading": "Loading submission",
-      "notFound": "Submission not found",
-      "toolbarAriaLabel": "Submission actions",
-      "submissionFor": "Submission for",
-      "description": "Description",
-      "id": "ID",
-      "startDate": "Start date",
+      "loading": "Loading application",
+      "notFound": "Application not found",
+      "toolbarAriaLabel": "Application actions",
+      "applicationStatus": "Application status",
+      "lastUpdate": "Last update",
       "submittedDate": "Submitted date",
-      "status": "Status",
+      "id": "Submission ID",
       "related": {
         "title": "Related messages",
-        "empty": "There are no messages related to this submission.",
+        "empty": "You have no messages about this application",
         "attachment": "Has attachment",
         "read": "Read",
         "unread": "Unread"
@@ -477,6 +483,7 @@
     "summary": "{categories, plural, one {# category} other {# categories}} · {lifeEvents, plural, one {# life event} other {# life events}}",
     "lifeEventLabel": "Life event · {category}",
     "services": "Services",
+    "guidance": "Guidance",
     "servicesCount": "{count, plural, =0 {There are no services in this life event yet} one {# service in this life event} other {# services in this life event}}"
   }
 }

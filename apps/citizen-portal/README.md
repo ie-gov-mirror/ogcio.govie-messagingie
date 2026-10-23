@@ -171,7 +171,6 @@ curl -i -H "Host: somewhere-else.local.test" http://localhost:8080/
 ```
 
 If a hostname renders the wrong content, double-check:
-
 - `MESSAGING_HOST` / `PROFILE_HOST` / `DASHBOARD_HOST` in
   `docker-compose.yaml` match your `/etc/hosts` line.
 - The `docker compose` build picked up your latest changes
@@ -232,13 +231,13 @@ to `.env.local` to seed it.
 `pnpm docker:run:citizen-portal:local --help` lists everything, but the
 common ones:
 
-| Flag | Default | Notes |
-|------|---------|-------|
-| `--port <port>` | `8080` | Host port mapped to the container's nginx (8080) |
-| `--name <name>` | `citizen-portal-run` | Container name (kept distinct from docker-compose's `citizen-portal`) |
-| `--build` | off | Run `pnpm docker:build:citizen-portal:local` first |
-| `--no-add-host` | off | Skip the auto-injected `*.local.test:host-gateway` entries (use this when you've already added the names to `/etc/hosts` or want to test with real DNS) |
-| `--detach` / `-d` | off | Run the container detached |
+| Flag              | Default              | Notes                                                                                                                                                   |
+| ----------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--port <port>`   | `8080`               | Host port mapped to the container's nginx (8080)                                                                                                        |
+| `--name <name>`   | `citizen-portal-run` | Container name (kept distinct from docker-compose's `citizen-portal`)                                                                                   |
+| `--build`         | off                  | Run `pnpm docker:build:citizen-portal:local` first                                                                                                      |
+| `--no-add-host`   | off                  | Skip the auto-injected `*.local.test:host-gateway` entries (use this when you've already added the names to `/etc/hosts` or want to test with real DNS) |
+| `--detach` / `-d` | off                  | Run the container detached                                                                                                                              |
 
 > **Note** Because the image is a **static export**, `NEXT_PUBLIC_*`
 > values are baked in at **build time** — passing them via `--env-file`
@@ -270,13 +269,13 @@ through the single helper module
 [`src/lib/feature-config.ts`](src/lib/feature-config.ts). **All default
 `true`**, so every current deployment is unchanged.
 
-| Flag | Default | When `false` |
-| --- | --- | --- |
-| `NEXT_PUBLIC_ENABLE_DASHBOARD` | `true` | Dashboard drawer link hidden; `/{locale}/` landing never resolves to dashboard; a direct visit to `/{locale}/my-dashboard` redirects to the first enabled landing zone; unmatched-path fallback no longer points at dashboard. |
-| `NEXT_PUBLIC_ENABLE_MESSAGING` | `true` | MessagingIE drawer link hidden; the recent-messages (`MyMessages`) widget is omitted from the dashboard landing; messaging is no longer a landing fallback. |
-| `NEXT_PUBLIC_ENABLE_JOURNEY_INTEGRATION` | `true` | Journey-Builder sign-out iframe is not added to the global-signout fan-out (no reference to a Journey-Builder origin). |
-| `NEXT_PUBLIC_ENABLE_PAYMENTS_INTEGRATION` | `true` | Payments sign-out iframe is not added to the global-signout fan-out. |
-| `NEXT_PUBLIC_ENABLE_FORMS_INTEGRATION` | `true` | Forms sign-out iframe is not added to the global-signout fan-out. |
+| Flag                                      | Default | When `false`                                                                                                                                                                                                                   |
+| ----------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_ENABLE_DASHBOARD`            | `true`  | Dashboard drawer link hidden; `/{locale}/` landing never resolves to dashboard; a direct visit to `/{locale}/my-dashboard` redirects to the first enabled landing zone; unmatched-path fallback no longer points at dashboard. |
+| `NEXT_PUBLIC_ENABLE_MESSAGING`            | `true`  | MessagingIE drawer link hidden; the recent-messages (`MyMessages`) widget is omitted from the dashboard landing; messaging is no longer a landing fallback.                                                                    |
+| `NEXT_PUBLIC_ENABLE_JOURNEY_INTEGRATION`  | `true`  | Journey-Builder sign-out iframe is not added to the global-signout fan-out (no reference to a Journey-Builder origin).                                                                                                         |
+| `NEXT_PUBLIC_ENABLE_PAYMENTS_INTEGRATION` | `true`  | Payments sign-out iframe is not added to the global-signout fan-out.                                                                                                                                                           |
+| `NEXT_PUBLIC_ENABLE_FORMS_INTEGRATION`    | `true`  | Forms sign-out iframe is not added to the global-signout fan-out.                                                                                                                                                              |
 
 Profile has no flag — every building block requires Profile, so the
 profile zone is always enabled and is the terminal landing fallback.
@@ -297,12 +296,12 @@ reduced-topology pipeline overrides them at the `--build-arg` level.
 
 #### Deployment scenarios → flag values
 
-| Scenario | `ENABLE_DASHBOARD` | `ENABLE_MESSAGING` | `ENABLE_JOURNEY_INTEGRATION` |
-| --- | --- | --- | --- |
-| Profile + MessagingIE (no Dashboard) | `false` | `true` | `true` |
-| Profile + Forms (no Dashboard, no MessagingIE) | `false` | `false` | `true` |
-| Profile + Forms + MessagingIE + Journey Builder (no Dashboard) | `false` | `true` | `true` |
-| Profile + Forms + Journey Builder (no Dashboard, no MessagingIE) | `false` | `false` | `true` |
+| Scenario                                                         | `ENABLE_DASHBOARD` | `ENABLE_MESSAGING` | `ENABLE_JOURNEY_INTEGRATION` |
+| ---------------------------------------------------------------- | ------------------ | ------------------ | ---------------------------- |
+| Profile + MessagingIE (no Dashboard)                             | `false`            | `true`             | `true`                       |
+| Profile + Forms (no Dashboard, no MessagingIE)                   | `false`            | `false`            | `true`                       |
+| Profile + Forms + MessagingIE + Journey Builder (no Dashboard)   | `false`            | `true`             | `true`                       |
+| Profile + Forms + Journey Builder (no Dashboard, no MessagingIE) | `false`            | `false`            | `true`                       |
 
 (Forms is reached via direct `NEXT_PUBLIC_FORMS_SERVICE_URL` links, not a
 citizen-portal zone, so it needs no zone flag. Disabling Journey or
@@ -321,8 +320,8 @@ Unlike the topology flags it **defaults `false`** and the shared pipeline
 **does** forward it (`--build-arg NEXT_PUBLIC_ENABLE_LEA=$(nextPublicEnableLea)`),
 so its value can differ per environment:
 
-| Flag | Default | Dev | UAT | Prod |
-| --- | --- | --- | --- | --- |
+| Flag                     | Default | Dev    | UAT    | Prod    |
+| ------------------------ | ------- | ------ | ------ | ------- |
 | `NEXT_PUBLIC_ENABLE_LEA` | `false` | `true` | `true` | `false` |
 
 Prod keeps the default (non-LEA) version. Gate the LEA surfaces on
@@ -335,8 +334,8 @@ actions, mobile folder panel). Parsed by the same helper and read via
 `isFoldersEnabled()`. **Defaults `false`** in every environment until
 the pipeline `nextPublicEnableFolders` is flipped.
 
-| Flag | Default | Dev | UAT | Prod |
-| --- | --- | --- | --- | --- |
+| Flag                         | Default | Dev     | UAT     | Prod    |
+| ---------------------------- | ------- | ------- | ------- | ------- |
 | `NEXT_PUBLIC_ENABLE_FOLDERS` | `false` | `false` | `false` | `false` |
 
 Folder e2e specs skip unless `NEXT_PUBLIC_ENABLE_FOLDERS` is truthy in
@@ -370,7 +369,6 @@ the live visibility of the linked UI within such a build.)
 ### URL-content parity via canonicalisation
 
 The unified `nginx.conf.template` declares two `map` directives:
-
 - `map $uri $canonical_host` maps every owned URI prefix to the
   hostname that owns it (e.g. `/<locale>/messages*` → `${MESSAGING_HOST}`,
   `/<locale>/my-profile*` → `${PROFILE_HOST}`,

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   PAGINATION_LIMIT_DEFAULT,
   PAGINATION_MAX_LIMIT,
+  PAGINATION_MIN_LIMIT,
   PAGINATION_MIN_OFFSET,
   PAGINATION_OFFSET_DEFAULT,
 } from "~/const/pagination.js";
@@ -92,14 +93,44 @@ describe("Pagination Utils", () => {
       expect(Number(result.offset)).toBe(PAGINATION_OFFSET_DEFAULT);
     });
 
-    it("should enforce min/max limits", () => {
+    it("should accept the maximum limit", () => {
       const result = sanitizePagination({
-        limit: (PAGINATION_MAX_LIMIT + 100).toString(),
-        offset: "-10",
+        limit: PAGINATION_MAX_LIMIT.toString(),
+        offset: "0",
       });
 
-      expect(Number(result.limit)).toBe(PAGINATION_MAX_LIMIT);
-      expect(Number(result.offset)).toBe(PAGINATION_MIN_OFFSET);
+      expect(result).toEqual({
+        limit: PAGINATION_MAX_LIMIT.toString(),
+        offset: "0",
+      });
+    });
+
+    it("should reject a limit above the maximum", () => {
+      expect(() =>
+        sanitizePagination({
+          limit: (PAGINATION_MAX_LIMIT + 100).toString(),
+          offset: "0",
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          statusCode: 422,
+          message: `Limit must be between ${PAGINATION_MIN_LIMIT} and ${PAGINATION_MAX_LIMIT}`,
+        }),
+      );
+    });
+
+    it("should reject an offset below the minimum", () => {
+      expect(() =>
+        sanitizePagination({
+          limit: "10",
+          offset: "-10",
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          statusCode: 422,
+          message: `Offset must be greater than or equal to ${PAGINATION_MIN_OFFSET}`,
+        }),
+      );
     });
   });
 

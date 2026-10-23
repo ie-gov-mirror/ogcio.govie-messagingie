@@ -118,11 +118,21 @@ vi.mock("@/components/PaginationWrapper", () => ({
   ),
 }))
 
-vi.mock("@/components/message-events/MessageStatus", () => ({
-  MessageStatus: ({ type, status }: { type: string; status: string }) => (
-    <span>{`${type}:${status}`}</span>
-  ),
-}))
+vi.mock(
+  "@/components/message-events/MessageStatus",
+  async (importOriginal) => ({
+    ...(await importOriginal<object>()),
+    MessageStatus: ({
+      type,
+      status,
+      context,
+    }: {
+      type: string
+      status: string
+      context: string
+    }) => <span data-context={context}>{`${type}:${status}`}</span>,
+  }),
+)
 
 vi.mock("@/components/tables/TanStackTable", () => ({
   TanStackTable: ({
@@ -281,7 +291,10 @@ describe(EventTable.name, () => {
 
     render(<EventTable />)
 
-    expect(screen.getByText("message_delivery:successful")).toBeInTheDocument()
+    expect(screen.getByText("message_delivery:successful")).toHaveAttribute(
+      "data-context",
+      "list",
+    )
     expect(screen.getByText("n/a")).toBeInTheDocument()
     expect(screen.getAllByRole("link", { name: "link.view" })).toHaveLength(2)
     expect(fetchMock.mock.calls[0]?.[0]).not.toContain("status=")
@@ -337,7 +350,10 @@ describe(MessageEventDetailClient.name, () => {
     expect(
       screen.getByRole("heading", { name: "heading.mainEvent" }),
     ).toBeInTheDocument()
-    expect(screen.getByText("message_delivery:successful")).toBeInTheDocument()
+    expect(screen.getByText("message_delivery:successful")).toHaveAttribute(
+      "data-context",
+      "timeline",
+    )
     expect(screen.getByRole("link", { name: "link.back" })).toHaveAttribute(
       "href",
       "/en/message-events",

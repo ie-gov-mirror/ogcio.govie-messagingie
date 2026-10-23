@@ -7,7 +7,6 @@
 ## 1. Executive Summary
 
 Following the recent production incident, we identified two areas of intervention:
-
 - **Fix the export feature** so that it returns only the data associated with a
   user's messages.
 - **Sanitise the incorrect file–user associations** in the upload-api database.
@@ -28,7 +27,7 @@ reversible.
 ### 2.1 Root cause
 
 The lifecycle worker's "export my data" step built the export file set from
-*every* file shared to a user, via `upload.support.getSharedFilesForUser` — i.e.
+_every_ file shared to a user, via `upload.support.getSharedFilesForUser` — i.e.
 all rows in `files_users`. That is the exact junction table polluted by the
 digital-postbox migration cross-join (the same table targeted by Remediation 2),
 so other users' attachments were zipped into an export.
@@ -43,7 +42,6 @@ still go through the existing `upload.support.getFiles({ fileIds, userId })` bat
 endpoint, which enforces a per-id ACL check as defence-in-depth.
 
 Concretely:
-
 - Adds a pure extractor `getAttachmentFileIdsByUserId(messagesByUserId)` (dedupes
   per user, omits users with no attachments).
 - Fetches messages first, then derives `fileIdsByUserId` from message
@@ -92,24 +90,24 @@ the duration of the clean-up, and removes it afterwards.
 
 > The temporary bridge is a **staging table**, not a temporary `message_id`
 > column on `files_users`. A staging table works cleanly across two separate
-> databases (a column would have to be populated from the *other* database, which
+> databases (a column would have to be populated from the _other_ database, which
 > isn't directly possible) and avoids altering the live table's schema.
 
 ### 3.2 Procedure
 
-| # | Step | Notes |
-|---|------|-------|
-| 1 | Back up `files_users` (and take the upload-api DB backup) | Before any intervention; enables full rollback |
-| 2 | Build the list of **valid** `(file, user)` pairs from messaging-api | `attachments_messages` ⋈ `messages` → each attachment paired with its recipient — the source of truth |
-| 3 | Load that list into a **temporary staging table** in upload-api | The temporary bridge to messages; separate DBs mean no live cross-DB join |
-| 4 | **Dry-run report** — list the invalid rows that would be removed | Read-only; reviewed and signed off before any deletion |
-| 5 | **Delete the first verification cohort: 4 users** (`verify_04.txt`) | The affected population is frozen once and sliced into 3 files (`verify_04` / `verify_14` / `remaining`); delete this cohort first |
-| 6 | **Analyze export** for the 4 users | Trigger the data export on their behalf (export confirmation notification disabled) and check the exported files contain no leak; if clean, continue |
-| 7 | **Delete the second verification cohort: 14 users** (`verify_14.txt`) | The remaining known-affected users we saw export with leaks |
-| 8 | **Analyze export** for the 14 users | Same export check; only proceed once it is clean |
-| 9 | Delete the invalid rows for **everyone else** (`remaining.txt`), processed **internally in groups of 20** | One command (`run.sh --group 20`); a row is invalid if the file came from the migration but its `(file, user)` pair is not in the valid list |
-| 10 | Verify the result | Re-check files shared with multiple users (see §3.3) |
-| 11 | Drop the temporary staging table | Restores the original schema and service separation |
+| #   | Step                                                                                                      | Notes                                                                                                                                                |
+| --- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Back up `files_users` (and take the upload-api DB backup)                                                 | Before any intervention; enables full rollback                                                                                                       |
+| 2   | Build the list of **valid** `(file, user)` pairs from messaging-api                                       | `attachments_messages` ⋈ `messages` → each attachment paired with its recipient — the source of truth                                                |
+| 3   | Load that list into a **temporary staging table** in upload-api                                           | The temporary bridge to messages; separate DBs mean no live cross-DB join                                                                            |
+| 4   | **Dry-run report** — list the invalid rows that would be removed                                          | Read-only; reviewed and signed off before any deletion                                                                                               |
+| 5   | **Delete the first verification cohort: 4 users** (`verify_04.txt`)                                       | The affected population is frozen once and sliced into 3 files (`verify_04` / `verify_14` / `remaining`); delete this cohort first                   |
+| 6   | **Analyze export** for the 4 users                                                                        | Trigger the data export on their behalf (export confirmation notification disabled) and check the exported files contain no leak; if clean, continue |
+| 7   | **Delete the second verification cohort: 14 users** (`verify_14.txt`)                                     | The remaining known-affected users we saw export with leaks                                                                                          |
+| 8   | **Analyze export** for the 14 users                                                                       | Same export check; only proceed once it is clean                                                                                                     |
+| 9   | Delete the invalid rows for **everyone else** (`remaining.txt`), processed **internally in groups of 20** | One command (`run.sh --group 20`); a row is invalid if the file came from the migration but its `(file, user)` pair is not in the valid list         |
+| 10  | Verify the result                                                                                         | Re-check files shared with multiple users (see §3.3)                                                                                                 |
+| 11  | Drop the temporary staging table                                                                          | Restores the original schema and service separation                                                                                                  |
 
 Steps 5–8 validate that the deployed read-time export fix (profile #757) still
 prevents leaks for the known-affected users **before** the bulk cleanse: we
@@ -139,7 +137,7 @@ incident are explicitly excluded.
 After the deletion we re-check for files associated with multiple users. This can
 be legitimate (e.g. the same PDF sent to several people) — such cases are backed
 by multiple messages and are **retained automatically**, because each recipient
-appears in the valid list. Any remaining occurrence that is *not* backed by a
+appears in the valid list. Any remaining occurrence that is _not_ backed by a
 message is individually verified rather than automatically removed. Only once all
 verifications are complete do we drop the temporary staging table (step 7).
 

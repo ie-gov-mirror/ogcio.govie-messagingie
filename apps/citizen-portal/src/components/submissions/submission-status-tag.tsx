@@ -7,11 +7,11 @@ import type { SubmissionStatus } from "@/types"
 function tagTypeForStatus(status: SubmissionStatus): TagType {
   switch (status) {
     case "initiated":
-      return TagTypeEnum.Info
+      return TagTypeEnum.Warning
     case "submitted":
       return TagTypeEnum.Info
     case "processing":
-      return TagTypeEnum.Warning
+      return TagTypeEnum.Info
     case "completed":
       return TagTypeEnum.Success
     case "cancelled":

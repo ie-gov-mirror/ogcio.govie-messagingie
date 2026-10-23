@@ -26,7 +26,6 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo } from "react"
-import { ListCard } from "@/components/list-card/list-card"
 import { InboxPagination } from "@/components/messages/inbox-pagination"
 import { MessagesLoading } from "@/components/messages/messages-loading"
 import inboxTableStyles from "@/components/messages/unified-inbox-table.module.css"
@@ -44,7 +43,24 @@ export interface SubmissionListTableProps {
   totalPages: number
   pageSize: number
   onPageSizeChange: (size: number) => void
-  onSelect: (id: string) => void
+}
+
+function SubmissionDate({
+  submission,
+  withLabel = false,
+}: {
+  submission: Submission
+  /** Prefix plain dates with "Last update" (mobile, where there is no column header). */
+  withLabel?: boolean
+}) {
+  const tTable = useTranslations("submissions.table")
+  const date = formatDate(submission.updatedAt, "short")
+
+  return (
+    <time dateTime={submission.updatedAt} className={styles.lastUpdateDate}>
+      {withLabel ? tTable("lastUpdate", { date }) : date}
+    </time>
+  )
 }
 
 export function SubmissionListTable({
@@ -53,7 +69,6 @@ export function SubmissionListTable({
   totalPages,
   pageSize,
   onPageSizeChange,
-  onSelect,
 }: SubmissionListTableProps) {
   const t = useTranslations("submissions")
   const tTable = useTranslations("submissions.table")
@@ -67,17 +82,9 @@ export function SubmissionListTable({
   const columns = useMemo<ColumnDef<Submission>[]>(
     () => [
       {
-        id: "id",
-        accessorKey: "id",
-        header: tTable("column.id"),
-        cell: ({ getValue }) => (
-          <span className={styles.idCell}>{getValue<string>()}</span>
-        ),
-      },
-      {
-        id: "application",
+        id: "title",
         accessorFn: (row) => pickLocalized(row.title, locale),
-        header: tTable("column.submission"),
+        header: tTable("column.title"),
         cell: ({ row }) => (
           <Link
             href={`${pathname}?id=${row.original.id}`}
@@ -85,7 +92,7 @@ export function SubmissionListTable({
             prefetch={false}
             className={inboxTableStyles.rowLink}
           >
-            <span className={inboxTableStyles.detailsText}>
+            <span className={styles.titleText}>
               {pickLocalized(row.original.title, locale)}
             </span>
           </Link>
@@ -99,12 +106,16 @@ export function SubmissionListTable({
       },
       {
         id: "date",
-        accessorFn: (row) => row.submittedAt ?? row.createdAt,
+        accessorKey: "updatedAt",
         header: tTable("column.date"),
+        cell: ({ row }) => <SubmissionDate submission={row.original} />,
+      },
+      {
+        id: "id",
+        accessorKey: "id",
+        header: tTable("column.id"),
         cell: ({ getValue }) => (
-          <time dateTime={getValue<string>()}>
-            {formatDate(getValue<string>(), "short")}
-          </time>
+          <span className={styles.idCell}>{getValue<string>()}</span>
         ),
       },
     ],
@@ -122,10 +133,10 @@ export function SubmissionListTable({
   const columnSize = (id: string) =>
     (
       ({
-        id: "sm-fixed",
-        application: "fluid",
+        title: "fluid",
         status: "md-fixed",
-        date: "sm-fixed",
+        date: "md-fixed",
+        id: "md-fixed",
       }) as Record<
         string,
         "xs-fixed" | "sm-fixed" | "md-fixed" | "lg-flex" | "fluid"
@@ -218,21 +229,30 @@ export function SubmissionListTable({
             </Table>
           </div>
 
-          <div className={inboxTableStyles.mobileList}>
+          <ul
+            className={`${inboxTableStyles.mobileList} ${styles.mobileList}`}
+            aria-label={tTable("aria.submissionList")}
+          >
             {submissions.map((submission) => (
-              <ListCard
-                key={submission.id}
-                title={submission.id}
-                date={formatDate(
-                  submission.submittedAt ?? submission.createdAt,
-                  "medium",
-                )}
-                preview={pickLocalized(submission.title, locale)}
-                previewUnderline={false}
-                onClick={() => onSelect(submission.id)}
-              />
+              <li key={submission.id} className={styles.mobileItem}>
+                <div className={styles.mobileItemHeader}>
+                  <span className={styles.idCell}>
+                    {tTable("idLabel", { id: submission.id })}
+                  </span>
+                  <SubmissionStatusTag status={submission.status} />
+                </div>
+                <Link
+                  href={`${pathname}?id=${submission.id}`}
+                  scroll={false}
+                  prefetch={false}
+                  className={styles.mobileItemLink}
+                >
+                  {pickLocalized(submission.title, locale)}
+                </Link>
+                <SubmissionDate submission={submission} withLabel />
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       ) : (
         <div className={inboxTableStyles.emptyState}>

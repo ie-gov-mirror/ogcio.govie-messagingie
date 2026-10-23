@@ -106,6 +106,46 @@ describe("GET /api/v1/messages/{messageId}/events", {}, () => {
     expect(body[0].eventType).toBe(MessagingEventType.deliverMessage.key);
     expect(body[1].eventType).toBe(MessagingEventType.createRawMessage.key);
   });
+
+  it("should keep the reason and provider fields of email events", async () => {
+    // Email outcomes carry their reason and provider ID in the event data
+    const message = await insertMessage(
+      recipientId,
+      organizationIdFirstSender,
+      pool,
+    );
+    messagingEventLogger.log(MessagingEventType.emailError, {
+      messageId: message.id,
+      messageKey: "failedToSend",
+      details: "554 Message rejected",
+    });
+    messagingEventLogger.log(MessagingEventType.emailAccepted, {
+      messageId: message.id,
+      providerMessageId: "0102018f-ses-id",
+    });
+    await messagingEventLogger.commit();
+
+    app = await getServer(
+      randomUUID().substring(0, 12),
+      message.organisationId,
+    );
+    const res = await app.inject({
+      method: "GET",
+      url: `/api/v1/messages/${message.id}/events`,
+    });
+
+    expect(res.statusCode).toBe(200);
+    const [accepted, failed] = res.json().data;
+    expect(accepted.data).toEqual({
+      messageId: message.id,
+      providerMessageId: "0102018f-ses-id",
+    });
+    expect(failed.data).toEqual({
+      messageId: message.id,
+      messageKey: "failedToSend",
+      details: "554 Message rejected",
+    });
+  });
 });
 
 async function getServer(

@@ -1,9 +1,0 @@
-/*
- * Page-level vertical rhythm for the authenticated shell's <main>.
- * DS gap: DS `Container` has no `margin`/`spacing` prop for outer
- * page gutters, so the margins are set here via DS space tokens.
- */
-.mainContainer {
-  margin-top: var(--gieds-space-10);
-  margin-bottom: var(--gieds-space-16);
-}

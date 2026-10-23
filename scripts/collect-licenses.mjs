@@ -10,17 +10,23 @@ const __dirname = dirname(__filename);
 
 // App name mapping
 const APP_NAME_MAP = {
-  "messaging-next": "MessagingIE App",
   "messaging-api": "MessagingIE API",
-  "messaging-admin-next": "MessagingIE Admin App",
+  "profile-api": "Profile API",
+  "scheduler-api": "Scheduler API",
+  "upload-api": "Upload API",
+  "citizen-portal": "MessagingIE Citizen App",
   "public-servant-portal": "MessagingIE Public Servant Portal",
+  "messaging-support": "MessagingIE Support tool",
 };
 
 const APP_ORDER = [
-  "messaging-next",
   "messaging-api",
-  "messaging-admin-next",
+  "profile-api",
+  "scheduler-api",
+  "upload-api",
+  "citizen-portal",
   "public-servant-portal",
+  "messaging-support",
 ];
 
 const APPS_DIR = join(__dirname, "../apps");

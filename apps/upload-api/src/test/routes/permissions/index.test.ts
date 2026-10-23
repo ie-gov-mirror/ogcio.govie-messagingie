@@ -16,12 +16,18 @@ const buildApp = async ({
   getFileSharings,
   userCanAccessFileOrThrow,
   infoLogs,
+  selectProfiles,
 }: {
   removeFileSharing?: () => Promise<unknown>;
   addFileSharing?: () => Promise<unknown>;
   getFileSharings?: () => Promise<unknown>;
   userCanAccessFileOrThrow?: () => Promise<unknown>;
   infoLogs?: unknown[][];
+  selectProfiles?: (
+    ids: string,
+    consentSubjects?: string[],
+    includeFullDetails?: boolean,
+  ) => Promise<unknown>;
 }) => {
   vi.resetModules();
 
@@ -80,6 +86,27 @@ const buildApp = async ({
   vi.doMock("../../../routes/utils/userCanAccessFileOrThrow.js", () => ({
     default: userCanAccessFileOrThrow,
   }));
+
+  vi.doMock("../../../utils/authentication-factory.js", async () => {
+    const actual = await vi.importActual<
+      typeof import("../../../utils/authentication-factory.js")
+    >("../../../utils/authentication-factory.js");
+    return {
+      ...actual,
+      getM2MProfileSdk: () =>
+        Promise.resolve({
+          selectProfiles:
+            selectProfiles ??
+            ((ids: string) =>
+              Promise.resolve({
+                data: ids
+                  .split(",")
+                  .filter((id) => id.length > 0)
+                  .map((id) => ({ id })),
+              })),
+        }),
+    };
+  });
 
   const { build } = await import("../../../app.js");
   const routes = await import("../../../routes/permissions/index.js");
@@ -252,6 +279,45 @@ describe("permissions", () => {
       });
 
       expect(response.statusCode).toBe(500);
+    });
+
+    it("returns 404 and does not write when a target profile is missing", async () => {
+      const addFileSharing = vi.fn(() => Promise.resolve({ rows: [] }));
+      const selectProfiles = vi.fn(async () => ({ data: [] }));
+      app = await buildApp({
+        userCanAccessFileOrThrow: () => Promise.resolve(),
+        addFileSharing,
+        selectProfiles,
+      });
+
+      const userId = randomUUID().substring(0, 12);
+      const response = await app.inject({
+        method: "POST",
+        url: "/permissions",
+        body: { fileId: "fileId", userId },
+      });
+
+      expect(response.statusCode).toBe(404);
+      expect(addFileSharing).not.toHaveBeenCalled();
+      expect(selectProfiles).toHaveBeenCalledWith(userId, undefined, false);
+    });
+
+    it("returns 503 and does not write when Profile fails", async () => {
+      const addFileSharing = vi.fn(() => Promise.resolve({ rows: [] }));
+      app = await buildApp({
+        userCanAccessFileOrThrow: () => Promise.resolve(),
+        addFileSharing,
+        selectProfiles: async () => ({ error: { statusCode: 500 } }),
+      });
+
+      const response = await app.inject({
+        method: "POST",
+        url: "/permissions",
+        body: { fileId: "fileId", userId: randomUUID().substring(0, 12) },
+      });
+
+      expect(response.statusCode).toBe(503);
+      expect(addFileSharing).not.toHaveBeenCalled();
     });
   });
 

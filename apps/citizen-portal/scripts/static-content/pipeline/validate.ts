@@ -2,8 +2,6 @@ import type { z } from "zod"
 import type { DiscoveryLocale } from "../../../src/lib/discovery/index.ts"
 import { PAGE_TYPES, SOURCE_LOCALE, TRANSLATION_LOCALE } from "../config.ts"
 import {
-  type JourneyPage,
-  journeyPageSchema,
   type LifeEventPage,
   type ListPage,
   lifeEventPageSchema,
@@ -17,10 +15,7 @@ export type Localised<T> = Record<DiscoveryLocale, T>
 
 export type ContentTree = {
   list: Localised<ListPage>
-  lifeEvents: Array<{
-    page: Localised<LifeEventPage>
-    journeys: Localised<JourneyPage>[]
-  }>
+  lifeEvents: Localised<LifeEventPage>[]
 }
 
 export function validateTree(
@@ -48,21 +43,12 @@ export function validateTree(
   }
 
   const list = localised(listPageSchema, PAGE_TYPES.list, raw.list)
-  const lifeEvents = raw.lifeEvents.map(({ page, journeys }) => ({
-    page: localised(lifeEventPageSchema, PAGE_TYPES.lifeEvent, page),
-    journeys: journeys.map((journey) =>
-      localised(journeyPageSchema, PAGE_TYPES.journey, journey),
-    ),
-  }))
+  const lifeEvents = raw.lifeEvents.map((page) =>
+    localised(lifeEventPageSchema, PAGE_TYPES.lifeEvent, page),
+  )
 
   if (!valid || !list) return undefined
-  return {
-    list,
-    lifeEvents: lifeEvents.map(({ page, journeys }) => ({
-      page: page as Localised<LifeEventPage>,
-      journeys: journeys as Localised<JourneyPage>[],
-    })),
-  }
+  return { list, lifeEvents: lifeEvents as Localised<LifeEventPage>[] }
 }
 
 function validatePage<T>(

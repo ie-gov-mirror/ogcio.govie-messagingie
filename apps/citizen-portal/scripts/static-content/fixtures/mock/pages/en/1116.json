@@ -1,7 +1,7 @@
 {
   "id": 1116,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "marriage-dissolution-separation-divorce",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Marriage Dissolution - Separation/Divorce",
+  "highlighted": false,
+  "category": "Relationships",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Separation, divorce and the supports available to families.</p>",
       "id": "le-1116"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

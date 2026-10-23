@@ -1,7 +1,7 @@
 {
   "id": 1121,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "supporting-the-bereaved-death-of-a-loved-one",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Supporting the bereaved - Death of a loved one",
+  "highlighted": false,
+  "category": "Bereavement",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Registering a death, bereavement payments and dealing with an estate.</p>",
       "id": "le-1121"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

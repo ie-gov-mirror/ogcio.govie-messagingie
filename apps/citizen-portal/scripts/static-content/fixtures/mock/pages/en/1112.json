@@ -1,7 +1,7 @@
 {
   "id": 1112,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "losing-a-job",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Losing a job",
+  "highlighted": false,
+  "category": "Work & Money",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Jobseeker payments, redundancy and help finding new work.</p>",
       "id": "le-1112"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

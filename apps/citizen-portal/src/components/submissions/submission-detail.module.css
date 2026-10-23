@@ -36,34 +36,90 @@
   box-sizing: border-box;
 }
 
-/* Definition list of submission fields, one label/value pair per row. */
+/* Organisation eyebrow, title and description. */
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gieds-space-2);
+}
+
+.intro > * {
+  margin: 0;
+}
+
+.organisation {
+  font-weight: var(--gieds-font-weight-700, 700);
+  color: var(--gieds-color-text-system-neutral-muted, #686d78);
+}
+
+/*
+ * Submission fields. Mobile: one label/value row each, divided, inset by the
+ * gutter. Desktop: a single row of label-over-value columns with one divider
+ * underneath.
+ */
 .fields {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin: 0;
+  margin: 0 var(--submission-detail-gutter);
 }
 
 .field {
   display: flex;
-  flex-direction: column;
-  gap: var(--gieds-space-1);
-  padding: var(--gieds-space-4) var(--submission-detail-gutter);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gieds-space-4);
+  padding: var(--gieds-space-3) 0;
   border-bottom: var(--gieds-border-width-100, 1px) solid
-    var(--gieds-color-gray-200, #e5e5e6);
-  box-sizing: border-box;
+    var(--gieds-color-border-system-neutral-subtle, #e1e2e5);
 }
 
 .label {
-  font-weight: var(--gieds-font-weight-700, 700);
-  color: var(--gieds-color-gray-950, #0b0c0c);
+  color: var(--gieds-color-text-system-neutral-muted, #686d78);
 }
 
 .value {
   margin: 0;
+  font-weight: var(--gieds-font-weight-700, 700);
   color: var(--gieds-color-gray-950, #0b0c0c);
-  white-space: pre-line;
+  text-align: end;
   overflow-wrap: anywhere;
+}
+
+@media (min-width: 1024px) {
+  .fields {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: var(--gieds-space-8);
+    row-gap: var(--gieds-space-4);
+    padding-bottom: var(--gieds-space-6);
+    border-bottom: var(--gieds-border-width-100, 1px) solid
+      var(--gieds-color-border-system-neutral-subtle, #e1e2e5);
+  }
+
+  .field {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--gieds-space-2);
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .value {
+    text-align: start;
+  }
+
+  /* The status tag spans its label's width, as in the design. */
+  .value :global(.gi-tag) {
+    display: block;
+    text-align: center;
+  }
+}
+
+/* Desktop is not full-bleed: align everything with the Back link. */
+@media (min-width: 1024px) {
+  .detailRoot {
+    --submission-detail-gutter: 0;
+  }
 }
 
 @media (max-width: 1023px) {

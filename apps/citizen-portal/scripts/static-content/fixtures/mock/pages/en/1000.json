@@ -1,7 +1,7 @@
 {
   "id": 1000,
   "meta": {
-    "type": "lea.ListPage",
+    "type": "life_events.LifeEventsLandingPage",
     "slug": "life-events",
     "locale": "en",
     "alias_of": null,
@@ -17,88 +17,220 @@
   ],
   "categories": [
     {
-      "key": "family",
-      "title": "Family & Children",
-      "icon": "child_care",
-      "life_events": [
-        1101,
-        1102,
-        1103
-      ]
+      "type": "category",
+      "value": {
+        "title": "Family & Children",
+        "icon": "child_care",
+        "life_events": [
+          {
+            "id": 1101,
+            "title": "Birth of a Child",
+            "url": "https://www.gov.ie/en/life-events/birth-of-a-child/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1101/"
+          },
+          {
+            "id": 1102,
+            "title": "Child Adoption",
+            "url": "https://www.gov.ie/en/life-events/child-adoption/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1102/"
+          },
+          {
+            "id": 1103,
+            "title": "Become an Adult",
+            "url": "https://www.gov.ie/en/life-events/become-an-adult/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1103/"
+          }
+        ]
+      },
+      "id": "category-family"
     },
     {
-      "key": "education",
-      "title": "Education & Learning",
-      "icon": "school",
-      "life_events": [
-        1104,
-        1105
-      ]
+      "type": "category",
+      "value": {
+        "title": "Education & Learning",
+        "icon": "school",
+        "life_events": [
+          {
+            "id": 1104,
+            "title": "Child starting school",
+            "url": "https://www.gov.ie/en/life-events/child-starting-school/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1104/"
+          },
+          {
+            "id": 1105,
+            "title": "Transition from Secondary to Tertiary Education",
+            "url": "https://www.gov.ie/en/life-events/transition-from-secondary-to-tertiary-education/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1105/"
+          }
+        ]
+      },
+      "id": "category-education"
     },
     {
-      "key": "transport",
-      "title": "Travel & Transport",
-      "icon": "directions_car",
-      "life_events": [
-        1106
-      ]
+      "type": "category",
+      "value": {
+        "title": "Travel & Transport",
+        "icon": "directions_car",
+        "life_events": [
+          {
+            "id": 1106,
+            "title": "Owning/Driving a Vehicle",
+            "url": "https://www.gov.ie/en/life-events/owning-driving-a-vehicle/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1106/"
+          }
+        ]
+      },
+      "id": "category-transport"
     },
     {
-      "key": "housing",
-      "title": "Home & Housing",
-      "icon": "home",
-      "life_events": [
-        1107,
-        1108,
-        1109,
-        1110
-      ]
+      "type": "category",
+      "value": {
+        "title": "Home & Housing",
+        "icon": "home",
+        "life_events": [
+          {
+            "id": 1107,
+            "title": "Accessing Social Housing",
+            "url": "https://www.gov.ie/en/life-events/accessing-social-housing/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1107/"
+          },
+          {
+            "id": 1108,
+            "title": "Moving home",
+            "url": "https://www.gov.ie/en/life-events/moving-home/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1108/"
+          },
+          {
+            "id": 1109,
+            "title": "Buying or renting",
+            "url": "https://www.gov.ie/en/life-events/buying-or-renting/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1109/"
+          },
+          {
+            "id": 1110,
+            "title": "Finding and Maintaining a Home",
+            "url": "https://www.gov.ie/en/life-events/finding-and-maintaining-a-home/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1110/"
+          }
+        ]
+      },
+      "id": "category-housing"
     },
     {
-      "key": "work",
-      "title": "Work & Money",
-      "icon": "work",
-      "life_events": [
-        1111,
-        1112,
-        1113
-      ]
+      "type": "category",
+      "value": {
+        "title": "Work & Money",
+        "icon": "work",
+        "life_events": [
+          {
+            "id": 1111,
+            "title": "Starting work",
+            "url": "https://www.gov.ie/en/life-events/starting-work/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1111/"
+          },
+          {
+            "id": 1112,
+            "title": "Losing a job",
+            "url": "https://www.gov.ie/en/life-events/losing-a-job/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1112/"
+          },
+          {
+            "id": 1113,
+            "title": "Starting a business",
+            "url": "https://www.gov.ie/en/life-events/starting-a-business/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1113/"
+          }
+        ]
+      },
+      "id": "category-work"
     },
     {
-      "key": "relationships",
-      "title": "Relationships",
-      "icon": "person_check",
-      "life_events": [
-        1114,
-        1115,
-        1116
-      ]
+      "type": "category",
+      "value": {
+        "title": "Relationships",
+        "icon": "person_check",
+        "life_events": [
+          {
+            "id": 1114,
+            "title": "Marriage",
+            "url": "https://www.gov.ie/en/life-events/marriage/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1114/"
+          },
+          {
+            "id": 1115,
+            "title": "Civil partnership",
+            "url": "https://www.gov.ie/en/life-events/civil-partnership/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1115/"
+          },
+          {
+            "id": 1116,
+            "title": "Marriage Dissolution - Separation/Divorce",
+            "url": "https://www.gov.ie/en/life-events/marriage-dissolution-separation-divorce/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1116/"
+          }
+        ]
+      },
+      "id": "category-relationships"
     },
     {
-      "key": "health",
-      "title": "Health & Care",
-      "icon": "health_and_safety",
-      "life_events": [
-        1117,
-        1118
-      ]
+      "type": "category",
+      "value": {
+        "title": "Health & Care",
+        "icon": "health_and_safety",
+        "life_events": [
+          {
+            "id": 1117,
+            "title": "Developing a Life-Altering Illness",
+            "url": "https://www.gov.ie/en/life-events/developing-a-life-altering-illness/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1117/"
+          },
+          {
+            "id": 1118,
+            "title": "Becoming a carer",
+            "url": "https://www.gov.ie/en/life-events/becoming-a-carer/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1118/"
+          }
+        ]
+      },
+      "id": "category-health"
     },
     {
-      "key": "later-life",
-      "title": "Later Life",
-      "icon": "blind",
-      "life_events": [
-        1119,
-        1120
-      ]
+      "type": "category",
+      "value": {
+        "title": "Later Life",
+        "icon": "blind",
+        "life_events": [
+          {
+            "id": 1119,
+            "title": "Retirement",
+            "url": "https://www.gov.ie/en/life-events/retirement/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1119/"
+          },
+          {
+            "id": 1120,
+            "title": "Pension",
+            "url": "https://www.gov.ie/en/life-events/pension/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1120/"
+          }
+        ]
+      },
+      "id": "category-later-life"
     },
     {
-      "key": "bereavement",
-      "title": "Bereavement",
-      "icon": "local_florist",
-      "life_events": [
-        1121
-      ]
+      "type": "category",
+      "value": {
+        "title": "Bereavement",
+        "icon": "local_florist",
+        "life_events": [
+          {
+            "id": 1121,
+            "title": "Supporting the bereaved - Death of a loved one",
+            "url": "https://www.gov.ie/en/life-events/supporting-the-bereaved-death-of-a-loved-one/",
+            "api_url": "https://api.example.gov.ie/v2/pages/1121/"
+          }
+        ]
+      },
+      "id": "category-bereavement"
     }
   ]
 }

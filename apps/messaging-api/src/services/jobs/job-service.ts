@@ -15,7 +15,10 @@ import type {
   MessageToDeliver,
   MessageToDeliverWoAttachments,
 } from "../../types/messages.js";
-import type { EmailProvider } from "../../types/providers.js";
+import type {
+  EmailProvider,
+  ProviderAcceptance,
+} from "../../types/providers.js";
 import CryptographyService from "../../utils/cryptography-service.js";
 import type { I18n } from "../../utils/i18n.js";
 import {
@@ -61,6 +64,15 @@ export type RunningJob = {
   organizationId: string;
 };
 
+// Whether an earlier run already delivered the message to the Inbox
+enum InboxState {
+  Undelivered = "undelivered",
+  Delivered = "delivered",
+}
+
+// A claimed job, with the Inbox state its failures depend on
+type ClaimedJob = RunningJob & { inbox: InboxState };
+
 export type PendingJobCounter = {
   organizationId: string;
   counter: number;
@@ -96,6 +108,7 @@ export const executeJob = async (params: {
       break;
     default:
       params.logger.warn(job, "Job has unrecognized type");
+      await failJob(params.pool, params.jobId);
   }
 };
 
@@ -103,7 +116,7 @@ async function setJobAsRunning(params: {
   eventLogger: MessagingEventLogger;
   pool: Pool;
   job: { id: string; token: string };
-}): Promise<RunningJob> {
+}): Promise<ClaimedJob> {
   const { pool, job, eventLogger } = params;
   let runningJob: RunningJob | undefined;
   let jobResult:
@@ -111,19 +124,28 @@ async function setJobAsRunning(params: {
         status: ScheduledMessageStatus;
         entityId: string;
         organizationId: string;
+        inboxDelivered: boolean;
       }
     | undefined;
+  // Set once pending is logged; only a claimed message gets a failure event
+  let claimedMessageId: string | undefined;
+  let inbox = InboxState.Undelivered;
   try {
     const jobStatusResult = await pool.query<{
       status: ScheduledMessageStatus;
       entityId: string;
       organizationId: string;
+      inboxDelivered: boolean;
     }>(
       `
         SELECT
           coalesce(delivery_status, 'pending') as "status",
           job_id as "entityId",
-          organisation_id as "organizationId"
+          organisation_id as "organizationId",
+          coalesce(
+            (SELECT is_delivered FROM messages WHERE messages.id = jobs.job_id),
+            false
+          ) as "inboxDelivered"
         FROM jobs WHERE id = $1
         AND case when delivery_status is not null then delivery_status != $2 else true end
         AND job_token = $3
@@ -141,10 +163,15 @@ async function setJobAsRunning(params: {
       throw httpErrors.badRequest("job is already in progress");
     }
 
+    if (jobResult.inboxDelivered) {
+      inbox = InboxState.Delivered;
+    }
+
     eventLogger.log(
       MessagingEventType.deliverMessagePending,
       { messageId: jobResult.entityId }, // job id error field?
     );
+    claimedMessageId = jobResult.entityId;
 
     const updateResult = await pool.query<RunningJob>(
       `
@@ -165,13 +192,17 @@ async function setJobAsRunning(params: {
       throw httpErrors.notFound("Not able to find job to update");
     }
   } catch (err) {
-    eventLogger.log(MessagingEventType.deliverMessageError, {
-      messageId: job.id,
-    });
-    messagesFailedCounter.add(1, {
-      organizationId: jobResult?.organizationId ?? "unknown",
-      stage: "deliver",
-    });
+    // Unknown, duplicate or wrong-token callbacks leave no event and no count
+    if (claimedMessageId) {
+      logClaimFailure({
+        eventLogger,
+        messageId: claimedMessageId,
+        messageKey: "jobClaimError",
+        inbox,
+        organizationId: jobResult?.organizationId,
+      });
+    }
+
     if (isHttpError(err)) {
       throw err;
     }
@@ -182,24 +213,67 @@ async function setJobAsRunning(params: {
   }
 
   if (!runningJob.userId || !runningJob.type) {
-    eventLogger.log(MessagingEventType.deliverMessageError, {
-      messageId: runningJob?.jobId || job.id,
+    logClaimFailure({
+      eventLogger,
+      messageId: runningJob.jobId,
+      messageKey: "jobMissingFields",
+      inbox,
+      organizationId: runningJob.organizationId,
     });
-    messagesFailedCounter.add(1, {
-      organizationId: runningJob.organizationId ?? "unknown",
-      stage: "deliver",
-    });
+    await failJob(pool, job.id);
     throw httpErrors.internalServerError(
       `job row with id ${runningJob.jobId} missing critical fields`,
     );
   }
 
-  return runningJob;
+  return { ...runningJob, inbox };
+}
+
+// Ends a job the delivery cannot run; left working, every retry is refused
+async function failJob(pool: Pool, jobId: string) {
+  await pool.query("UPDATE jobs SET delivery_status = $1 WHERE id = $2", [
+    JobStatus.Failed,
+    jobId,
+  ]);
+}
+
+// Logs and counts a failure of the claimed message
+function logClaimFailure(params: {
+  eventLogger: MessagingEventLogger;
+  messageId: string;
+  messageKey: string;
+  inbox: InboxState;
+  organizationId?: string;
+}) {
+  const type = failureType(params.inbox);
+  params.eventLogger.log(type, {
+    messageId: params.messageId,
+    messageKey: params.messageKey,
+  });
+  messagesFailedCounter.add(1, {
+    organizationId: params.organizationId ?? "unknown",
+    stage: failedStage(type),
+  });
+}
+
+// A failure before the email fails the Inbox delivery, unless an earlier run
+// made it: the message stays readable, so only the email is left to fail
+function failureType(inbox: InboxState): EventType {
+  if (inbox === InboxState.Delivered) {
+    return MessagingEventType.emailError;
+  }
+
+  return MessagingEventType.deliverMessageError;
+}
+
+// messages_failed stage of a failure event, e.g. "email" for email_delivery
+function failedStage(type: EventType) {
+  return type === MessagingEventType.emailError ? "email" : "deliver";
 }
 
 async function processMessageJob(params: {
   config: EnvConfig;
-  job: RunningJob;
+  job: ClaimedJob;
   eventLogger: MessagingEventLogger;
   pool: Pool;
   logger: FastifyBaseLogger;
@@ -211,7 +285,6 @@ async function processMessageJob(params: {
   let profileWrapper: ProfileSdkWrapper | null = null;
   let profile: GetProfileResponse | null = null;
   let deliveryError: LoggingError | undefined;
-  let organisation: NonNullable<GetOrganisationResponse>["data"] | undefined;
   let eventToLogData: MessageEventData | undefined;
   try {
     profileWrapper = new ProfileM2MSdkWrapper(logger, job.organizationId);
@@ -231,7 +304,7 @@ async function processMessageJob(params: {
   if (!profileWrapper) {
     const eventToLog = eventToLogData
       ? {
-          type: MessagingEventType.deliverMessageError,
+          type: failureType(job.inbox),
           eventData: eventToLogData,
         }
       : undefined;
@@ -247,52 +320,37 @@ async function processMessageJob(params: {
     eventToLogData = {
       messageId: job.jobId,
       details: msg,
-      messageKey: "profileFetchError",
+      messageKey: profileFailureKey(e),
     };
   }
 
   if (!profile) {
     const eventToLog = eventToLogData
       ? {
-          type: MessagingEventType.deliverMessageError,
+          type: failureType(job.inbox),
           eventData: eventToLogData,
         }
       : undefined;
     return updateJobStatus({ ...params, deliveryError, eventToLog });
   }
 
-  try {
-    organisation = await profileWrapper.getOrganisationWithCache(
-      job.organizationId,
-      cache,
-      logger,
-    );
-  } catch (e) {
-    const msg = isNativeError(e)
-      ? e.message
-      : "failed to retrieve organisation";
-    deliveryError = toLoggingError(httpErrors.internalServerError(msg));
-    logger.error({ error: deliveryError.parent }, deliveryError.message);
-    eventToLogData = {
-      messageId: job.jobId,
-      details: msg,
-      messageKey: "organisationFetchError",
-    };
-  }
-
-  if (!organisation) {
-    const eventToLog = eventToLogData
-      ? {
-          type: MessagingEventType.deliverMessageError,
-          eventData: eventToLogData,
-        }
-      : undefined;
-    return updateJobStatus({ ...params, deliveryError, eventToLog });
+  const inboxResult = await deliverToInbox({
+    pool,
+    eventLogger,
+    logger,
+    messageId: job.jobId,
+    inbox: job.inbox,
+  });
+  if (inboxResult.error) {
+    return updateJobStatus({
+      ...params,
+      deliveryError: inboxResult.error,
+      eventToLog: inboxResult.eventToLog,
+    });
   }
 
   const deliveryResult = await deliverMessage({
     pool,
-    jobId: job.jobId,
     eventLogger,
     organizationId: job.organizationId,
     messageId: job.jobId,
@@ -300,7 +358,8 @@ async function processMessageJob(params: {
     i18n,
     config,
     profile,
-    organisation,
+    profileWrapper,
+    cache,
   });
 
   // Commented out SMS delivery for now
@@ -320,23 +379,86 @@ async function processMessageJob(params: {
   });
 }
 
+const HTTP_NOT_FOUND = 404;
+
+// Tells a recipient who no longer exists from an unavailable profile service
+function profileFailureKey(error: unknown): string {
+  if (isHttpError(error) && error.statusCode === HTTP_NOT_FOUND) {
+    return "profileNotFound";
+  }
+
+  return "profileFetchError";
+}
+
+// Marks the message readable in the Inbox; logs it only on the first delivery
+async function deliverToInbox(params: {
+  pool: Pool;
+  eventLogger: MessagingEventLogger;
+  logger: FastifyBaseLogger;
+  messageId: string;
+  inbox: InboxState;
+}): Promise<{
+  error?: LoggingError;
+  eventToLog?: { type: EventType; eventData: MessageEventData };
+}> {
+  const { pool, eventLogger, logger, messageId, inbox } = params;
+  let rowCount: number | null;
+  try {
+    ({ rowCount } = await pool.query(
+      `
+      UPDATE messages SET
+        is_delivered = true,
+        updated_at = now()
+      WHERE id = $1 AND is_delivered = false
+    `,
+      [messageId],
+    ));
+  } catch (err) {
+    // Fail the job rather than leave it working, so a retry can deliver it
+    logger.error({ error: err }, "Inbox delivery error");
+    return {
+      error: toLoggingError(
+        httpErrors.internalServerError("Error delivering to inbox"),
+      ),
+      eventToLog: {
+        type: failureType(inbox),
+        eventData: {
+          messageId,
+          details: getErrorMessage(err),
+          messageKey: "inboxDeliveryError",
+        },
+      },
+    };
+  }
+
+  // No row changed: already delivered by an earlier run, or no such message
+  if (!rowCount) {
+    return {};
+  }
+
+  eventLogger.log(MessagingEventType.deliverMessage, { messageId });
+
+  return {};
+}
+
 async function deliverMessage(params: {
   pool: Pool;
   messageId: string;
   eventLogger: MessagingEventLogger;
   organizationId: string;
   logger: FastifyBaseLogger;
-  jobId: string;
   i18n: I18n;
   config: EnvConfig;
   profile: GetProfileResponse;
-  organisation: NonNullable<GetOrganisationResponse>["data"];
+  profileWrapper: ProfileSdkWrapper;
+  // biome-ignore lint/suspicious/noExplicitAny: insert any type
+  cache: NodeCache<any>;
 }): Promise<{
   error?: LoggingError;
   eventToLog?: { type: EventType; eventData: MessageEventData };
 }> {
   let _err: unknown;
-  const { messageId, pool, logger, jobId, profile } = params;
+  const { messageId, pool, logger, profile } = params;
   let messageData: MessageToDeliver | undefined;
   try {
     messageData = await getMessageToDeliver({
@@ -357,7 +479,7 @@ async function deliverMessage(params: {
         }),
       ),
       eventToLog: {
-        type: MessagingEventType.deliverMessageError,
+        type: MessagingEventType.emailError,
         eventData: {
           messageId,
           details: isNativeError(_err) ? _err.message : "unknown error",
@@ -386,15 +508,7 @@ async function deliverMessage(params: {
         httpErrors.internalServerError(firstError.msg),
       );
     }
-    if (!loggingError) {
-      return {
-        eventToLog: {
-          type: MessagingEventType.deliverMessage,
-          eventData: { messageId: jobId },
-        },
-      };
-    }
-
+    // The Inbox delivery is already logged; the email outcome is the only one left
     return {
       error: loggingError,
       eventToLog: transportResult.eventToLog,
@@ -409,8 +523,9 @@ async function deliverMessage(params: {
       error: toLoggingError(
         httpErrors.createError(500, "Error sending message", { parent: _err }),
       ),
+      // Runs after the Inbox delivery, so only the email can have failed
       eventToLog: {
-        type: MessagingEventType.deliverMessageError,
+        type: MessagingEventType.emailError,
         eventData: {
           messageId,
           details: isNativeError(_err) ? _err.message : "unknown error",
@@ -495,21 +610,19 @@ async function updateJobStatus(params: {
 }): Promise<void> {
   const { pool, deliveryError, job } = params;
 
-  if (deliveryError) {
-    await pool.query(
-      `
-          UPDATE jobs SET delivery_status = $1
-          WHERE job_id = $2 AND user_id = $3
-        `,
-      [JobStatus.Failed, job.jobId, job.userId],
-    );
-  } else {
-    await setMessageAsDelivered({
-      messageId: job.jobId,
-      recipientUserId: job.userId,
-      pool,
-    });
-  }
+  // is_delivered is set at the Inbox delivery; only the job status is left
+  await pool.query(
+    `
+        UPDATE jobs SET delivery_status = $1
+        WHERE job_id = $2 AND user_id = $3
+      `,
+    [
+      deliveryError ? JobStatus.Failed : JobStatus.Delivered,
+      job.jobId,
+      job.userId,
+    ],
+  );
+
   if (params.eventToLog) {
     params.eventLogger.log(params.eventToLog.type, params.eventToLog.eventData);
     if (
@@ -518,52 +631,9 @@ async function updateJobStatus(params: {
     ) {
       messagesFailedCounter.add(1, {
         organizationId: params.job.organizationId ?? "unknown",
-        stage:
-          params.eventToLog.type === MessagingEventType.emailError
-            ? "email"
-            : "deliver",
+        stage: failedStage(params.eventToLog.type),
       });
     }
-  }
-}
-
-async function setMessageAsDelivered(params: {
-  messageId: string;
-  recipientUserId: string;
-  pool: Pool;
-}): Promise<void> {
-  const { messageId, pool } = params;
-  const client = await pool.connect();
-  try {
-    await client.query("BEGIN");
-    const messageUpdateQueryResult = await client.query<{ id: string }>(
-      `
-    UPDATE messages m set 
-      is_delivered = true,
-      updated_at = now()
-    WHERE m.id = $1
-    RETURNING m.id
-  `,
-      [messageId],
-    );
-
-    if (messageUpdateQueryResult.rowCount === 0) {
-      throw httpErrors.notFound(`failed to find message for id ${messageId}`);
-    }
-
-    await client.query(
-      `
-      UPDATE jobs SET delivery_status = $1
-      WHERE job_id = $2 AND user_id = $3
-    `,
-      [JobStatus.Delivered, messageId, params.recipientUserId],
-    );
-    await client.query("COMMIT");
-  } catch (err) {
-    await client.query("ROLLBACK");
-    throw err;
-  } finally {
-    client.release();
   }
 }
 
@@ -577,7 +647,9 @@ async function sendMessageToTransports(params: {
   i18n: I18n;
   config: EnvConfig;
   profile: GetProfileResponse;
-  organisation: NonNullable<GetOrganisationResponse>["data"];
+  profileWrapper: ProfileSdkWrapper;
+  // biome-ignore lint/suspicious/noExplicitAny: insert any type
+  cache: NodeCache<any>;
 }): Promise<{
   errors: ServiceError[];
   eventToLog?: { type: EventType; eventData: MessageEventData };
@@ -603,19 +675,39 @@ async function sendMessageToTransports(params: {
     error: httpErrors.badGateway("Message has not been sent anywhere"),
   };
 
-  const secureMessage = getSecureMessage(params);
+  // A step's error fails the email; the critical error then fails the job
+  const emailFailure = (
+    cause: ServiceError,
+    messageKey: string,
+    details?: string,
+  ) => ({
+    errors: [cause, criticalError],
+    eventToLog: {
+      type: MessagingEventType.emailError,
+      eventData: { messageId: params.messageId, messageKey, details },
+    },
+  });
+
+  // Only the email needs the organisation, so a lookup failure stops the email alone
+  const organisation = await getOrganisation(params);
+  if (organisation.error) {
+    return emailFailure(
+      organisation.error,
+      "organisationFetchError",
+      organisation.error.msg,
+    );
+  }
+
+  const secureMessage = getSecureMessage({
+    ...params,
+    organisation: organisation.data,
+  });
   if (secureMessage.error) {
-    return {
-      errors: [secureMessage.error, criticalError],
-      eventToLog: {
-        type: MessagingEventType.deliverMessage,
-        eventData: {
-          messageId: params.messageId,
-          messageKey: "secureMessagePreparationError",
-          details: secureMessage.error.msg,
-        },
-      },
-    };
+    return emailFailure(
+      secureMessage.error,
+      "secureMessagePreparationError",
+      secureMessage.error.msg,
+    );
   }
 
   const provider = await getProvider(params);
@@ -623,7 +715,7 @@ async function sendMessageToTransports(params: {
     return {
       errors: [criticalError],
       eventToLog: {
-        type: MessagingEventType.deliverMessage,
+        type: MessagingEventType.emailError,
         eventData: {
           messageId: params.messageId,
           messageKey: "noProvider",
@@ -640,36 +732,82 @@ async function sendMessageToTransports(params: {
   });
   if (!sentResult.sent) {
     if (sentResult.error) {
-      return {
-        errors: [sentResult.error, criticalError],
-        eventToLog: {
-          type: MessagingEventType.emailError,
-          eventData: {
-            messageId: params.messageId,
-            messageKey: "failedToSend",
-            details: sentResult.error.details,
-          },
-        },
-      };
+      return emailFailure(
+        sentResult.error,
+        "failedToSend",
+        sentResult.error.details,
+      );
     }
     return { errors: [criticalError], eventToLog: sentResult.eventToLog };
   }
 
-  messagesSentCounter.add(1, {
-    organizationId: params.organizationId,
-  });
-  if (params.messageData.createdAt) {
-    const seconds =
-      (Date.now() - new Date(params.messageData.createdAt).getTime()) / 1000;
-    // guard: never record garbage from an unparsable timestamp
-    if (Number.isFinite(seconds) && seconds >= 0) {
-      messageDeliveryDurationHistogram.record(seconds, {
-        organizationId: params.organizationId,
-      });
-    }
-  }
+  recordSentEmail(params);
 
-  return { errors: [] };
+  // Logged last, so the accepted email is the message's latest event
+  return {
+    errors: [],
+    eventToLog: {
+      type: MessagingEventType.emailAccepted,
+      eventData: { messageId: params.messageId, ...sentResult.acceptance },
+    },
+  };
+}
+
+// Counts an accepted email; a metrics error must not undo the acceptance
+function recordSentEmail(params: {
+  organizationId: string;
+  messageData: MessageToDeliver;
+  logger: FastifyBaseLogger;
+}) {
+  try {
+    messagesSentCounter.add(1, {
+      organizationId: params.organizationId,
+    });
+    if (params.messageData.createdAt) {
+      const seconds =
+        (Date.now() - new Date(params.messageData.createdAt).getTime()) / 1000;
+      // guard: never record garbage from an unparsable timestamp
+      if (Number.isFinite(seconds) && seconds >= 0) {
+        messageDeliveryDurationHistogram.record(seconds, {
+          organizationId: params.organizationId,
+        });
+      }
+    }
+  } catch (err) {
+    params.logger.error({ error: err }, "Failed to record sent email");
+  }
+}
+
+// Looks up the sender organisation; its names go into the secure email
+async function getOrganisation(params: {
+  profileWrapper: ProfileSdkWrapper;
+  organizationId: string;
+  // biome-ignore lint/suspicious/noExplicitAny: insert any type
+  cache: NodeCache<any>;
+  logger: FastifyBaseLogger;
+}): Promise<
+  | { data: NonNullable<GetOrganisationResponse>["data"]; error?: undefined }
+  | { data?: undefined; error: ServiceError }
+> {
+  try {
+    return {
+      data: await params.profileWrapper.getOrganisationWithCache(
+        params.organizationId,
+        params.cache,
+        params.logger,
+      ),
+    };
+  } catch (error) {
+    return {
+      error: {
+        critical: false,
+        error: { error },
+        msg: isNativeError(error)
+          ? error.message
+          : "failed to retrieve organisation",
+      },
+    };
+  }
 }
 
 function getSecureMessage(params: {
@@ -762,6 +900,7 @@ async function sendEmail({
   sent: boolean;
   error: ServiceError | null;
   eventToLog?: { type: EventType; eventData: MessageEventData };
+  acceptance?: ProviderAcceptance;
 }> {
   try {
     const specificTransport = new EmailSpecificTransport(provider);
@@ -777,12 +916,12 @@ async function sendEmail({
       };
     }
 
-    await specificTransport.sendMessage({
+    const acceptance = await specificTransport.sendMessage({
       message: secureMessage,
       recipientAddress: profile.email,
     });
 
-    return { sent: true, error: null };
+    return { sent: true, error: null, acceptance };
   } catch (err) {
     logger.error({ error: err }, "Failed to send message");
 

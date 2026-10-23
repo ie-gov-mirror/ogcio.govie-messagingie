@@ -1,7 +1,7 @@
 {
   "id": 1114,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "marriage",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Marriage",
+  "highlighted": false,
+  "category": "Relationships",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Giving notice of marriage and what changes afterwards.</p>",
       "id": "le-1114"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

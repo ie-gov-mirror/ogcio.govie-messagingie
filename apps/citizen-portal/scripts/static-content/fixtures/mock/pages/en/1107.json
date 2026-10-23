@@ -1,7 +1,7 @@
 {
   "id": 1107,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "accessing-social-housing",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Accessing Social Housing",
+  "highlighted": false,
+  "category": "Home & Housing",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Checking if you qualify for social housing and applying to your local authority.</p>",
       "id": "le-1107"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

@@ -16,13 +16,13 @@ read-time export fix in profile **#757**.
 
 Candidate-based set difference. A `files_users(file_id, user_id)` row is deleted iff **all** hold:
 
-| Predicate | Meaning |
-|---|---|
-| `files.external_id IS NOT NULL` | migrated file (scope) — **prod-only**, gated by `REQUIRE_EXTERNAL_ID` (default `true`); dev/uat drop it via `--no-external-id-filter` since the migration never ran there |
-| `files.organization_id = :MIGRATED_ORG` | migrated org (scope) |
-| `file_id ∈ (SELECT DISTINCT file_id FROM cleanse_legit_file_user)` | candidate: the file is a message attachment |
-| no matching row in `cleanse_legit_file_user` | `(file, user)` is not a legit message pair |
-| `file_id NOT IN :EXCLUDE_FILE_IDS` | skip the dev/uat repro-leak files |
+| Predicate                                                          | Meaning                                                                                                                                                                   |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `files.external_id IS NOT NULL`                                    | migrated file (scope) — **prod-only**, gated by `REQUIRE_EXTERNAL_ID` (default `true`); dev/uat drop it via `--no-external-id-filter` since the migration never ran there |
+| `files.organization_id = :MIGRATED_ORG`                            | migrated org (scope)                                                                                                                                                      |
+| `file_id ∈ (SELECT DISTINCT file_id FROM cleanse_legit_file_user)` | candidate: the file is a message attachment                                                                                                                               |
+| no matching row in `cleanse_legit_file_user`                       | `(file, user)` is not a legit message pair                                                                                                                                |
+| `file_id NOT IN :EXCLUDE_FILE_IDS`                                 | skip the dev/uat repro-leak files                                                                                                                                         |
 
 The **legit set** comes from the messaging DB (`attachments_messages ⋈ messages`,
 step `01`): each attachment paired with its message **recipient**. (Senders are
@@ -36,20 +36,20 @@ read-time derived, creates no `files_users` row, so the cleanse can't remove it)
 
 > [!IMPORTANT]
 > Limitation: for a message-attachment file, only its message recipients
-> count as legit. A legit *non-message* `/permissions` share of such a file to a
+> count as legit. A legit _non-message_ `/permissions` share of such a file to a
 > non-recipient would also be removed — accepted, because these files are shared
 > only via messages. Non-message files are never candidates.
 
 ## Files (run in order)
 
-| # | File | DB | Writes |
-|---|------|----|--------|
-| 01 | `01_messaging_extract_legit_pairs.sql` | messaging | read-only → CSV on stdout |
-| 02 | `02_upload_stage_and_backup.sql` | upload | creates staging/backup/`cleanse_bad_rows()` |
-| 03 | `03_upload_dry_run_report.sql` | upload | **read-only** report |
-| 04 | `04_upload_cleanse_chunked.sql` | upload | **DELETES** (only one) — **user-scoped**: requires a non-empty `USER_IDS` batch; run in batches (e.g. 20 users), each with its own `RUN_ID` |
-| 05 | `05_upload_validate.sql` | upload | read-only validation |
-| 99 | `99_upload_rollback.sql` | upload | re-insert from backup by `run_id` |
+| #   | File                                   | DB        | Writes                                                                                                                                      |
+| --- | -------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01  | `01_messaging_extract_legit_pairs.sql` | messaging | read-only → CSV on stdout                                                                                                                   |
+| 02  | `02_upload_stage_and_backup.sql`       | upload    | creates staging/backup/`cleanse_bad_rows()`                                                                                                 |
+| 03  | `03_upload_dry_run_report.sql`         | upload    | **read-only** report                                                                                                                        |
+| 04  | `04_upload_cleanse_chunked.sql`        | upload    | **DELETES** (only one) — **user-scoped**: requires a non-empty `USER_IDS` batch; run in batches (e.g. 20 users), each with its own `RUN_ID` |
+| 05  | `05_upload_validate.sql`               | upload    | read-only validation                                                                                                                        |
+| 99  | `99_upload_rollback.sql`               | upload    | re-insert from backup by `run_id`                                                                                                           |
 
 ## Run it
 

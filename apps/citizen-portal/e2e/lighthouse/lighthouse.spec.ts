@@ -38,7 +38,7 @@ const auditCases: AuditCase[] = [
     auditUrl: `${BASE_URL}/en/messages?force-consent=1`,
     reportName: "lighthouse-consent",
     citizen: users.bruceWayne.email,
-    // ponytail: this audit reports its performance score without gating on
+    // this audit reports its performance score without gating on
     // it. Ceiling: CI plus the consent modal does not hold 50 (42–53 across
     // runs, while the sibling pages score 52–73), so the only thing the gate
     // measured was CI noise. `0` rather than dropping the key keeps
@@ -68,6 +68,26 @@ const auditCases: AuditCase[] = [
     citizen: users.citizen1.email,
     prepare: async (page) => {
       await page.goto(`${DASHBOARD_URL}/en/my-submissions`)
+      await expect(page.locator("main")).toBeVisible()
+    },
+  },
+  {
+    title: "discovery",
+    auditUrl: `${DASHBOARD_URL}/en/discovery`,
+    reportName: "lighthouse-discovery",
+    citizen: users.citizen1.email,
+    prepare: async (page) => {
+      await page.goto(`${DASHBOARD_URL}/en/discovery`)
+      await expect(page.locator("main")).toBeVisible()
+    },
+  },
+  {
+    title: "discovery child starting school",
+    auditUrl: `${DASHBOARD_URL}/en/discovery/child-starting-school`,
+    reportName: "lighthouse-discovery-child-starting-school",
+    citizen: users.citizen1.email,
+    prepare: async (page) => {
+      await page.goto(`${DASHBOARD_URL}/en/discovery/child-starting-school`)
       await expect(page.locator("main")).toBeVisible()
     },
   },

@@ -3,7 +3,7 @@
 }
 
 /*
- * ponytail: styles.css has no text utility for emerald-700 (#006658).
+ * styles.css has no text utility for emerald-700 (#006658).
  * gi-shadow-emerald-700 only sets shadow-color, and the semantic match
  * gi-bg-color-surface-system-primary-subtle sets background-color.
  * Ceiling: currentColor on the category icon. Upgrade path: a text or icon

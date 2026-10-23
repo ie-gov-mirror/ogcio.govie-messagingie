@@ -14,7 +14,7 @@ const MAX_NAME_LENGTH = 200
 
 const listeners = new Set<() => void>()
 
-// ponytail: sign-out seals name writes for this document so an in-flight
+// sign-out seals name writes for this document so an in-flight
 // profile fetch cannot put the previous citizen's name back. The next page
 // load starts unsealed. A failed sign-out that stays on the page will not
 // refresh the name cache until reload.

@@ -1,11 +1,13 @@
 import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
-import { PAGE_TYPES, SOURCE_LOCALE, WAGTAIL_PAGE_LIMIT } from "../config.ts"
+import { PAGE_TYPES, WAGTAIL_PAGE_LIMIT } from "../config.ts"
 import type { Query, Transport, TransportResponse } from "./transport.ts"
 
-// Pages live in `pages/<locale>/<id>.json`. A page and its translations
-// share an ID, as the gov.ie CMS returns them. Listings return pages in ID
-// order, standing in for Wagtail's tree order.
+// Pages live in `pages/<locale>/<id>.json`, each locale with its own IDs as
+// the gov.ie CMS has them. Wagtail links a translation to its source with a
+// key the API doesn't expose, so fixtures name the source in `_translation_of`
+// and responses leave it out. Listings return pages in ID order, standing in
+// for Wagtail's tree order.
 
 export type FixturePage = {
   id: number
@@ -18,8 +20,9 @@ export type FixturePage = {
     html_url?: string | null
     first_published_at?: string | null
     parent?: { id: number } | null
-    alias_of?: unknown
+    alias_of?: { id: number } | null
   }
+  _translation_of?: number
 } & Record<string, unknown>
 
 const LISTING_PARAMS = new Set([
@@ -67,11 +70,9 @@ function respond(
 ): TransportResponse {
   const detail = /^\/v2\/pages\/(\d+)\/$/.exec(path)
   if (detail) {
-    const id = Number(detail[1])
-    const locale = query.locale ?? SOURCE_LOCALE
-    const page = pages.find((p) => p.id === id && p.meta.locale === locale)
+    const page = pages.find((p) => p.id === Number(detail[1]))
     return page
-      ? { status: 200, body: page }
+      ? { status: 200, body: withoutMockFields(page) }
       : notFound("No Page matches the given query.")
   }
   if (path === "/v2/pages/") return listing(pages, query)
@@ -127,9 +128,7 @@ function listing(
     if (pageId === undefined || !exists(pageId)) {
       return badRequest("translation_of page doesn't exist")
     }
-    items = items.filter(
-      (p) => p.id === pageId && p.meta.locale !== SOURCE_LOCALE,
-    )
+    items = items.filter((p) => p._translation_of === pageId)
   }
 
   if (query.locale !== undefined) {
@@ -142,7 +141,10 @@ function listing(
     status: 200,
     body: {
       meta: { total_count: items.length },
-      items: query.fields === "*" ? page : page.map(listingItem),
+      items:
+        query.fields === "*"
+          ? page.map(withoutMockFields)
+          : page.map(listingItem),
     },
   }
 }
@@ -155,6 +157,11 @@ function listingItem(page: FixturePage) {
     meta: { type, detail_url, html_url, slug, first_published_at, locale },
     title: page.title,
   }
+}
+
+function withoutMockFields(page: FixturePage) {
+  const { _translation_of, ...rest } = page
+  return rest
 }
 
 function toInt(value: string | number): number | undefined {

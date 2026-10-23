@@ -39,6 +39,9 @@ export interface MessagesDataTableHeaderProps {
   showHeader?: boolean
   enableFilters?: boolean
   searchInputTestId?: string
+  searchPlaceholder?: string
+  searchAriaLabel?: string
+  showSearchIcon?: boolean
 }
 
 /**
@@ -49,6 +52,9 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
   showHeader = true,
   enableFilters = true,
   searchInputTestId = "search-input",
+  searchPlaceholder,
+  searchAriaLabel,
+  showSearchIcon,
 }: MessagesDataTableHeaderProps) {
   const tFilter = useTranslations("home.table.filter")
   const router = useRouter()
@@ -167,6 +173,9 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
         <InboxListSearchField
           searchInputTestId={searchInputTestId}
           inputId='messages-data-table-search'
+          placeholder={searchPlaceholder}
+          ariaLabel={searchAriaLabel}
+          showSearchIcon={showSearchIcon}
         />
       </DataTableHeaderSearch>
 

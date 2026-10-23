@@ -7,6 +7,7 @@ import {
   AddPermissionsRequestBodySchema,
 } from "./schema.js";
 import addFileSharing from "./utils/addFileSharing.js";
+import { ensureShareTargetProfilesExist } from "./utils/ensureShareTargetProfilesExist.js";
 
 const API_DOCS_TAG = "SupportPermissions";
 
@@ -34,6 +35,16 @@ export default async function routes(app: FastifyInstance) {
           "You are not authorized to access this resource",
         );
       }
+
+      const sharedWith =
+        "userIds" in request.body
+          ? request.body.userIds
+          : [request.body.userId];
+      await ensureShareTargetProfilesExist({
+        organizationId: request.userData.organizationId,
+        userIds: sharedWith,
+        logger: request.log,
+      });
 
       await addFileSharing(app.pg, request.body);
 

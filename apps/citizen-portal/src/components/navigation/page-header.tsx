@@ -70,7 +70,8 @@ export function PageHeader({
   const showApplicationLinks = useShowApplicationLinks()
   const lea = isLeaEnabled()
   const navItems = useAppNavItems()
-  const { count: unreadCount, isLoading: unreadLoading } = useInboxUnreadCount()
+  const { count: unreadCount, isLoading: unreadLoading } =
+    useInboxUnreadCount(showApplicationLinks)
   const menuUnreadId = useId()
 
   const zone = getZoneFromPath(path)

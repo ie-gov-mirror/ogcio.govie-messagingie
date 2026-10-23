@@ -1,0 +1,244 @@
+{
+  "id": 208340,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208339,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208339/",
+        "html_url": null
+      },
+      "title": "Marriage"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208340/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/marriage/",
+    "slug": "marriage",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:42:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Marriage",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"8h5mk\">This page outlines what you need to do to get married in Ireland.</p>",
+      "id": "3a7ac8d2-f81c-4776-ba85-c88753a5dc01"
+    },
+    {
+      "type": "heading",
+      "value": "Book a marriage notification appointment",
+      "id": "ddd51abd-90bf-4012-ac79-2884db11b6b0"
+    },
+    {
+      "type": "paragraph",
+      "value": "<ul><li data-block-key=\"8h5mk\">if you want to get married in Ireland, you must give three months' notice, in person, at a civil registration service. This applies to all civil, religious and secular marriages. If you cannot give three months' notice, you can apply to the court for a <a href=\"https://www.courts.ie/guides/marriage-notification-exemptions\">marriage notification exemption</a></li><li data-block-key=\"2m2mm\">to give notice, you must book a notification appointment and both of you must attend</li><li data-block-key=\"epbof\">book your appointment as far in advance as possible. Waiting times can vary throughout the year</li><li data-block-key=\"5hcsh\">you will need to bring a <a href=\"https://www.gov.ie/en/department-of-social-protection/services/get-married-in-ireland/#marriage-notification-appointment\">number of documents</a> to your appointment, and provide certain <a href=\"https://www.gov.ie/en/department-of-social-protection/services/get-married-in-ireland/#marriage-notification-appointment\">details</a> about your ceremony</li><li data-block-key=\"cn3n\">the non-refundable notification fee is €200</li></ul><h3 data-block-key=\"34pd3\">Civil marriage</h3><p data-block-key=\"bksar\">To book a civil marriage notification appointment over the phone, contact a <a href=\"https://www2.hse.ie/services/civil-registration-services/\">civil registration service</a>. For certain areas of the country you can also <a href=\"https://www.gov.ie/en/department-of-social-protection/services/get-married-in-ireland/#book-a-marriage-notification-appointment-or-civil-ceremony-online\">book online.</a></p><h3 data-block-key=\"f95gu\">Religious and secular marriages</h3><p data-block-key=\"4t6qs\">You can <a href=\"https://www2.hse.ie/services/births-deaths-and-marriages/getting-married/\">book a marriage notification appointment online</a> for a religious or secular marriage. You can do this for all areas of the country except Limerick, Clare and Tipperary North.</p><p data-block-key=\"febij\">The couple and celebrant must arrange the marriage ceremony.</p>",
+      "id": "82753f5f-e6ec-4582-a973-7d7f22c48abf"
+    },
+    {
+      "type": "heading",
+      "value": "Book a registrar or solemniser",
+      "id": "5d4977c5-37e4-4a0d-8fd7-8f77138b7479"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"8h5mk\">For a marriage to be legal, the ceremony must be performed by a solemniser.</p><p data-block-key=\"5m4pe\">The solemniser must be on the <a href=\"https://www.gov.ie/en/department-of-social-protection/publications/register-of-solemnisers/\">Register of Solemnisers.</a></p><p data-block-key=\"cl27v\">For a civil ceremony, the registrar will solemnise the marriage.</p>",
+      "id": "038b28d3-3f0e-400b-a8cd-32a907ea7bc9"
+    },
+    {
+      "type": "heading",
+      "value": "Choose your venue",
+      "id": "39bbc5d2-55dc-4186-be49-01059b005f31"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"8h5mk\">For all ceremonies, you will need two witnesses over the age of 18.</p><h3 data-block-key=\"8qokt\">Civil ceremonies</h3><p data-block-key=\"5sodi\">A civil ceremony can be held in a civil registration service or a venue approved by the registrar. You do not have to live in the same area as the venue.</p><p data-block-key=\"ano8e\">In general, registrars only perform ceremonies in the county in which they are based.</p><p data-block-key=\"8rero\">If you want to get married in a venue other than a civil registration service, contact the civil registration service in that area. The registrar may need to inspect the venue.</p><p data-block-key=\"egvbc\">An additional fee is charged for holding a civil ceremony in a venue other than a civil registration service.</p><p data-block-key=\"l2sd\">You can book a civil marriage notification appointment and ceremony online in Meath, Louth, Cavan and Monaghan. Book a <a href=\"https://www2.hse.ie/services/births-deaths-and-marriages/getting-married/book-appointment/\">civil marriage notification appointment and ceremony online.</a></p><h3 data-block-key=\"ar8mc\">Religious ceremonies</h3><p data-block-key=\"4bdc1\">You must book a notification appointment for a church, religious or secular ceremony.</p><p data-block-key=\"8a1u6\">Contact the religious authorities to arrange the ceremony.</p>",
+      "id": "1107de1a-a8c1-499b-8645-9ca50f710274"
+    },
+    {
+      "type": "heading",
+      "value": "Register your marriage",
+      "id": "9a37e60c-b110-4d63-9617-944b4cd1438c"
+    },
+    {
+      "type": "paragraph",
+      "value": "<h3 data-block-key=\"8h5mk\">Civil marriage</h3><p data-block-key=\"1nqpj\">The registrar who conducted the ceremony will register the marriage.</p><h3 data-block-key=\"eahht\">Religious or secular marriage</h3><p data-block-key=\"8vlfq\">Bring your marriage registration form to any civil registration service. You <b>must</b> do this within 1 month of the date of marriage.</p><h3 data-block-key=\"eou55\">Fee for registering a marriage</h3><p data-block-key=\"7hkeo\">Registering a marriage in Ireland is free.</p>",
+      "id": "1c22965d-c1fb-43d5-bbf1-6d8cb6444266"
+    },
+    {
+      "type": "heading",
+      "value": "Get a marriage certificate",
+      "id": "c5571ca1-3e2b-4623-b8c0-eacc8fbf2314"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"8h5mk\">Order a marriage certificate <a href=\"https://lifeevents.hse.ie/\">online</a>, by post or in person from any <a href=\"https://www2.hse.ie/services/births-deaths-and-marriages/contact-a-civil-registration-service.html\">civil registration service.</a></p><p data-block-key=\"em51i\">To get a marriage certificate you need to provide:</p><ul><li data-block-key=\"4rspg\">couple's full names before marriage</li><li data-block-key=\"aqc54\">date of marriage or approximate date if not known</li><li data-block-key=\"6lq31\">name and full address of church, civil registration office or venue where the marriage took place</li></ul>",
+      "id": "8e76a00f-297a-4e8a-9038-1ff09f202b5e"
+    },
+    {
+      "type": "heading",
+      "value": "Inform Revenue of your updated status",
+      "id": "7d6a24f6-ec43-4d5f-8b27-cfd04a24b089"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"8h5mk\">When you get married or enter a civil partnership, it's important to update your civil status with <a href=\"https://www.revenue.ie/en/life-events-and-personal-circumstances/marital-status/marriage-and-civil-partnerships/index.aspx\">Revenue</a>.</p><p data-block-key=\"f4qjr\">You can do this online through myAccount.</p>",
+      "id": "a5e25b52-c47c-4f95-b219-2c3bdb8609c9"
+    },
+    {
+      "type": "heading",
+      "value": "Apply for a change of name on your passport, if you wish",
+      "id": "0fc9fe24-f5ed-4c73-9d50-81f5eb8235bc"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"8h5mk\">If you wish to change your name on your passport, you can apply to do so on <a href=\"https://www.ireland.ie/en/dfa/passports/documentary-requirements/adult/#change-information\">Passport Online</a>.</p>",
+      "id": "0e7ce9c4-a0ff-4915-a9f2-499f337243a3"
+    },
+    {
+      "type": "heading",
+      "value": "Getting married abroad",
+      "id": "0ebe0412-443a-4ba5-bb62-0cc365e62d29"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"8h5mk\">If you <a href=\"https://www.ireland.ie/en/dfa/overseas-travel/consular-services/marriage-and-civil-partnership-abroad/\">get married abroad</a>, it will only be recognised in Ireland if it is entered on the civil register of the country where the ceremony took place and provided all legal formalities have been followed. The civil registration service does not register marriages that took place abroad.</p><p data-block-key=\"kkg3\"><a href=\"https://www.ireland.ie/en/dfa/overseas-travel/consular-services/marriage-and-civil-partnership-abroad/\">Find out more</a> about getting married abroad.</p>",
+      "id": "8b21b3d2-ae82-42e6-af13-7e967c662fa3"
+    }
+  ],
+  "services": [
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www2.hse.ie/services/civil-registration-services/",
+              "link_text": "Find a civil registration service"
+            },
+            "id": "68d9525f-6440-418c-8f25-824c890a19d4"
+          }
+        ],
+        "description": "Find contact details for HSE Civil Registration Services in Ireland for registering marriages."
+      },
+      "id": "e4d037b8-aab6-4527-bbcb-f098f1b06de0"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/services/get-married-in-ireland/#book-a-marriage-notification-appointment-or-civil-ceremony-online",
+              "link_text": "Book a marriage notification appointment or civil ceremony online"
+            },
+            "id": "f9efe4e5-958b-4963-b96f-60294b298643"
+          }
+        ],
+        "description": "You can book a marriage notification appointment online for a religious or secular marriage. You can do this for all areas of the country except Limerick, Clare and Tipperary North."
+      },
+      "id": "1eead0fc-33f3-464c-981f-4780e745b5a4"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.gov.ie/en/department-of-social-protection/publications/register-of-solemnisers/",
+              "link_text": "Register of Solemnisers"
+            },
+            "id": "ad7bc666-254a-437b-9bf3-caf27390e3da"
+          }
+        ],
+        "description": "The Register of Solemnisers contains information and contact details for the people who can perform marriage or civil ceremonies in Ireland."
+      },
+      "id": "e870102f-dd90-4a6d-8708-c7d7a52e7abd"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www2.hse.ie/services/births-deaths-and-marriages/order/marriage-certificate/",
+              "link_text": "Order a marriage certificate"
+            },
+            "id": "93507805-523f-4f3a-a03f-66abf7f331b2"
+          }
+        ],
+        "description": "Order a marriage certificate online, by post or in person from any civil registration service."
+      },
+      "id": "789dadf4-696c-40c8-9c98-298f1106cec7"
+    },
+    {
+      "type": "service",
+      "value": {
+        "link": [
+          {
+            "type": "external_link",
+            "value": {
+              "link_url": "https://www.ireland.ie/en/dfa/passports/documentary-requirements/adult/#change-information",
+              "link_text": "Apply for a change of name on your passport"
+            },
+            "id": "45efbde0-bad7-4af4-88fb-5c92918df7ca"
+          }
+        ],
+        "description": "If you want to change your name on your passport, you can apply to do so on Passport Online."
+      },
+      "id": "33500865-7fe9-4b09-9883-d707cac7b03c"
+    }
+  ],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/services/get-married-in-ireland/#marriage-notification-appointment",
+        "link_text": "Marriage notification appointment"
+      },
+      "id": "e62eebf7-b916-40a2-9bfa-4899c8b48723"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.courts.ie/guides/marriage-notification-exemptions",
+        "link_text": "Marriage notification exemptions"
+      },
+      "id": "36c67053-d352-4ef5-9156-8440abb8165e"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.revenue.ie/en/life-events-and-personal-circumstances/marital-status/marriage-and-civil-partnerships/index.aspx",
+        "link_text": "Guidance on marriage and civil partnerships from Revenue"
+      },
+      "id": "e34fbdb4-cda0-4683-86c7-6b94e90b8ab3"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.ireland.ie/en/dfa/overseas-travel/consular-services/marriage-and-civil-partnership-abroad/",
+        "link_text": "Marriage and civil partnership abroad"
+      },
+      "id": "33c3cf3a-53c1-4b9c-b653-60e3378b5d3d"
+    }
+  ],
+  "_translation_of": 208339
+}

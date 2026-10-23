@@ -13,11 +13,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@12.11.2",
+  "packageManager": "pnpm@12.14.0",
   "dependencies": {
     "@faker-js/faker": "10.6.0",
     "@logto/node": "2.5.5",
-    "@ogcio/building-blocks-sdk": "0.2.118",
+    "@ogcio/building-blocks-sdk": "0.2.120",
     "pg": "8.23.1"
   },
   "devDependencies": {

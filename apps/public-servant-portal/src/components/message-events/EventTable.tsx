@@ -17,7 +17,7 @@ import { messagingApi, pagingMeta } from "@/util/api-paths"
 import { formatDate } from "@/util/datetime"
 import { isStatus } from "@/util/messaging"
 import { url } from "@/util/url"
-import { MessageStatus } from "./MessageStatus"
+import { MessageStatus, MessageStatusContext } from "./MessageStatus"
 
 type MessageEventRow = {
   eventStatus: string
@@ -87,6 +87,7 @@ export default function EventTable() {
           <MessageStatus
             type={row.original.eventType}
             status={row.original.eventStatus}
+            context={MessageStatusContext.LIST}
           />
         ),
       },

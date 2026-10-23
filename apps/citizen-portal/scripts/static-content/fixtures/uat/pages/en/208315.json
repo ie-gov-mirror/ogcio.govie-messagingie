@@ -1,0 +1,129 @@
+{
+  "id": 208315,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "en",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208315/",
+    "html_url": "https://www.uat.beta.gov.ie/en/life-events/child-adoption/",
+    "slug": "child-adoption",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:39:00+01:00",
+    "parent": {
+      "id": 207788,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207788/",
+        "html_url": null
+      },
+      "title": "Life Events"
+    }
+  },
+  "title": "Child adoption",
+  "highlighted": false,
+  "category": "Family & Children",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ct843\">There are three steps in the adoption process:</p><ul><li data-block-key=\"3lifc\">assessment</li><li data-block-key=\"2u6gn\">adjudication</li><li data-block-key=\"d27e8\">determination</li></ul><p data-block-key=\"1lbum\">You must be 21 or older to be eligible to apply to adopt. Although there are no upper age limits for prospective adoptive parents, age is a factor in all applications.</p>",
+      "id": "39fa4b47-2cc9-453a-bf0f-6a554ca57d72"
+    },
+    {
+      "type": "heading",
+      "value": "Eligibility of a child to be adopted in Ireland",
+      "id": "caa96fa8-947b-4c30-8392-76a537631a49"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ct843\">The child must be a minimum of 6 weeks old and the mother/guardians must consent to the adoption.</p><p data-block-key=\"eb1fm\">If the father does not have automatic guardianship or has not obtained guardianship rights, the birth father’s consent is not required. However, he and other relevant parties will be consulted (if possible) about the adoption of the child.</p><p data-block-key=\"3r3lt\">The mother's consent may be withdrawn at any time before the making of an Adoption Order.</p><p data-block-key=\"ak91n\">If the guardian cannot be located or refuses to engage, it may be decided that the application may be made to the High Court to dispense with this consent if it is in the child’s best interest.</p>",
+      "id": "d9bfaa9a-1632-4ac8-83bd-34a5b6acc793"
+    },
+    {
+      "type": "heading",
+      "value": "Assessment",
+      "id": "096453d4-1fc9-4cb3-a36e-7e2c142dda98"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ct843\">You must first apply for an assessment, through <a href=\"https://www.tusla.ie/get-in-touch/adoption-services/\">your local adoption office</a>. They will answer any questions you might have, or help you complete your application for assessment.</p><p data-block-key=\"ar58c\">TUSLA/PACT will assess all applicants and prepare an Assessment Report with a finding as to the eligibility and suitability of the applicant(s).</p><p data-block-key=\"brokc\">This Assessment Report will include:</p><ul><li data-block-key=\"614b6\">interviews with you</li><li data-block-key=\"15bbr\">interviews with your partner (if applicable)</li><li data-block-key=\"2h1e0\">Garda vetting</li><li data-block-key=\"2d22\">a medical exam</li></ul><p data-block-key=\"aqrp8\">The Local Adoption Committee will consider the Assessment Report and finding and make a recommendation.</p><p data-block-key=\"3kmb8\">After this, the board and social work team will verify that assessment and recommendation paperwork is either complete or incomplete. If incomplete, they will request additional information or paperwork.</p><p data-block-key=\"f4p9e\">Once the paperwork is complete, you will move on to step three, Adjudication.</p>",
+      "id": "bce66f64-110d-4a8e-9262-cb4ed16d4937"
+    },
+    {
+      "type": "heading",
+      "value": "Adjudication",
+      "id": "ca1ae42b-1cd4-46b2-b63c-c1c0e7081d75"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ct843\">The board will assess the case sheet compiled by the Intercountry Adoption Unit (ICA).</p><p data-block-key=\"24i4e\">This includes:</p><ul><li data-block-key=\"ehrma\">the TUSLA/PACT assessment and finding</li><li data-block-key=\"6gc6c\">Local Adoption Committee (LAC) recommendation</li></ul><p data-block-key=\"2j3ra\">They may request additional information or hold an Information Sharing meeting with applicants.</p><p data-block-key=\"e6ptj\">The board will consider:</p><ul><li data-block-key=\"7am16\">the Assessing Agency Assessment</li><li data-block-key=\"1gds\">the Local Adoption Committee Recommendation</li><li data-block-key=\"4jjhp\">any additional documents submitted</li><li data-block-key=\"dfn0o\">proceedings of the Information Sharing meeting (if held)</li></ul><p data-block-key=\"5d59s\">The board will then make a decision as to the eligibility and suitability of the applicants.</p>",
+      "id": "032b6078-9495-4b2c-acdb-dc5d58696546"
+    },
+    {
+      "type": "heading",
+      "value": "Decision",
+      "id": "43b22736-f186-49da-a111-9125d2f1eb52"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ct843\">If the board is satisfied, applicants will receive a Declaration of Eligibility and Suitability and can proceed with the adoption.</p><p data-block-key=\"7aed4\">If the board is not satisfied, applicants will receive written notice that the AAI Board is ‘minded to decline’. The letter from AAI will give reasons, and invite applicants to make a written submission and/or attend an oral hearing.</p><p data-block-key=\"13e8v\">Applicants can either:</p><ul><li data-block-key=\"5272i\">make a written submission and/or attend an oral hearing</li><li data-block-key=\"igub\">choose to decline</li><li data-block-key=\"5i99t\">or fail to respond in time</li></ul><p data-block-key=\"2qkit\">If you decline or do not respond in time, the AAI will refuse the Declaration of Eligibility and Suitability, and give reasons for the decision.</p><p data-block-key=\"1p72s\">If you do contest the decision, you will be issued copies of all documentation considered by the board.</p><p data-block-key=\"8ac72\">After considering the written submissions and/or the oral hearing is held, the board will make its final decision.</p><p data-block-key=\"4j047\">If the board is satisfied, applicants will receive a Declaration of Eligibility and Suitability and can proceed with the adoption.</p><p data-block-key=\"2edfm\">If the board is not satisfied, applicants will be refused a Declaration of Eligibility and Suitability, with reasons for the decision.</p>",
+      "id": "5e69fcc7-2acf-48f6-b3d9-98e667b110a4"
+    },
+    {
+      "type": "heading",
+      "value": "Intercountry adoption",
+      "id": "3d3fcae7-1770-470e-a6ec-d8186cdce552"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ct843\">Intercountry adoption is when someone living in Ireland wants to adopt a child living in another country.</p><p data-block-key=\"c3999\">The person or couple applying must have a valid Declaration of Eligibility and Suitability.</p><p data-block-key=\"3tch4\">While being assessed for the Declaration of Eligibility and Suitability, you can choose which country you want to adopt from. Once you receive your Declaration of Eligibility and Suitability, you must make contact with the <a href=\"https://aai.gov.ie/en/intercountry-adoption\">accredited agency in that country</a>.</p><p data-block-key=\"3bnhl\">When the adoption has gone through successfully and the child has entered Ireland, you must enter the information into the <a href=\"https://aai.gov.ie/en/intercountry-adoption/register-of-intercountry-adoptions\">Register of Intercountry Adoptions (RICA)</a> within 3 months of the child entering the State.</p>",
+      "id": "1e15348c-63a4-4fe8-b3b5-bee25ce93e8f"
+    },
+    {
+      "type": "heading",
+      "value": "Apply for birth information",
+      "id": "c1fb49f7-9de8-421c-a442-4d1ea962bd23"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"ct843\">The Birth Information and Tracing Act 2022 provides eligible persons access to the full release of their birth certificate, birth, early life, care and medical information.</p><p data-block-key=\"7n5hn\">Only relevant people can access this. A relevant person is:</p><ul><li data-block-key=\"7gioq\">over 16 (to apply for information) and over 18 (to apply for tracing services)</li><li data-block-key=\"3i8rm\">adopted, or</li><li data-block-key=\"ch0qj\">was or believe they may be the subject of an illegal birth registration (pre-1980), or</li><li data-block-key=\"7udvh\">was nursed out or boarded out or believes they may have been nursed out or boarded out (pre-1991)</li><li data-block-key=\"fsrie\">someone who lived in an institution as a child but fit into any of the above categories (as outlined in the Act)</li></ul><p data-block-key=\"d2rsj\">If you<b> </b>are a relevant person and you wish to apply for your information via the <a href=\"https://bitportal.tusla.ie/Account/Login\">online Tusla portal</a>. You can also apply by posting the <a href=\"https://www.tusla.ie/uploads/content/04_10_2022_BIT_Relevant_Person_Application_Form_V3.pdf\">Birth Information and Tracing Application Form for Relevant Persons</a> to P.O Box 13018, Dublin 15.</p>",
+      "id": "a0d365b7-8f43-4750-9028-384eb8698241"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.tusla.ie/get-in-touch/adoption-services/",
+        "link_text": "Adoption Services"
+      },
+      "id": "5f26f95b-209b-472e-8211-3c64058fee22"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://aai.gov.ie/en/intercountry-adoption",
+        "link_text": "Intercountry Adoption"
+      },
+      "id": "832bfa13-babf-4233-9ebf-5b73a6e1abf7"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://aai.gov.ie/en/intercountry-adoption/register-of-intercountry-adoptions",
+        "link_text": "Register of Intercountry Adoptions"
+      },
+      "id": "968dc3af-cda1-4909-8dd9-9b4178c8b899"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://bitportal.tusla.ie/Account/Login",
+        "link_text": "Online application for a Birth Information and Tracing Service"
+      },
+      "id": "f4837a3d-5261-4844-a0f2-8304a1bdbdc3"
+    }
+  ]
+}

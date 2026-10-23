@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { discoveryContentSchema, type RichTextNode } from "@/lib/discovery"
 import {
   MOCK_FIXTURES_DIR,
@@ -14,59 +14,60 @@ import {
   createInMemoryTransport,
   type FixturePage,
   loadFixtures,
+  type Transport,
 } from "../../scripts/static-content/wagtail/index.ts"
 
-type Locale = "en" | "ga"
 type Fixtures = { pages: FixturePage[] }
-type Body = Array<{ type: string; value: unknown; id: string }>
+type Link = { type: string; value: Record<string, unknown>; id: string }
 type Category = {
-  key: string
-  title: string
-  icon: string
-  life_events: number[]
+  type: string
+  value: { title: string; icon: string; life_events: Array<{ id: number }> }
+  id: string
+}
+type Page = FixturePage & {
+  body: Array<{ type: string; value: unknown; id: string }>
+  categories: Category[]
+  services: Array<{
+    type: string
+    value: { link: Link[]; description?: string }
+    id: string
+  }>
+  guidance: Link[]
 }
 
 const LIST = 1000
+const GA_LIST = 2000
 const LIFE_EVENT = 1104
-const JOURNEY = 1201
-const APPEAL_JOURNEY = 1205
+const GA_LIFE_EVENT = 2104
+const PUBLICATION = 3001
 
-async function build(mutate: (fixtures: Fixtures) => void = () => {}) {
-  const fixtures: Fixtures = {
-    pages: structuredClone(await loadFixtures(MOCK_FIXTURES_DIR)),
-  }
-  mutate(fixtures)
+const SCHOOL_PLACE_JOURNEY_URL =
+  "https://journey.uat.services.gov.ie/journey/d48b8b19-7c36-4f90-b9a0-94daaf9e73a4"
+
+async function fixtures(): Promise<Fixtures> {
+  return { pages: structuredClone(await loadFixtures(MOCK_FIXTURES_DIR)) }
+}
+
+async function build(
+  mutate: (fixtures: Fixtures) => void = () => {},
+  wrap: (transport: Transport) => Transport = (transport) => transport,
+) {
+  const loaded = await fixtures()
+  mutate(loaded)
   return buildDiscoveryContent({
-    transport: createInMemoryTransport(fixtures.pages),
+    transport: wrap(createInMemoryTransport(loaded.pages)),
     indexPageId: MOCK_INDEX_PAGE_ID,
   })
 }
 
-function page({ pages }: Fixtures, id: number, locale: Locale = "en") {
-  const found = pages.find((p) => p.id === id && p.meta.locale === locale)
-  if (!found) throw new Error(`no fixture page ${locale}:${id}`)
-  return found as FixturePage & { body: Body; categories: Category[] }
+function page({ pages }: Fixtures, id: number) {
+  const found = pages.find((p) => p.id === id)
+  if (!found) throw new Error(`no fixture page ${id}`)
+  return found as Page
 }
 
-function remove(fixtures: Fixtures, id: number, locale: Locale) {
-  fixtures.pages = fixtures.pages.filter(
-    (p) => !(p.id === id && p.meta.locale === locale),
-  )
-}
-
-function cta(fixtures: Fixtures, id: number, locale: Locale = "en") {
-  const block = page(fixtures, id, locale).body.find(
-    (b) => b.type === "button_link",
-  )
-  return block?.value as Array<{ value: { link_url: string } }>
-}
-
-function addCopy(fixtures: Fixtures, from: number, to: number) {
-  for (const locale of ["en", "ga"] as const) {
-    const copy = structuredClone(page(fixtures, from, locale))
-    copy.id = to
-    fixtures.pages.push(copy)
-  }
+function remove(fixtures: Fixtures, id: number) {
+  fixtures.pages = fixtures.pages.filter((p) => p.id !== id)
 }
 
 function schoolStart(content: BuildResult["content"], locale: "en" | "ga") {
@@ -77,16 +78,6 @@ function schoolStart(content: BuildResult["content"], locale: "en" | "ga") {
   return lifeEvent
 }
 
-function journey(
-  content: BuildResult["content"],
-  locale: "en" | "ga",
-  id: number,
-) {
-  const found = schoolStart(content, locale).journeys.find((j) => j.id === id)
-  if (!found) throw new Error(`no journey ${id} in ${locale}`)
-  return found
-}
-
 function links(nodes: RichTextNode[]): RichTextNode[] {
   return nodes.flatMap((node) => [
     ...(node.type === "link" ? [node] : []),
@@ -95,46 +86,52 @@ function links(nodes: RichTextNode[]): RichTextNode[] {
 }
 
 describe("buildDiscoveryContent on the mock fixtures", () => {
-  it("builds valid EN and GA content, warning about empty life events", async () => {
+  it("builds valid EN and GA content, warning about life events with no services", async () => {
     const { content, issues } = await build()
 
     expect(issues.errors).toEqual([])
-    expect(issues.warnings).toHaveLength(20)
-    expect(
-      issues.warnings.every((w) => w.rule === "life-event-no-journeys"),
-    ).toBe(true)
-    expect(issues.warnings[0].document).toBe(
+    const noServices = issues.warnings.filter(
+      (w) => w.rule === "life-event-no-services",
+    )
+    expect(noServices).toHaveLength(20)
+    expect(noServices[0].document).toBe(
       'en:1101 LifeEventPage "birth-of-a-child"',
     )
+    // The appeal service links with no text, in EN and GA.
+    expect(issues.warnings.map((w) => w.rule).sort()).toEqual([
+      ...Array(20).fill("life-event-no-services"),
+      "link-text-missing",
+      "link-text-missing",
+    ])
     for (const locale of ["en", "ga"] as const) {
       const localised = discoveryContentSchema.parse(content?.[locale])
       expect(localised.locale).toBe(locale)
       expect(localised.categories.map((c) => c.key)).toEqual([
-        "family",
-        "education",
-        "transport",
-        "housing",
-        "work",
-        "relationships",
-        "health",
-        "later-life",
-        "bereavement",
+        "category-family",
+        "category-education",
+        "category-transport",
+        "category-housing",
+        "category-work",
+        "category-relationships",
+        "category-health",
+        "category-later-life",
+        "category-bereavement",
       ])
       expect(localised.lifeEvents).toHaveLength(21)
-      expect(schoolStart(content, locale).journeys).toHaveLength(5)
-      expect(localised.lifeEvents.flatMap((le) => le.journeys)).toHaveLength(5)
+      expect(schoolStart(content, locale).services).toHaveLength(5)
+      expect(schoolStart(content, locale).guidance).toHaveLength(2)
     }
   })
 
   it("takes structure and slugs from EN, and text from GA", async () => {
     const { content } = await build((fixtures) => {
-      page(fixtures, LIST, "ga").categories[1].title = "Oideachas"
-      page(fixtures, LIFE_EVENT, "ga").title = "Leanbh ag tosú ar scoil"
-      page(fixtures, LIFE_EVENT, "ga").meta.slug = "leanbh-ag-tosu-ar-scoil"
+      page(fixtures, GA_LIST).categories[1].value.title = "Oideachas"
+      page(fixtures, GA_LIFE_EVENT).title = "Leanbh ag tosú ar scoil"
+      page(fixtures, GA_LIFE_EVENT).meta.slug = "leanbh-ag-tosu-ar-scoil"
     })
 
     expect(content?.en.categories[1]).toEqual({
-      key: "education",
+      key: "category-education",
       title: "Education & Learning",
       icon: "school",
       lifeEventSlugs: [
@@ -152,54 +149,199 @@ describe("buildDiscoveryContent on the mock fixtures", () => {
     expect(schoolStart(content, "en").title).toBe("Child starting school")
   })
 
-  it("drops empty summaries", async () => {
+  it("maps services and guidance to links, in the app or out of it", async () => {
     const { content } = await build((fixtures) => {
-      page(fixtures, JOURNEY).summary = ""
-      page(fixtures, JOURNEY, "ga").summary = ""
+      page(fixtures, GA_LIFE_EVENT).title = "Leanbh ag tosú ar scoil"
+      page(fixtures, 2105).title = "Aistriú go dtí an tríú leibhéal"
     })
-    expect(journey(content, "en", JOURNEY)).not.toHaveProperty("summary")
+
+    const { services, guidance } = schoolStart(content, "ga")
+    expect(services[0]).toEqual({
+      link: {
+        text: "Apply for a school place",
+        href: SCHOOL_PLACE_JOURNEY_URL,
+        internal: false,
+      },
+      description:
+        "Apply for a primary school place in one of the five pilot regions. Takes 20 to 25 minutes and cannot be saved part-way.",
+    })
+    // No link text: a discovery page's title in the locale, otherwise the URL.
+    expect(services[4].link).toEqual({
+      text: "https://www.gov.ie/en/publication/appeal-a-refusal-of-admission/",
+      href: "https://www.gov.ie/en/publication/appeal-a-refusal-of-admission/",
+      internal: false,
+    })
+    expect(guidance[1]).toEqual({
+      text: "Aistriú go dtí an tríú leibhéal",
+      href: "/discovery/transition-from-secondary-to-tertiary-education",
+      internal: true,
+    })
   })
 
-  it("resolves internal links to app paths in both locales", async () => {
+  it("shows the URL of a guidance link with no text, with a warning", async () => {
+    const get = vi.fn()
+    const { content, issues } = await build(
+      (fixtures) => {
+        page(fixtures, LIFE_EVENT).guidance[0].value.link_text = " "
+      },
+      (transport) => {
+        get.mockImplementation(transport.get)
+        return { get }
+      },
+    )
+
+    const url = "https://www.gov.ie/en/publication/choosing-a-primary-school/"
+    expect(schoolStart(content, "en").guidance[0]).toEqual({
+      text: url,
+      href: url,
+      internal: false,
+    })
+    expect(issues.warnings).toContainEqual({
+      document: 'en:1104 LifeEventPage "child-starting-school"',
+      path: "guidance[0].value.link_text",
+      rule: "link-text-missing",
+      message: `has no link text, so it shows its URL (${url})`,
+    })
+    // An empty service page is fetched and left as an outbound link.
+    expect(get.mock.calls.map((call) => call[0])).toContain(
+      `/v2/pages/${PUBLICATION}/`,
+    )
+  })
+
+  it("hosts a service whose link is a page with a body", async () => {
+    const { content, issues } = await build((fixtures) => {
+      fixtures.pages.push({
+        id: 1201,
+        title: "Apply for a school place",
+        meta: {
+          type: "publication.PublicationPage",
+          locale: "en",
+          slug: "apply-for-a-school-place",
+          alias_of: null,
+          parent: null,
+        },
+        body: [
+          {
+            type: "paragraph",
+            value: "<p>Use this service to apply.</p>",
+            id: "p1",
+          },
+          {
+            type: "button_link",
+            value: [
+              {
+                type: "external_link",
+                value: {
+                  link_url: SCHOOL_PLACE_JOURNEY_URL,
+                  link_text: "Start application",
+                },
+                id: "b1",
+              },
+            ],
+            id: "btn",
+          },
+        ],
+      })
+      for (const id of [LIFE_EVENT, GA_LIFE_EVENT]) {
+        page(fixtures, id).services[0].value.link = [
+          {
+            type: "internal_link",
+            value: {
+              page: 1201,
+              link_text: "",
+              url: "https://www.gov.ie/en/publication/apply-for-a-school-place/",
+            },
+            id: "svc",
+          },
+        ]
+      }
+    })
+
+    expect(issues.errors).toEqual([])
+    expect(issues.warnings).toContainEqual(
+      expect.objectContaining({ rule: "service-untranslated" }),
+    )
+    for (const locale of ["en", "ga"] as const) {
+      expect(schoolStart(content, locale).services[0]).toMatchObject({
+        link: {
+          text: "Apply for a school place",
+          href: "/discovery/child-starting-school/apply-for-a-school-place",
+          internal: true,
+        },
+        detail: {
+          slug: "apply-for-a-school-place",
+          title: "Apply for a school place",
+          body: [
+            expect.objectContaining({ type: "richText" }),
+            {
+              type: "buttonLinks",
+              links: [
+                {
+                  text: "Start application",
+                  href: SCHOOL_PLACE_JOURNEY_URL,
+                  internal: false,
+                },
+              ],
+            },
+          ],
+        },
+      })
+    }
+    expect(schoolStart(content, "en").services[4].link.internal).toBe(false)
+  })
+
+  it("accepts email links in services, guidance and buttons", async () => {
+    const email = "mailto:schools@education.gov.ie"
+    const { content, issues } = await build((fixtures) => {
+      page(fixtures, LIFE_EVENT).guidance[0].value.link_url = email
+    })
+    expect(issues.errors).toEqual([])
+    expect(schoolStart(content, "en").guidance[0]).toEqual({
+      text: "Choosing a primary school",
+      href: email,
+      internal: false,
+    })
+  })
+
+  it("drops empty service descriptions", async () => {
+    const { content } = await build((fixtures) => {
+      page(fixtures, LIFE_EVENT).services[0].value.description = " "
+    })
+    expect(schoolStart(content, "en").services[0]).not.toHaveProperty(
+      "description",
+    )
+  })
+
+  it("keeps rich-text links to discovery pages in the app, in both locales", async () => {
     const { content } = await build()
 
     for (const locale of ["en", "ga"] as const) {
-      const found = journey(content, locale, APPEAL_JOURNEY).body.flatMap(
-        (block) => (block.type === "richText" ? links(block.nodes) : []),
+      const found = schoolStart(content, locale).body.flatMap((block) =>
+        block.type === "richText" ? links(block.nodes) : [],
       )
       expect(found).toEqual([
         expect.objectContaining({
-          href: "/discovery/child-starting-school/apply-for-a-school-place",
+          href: "/discovery/transition-from-secondary-to-tertiary-education",
           internal: true,
         }),
       ])
     }
   })
 
-  it("exposes CTAs as button links", async () => {
-    const { content } = await build()
-    expect(
-      journey(content, "en", JOURNEY).body.find(
-        (block) => block.type === "buttonLinks",
-      ),
-    ).toEqual({
-      type: "buttonLinks",
-      links: [
-        {
-          text: "Start application",
-          href: "https://journey.uat.services.gov.ie/journey/d48b8b19-7c36-4f90-b9a0-94daaf9e73a4",
-          internal: false,
-        },
-      ],
+  it("builds an untranslated GA alias from its EN content, with a warning", async () => {
+    const { content, issues } = await build((fixtures) => {
+      page(fixtures, GA_LIFE_EVENT).meta.alias_of = { id: LIFE_EVENT }
     })
-  })
 
-  it("keeps a life event with no journeys, with an empty list", async () => {
-    const { content } = await build()
-    expect(
-      content?.en.lifeEvents.find((le) => le.slug === "birth-of-a-child")
-        ?.journeys,
-    ).toEqual([])
+    expect(issues.errors).toEqual([])
+    expect(issues.warnings).toContainEqual({
+      document: 'en:1104 LifeEventPage "child-starting-school"',
+      path: "",
+      rule: "translation-alias",
+      message:
+        "isn't translated yet: its ga page 2104 is an alias, so it shows the en content",
+    })
+    expect(schoolStart(content, "ga").title).toBe("Child starting school")
   })
 })
 
@@ -208,13 +350,13 @@ describe("buildDiscoveryContent failures", () => {
     [
       "a missing GA page",
       "missing-translation",
-      (fixtures) => remove(fixtures, JOURNEY, "ga"),
+      (fixtures) => remove(fixtures, GA_LIFE_EVENT),
     ],
     [
-      "a GA page that is an alias",
-      "missing-translation",
+      "a GA alias of a different page",
+      "translation-alias",
       (fixtures) => {
-        page(fixtures, JOURNEY, "ga").meta.alias_of = { id: JOURNEY }
+        page(fixtures, GA_LIFE_EVENT).meta.alias_of = { id: 1105 }
       },
     ],
     [
@@ -228,14 +370,26 @@ describe("buildDiscoveryContent failures", () => {
       "an invalid GA field",
       "schema",
       (fixtures) => {
-        page(fixtures, LIFE_EVENT, "ga").title = ""
+        page(fixtures, GA_LIFE_EVENT).title = ""
+      },
+    ],
+    [
+      "a service with two links",
+      "schema",
+      (fixtures) => {
+        const { link } = page(fixtures, LIFE_EVENT).services[0].value
+        link.push(link[0])
       },
     ],
     [
       "an unknown block type",
       "unknown-block-type",
       (fixtures) => {
-        page(fixtures, JOURNEY).body.push({ type: "image", value: 1, id: "x" })
+        page(fixtures, LIFE_EVENT).body.push({
+          type: "image",
+          value: 1,
+          id: "x",
+        })
       },
     ],
     [
@@ -250,10 +404,13 @@ describe("buildDiscoveryContent failures", () => {
       "life-event-category-count",
       (fixtures) => {
         page(fixtures, LIST).categories.push({
-          key: "benefits",
-          title: "Benefits",
-          icon: "home",
-          life_events: [LIFE_EVENT],
+          type: "category",
+          value: {
+            title: "Benefits",
+            icon: "home",
+            life_events: [{ id: LIFE_EVENT }],
+          },
+          id: "category-benefits",
         })
       },
     ],
@@ -261,23 +418,25 @@ describe("buildDiscoveryContent failures", () => {
       "a life event in no category",
       "life-event-category-count",
       (fixtures) => {
-        page(fixtures, LIST).categories[1].life_events = []
+        page(fixtures, LIST).categories[1].value.life_events = []
       },
     ],
     [
       "a category referencing an unknown page",
       "category-unknown-life-event",
-      (fixtures) => page(fixtures, LIST).categories[0].life_events.push(424242),
+      (fixtures) =>
+        page(fixtures, LIST).categories[0].value.life_events.push({
+          id: 424242,
+        }),
     ],
     [
-      "a duplicate category key",
+      "a duplicate category ID",
       "category-key-unique",
       (fixtures) => {
         page(fixtures, LIST).categories.push({
-          key: "housing",
-          title: "Homes",
-          icon: "home",
-          life_events: [],
+          type: "category",
+          value: { title: "Homes", icon: "home", life_events: [] },
+          id: "category-housing",
         })
       },
     ],
@@ -285,7 +444,7 @@ describe("buildDiscoveryContent failures", () => {
       "a GA category that doesn't match EN",
       "category-translation",
       (fixtures) => {
-        page(fixtures, LIST, "ga").categories[0].key = "homes"
+        page(fixtures, GA_LIST).categories[0].id = "category-homes"
       },
     ],
     [
@@ -296,36 +455,28 @@ describe("buildDiscoveryContent failures", () => {
       },
     ],
     [
-      "a duplicate journey slug in one life event",
-      "slug-unique",
-      (fixtures) => addCopy(fixtures, JOURNEY, 1299),
-    ],
-    [
       "a duplicate life-event slug",
       "slug-unique",
       (fixtures) => {
-        addCopy(fixtures, LIFE_EVENT, 1199)
-        page(fixtures, LIST).categories[1].life_events.push(1199)
-        page(fixtures, LIST, "ga").categories[1].life_events.push(1199)
+        const copy = {
+          ...structuredClone(page(fixtures, LIFE_EVENT)),
+          id: 1199,
+        }
+        const gaCopy = {
+          ...structuredClone(page(fixtures, GA_LIFE_EVENT)),
+          id: 2199,
+          _translation_of: 1199,
+        }
+        fixtures.pages.push(copy, gaCopy)
+        page(fixtures, LIST).categories[1].value.life_events.push({ id: 1199 })
       },
     ],
     [
-      "an http CTA",
+      "an http service link",
       "external-link-https",
       (fixtures) => {
-        cta(fixtures, JOURNEY, "ga")[0].value.link_url =
+        page(fixtures, GA_LIFE_EVENT).services[0].value.link[0].value.link_url =
           "http://forms.uat.services.gov.ie/ga/x"
-      },
-    ],
-    [
-      "an internal link to an unknown page",
-      "internal-link-unknown-page",
-      (fixtures) => {
-        page(fixtures, JOURNEY).body.push({
-          type: "paragraph",
-          value: '<p><a linktype="page" id="424242">x</a></p>',
-          id: "x",
-        })
       },
     ],
   ])("fails on %s", async (_, rule, mutate) => {
@@ -336,26 +487,28 @@ describe("buildDiscoveryContent failures", () => {
 
   it("names the document and the JSON path of each error", async () => {
     const { issues } = await build((fixtures) => {
-      cta(fixtures, JOURNEY, "ga")[0].value.link_url = "http://example.ie"
+      page(fixtures, GA_LIFE_EVENT).services[0].value.link[0].value.link_url =
+        "http://example.ie"
     })
     expect(issues.errors).toEqual([
       {
-        document: 'ga:1201 JourneyPage "apply-for-a-school-place"',
-        path: "body[2].value[0].value.link_url",
+        document: 'ga:2104 LifeEventPage "child-starting-school"',
+        path: "services[0].value.link[0].value.link_url",
         rule: "external-link-https",
-        message: '"http://example.ie" isn\'t an absolute https URL',
+        message:
+          '"http://example.ie" isn\'t an absolute https URL or a mailto: email address',
       },
     ])
   })
 
   it("reports every page error in one run", async () => {
     const { issues } = await build((fixtures) => {
-      remove(fixtures, JOURNEY, "ga")
-      page(fixtures, LIST, "ga").title = ""
+      remove(fixtures, GA_LIFE_EVENT)
+      page(fixtures, GA_LIST).title = ""
     })
     expect(issues.errors.map((e) => [e.document, e.rule])).toEqual([
-      ['en:1201 JourneyPage "apply-for-a-school-place"', "missing-translation"],
-      ['ga:1000 ListPage "life-events"', "schema"],
+      ['en:1104 LifeEventPage "child-starting-school"', "missing-translation"],
+      ['ga:2000 LifeEventsLandingPage "life-events"', "schema"],
     ])
   })
 

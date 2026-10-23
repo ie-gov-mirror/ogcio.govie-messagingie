@@ -1,6 +1,10 @@
 import { getAccessToken } from "@ogcio/api-auth";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildLogtoClient } from "~/clients/logto.js";
+import {
+  BB_CITIZEN_ROLE_ID,
+  ONBOARDING_CANDIDATE_ROLE_ID,
+} from "~/const/logto.js";
 import { createLogtoUsers } from "~/services/profiles/create-logto-users.js";
 import {
   mockLogger,
@@ -35,7 +39,11 @@ describe("createLogtoUsers", () => {
       .mockResolvedValueOnce(mockLogtoUsers[0])
       .mockResolvedValueOnce(mockLogtoUsers[1]);
 
-    const mockClient = { createUser: mockCreateUser };
+    const mockAssignUserRole = vi.fn().mockResolvedValue(undefined);
+    const mockClient = {
+      createUser: mockCreateUser,
+      assignUserRole: mockAssignUserRole,
+    };
 
     // Mock buildLogtoClient to call getAccessToken and return our mock client
     vi.mocked(buildLogtoClient).mockImplementation(async (config) => {
@@ -70,6 +78,22 @@ describe("createLogtoUsers", () => {
     });
 
     expect(mockCreateUser).toHaveBeenCalledTimes(2);
+    expect(mockAssignUserRole).toHaveBeenCalledWith(
+      "user-1",
+      BB_CITIZEN_ROLE_ID,
+    );
+    expect(mockAssignUserRole).toHaveBeenCalledWith(
+      "user-1",
+      ONBOARDING_CANDIDATE_ROLE_ID,
+    );
+    expect(mockAssignUserRole).toHaveBeenCalledWith(
+      "user-2",
+      BB_CITIZEN_ROLE_ID,
+    );
+    expect(mockAssignUserRole).toHaveBeenCalledWith(
+      "user-2",
+      ONBOARDING_CANDIDATE_ROLE_ID,
+    );
     expect(mockCreateUser).toHaveBeenCalledWith({
       primaryEmail: mockProfiles[0].email,
       name: "John Doe",
@@ -88,7 +112,10 @@ describe("createLogtoUsers", () => {
       .mockResolvedValueOnce({ id: "user-1", primaryEmail: "john@example.com" })
       .mockRejectedValueOnce(new Error("Failed to create user"));
 
-    const mockClient = { createUser: mockCreateUser };
+    const mockClient = {
+      createUser: mockCreateUser,
+      assignUserRole: vi.fn().mockResolvedValue(undefined),
+    };
     vi.mocked(buildLogtoClient).mockResolvedValue(mockClient as never);
 
     const promise = createLogtoUsers(
@@ -125,7 +152,10 @@ describe("createLogtoUsers", () => {
       }),
     );
 
-    const mockClient = { createUser: mockCreateUser };
+    const mockClient = {
+      createUser: mockCreateUser,
+      assignUserRole: vi.fn().mockResolvedValue(undefined),
+    };
     vi.mocked(buildLogtoClient).mockResolvedValue(mockClient as never);
 
     const promise = createLogtoUsers(
@@ -163,7 +193,10 @@ describe("createLogtoUsers", () => {
       .substring(0, 128);
     const mockCreateUser = vi.fn().mockResolvedValueOnce(mockLogtoUsers[0]);
 
-    const mockClient = { createUser: mockCreateUser };
+    const mockClient = {
+      createUser: mockCreateUser,
+      assignUserRole: vi.fn().mockResolvedValue(undefined),
+    };
     vi.mocked(buildLogtoClient).mockResolvedValue(mockClient as never);
 
     await createLogtoUsers(
@@ -187,5 +220,30 @@ describe("createLogtoUsers", () => {
         onlyPrivateDetails: false,
       },
     });
+  });
+
+  it("does not count a user as created when role assignment fails", async () => {
+    const mockCreateUser = vi
+      .fn()
+      .mockResolvedValue({ id: "user-1", primaryEmail: "john@example.com" });
+    const mockClient = {
+      createUser: mockCreateUser,
+      assignUserRole: vi
+        .fn()
+        .mockRejectedValue(new Error("role assign failed")),
+    };
+    vi.mocked(buildLogtoClient).mockResolvedValue(mockClient as never);
+
+    const promise = createLogtoUsers(
+      [mockProfiles[0]],
+      mockLogtoConfig,
+      "org-123",
+      "job-123",
+      false,
+      false,
+      mockLogger,
+    );
+
+    await expect(promise).rejects.toMatchObject({ successfulEmails: [] });
   });
 });

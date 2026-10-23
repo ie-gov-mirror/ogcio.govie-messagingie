@@ -1,0 +1,25 @@
+{
+  "id": 2119,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "slug": "retirement",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 2000
+    }
+  },
+  "title": "Retirement",
+  "highlighted": false,
+  "category": "Later Life",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Planning for retirement and what to do when you stop working.</p>",
+      "id": "le-1119"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 1119
+}

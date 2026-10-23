@@ -31,6 +31,7 @@ const {
 let selectedOrgValue: string | null = null
 
 vi.mock("@ogcio/sag-client/react", () => ({
+  CONNECTOR_ENTRAID: "social:OGCIO EntraID",
   MESSAGING_PUBLIC_SERVANT_ROLE_NAME: "Messaging Public Servant",
   SagClientProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
@@ -262,17 +263,14 @@ describe("ClientShell — gate states", () => {
     )
 
     await waitFor(() => expect(signInMock).toHaveBeenCalledTimes(1))
-    // No `connector` is passed: SAG forwards a plain Logto signIn (no
-    // `direct_sign_in`) so Logto serves its own chooser screen, matching the
-    // legacy admin UX and avoiding silent EntraID re-auth after sign-out.
+    // Entra `direct_sign_in`: the connector sends `prompt=select_account`.
     // `redirectUrl` is the full href so the path survives the cross-subdomain
     // strict-origin-when-cross-origin Referer trim on the SAG POST.
     expect(signInMock).toHaveBeenCalledWith({
+      connector: "social:OGCIO EntraID",
       redirectUrl: window.location.href,
     })
-    // The `connectorsToShow` cookie scopes Logto's chooser to EntraID only —
-    // public servants must never see a MyGovID button on the sign-in page.
-    expect(document.cookie).toContain("connectorsToShow=ogcio-entraid")
+    expect(document.cookie).not.toContain("connectorsToShow")
 
     // Re-rendering must not re-trigger sign-in (the ref-based guard ensures
     // we don't bounce the user back to Logto on every render cycle).

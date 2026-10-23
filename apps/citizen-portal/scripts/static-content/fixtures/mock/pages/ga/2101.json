@@ -1,0 +1,25 @@
+{
+  "id": 2101,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "slug": "birth-of-a-child",
+    "locale": "ga",
+    "alias_of": null,
+    "parent": {
+      "id": 2000
+    }
+  },
+  "title": "Birth of a Child",
+  "highlighted": false,
+  "category": "Family & Children",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p>Registering a birth, and the payments and services available to new parents.</p>",
+      "id": "le-1101"
+    }
+  ],
+  "services": [],
+  "guidance": [],
+  "_translation_of": 1101
+}

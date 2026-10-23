@@ -1,7 +1,7 @@
 {
   "id": 1105,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "transition-from-secondary-to-tertiary-education",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Transition from Secondary to Tertiary Education",
+  "highlighted": false,
+  "category": "Education & Learning",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Applying for college, grants and supports after secondary school.</p>",
       "id": "le-1105"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

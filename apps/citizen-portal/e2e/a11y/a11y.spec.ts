@@ -169,6 +169,82 @@ test.describe("Accessibility (a11y) checks @regression", () => {
     await page.close()
   })
 
+  test(`citizen - should have no SERIOUS a11y violations on life events discovery`, async ({
+    browser,
+  }) => {
+    const page = await createAuthenticatedPage(
+      browser,
+      users.citizen1.email,
+    )
+    await page.goto(`${DASHBOARD_URL}/en/discovery`)
+    await expect(
+      page.getByRole("heading", { name: "Life Events" }),
+    ).toBeVisible()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('iframe[title="reCAPTCHA"]')
+      .analyze()
+
+    const reportHTML = createHtmlReport({
+      results: accessibilityScanResults,
+      options: {
+        projectKey: "citizen-portal",
+        outputDir: "./e2e/test-results/a11y-report",
+        reportFileName: "accessibility-report-discovery.html",
+      },
+    })
+
+    if (!fs.existsSync("./e2e/test-results/a11y-report/accessibility-report-discovery.html")) {
+      fs.mkdirSync("./e2e/test-results/a11y-report", {
+        recursive: true,
+      })
+    }
+    fs.writeFileSync("./e2e/test-results/a11y-report/accessibility-report-discovery.html", reportHTML)
+
+    const seriousViolations = accessibilityScanResults.violations.filter(
+      (v) => v.impact === "serious" || v.impact === "critical",
+    )
+    expect(seriousViolations, `SERIOUS Violations on discovery`).toEqual([])
+    await page.close()
+  })
+
+  test(`citizen - should have no SERIOUS a11y violations on life events example`, async ({
+    browser,
+  }) => {
+    const page = await createAuthenticatedPage(
+      browser,
+      users.citizen1.email,
+    )
+    await page.goto(`${DASHBOARD_URL}/en/discovery/child-starting-school`)
+    await expect(
+      page.getByRole("heading", { name: "Child Starting School" }),
+    ).toBeVisible()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('iframe[title="reCAPTCHA"]')
+      .analyze()
+
+    const reportHTML = createHtmlReport({
+      results: accessibilityScanResults,
+      options: {
+        projectKey: "citizen-portal",
+        outputDir: "./e2e/test-results/a11y-report",
+        reportFileName: "accessibility-report-discovery/child-starting-school.html",
+      },
+    })
+
+    if (!fs.existsSync("./e2e/test-results/a11y-report/accessibility-report-discovery.html")) {
+      fs.mkdirSync("./e2e/test-results/a11y-report", {
+        recursive: true,
+      })
+    }
+    fs.writeFileSync("./e2e/test-results/a11y-report/accessibility-report-discovery.html", reportHTML)
+
+    const seriousViolations = accessibilityScanResults.violations.filter(
+      (v) => v.impact === "serious" || v.impact === "critical",
+    )
+    expect(seriousViolations, `SERIOUS Violations on discovery`).toEqual([])
+    await page.close()
+  })
+
   test(`citizen - should have no SERIOUS a11y violations on profile`, async ({
     browser,
   }) => {

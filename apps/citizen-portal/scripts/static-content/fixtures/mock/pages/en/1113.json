@@ -1,7 +1,7 @@
 {
   "id": 1113,
   "meta": {
-    "type": "lea.LifeEventPage",
+    "type": "life_events.LifeEventPage",
     "slug": "starting-a-business",
     "locale": "en",
     "alias_of": null,
@@ -10,11 +10,15 @@
     }
   },
   "title": "Starting a business",
+  "highlighted": false,
+  "category": "Work & Money",
   "body": [
     {
       "type": "paragraph",
       "value": "<p>Registering a business, tax obligations and supports for new enterprises.</p>",
       "id": "le-1113"
     }
-  ]
+  ],
+  "services": [],
+  "guidance": []
 }

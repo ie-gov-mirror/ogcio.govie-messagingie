@@ -71,8 +71,9 @@ vi.mock("next-intl", () => ({
   },
 }))
 
+const links = vi.hoisted(() => ({ show: true }))
 vi.mock("@/hooks/use-show-application-links", () => ({
-  useShowApplicationLinks: () => true,
+  useShowApplicationLinks: () => links.show,
 }))
 
 // Drive the deployment-topology flags directly so the suite can assert
@@ -97,8 +98,9 @@ vi.mock("@/lib/feature-config", () => ({
 }))
 
 const unread = vi.hoisted(() => ({ count: 1, isLoading: false }))
+const unreadHook = vi.hoisted(() => vi.fn(() => unread))
 vi.mock("@/components/messages/use-inbox-unread-count", () => ({
-  useInboxUnreadCount: () => unread,
+  useInboxUnreadCount: unreadHook,
 }))
 
 vi.mock("@/components/messages/inbox-unread-badge", () => ({
@@ -229,6 +231,7 @@ describe("PageHeader", () => {
     flagState.journey = true
     unread.count = 1
     unread.isLoading = false
+    links.show = true
   })
 
   afterEach(() => {
@@ -364,6 +367,23 @@ describe("PageHeader", () => {
     expect(screen.getByRole("button", { name: "Menu" })).not.toHaveAttribute(
       "aria-describedby",
     )
+  })
+
+  // Non-onboarded citizens (e.g. /onboarding) lack the messages scope, so
+  // probing the inbox only earns a 403 from messaging-api.
+  it("skips the unread fetch when application links are hidden", () => {
+    links.show = false
+    mockPathname = "/onboarding"
+    render(
+      <PageHeader publicName='Jane' onSignOut={() => {}} title='Onboarding' />,
+    )
+    expect(unreadHook).toHaveBeenCalledWith(false)
+    expect(unreadHook).not.toHaveBeenCalledWith(true)
+  })
+
+  it("fetches the unread count when application links are shown", () => {
+    render(<PageHeader publicName='Jane' onSignOut={() => {}} />)
+    expect(unreadHook).toHaveBeenCalledWith(true)
   })
 
   it("leaves the Menu icon unmarked when the drawer has no Messages link", () => {

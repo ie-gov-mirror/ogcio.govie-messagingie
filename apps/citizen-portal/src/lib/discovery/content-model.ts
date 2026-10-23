@@ -4,7 +4,7 @@ import { AVAILABLE_LOCALES } from "../../const/locale.ts"
 // scripts/static-content runs this file under Node's type stripping: keep
 // imports relative with `.ts` extensions (no `@/` alias).
 
-export const DISCOVERY_CONTENT_SCHEMA_VERSION = 1
+export const DISCOVERY_CONTENT_SCHEMA_VERSION = 2
 
 export const discoveryLocaleSchema = z.enum(AVAILABLE_LOCALES)
 export type DiscoveryLocale = z.infer<typeof discoveryLocaleSchema>
@@ -18,8 +18,13 @@ export type RichTextNode =
       type: "paragraph" | "listItem" | "strong" | "emphasis"
       children: RichTextNode[]
     }
+  | { type: "heading"; level: RichTextHeadingLevel; children: RichTextNode[] }
   | { type: "list"; ordered: boolean; children: RichTextNode[] }
   | { type: "link"; href: string; internal: boolean; children: RichTextNode[] }
+
+// `h1` is the page title, so content can't add another.
+export const RICH_TEXT_HEADING_LEVELS = [2, 3, 4] as const
+export type RichTextHeadingLevel = (typeof RICH_TEXT_HEADING_LEVELS)[number]
 
 export const richTextNodeSchema: z.ZodType<RichTextNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
@@ -27,6 +32,11 @@ export const richTextNodeSchema: z.ZodType<RichTextNode> = z.lazy(() =>
     z.object({ type: z.literal("lineBreak") }),
     z.object({
       type: z.enum(["paragraph", "listItem", "strong", "emphasis"]),
+      children: z.array(richTextNodeSchema),
+    }),
+    z.object({
+      type: z.literal("heading"),
+      level: z.literal(RICH_TEXT_HEADING_LEVELS),
       children: z.array(richTextNodeSchema),
     }),
     z.object({
@@ -60,30 +70,36 @@ export const contentBlockSchema = z.discriminatedUnion("type", [
 ])
 export type ContentBlock = z.infer<typeof contentBlockSchema>
 
-const pageFields = {
+export const serviceDetailSchema = z.object({
+  slug: z.string().min(1),
+  title: z.string().min(1),
+  body: z.array(contentBlockSchema),
+})
+export type ServiceDetail = z.infer<typeof serviceDetailSchema>
+
+export const serviceSchema = z.object({
+  link: contentLinkSchema,
+  description: z.string().min(1).optional(),
+  // Present when the service's CMS link is a page with a body. The card
+  // then opens that page at /discovery/<life-event>/<slug>.
+  detail: serviceDetailSchema.optional(),
+})
+export type Service = z.infer<typeof serviceSchema>
+
+export const lifeEventSchema = z.object({
   // The EN page's ID and slug, shared by both locales.
   id: z.number().int(),
   slug: z.string().min(1),
   title: z.string().min(1),
   body: z.array(contentBlockSchema),
-}
-
-export const journeySchema = z.object({
-  ...pageFields,
-  summary: z.string().min(1).optional(),
   highlighted: z.boolean(),
-})
-export type Journey = z.infer<typeof journeySchema>
-
-export const lifeEventSchema = z.object({
-  ...pageFields,
-  summary: z.string().min(1).optional(),
-  highlighted: z.boolean(),
-  journeys: z.array(journeySchema),
+  services: z.array(serviceSchema),
+  guidance: z.array(contentLinkSchema),
 })
 export type LifeEvent = z.infer<typeof lifeEventSchema>
 
 export const categorySchema = z.object({
+  // The CMS block ID, which the GA landing page shares with EN.
   key: z.string().min(1),
   title: z.string().min(1),
   icon: z.string().min(1),

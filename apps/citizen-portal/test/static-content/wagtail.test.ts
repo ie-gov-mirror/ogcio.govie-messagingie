@@ -10,10 +10,12 @@ import {
   type Transport,
 } from "../../scripts/static-content/wagtail/index.ts"
 
+const LIFE_EVENT = "life_events.LifeEventPage"
+
 function fixturePage(
   id: number,
   parentId: number | null,
-  type = "lea.LifeEventPage",
+  type = LIFE_EVENT,
   locale = "en",
 ): FixturePage {
   return {
@@ -29,9 +31,12 @@ function fixturePage(
   }
 }
 
-const list = fixturePage(1, null, "lea.ListPage")
+const list = fixturePage(1, null, "life_events.LifeEventsLandingPage")
 const children = Array.from({ length: 21 }, (_, i) => fixturePage(100 + i, 1))
-const gaChild = fixturePage(100, 1, "lea.LifeEventPage", "ga")
+const gaChild = {
+  ...fixturePage(200, 2, LIFE_EVENT, "ga"),
+  _translation_of: 100,
+}
 const transport = createInMemoryTransport([list, ...children, gaChild])
 
 describe("mock transport", () => {
@@ -43,10 +48,16 @@ describe("mock transport", () => {
     expect((await transport.get("/v2/pages/2/")).status).toBe(404)
   })
 
-  it("returns the requested locale of a page that shares its ID", async () => {
-    expect((await transport.get("/v2/pages/100/")).body).toBe(children[0])
-    expect((await transport.get("/v2/pages/100/", { locale: "ga" })).body).toBe(
-      gaChild,
+  it("leaves the mock-only _translation_of out of responses", async () => {
+    const detail = await transport.get("/v2/pages/200/")
+    expect(detail.body).toMatchObject({ id: 200, meta: { locale: "ga" } })
+    expect(detail.body).not.toHaveProperty("_translation_of")
+    const listing = await transport.get("/v2/pages/", {
+      translation_of: 100,
+      fields: "*",
+    })
+    expect((listing.body as { items: object[] }).items[0]).not.toHaveProperty(
+      "_translation_of",
     )
   })
 
@@ -85,14 +96,14 @@ describe("wagtail client", () => {
     const spy: Transport = { get: vi.fn(transport.get) }
     const client = createWagtailClient(spy)
 
-    const pages = await client.listChildren(1, "lea.LifeEventPage", "en")
+    const pages = await client.listChildren(1, LIFE_EVENT, "en")
 
     expect(pages.map((p) => p.id)).toEqual(children.map((p) => p.id))
     expect(pages.every((p) => p.meta.locale === "en")).toBe(true)
     expect(spy.get).toHaveBeenCalledTimes(2)
     expect(spy.get).toHaveBeenLastCalledWith("/v2/pages/", {
       child_of: 1,
-      type: "lea.LifeEventPage",
+      type: LIFE_EVENT,
       locale: "en",
       fields: "*",
       limit: 20,
@@ -102,11 +113,9 @@ describe("wagtail client", () => {
 
   it("finds translations with translation_of and locale", async () => {
     const client = createWagtailClient(transport)
-    const found = await client.findTranslations(100, "ga", "lea.LifeEventPage")
-    expect(found.map((p) => [p.id, p.meta.locale])).toEqual([[100, "ga"]])
-    expect(
-      await client.findTranslations(101, "ga", "lea.LifeEventPage"),
-    ).toEqual([])
+    const found = await client.findTranslations(100, "ga", LIFE_EVENT)
+    expect(found.map((p) => [p.id, p.meta.locale])).toEqual([[200, "ga"]])
+    expect(await client.findTranslations(101, "ga", LIFE_EVENT)).toEqual([])
   })
 
   it("fails on a non-200 response, naming the request", async () => {

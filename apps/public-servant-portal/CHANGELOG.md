@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.3](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.2...public-servant-portal-v0.1.3) (2026-10-23)
+
+
+### Features
+
+* **messaging-api:** separate inbox and email delivery events AB[#44677](https://github.com/ogcio/govie-services-messaging/issues/44677) ([#1071](https://github.com/ogcio/govie-services-messaging/issues/1071)) ([c6d6dea](https://github.com/ogcio/govie-services-messaging/commit/c6d6dea3421b650ec0f31c92d73bebdb32728ba7))
+
+
+### Bug Fixes
+
+* **auth:** sign public-servant portal in with Entra direct sign-in AB[#44576](https://github.com/ogcio/govie-services-messaging/issues/44576) ([#1051](https://github.com/ogcio/govie-services-messaging/issues/1051)) ([4b1f910](https://github.com/ogcio/govie-services-messaging/commit/4b1f910250b2e42ae20f083032dd06962895536d))
+* **deps:** bump @ogcio/sag-client to 0.8.5 AB[#44872](https://github.com/ogcio/govie-services-messaging/issues/44872) ([#1076](https://github.com/ogcio/govie-services-messaging/issues/1076)) ([24c8a20](https://github.com/ogcio/govie-services-messaging/commit/24c8a20659a304fd72a1ade218ede508d981f293))
+* **deps:** update all non-major dependencies ([#1063](https://github.com/ogcio/govie-services-messaging/issues/1063)) ([d0139ae](https://github.com/ogcio/govie-services-messaging/commit/d0139ae46dd1a53f189e836f8975219e9e4ec864))
+
+
+### Miscellaneous Chores
+
+* Update admin login for e2e tests AB[#44576](https://github.com/ogcio/govie-services-messaging/issues/44576) ([#1054](https://github.com/ogcio/govie-services-messaging/issues/1054)) ([35e7e39](https://github.com/ogcio/govie-services-messaging/commit/35e7e39abfc87acaa5fa1737a3f25685f8ac2b1c))
+* update deps AB[#44227](https://github.com/ogcio/govie-services-messaging/issues/44227) ([#1072](https://github.com/ogcio/govie-services-messaging/issues/1072)) ([efeca5b](https://github.com/ogcio/govie-services-messaging/commit/efeca5b4db6131c6b9c943e7de4683e32dfde58b))
+* update deps AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1078](https://github.com/ogcio/govie-services-messaging/issues/1078)) ([2b9558e](https://github.com/ogcio/govie-services-messaging/commit/2b9558ecb07b14b472f20d988f7f1b2d71ac4440))
+* use a single Biome config AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1081](https://github.com/ogcio/govie-services-messaging/issues/1081)) ([496f24c](https://github.com/ogcio/govie-services-messaging/commit/496f24c426219ef23c6cda31fb11408cc40bef6c))
+
 ## [0.1.2](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.1...public-servant-portal-v0.1.2) (2026-10-13)
 
 

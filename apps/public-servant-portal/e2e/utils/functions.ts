@@ -50,11 +50,6 @@ export async function logout(page: Page) {
     await clickButton(page, "Menu")
     await clickButton(page, "Logout")
   }
-
-  if (page.url().includes(urls.authSignIn)) {
-    // Click the MyGovID login button
-    await page.getByRole("button", { name: "Continue with MyGovId" }).click()
-  }
   await expect(page.getByText("Mock Login")).toBeVisible({
     timeout: 15000,
   })

@@ -7,9 +7,11 @@ export const selectProfiles = async (params: {
   organizationId: string;
   profileIds: string[];
   consentSubjects: string[];
+  includeFullDetails?: boolean;
 }): Promise<Partial<ProfileWithDetails>[]> =>
   profileServiceFromPool(params.pool).select({
     organizationId: params.organizationId,
     profileIds: params.profileIds,
     consentSubjects: params.consentSubjects,
+    includeFullDetails: params.includeFullDetails,
   });

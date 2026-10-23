@@ -11,7 +11,10 @@ import { useSearchParams } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo } from "react"
 import { BackLink } from "@/components/BackButton"
-import { MessageStatus } from "@/components/message-events/MessageStatus"
+import {
+  MessageStatus,
+  MessageStatusContext,
+} from "@/components/message-events/MessageStatus"
 import { TanStackTable } from "@/components/tables/TanStackTable"
 import { messagingApi } from "@/util/api-paths"
 import { defaultFormGap, formatDate, formatTime } from "@/util/datetime"
@@ -55,6 +58,7 @@ export function MessageEventDetailClient() {
           <MessageStatus
             type={row.original.eventType}
             status={row.original.eventStatus}
+            context={MessageStatusContext.TIMELINE}
           />
         ),
       },

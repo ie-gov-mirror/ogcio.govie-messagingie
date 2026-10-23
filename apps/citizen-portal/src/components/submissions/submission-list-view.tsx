@@ -1,12 +1,13 @@
 "use client"
 
-import { Paragraph } from "@ogcio/design-system-react"
+import { Alert, Heading, Paragraph } from "@ogcio/design-system-react"
 import { usePathname, useRouter } from "next/navigation"
-import { useLocale, useTranslations } from "next-intl"
+import { useTranslations } from "next-intl"
 import { useCallback, useMemo, useRef } from "react"
 import { InboxListChromeHeader } from "@/components/messages/inbox-list-chrome-header"
 import { MessagesDataTableHeader } from "@/components/messages/messages-data-table-header"
 import inboxTableStyles from "@/components/messages/unified-inbox-table.module.css"
+import pageTitleStyles from "@/components/page-title.module.css"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import type { Submission } from "@/types"
 import {
@@ -20,7 +21,6 @@ import { useSubmissionsList } from "./use-submissions"
 
 export function SubmissionListView() {
   const t = useTranslations("submissions")
-  const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useUrlSearchParams()
@@ -54,13 +54,6 @@ export function SubmissionListView() {
     return submissions
   }, [submissions, isLoading])
 
-  const handleSelect = useCallback(
-    (id: string) => {
-      router.push(`/${locale}/my-submissions?id=${id}`)
-    },
-    [locale, router],
-  )
-
   const handlePageSizeChange = useCallback(
     (size: number) => {
       const params = new URLSearchParams(searchParams)
@@ -76,28 +69,63 @@ export function SubmissionListView() {
     [pathname, router, searchParams],
   )
 
+  // Nothing to search or page through: replace the list chrome with a
+  // banner. A failed fetch or an out-of-range page is not "no applications".
+  // The empty list 404s, so SWR re-enters loading on every focus
+  // revalidation; keep the last settled answer so the banner doesn't flicker.
+  const isUnfilteredEmpty =
+    !search && page === 1 && displaySubmissions.length === 0
+  const settledEmptyRef = useRef(false)
+  if (!isLoading) {
+    settledEmptyRef.current = isUnfilteredEmpty && error == null
+  }
+  const hasNoApplications = isUnfilteredEmpty && settledEmptyRef.current
+
   return (
     <div className={styles.listRoot}>
-      <div className={styles.inboxBleed}>
-        <div className={inboxTableStyles.listChrome}>
-          <InboxListChromeHeader
-            searchChrome={<MessagesDataTableHeader enableFilters={false} />}
-          />
-          <SubmissionListTable
-            submissions={displaySubmissions}
-            isLoading={isLoading}
-            totalPages={totalPages}
-            pageSize={pageSize}
-            onPageSizeChange={handlePageSizeChange}
-            onSelect={handleSelect}
-          />
-        </div>
-        {error != null && !isLoading && (
-          <Paragraph className={styles.error}>
-            {t("error", { message: error.message })}
-          </Paragraph>
-        )}
+      <div className={styles.intro}>
+        <Heading as='h1' className={pageTitleStyles.pageTitle}>
+          {t("heading")}
+        </Heading>
+        <Paragraph size='lg'>{t("description")}</Paragraph>
       </div>
+      {hasNoApplications ? (
+        <Alert
+          variant='info'
+          title={t("empty.title")}
+          className={styles.emptyAlert}
+          data-testid='submissions-empty'
+        >
+          <Paragraph>{t("empty.description")}</Paragraph>
+        </Alert>
+      ) : (
+        <div className={styles.inboxBleed}>
+          <div className={inboxTableStyles.listChrome}>
+            <InboxListChromeHeader
+              searchChrome={
+                <MessagesDataTableHeader
+                  enableFilters={false}
+                  searchPlaceholder={t("search.placeholder")}
+                  searchAriaLabel={t("search.ariaLabel")}
+                  showSearchIcon
+                />
+              }
+            />
+            <SubmissionListTable
+              submissions={displaySubmissions}
+              isLoading={isLoading}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </div>
+          {error != null && !isLoading && (
+            <Paragraph className={styles.error}>
+              {t("error", { message: error.message })}
+            </Paragraph>
+          )}
+        </div>
+      )}
     </div>
   )
 }

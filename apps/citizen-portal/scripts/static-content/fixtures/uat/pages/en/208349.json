@@ -1,0 +1,131 @@
+{
+  "id": 208349,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "en",
+    "alias_of": null,
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208349/",
+    "html_url": "https://www.uat.beta.gov.ie/en/life-events/retirement/",
+    "slug": "retirement",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:44:00+01:00",
+    "parent": {
+      "id": 207788,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207788/",
+        "html_url": null
+      },
+      "title": "Life Events"
+    }
+  },
+  "title": "Retirement",
+  "highlighted": false,
+  "category": "Later Life",
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">This page provides an overview of retirement in Ireland, including how to plan ahead, understand your pension options, and apply for State supports when you reach retirement age.</p>",
+      "id": "39dc639a-ba6f-4ba8-85de-7f738c210c98"
+    },
+    {
+      "type": "heading",
+      "value": "Start planning early",
+      "id": "5ac3421b-db66-4d64-8244-6033ae5e21a8"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">Even if retirement seems far away, planning as soon as possible helps ensure you have enough income when you stop working:</p><ul><li data-block-key=\"7fkq2\">think about how much money you might need in retirement compared with your current lifestyle</li><li data-block-key=\"e60c\">consider how much of your income you want to replace when you retire</li></ul><p data-block-key=\"5v1cl\">This is good financial planning—the State Pension is only a part of your retirement income.</p>",
+      "id": "2cc660f7-e64c-4779-b96b-7109e67d06ba"
+    },
+    {
+      "type": "heading",
+      "value": "Understand the State Pension",
+      "id": "0aade355-3fee-4762-b211-6f8aa3ed9539"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">Ireland’s State Pension gives you a basic income in retirement.</p><h3 data-block-key=\"al9ig\">State Pension (Contributory)</h3><ul><li data-block-key=\"eefmd\">you must have paid enough Pay Related Social Insurance (PRSI) during your working life</li><li data-block-key=\"e59r7\">you can claim it when you reach State Pension age (currently 66)</li><li data-block-key=\"fe4n8\">if you were born on or after 1 January 1958, you can choose to take it between ages 66 and 70 — and you may get a higher weekly pension if you delay</li></ul><h3 data-block-key=\"7rkrb\">State Pension (Non-contributory)</h3><ul><li data-block-key=\"33r90\">this is means-tested, so it depends on your income and assets</li><li data-block-key=\"9fq60\">you must still be aged 66 or over</li></ul><p data-block-key=\"2u64f\">It’s a good idea to apply about six months before you want your pension to start.</p><p data-block-key=\"6iirs\">More information: <a href=\"https://www.gov.ie/en/department-of-social-protection/publications/state-pensions/\">State Pensions</a>.</p>",
+      "id": "183457ee-4682-438e-b5b6-cafdfb857bfd"
+    },
+    {
+      "type": "heading",
+      "value": "Build additional retirement savings",
+      "id": "1bcdb9b7-c1ef-468a-aa92-4cd1ec996fa2"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">Most people will want more than just the State Pension.</p><h3 data-block-key=\"7abbk\">Workplace pensions</h3><ul><li data-block-key=\"663l1\">many employers offer pension schemes — check with your workplace</li><li data-block-key=\"9ojo6\">your contributions and often your employer’s contributions go into a pension pot</li></ul><h3 data-block-key=\"dv3p5\">Auto-Enrolment Retirement Savings System</h3><p data-block-key=\"3a3lq\">Auto-enrolment is a new retirement savings system for employees that was introduced on 1 January 2026.</p><p data-block-key=\"fsrdf\">People who do not have a pension scheme, earn more than €20,000 per year and are aged between 23 and 60 will be automatically enrolled into the new system. This means that they will have extra money when they retire and won’t have to rely on the state pension alone.</p><p data-block-key=\"a7eqe\">An extra benefit to employees is that their employer and the State will also contribute – for every €3 that an employee puts in, the employer will also put in €3 and the State will top up by €1. This means that for every €3 contributed by the employee, €7 will be put into the employee’s account.</p><p data-block-key=\"76vq9\">More information: <a href=\"https://www.gov.ie/en/department-of-social-protection/publications/auto-enrolment-retirement-savings-system-for-employees/\">Auto-enrolment retirement savings system for employees</a>.</p><h3 data-block-key=\"330r0\">Personal Pensions (PRSAs)</h3><ul><li data-block-key=\"9k0rc\">you can open your own pension (a PRSA) if you are self-employed or want extra savings</li><li data-block-key=\"etkam\">PRSAs give tax relief on contributions and flexible options</li></ul>",
+      "id": "9837acc2-d80c-4e33-83dc-c92ae3fd87ce"
+    },
+    {
+      "type": "heading",
+      "value": "Think about your work and retirement age",
+      "id": "81826e54-c975-4d1f-9246-56bcaf200b21"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">There is no compulsory retirement age under Irish employment law for most jobs — you can work past pension age if you choose.</p><p data-block-key=\"56aii\">Many people work longer to build bigger savings or delay claiming their State Pension to increase their eventual payments.</p><p data-block-key=\"f2a8v\">If you continue working after claiming the State Pension (Contributory), you may no longer pay PRSI.</p>",
+      "id": "8207418f-3e5b-4f1f-8d5f-45723824edd0"
+    },
+    {
+      "type": "heading",
+      "value": "Apply for your State Pension",
+      "id": "f19a8de8-8ac3-4093-8749-90fb04aa95a9"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">When you are approaching the age you want to retire:</p><ol><li data-block-key=\"amtgc\">check your eligibility — ensure you have enough PRSI contributions if claiming contributory pension</li><li data-block-key=\"4qfp\">apply early — about six months before your chosen pension start date</li><li data-block-key=\"2cbvd\">use the MyWelfare online service — it’s the quickest way to apply</li></ol><p data-block-key=\"9iss8\">More information: <a href=\"https://www.gov.ie/en/department-of-social-protection/publications/state-pensions/\">State Pensions</a>.</p>",
+      "id": "784eb66b-02ee-49ca-b0a0-515ab0f0fb58"
+    },
+    {
+      "type": "heading",
+      "value": "Claim other supports you may be entitled to",
+      "id": "31a07fd5-fbef-433d-a603-58a7a278db90"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">When you retire, there are other Social Protection supports you might qualify for:</p><ul><li data-block-key=\"8oj7f\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/free-travel-scheme/\">Free Travel</a></li><li data-block-key=\"9uv7b\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/household-benefits-package/\">Household Benefits Package</a></li><li data-block-key=\"tuno\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/fuel-allowance/\">Fuel Allowance</a></li><li data-block-key=\"chna1\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/living-alone-increase/\">Living Alone Increase</a></li><li data-block-key=\"c3nub\"><a href=\"https://www.gov.ie/en/department-of-social-protection/services/carers-allowance/\">Carer’s Allowance</a></li><li data-block-key=\"9db7a\">other benefits for qualifying adults</li></ul><p data-block-key=\"h7mi\">Your eligibility depends on age, residence, income and other criteria.</p>",
+      "id": "6bde032c-69e2-40dc-b843-7c9a157fd88e"
+    },
+    {
+      "type": "heading",
+      "value": "Prepare for life after retirement",
+      "id": "17ce6206-9513-4812-8e56-17237d6867eb"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"5pniz\">Retirement isn’t just about money. Think about:</p><ul><li data-block-key=\"20e8t\">how you will spend your time (hobbies, volunteering, family, travel)</li><li data-block-key=\"99l8b\">health and long-term care planning</li><li data-block-key=\"dspe7\">where you want to live</li></ul><p data-block-key=\"eigtq\">Starting these conversations early — with family, financial advisors, or citizen advice services — will make the transition to retirement smoother.</p>",
+      "id": "f2cd934e-2895-4180-b112-9a5c71f979d6"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/publications/state-pensions/",
+        "link_text": "State Pensions"
+      },
+      "id": "5128d0d0-3c19-4f73-bf0d-2c82fc3491c8"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/publications/auto-enrolment-retirement-savings-system-for-employees/",
+        "link_text": "Auto-enrolment retirement savings system for employees"
+      },
+      "id": "6e7ff0f1-3ad8-4789-b2cc-29995fb9d439"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/publications/retired-and-older-people/",
+        "link_text": "Your guide to schemes and services for retired and older people"
+      },
+      "id": "dfbe89d4-63ef-4321-92a0-a1513bc4aad1"
+    }
+  ]
+}

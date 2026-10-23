@@ -111,11 +111,24 @@ const SingleMessageEventSchema = Type.Object({
       }),
       jobId: Type.String({ description: "Unique id of the job" }),
     }),
-    // Error data
+    // Delivery and error data: reason of a failure, provider ID of an accepted email
     Type.Object({
       messageId: Type.String({
         description: "Unique id of the related message",
       }),
+      messageKey: Type.Optional(
+        Type.String({
+          description: "Reason of a failure, e.g. failedToSend or noProvider",
+        }),
+      ),
+      details: Type.Optional(
+        Type.String({ description: "Technical details of a failure" }),
+      ),
+      providerMessageId: Type.Optional(
+        Type.String({
+          description: "Email provider's ID of an accepted email",
+        }),
+      ),
     }),
   ]),
   createdAt: Type.String({

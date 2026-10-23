@@ -3,17 +3,7 @@ import { urls, users } from "../fixtures"
 
 export async function authenticateUser(page: Page) {
   // Go to the main messaging page which will redirect to auth with mygovid for mock login
-  await page.goto(urls.admin)
-
-  // Wait for redirect to auth service
-  await page.waitForURL(`${urls.auth}?**`)
-
-  await page.context().clearCookies({ name: "connectorsToShow" })
-
-  await page.reload()
-
-  // Click the MyGovID login button
-  await page.getByRole("button", { name: "Continue with MyGovId" }).click()
+  await page.goto(urls.messaging)
 
   // Wait for the MyGovID mock login page
   await page.waitForURL(`${urls.mock}/**`)

@@ -1,9 +1,20 @@
 // Runs under Node's type stripping: relative `.ts` imports only (no `@/`
 // alias) and no non-erasable TypeScript such as enums.
 import { isLeaEnabled } from "../../src/lib/feature-config.ts"
-import { ConfigError, MOCK_FIXTURES_DIR, readConfig } from "./config.ts"
+import {
+  ConfigError,
+  readConfig,
+  type StaticContentConfig,
+  UAT_FIXTURES_DIR,
+} from "./config.ts"
 import { buildDiscoveryContent, formatIssue } from "./pipeline/index.ts"
-import { ContentFetchError, createMockTransport } from "./wagtail/index.ts"
+import {
+  ContentFetchError,
+  createClientCredentialsTokenSource,
+  createHttpTransport,
+  createMockTransport,
+  type Transport,
+} from "./wagtail/index.ts"
 import { writeStaticContent } from "./write.ts"
 
 async function main(): Promise<number> {
@@ -16,11 +27,11 @@ async function main(): Promise<number> {
 
   const config = readConfig(process.env)
   console.log(
-    `static-content: fetching discovery content (mode=${config.mode})`,
+    `static-content: fetching discovery content (mode=${config.mode}${config.mode === "proxy" ? `, api=${config.api.baseUrl}` : ""})`,
   )
 
   const { content, issues } = await buildDiscoveryContent({
-    transport: createMockTransport(MOCK_FIXTURES_DIR),
+    transport: createTransport(config),
     indexPageId: config.indexPageId,
   })
 
@@ -44,6 +55,20 @@ async function main(): Promise<number> {
   })
   for (const file of written) console.log(`static-content: wrote ${file}`)
   return 0
+}
+
+function createTransport(config: StaticContentConfig): Transport {
+  // TODO: back to MOCK_FIXTURES_DIR once UAT is flagged as stable.
+  if (config.mode === "mock") return createMockTransport(UAT_FIXTURES_DIR)
+  const { baseUrl, tokenUrl, clientId, clientSecret } = config.api
+  return createHttpTransport({
+    baseUrl,
+    tokens: createClientCredentialsTokenSource({
+      tokenUrl,
+      clientId,
+      clientSecret,
+    }),
+  })
 }
 
 main().then(

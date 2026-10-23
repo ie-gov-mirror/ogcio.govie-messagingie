@@ -1,0 +1,214 @@
+{
+  "id": 208338,
+  "meta": {
+    "type": "life_events.LifeEventPage",
+    "locale": "ga",
+    "alias_of": {
+      "id": 208337,
+      "meta": {
+        "type": "life_events.LifeEventPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208337/",
+        "html_url": null
+      },
+      "title": "Starting a business"
+    },
+    "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/208338/",
+    "html_url": "https://www.uat.beta.gov.ie/ga/life-events/starting-a-business/",
+    "slug": "starting-a-business",
+    "show_in_menus": true,
+    "seo_title": "",
+    "search_description": "",
+    "first_published_at": "2026-10-09T10:42:00+01:00",
+    "parent": {
+      "id": 207789,
+      "meta": {
+        "type": "life_events.LifeEventsLandingPage",
+        "detail_url": "https://api.integration.uat.beta.gov.ie/v2/pages/207789/",
+        "html_url": null
+      },
+      "title": "Life Events GA"
+    }
+  },
+  "title": "Starting a business",
+  "highlighted": false,
+  "category": null,
+  "body": [
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"g8i0t\">There are a number of steps to follow if you are setting up any kind of business in Ireland.</p>",
+      "id": "b3bdd4a5-ae05-4e34-bd93-9037b748764b"
+    },
+    {
+      "type": "heading",
+      "value": "Get start-up advice and supports",
+      "id": "4a0b820f-f0b4-4c0b-b7bf-b563bee368cd"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">Your <a href=\"https://www.localenterprise.ie/find-your-local-enterprise-office/\">Local Enterprise Office (LEO)</a> will guide you through structure, grants, training, mentoring and point you to the right registrations for your specific business type.</p>",
+      "id": "332c0766-8960-4e63-8354-15040456788a"
+    },
+    {
+      "type": "heading",
+      "value": "Register for tax",
+      "id": "91583065-9890-4215-b262-ba9a2bf81e65"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">You can register online via <a href=\"https://www.revenue.ie/en/starting-a-business/registering-for-tax/eregistration.aspx\">eRegistration</a> (or use forms like <a href=\"https://www.revenue.ie/en/self-assessment-and-self-employment/documents/form-tr1.pdf\">TR1</a> for sole traders/partnerships or TR2 for companies, where relevant).</p><p data-block-key=\"15qkm\">An overview of registering for tax for each business type is <a href=\"https://www.revenue.ie/en/starting-a-business/registering-for-tax/index.aspx\">available on Revenue.ie</a></p><p data-block-key=\"82sv6\">If you will hire staff you must also <a href=\"https://www.revenue.ie/en/employing-people/becoming-an-employer-and-ongoing-obligations/registration-of-employers-for-paye-purposes/how-to-register.aspx\">register as an employer for PAYE</a> with Revenue (typically via ROS/MyEnquiries) before paying employees.</p>",
+      "id": "5a9c095b-8139-4873-87e7-3d8c5c0bdeda"
+    },
+    {
+      "type": "heading",
+      "value": "Register the business legally",
+      "id": "02fabdce-c141-4755-b26c-bab06bbf1de4"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">You must contact the <a href=\"https://cro.ie/registration/\">Companies Registration Office</a> to:</p><ul><li data-block-key=\"9f4s9\"><a href=\"https://cro.ie/registration/company/\">incorporate a company</a> (if going Ltd)</li><li data-block-key=\"18lnu\"><a href=\"https://cro.ie/registration/business-name/\">register a business name</a> (if trading under a name), depending on your setup</li><li data-block-key=\"5q2uj\"><a href=\"https://cro.ie/registration/qualifying-limited-partnerships/\">register a partnership</a></li></ul><p data-block-key=\"cr5d1\">If you are registering as a charity, you can do this on the <a href=\"https://www.charitiesregulator.ie/en/information-for-charities/registering-a-charity\">Charities Regulator website</a>.</p>",
+      "id": "789d7baa-63d7-499f-97ee-53a31c30d9a9"
+    },
+    {
+      "type": "heading",
+      "value": "If you set up a company, file Beneficial Ownership (RBO)",
+      "id": "5c8c43c5-a0d0-46f7-a45a-79c81f10f110"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">You will need to make contact with the Central Register of <a href=\"https://cro.ie/registration/beneficial-ownership/\">Beneficial Ownership</a> if you are setting up a company.</p><p data-block-key=\"9k8ig\">RBO can <a href=\"https://rbo.gov.ie/faqs/how-do-i-register-a-beneficial-owner/\">filed online via the RBO portal</a>.</p>",
+      "id": "ca506008-f513-4a87-8c3a-5af8c94be64a"
+    },
+    {
+      "type": "heading",
+      "value": "Understand PRSI for self-employed",
+      "id": "987064ba-fc2c-439e-96cd-7f43dfa1a0c1"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">The <a href=\"https://www.gov.ie/en/department-of-social-protection/\">Department of Social Protection</a> has <a href=\"https://www.gov.ie/en/department-of-social-protection/publications/prsi-pay-related-social-insurance/\">PRSI guidance</a> for self-employed people.</p>",
+      "id": "347407a9-7619-4d1d-9f3f-3f03f2b16d22"
+    },
+    {
+      "type": "heading",
+      "value": "Know your health and safety obligations",
+      "id": "50c1daca-4d5d-4b8f-ac9a-ac3c3fef6417"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">This is particularly important if you have a workplace, staff or hire contractors.</p><p data-block-key=\"1ogua\">The <a href=\"https://www.hsa.ie/eng/enterprise_and_employee_supports/getting_started/the_basics/\">Health and Safety Authority (HSA) has guidance</a> that covers risk assessments and safety statements that apply to employers and the self employed.</p>",
+      "id": "1d27b25c-ba09-45cf-b8c3-ff0537b6e9ae"
+    },
+    {
+      "type": "heading",
+      "value": "If you employ people, know how to comply with employment rights",
+      "id": "8823e0e5-e2a7-4165-8c21-077a5444a335"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">The <a href=\"https://www.workplacerelations.ie/en/\">Workplace Relations Commission (WRC)</a> provides employer and employee guidance and runs inspections and enforcement around employment law compliance.</p>",
+      "id": "67f38466-1ab8-4a60-8ba1-3cc2500a4691"
+    },
+    {
+      "type": "heading",
+      "value": "If relevant, there are some sector-specific \"public body\" steps to follow",
+      "id": "56a1b080-7323-48df-88fc-f3924a1e25a6"
+    },
+    {
+      "type": "paragraph",
+      "value": "<p data-block-key=\"on2d9\">These steps are for businesses involve food like a café, takeaway, catering, food truck, home food business and so on.</p><p data-block-key=\"dud8g\">You will need to <a href=\"https://about.hse.ie/environmental-health/notify-the-hse-about-starting-a-food-business/\">notify and register with the Health Service Executive (HSE)</a> before operating.</p><p data-block-key=\"3k9iv\">HSE Environmental Health uses an online notification process, and the <a href=\"https://www.fsai.ie/business-advice/starting-a-food-business/register\">Food Safety Authority of Ireland (FSAI) explains which authority applies</a>.</p><p data-block-key=\"6eu4\">If you sell to consumers (online shop, services to the public), the Competition and Consumer Protection Commission (CCPC) provides <a href=\"https://www.ccpc.ie/information-for-businesses/selling-goods-and-services/selling-products\">practical guidance on consumer law obligations</a>.</p>",
+      "id": "52c6189a-b314-4c82-a406-2269c48bbaf6"
+    }
+  ],
+  "services": [],
+  "guidance": [
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.localenterprise.ie/find-your-local-enterprise-office/",
+        "link_text": "Find Your Local Enterprise Office"
+      },
+      "id": "03a76e4f-8600-481f-b03c-52b3db1a2dac"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.revenue.ie/en/starting-a-business/registering-for-tax/index.aspx",
+        "link_text": "Registering for tax"
+      },
+      "id": "266e42a3-5fff-412c-9a09-1cbe3e2d9fd3"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.revenue.ie/en/employing-people/becoming-an-employer-and-ongoing-obligations/registration-of-employers-for-paye-purposes/how-to-register.aspx",
+        "link_text": "Registration of employers for Pay As You Earn (PAYE)"
+      },
+      "id": "805109dc-f5a5-49f7-a6b3-2c5df2f7f958"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://cro.ie/registration/company/",
+        "link_text": "Registering a company"
+      },
+      "id": "02bb3ca8-7db2-4694-b6f1-19c388d62364"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://cro.ie/registration/business-name/",
+        "link_text": "Registering a business name"
+      },
+      "id": "b38e337c-3ef8-44c6-8587-63794e1f1d6d"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://cro.ie/registration/qualifying-limited-partnerships/",
+        "link_text": "Qualifying and Limited Partnerships"
+      },
+      "id": "365c6f6f-6a61-4593-90f8-708c5f3b7df4"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://cro.ie/registration/beneficial-ownership/",
+        "link_text": "Registering beneficial ownership"
+      },
+      "id": "c127b7e9-537e-40b4-a396-f46fe66b4f30"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://rbo.gov.ie/faqs/how-do-i-register-a-beneficial-owner/",
+        "link_text": "How to register a beneficial owner"
+      },
+      "id": "84fc636f-9a75-4c68-b060-2e3eae3bd1b2"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.charitiesregulator.ie/en/information-for-charities/registering-a-charity",
+        "link_text": "Registering a charity"
+      },
+      "id": "d39cd3de-1465-4a73-bebc-545dddc377ed"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.gov.ie/en/department-of-social-protection/publications/prsi-pay-related-social-insurance/",
+        "link_text": "Guidance on Pay Related Social Insurance (PRSI)"
+      },
+      "id": "c6eb4cb9-d0ef-4ecc-8219-ee0b7f177639"
+    },
+    {
+      "type": "external_link",
+      "value": {
+        "link_url": "https://www.hsa.ie/eng/enterprise_and_employee_supports/getting_started/the_basics/",
+        "link_text": "Health and safety basics for small businesses"
+      },
+      "id": "580ebff4-b4c5-49b4-8dd3-6468293b19f6"
+    }
+  ],
+  "_translation_of": 208337
+}
