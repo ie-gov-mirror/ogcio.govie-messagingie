@@ -248,8 +248,23 @@ async function pipeWithAvScan(params: {
 
       antivirusPassthrough.once(
         "scan-complete",
-        async (result: { isInfected: boolean; viruses: string[] }) => {
-          const { isInfected, viruses } = result;
+        async (result: {
+          isInfected: boolean;
+          failed?: boolean;
+          viruses: string[];
+        }) => {
+          const { isInfected, failed, viruses } = result;
+
+          // Same as a scan error: serve, but do not record the file as scanned.
+          if (failed) {
+            logger.error(
+              { fileId: file.id, key: file.key },
+              "antivirus scan failed",
+            );
+            scanResolve();
+            return;
+          }
+
           let fileDeleted = false;
 
           if (isInfected) {

@@ -16,60 +16,39 @@ test.describe("User Dashboard Features", () => {
     await page.close()
   })
 
-  test("a user can view the latest messages on the dashboard @regression", async () => {
+  test("a user can view life events on the dashboard @regression", async () => {
     await page.goto(`${DASHBOARD_URL}`)
     await expect(
-      page.getByRole("heading", { name: "Welcome back, E2E Citizen User" }),
+      page.getByRole("heading", { name: "Welcome, E2E Citizen User" }),
     ).toBeVisible()
-    await expect(page.getByText("Your recent messages")).toBeVisible()
-    await expect(page.getByText("View all messages")).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: "Life events" }),
+    ).toBeVisible()    
+    await expect(page.getByText("View all")).toBeVisible()
   })
 
-  test("clicking view all messages will take the user to the messaging page @regression", async () => {
+  test("clicking view all will take the user to the life events page @regression", async () => {
     await page.goto(`${DASHBOARD_URL}`)
     await expect(
-      page.getByRole("heading", { name: "Welcome back, E2E Citizen User" }),
+      page.getByRole("heading", { name: "Welcome, E2E Citizen User" }),
     ).toBeVisible()
-    await expect(page.getByText("Your recent messages")).toBeVisible()
-    await page.getByText("View all messages").click()
+    await expect(
+      page.getByRole("heading", { name: "Life events" }),
+    ).toBeVisible()    
+    await page.getByText("View all").click()
     // `expect(page.url())` is a plain string assertion — it can't wait, so it
     // sampled the URL mid-click. `toHaveURL` retries until the hop lands.
     await expect(page).toHaveURL((url) =>
-      url.href.startsWith(`${BASE_URL}/en/messages`),
+      url.href.startsWith(`${DASHBOARD_URL}/en/discovery`),
     )
-    // Wait on the inbox by test id, not by role+name: `InboxListChromeHeader`
-    // parks the search layer inside an `aria-hidden` wrapper when the bulk
-    // toolbar takes the slot, and role queries skip `aria-hidden` subtrees.
-    // The point here is only "the inbox rendered", so use the stable handle.
-    //
-    // The long timeout is the cross-zone hop: messaging only renders once it
-    // has its own SAG session, and that redirect chain through auth outlasts
-    // the 25s `expect.timeout`.
-    await expect(page.getByTestId("search-input")).toBeVisible({
-      timeout: 60_000,
-    })
   })
 
-  test("a user can view the latest submissions on the dashboard @regression", async () => {
+  test("a user can view the latest applications on the dashboard @regression", async () => {
     await page.goto(`${DASHBOARD_URL}`)
     await expect(
-      page.getByRole("heading", { name: "Welcome back, E2E Citizen User" }),
+      page.getByRole("heading", { name: "Welcome, E2E Citizen User" }),
     ).toBeVisible()
-    await expect(page.getByText("Your recent submissions")).toBeVisible()
-    await expect(page.getByText("View all submissions")).toBeVisible()
+    await expect(page.getByText("Recent applications")).toBeVisible()
   })
-
-  test("clicking view all submissions will take the user to the submissions page @regression", async () => {
-    await page.goto(`${DASHBOARD_URL}`)
-    await expect(
-      page.getByRole("heading", { name: "Welcome back, E2E Citizen User" }),
-    ).toBeVisible()
-    await expect(page.getByText("Your recent submissions")).toBeVisible()
-    await page.getByText("View all submissions").click()
-    await expect(page).toHaveURL((url) =>
-      url.href.startsWith(`${DASHBOARD_URL}/en/my-submissions`),
-    )
-    await expect(page.getByRole("textbox", { name: "Search" })).toBeVisible()
-  })
-  
+ 
 })

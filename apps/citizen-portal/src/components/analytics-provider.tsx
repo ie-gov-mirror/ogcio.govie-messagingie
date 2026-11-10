@@ -13,7 +13,7 @@ import { useIdleMount } from "@/hooks/use-idle-mount"
  * Same config fallback as before (`NEXT_PUBLIC_ANALYTICS_URL` ||
  * Matomo same-origin proxy). Tracker script (`tr4ck3rj`) is injected only
  * after the main thread is idle so it stays off the Lighthouse TBT path;
- * `useAnalytics()` still works immediately (events no-op or queue until init).
+ * `useTrack()` still works immediately (events no-op or queue until init).
  *
  * No-ops when URL or website id are unset (e.g. local without analytics env).
  */
@@ -54,6 +54,29 @@ function getAnalyticsBaseUrl(): string | undefined {
   return undefined
 }
 
+/**
+ * The SDK reports `location.href` (`setCustomUrl`) with every page view and
+ * event, so query params would reach Matomo verbatim: `search` carries the
+ * citizen's search text, `folder`, `id` and `submissionId` the ids of a
+ * folder, a message or an application, and `submissionTitle` an application's
+ * title. Matomo's tracker strips these from every URL it sends; queued before
+ * the tracker script loads, it is applied first (it is in Matomo's
+ * `applyFirst` list).
+ */
+const EXCLUDED_QUERY_PARAMS = [
+  "search",
+  "folder",
+  "id",
+  "submissionId",
+  "submissionTitle",
+]
+
+function excludeSensitiveQueryParams() {
+  const queue = globalThis as { _paq?: unknown[] }
+  queue._paq ??= []
+  queue._paq.push(["setExcludedQueryParams", EXCLUDED_QUERY_PARAMS])
+}
+
 export function AnalyticsProvider({ children }: { children: ReactNode }) {
   const idleReady = useIdleMount()
   const pathname = usePathname()
@@ -80,6 +103,7 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
 
     const initializeAnalytics = async () => {
       try {
+        excludeSensitiveQueryParams()
         await context.analyticsInstance?.initClientTracker({
           trackPageView: false,
         })

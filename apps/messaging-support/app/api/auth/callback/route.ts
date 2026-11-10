@@ -23,6 +23,19 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url)
   const code = url.searchParams.get("code")
   const state = url.searchParams.get("state")
+  const oauthError = url.searchParams.get("error")
+
+  if (oauthError) {
+    return NextResponse.redirect(buildBaseErrorUrl("oauth_error"))
+  }
+
+  if (!code && !state) {
+    // /api/auth/signout sends Entra's post_logout_redirect_uri here (it's
+    // the only redirect URI already registered on the app). No code, no
+    // error: this is the logout return, not a failed login.
+    const { BASE_URL } = getEnvConfig()
+    return NextResponse.redirect(new URL("/signed-out", BASE_URL), 303)
+  }
 
   if (!code || !state) {
     return NextResponse.redirect(buildBaseErrorUrl("missing_code_or_state"))

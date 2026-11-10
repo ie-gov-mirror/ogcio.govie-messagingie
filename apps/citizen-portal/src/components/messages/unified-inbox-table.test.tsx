@@ -108,7 +108,11 @@ vi.mock("next-intl", () => ({
         "home.table.from": "From",
         "home.table.unknownSender": "Unknown sender",
         "home.table.systemSender.support": "MessagingIE",
-        "home.table.empty.all": "You have no messages",
+        "home.table.loading": "Loading messages",
+        "home.table.noResults.title": "No messages match your search",
+        "home.table.noResults.description":
+          "Check the spelling or try different words, or change your filters.",
+        "home.table.noResults.clear": "Clear search",
         "home.table.select": "Select",
         "home.table.selectAll": "Select All",
         "home.table.close": "Close",
@@ -520,20 +524,43 @@ describe("UnifiedInboxTable", () => {
     }
   })
 
-  it("shows loading state", () => {
+  it("shows skeleton rows under the table header while loading", () => {
     renderInboxTable({ ...defaultProps, messages: [], isLoading: true })
 
-    // Spinner is rendered inside an <output aria-label="Loading"> wrapper
-    // (the shared <MessagesLoading /> component used by the page-level
-    // suspense fallback), so we assert on the accessible label rather than
-    // on the previous "Loading messages..." copy.
-    expect(screen.getByLabelText("Loading")).toBeInTheDocument()
+    expect(screen.getByText("Loading messages")).toBeInTheDocument()
+    expect(
+      screen.getByRole("columnheader", { name: "Sender" }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByTestId("message-skeleton-row").length,
+    ).toBeGreaterThan(0)
+    expect(
+      screen.getAllByTestId("message-skeleton-card").length,
+    ).toBeGreaterThan(0)
+    expect(
+      screen.queryByText("No messages match your search"),
+    ).not.toBeInTheDocument()
   })
 
-  it("shows empty state when no messages", () => {
+  it("shows no-results copy with a Clear search link that keeps the folder", () => {
+    currentSearchParams = new URLSearchParams(
+      "folder=deleted&search=payslip&status=unread&page=2",
+    )
     renderInboxTable({ ...defaultProps, messages: [] })
 
-    expect(screen.getByText("You have no messages")).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", { name: "No messages match your search" }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "Check the spelling or try different words, or change your filters.",
+      ),
+    ).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Clear search" })).toHaveAttribute(
+      "href",
+      "/en/messages?folder=deleted",
+    )
+    expect(screen.getByTestId("search-input")).toHaveValue("payslip")
   })
 
   it("does not render a per-row delete control (deletion goes through the bulk toolbar)", () => {

@@ -5,11 +5,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 // Topology flag drives whether the recent-messages widget is part of the
 // dashboard landing (AB#39580): a deployment without MessagingIE must not
 // render a messages preview that 404s / implies messaging is present.
-const flagState = vi.hoisted(() => ({ messages: true, lea: false }))
+const flagState = vi.hoisted(() => ({
+  messages: true,
+  lea: false,
+}))
 vi.mock("@/lib/feature-config", () => ({
   isZoneEnabled: (zone: "messages" | "profile" | "dashboard") =>
     zone === "messages" ? flagState.messages : true,
   isLeaEnabled: () => flagState.lea,
+}))
+
+vi.mock("@/components/dashboard/le-dashboard", () => ({
+  LeDashboard: () => <div data-testid='le-dashboard' />,
 }))
 
 vi.mock("@ogcio/sag-client/react", () => ({
@@ -79,10 +86,6 @@ vi.mock("@/components/dashboard/my-messages", () => ({
   MyMessages: () => <div data-testid='my-messages' />,
 }))
 
-vi.mock("@/components/dashboard/my-applications", () => ({
-  MyApplications: () => <div data-testid='my-applications' />,
-}))
-
 import { MyDashboard } from "@/components/dashboard/my-dashboard"
 import pageTitleStyles from "@/components/page-title.module.css"
 
@@ -90,6 +93,13 @@ describe("MyDashboard", () => {
   beforeEach(() => {
     flagState.messages = true
     flagState.lea = false
+  })
+
+  it("renders the LE Card dashboard when LEA is enabled", () => {
+    flagState.lea = true
+    render(<MyDashboard />)
+    expect(screen.getByTestId("le-dashboard")).toBeInTheDocument()
+    expect(screen.queryByTestId("my-messages")).not.toBeInTheDocument()
   })
 
   it("renders the recent-messages widget when messaging is enabled", () => {
@@ -106,17 +116,13 @@ describe("MyDashboard", () => {
     expect(screen.getByText("dashboard.help.title")).toBeInTheDocument()
   })
 
-  it.each([false, true])(
-    "renders the welcome name through PublicName (lea: %s)",
-    (lea) => {
-      // The heading must defer to the shared component, not read a name
-      // field itself. Both layouts have their own heading, so pin both.
-      flagState.lea = lea
-      render(<MyDashboard />)
-      expect(screen.getByTestId("public-name")).toBeInTheDocument()
-      expect(screen.getByRole("heading", { level: 1 })).toHaveClass(
-        pageTitleStyles.pageTitle,
-      )
-    },
-  )
+  it("renders the welcome name through PublicName", () => {
+    // The heading must defer to the shared component, not read a name
+    // field itself.
+    render(<MyDashboard />)
+    expect(screen.getByTestId("public-name")).toBeInTheDocument()
+    expect(screen.getByRole("heading", { level: 1 })).toHaveClass(
+      pageTitleStyles.pageTitle,
+    )
+  })
 })

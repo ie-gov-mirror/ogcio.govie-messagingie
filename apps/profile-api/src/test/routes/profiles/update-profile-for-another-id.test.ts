@@ -13,6 +13,14 @@ import {
 } from "~/test/build-testcontainer-pg.js";
 import { buildOnce } from "~/test/test-server-builder.js";
 
+const sentMessages: { id: string; recipientUserId: string }[] = [];
+
+function sendMessageTo(recipientUserId: string): string {
+  const id = randomUUID();
+  sentMessages.push({ id, recipientUserId });
+  return id;
+}
+
 const organizationId = "org-id";
 const pool = getPoolFromConnectionString(process.env[DATABASE_TEST_URL_KEY]);
 
@@ -38,6 +46,18 @@ const updateRequestedBy = await createUser(
 );
 
 const { app, setAuth } = await buildOnce();
+await app.ready();
+app.getMessagingSupportSdk = () =>
+  ({
+    postMessagesSearch: async (
+      _query: unknown,
+      body: { recipientUserIds: string[] },
+    ) => ({
+      data: sentMessages.filter((m) =>
+        body.recipientUserIds.includes(m.recipientUserId),
+      ),
+    }),
+  }) as unknown as ReturnType<typeof app.getMessagingSupportSdk>;
 
 afterAll(async () => {
   await app.close();
@@ -159,12 +179,54 @@ describe(`${patchTestParam.method} - /api/v1/profiles/{id} - Another profile`, a
     const response = await app.inject({
       method: patchTestParam.method,
       url: `/api/v1/profiles/${loggedInUser}`,
+      query: { messageId: sendMessageTo(loggedInUser) },
       body: {
         primaryUserId: updateRequestedById,
       },
     });
 
     expect(response.statusCode).toBe(200);
+  });
+
+  it("Returns 403 without a message addressed to the profile to link", async () => {
+    const toLinkId = randomUUID().substring(0, 12);
+    await createUser(
+      pool,
+      getFullBody(),
+      getFullBody(),
+      toLinkId,
+      organizationId,
+      false,
+    );
+
+    const response = await app.inject({
+      method: patchTestParam.method,
+      url: `/api/v1/profiles/${toLinkId}`,
+      body: { primaryUserId: updateRequestedById },
+    });
+
+    expect(response.statusCode).toBe(403);
+  });
+
+  it("Returns 403 when the message was sent to a different profile", async () => {
+    const toLinkId = randomUUID().substring(0, 12);
+    await createUser(
+      pool,
+      getFullBody(),
+      getFullBody(),
+      toLinkId,
+      organizationId,
+      false,
+    );
+
+    const response = await app.inject({
+      method: patchTestParam.method,
+      url: `/api/v1/profiles/${toLinkId}`,
+      query: { messageId: sendMessageTo(randomUUID().substring(0, 12)) },
+      body: { primaryUserId: updateRequestedById },
+    });
+
+    expect(response.statusCode).toBe(403);
   });
 
   it("Returns 400 if the primary user id is already different than profile id itself", async () => {
@@ -235,11 +297,11 @@ describe(`${patchTestParam.method} - /api/v1/profiles/{id} - Another profile`, a
     const response = await app.inject({
       method: patchTestParam.method,
       url: `/api/v1/profiles/${patchTestParam.profileId}`,
+      query: { messageId: sendMessageTo(patchTestParam.profileId) },
       body: {
         primaryUserId: updateRequestedBy.profileId,
       },
     });
-
     expect(response.statusCode).toBe(200);
     const responseBody = response.json().data as ProfileWithDetails;
 

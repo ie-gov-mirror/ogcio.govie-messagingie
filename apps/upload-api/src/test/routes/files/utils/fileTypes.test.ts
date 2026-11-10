@@ -12,6 +12,11 @@ describe("getResponseMimeType", () => {
     expect(getResponseMimeType("notes.txt")).toBe("text/plain");
   });
 
+  it("serves documents a browser renders as a page as application/octet-stream", () => {
+    expect(getResponseMimeType("data.xml")).toBe("application/octet-stream");
+    expect(getResponseMimeType("data.json")).toBe("application/octet-stream");
+  });
+
   it("is case-insensitive on the extension", () => {
     expect(getResponseMimeType("IMAGE.SVG")).toBe("application/octet-stream");
     expect(getResponseMimeType("Report.PDF")).toBe("application/pdf");

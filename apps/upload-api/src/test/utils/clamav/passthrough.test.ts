@@ -13,7 +13,7 @@ const EICAR_TEST_STRING =
 
 function collectScanComplete(
   passthrough: ClamavPassthrough,
-): Promise<{ isInfected: boolean; viruses: string[] }> {
+): Promise<{ isInfected: boolean; failed: boolean; viruses: string[] }> {
   return new Promise((resolve, reject) => {
     passthrough.once("scan-complete", resolve);
     passthrough.once("error", reject);
@@ -48,6 +48,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
 
     const result = await scanPromise;
     expect(result.isInfected).toBe(false);
+    expect(result.failed).toBe(false);
     expect(result.viruses).toEqual([]);
     expect(Buffer.concat(chunks).toString()).toBe("clean content");
     expect(server?.commandReceived).toBe(true);
@@ -68,7 +69,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
     expect(result.viruses).toEqual(["Eicar-Test-Signature"]);
   });
 
-  it("treats a clamd ERROR response as a failed (not infected) scan", async () => {
+  it("reports a clamd ERROR response as a failed scan, not a clean one", async () => {
     const opts = await startServer({
       behavior: { type: "error", message: "Size limit exceeded" },
     });
@@ -80,6 +81,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
 
     const result = await scanPromise;
     expect(result.isInfected).toBe(false);
+    expect(result.failed).toBe(true);
     expect(result.viruses).toEqual([]);
   });
 
@@ -94,7 +96,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
     Readable.from([Buffer.from("data")]).pipe(passthrough);
 
     const result = await scanPromise;
-    expect(result.isInfected).toBe(false);
+    expect(result.failed).toBe(true);
   });
 
   it("settles on scan timeout when clamd never responds", async () => {
@@ -106,7 +108,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
     Readable.from([Buffer.from("data")]).pipe(passthrough);
 
     const result = await scanPromise;
-    expect(result.isInfected).toBe(false);
+    expect(result.failed).toBe(true);
   });
 
   it("settles when clamd disconnects mid-stream", async () => {
@@ -118,7 +120,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
     Readable.from([Buffer.from("data")]).pipe(passthrough);
 
     const result = await scanPromise;
-    expect(result.isInfected).toBe(false);
+    expect(result.failed).toBe(true);
   });
 
   it("settles with a connection error when nothing is listening", async () => {
@@ -134,7 +136,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
     Readable.from([Buffer.from("data")]).pipe(passthrough);
 
     const result = await scanPromise;
-    expect(result.isInfected).toBe(false);
+    expect(result.failed).toBe(true);
   });
 
   it("settles on connection timeout", async () => {
@@ -150,7 +152,7 @@ describe("ClamavPassthrough (mock clamd)", () => {
     Readable.from([Buffer.from("data")]).pipe(passthrough);
 
     const result = await scanPromise;
-    expect(result.isInfected).toBe(false);
+    expect(result.failed).toBe(true);
   });
 
   it("splits large payloads into protocol chunks of chunkSize", async () => {

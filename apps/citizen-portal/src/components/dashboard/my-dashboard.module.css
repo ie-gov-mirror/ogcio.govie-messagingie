@@ -1,22 +1,7 @@
 /*
- * LEA dashboard landing wrapper: welcome heading on top, then the
- * two-column grid.
- *
- * A plain flex column (default `align-items: stretch`) — NOT a DS `Stack`,
- * whose `align-items: flex-start` collapses the child `.twelve-column-layout`
- * grid to its content width, breaking the columns' full-width / stretch
- * behaviour at every breakpoint.
- */
-.landing {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gieds-space-8);
-  width: 100%;
-}
-
-/*
- * Non-LEA left column: same stretch rule as `.landing` so the recent-messages
- * panel fills the grid cell instead of shrinking to ListCard content width.
+ * Non-LEA left column: a plain flex column (default `align-items: stretch`),
+ * not a DS `Stack`, so the recent-messages panel fills the grid cell instead
+ * of shrinking to ListCard content width.
  */
 .column {
   display: flex;

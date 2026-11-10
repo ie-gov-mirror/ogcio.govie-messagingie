@@ -68,6 +68,7 @@ vi.mock("@ogcio/design-system-react", () => ({
   ),
 }))
 
+import { fakeAnalytics } from "../../../test/utils/analytics"
 import { SubmissionListView } from "./submission-list-view"
 
 describe("SubmissionListView", () => {
@@ -82,12 +83,12 @@ describe("SubmissionListView", () => {
     }
   })
 
-  it("renders the page heading, description and search placeholder", () => {
+  it("renders the page heading without a subtitle, and the search placeholder", () => {
     render(<SubmissionListView />)
     expect(
       screen.getByRole("heading", { level: 1, name: "heading" }),
     ).toBeInTheDocument()
-    expect(screen.getByText("description")).toBeInTheDocument()
+    expect(screen.queryByText("description")).not.toBeInTheDocument()
     expect(
       screen.getByText("search header:search.placeholder"),
     ).toBeInTheDocument()
@@ -139,5 +140,86 @@ describe("SubmissionListView", () => {
     state.result.error = new Error("service unavailable")
     render(<SubmissionListView />)
     expect(screen.getByText("error:service unavailable")).toBeInTheDocument()
+  })
+})
+
+describe("SubmissionListView analytics", () => {
+  const searched = (value: number) => ({
+    event: {
+      name: "submissions-searched",
+      category: "Search",
+      action: "Submissions Searched",
+      value,
+    },
+  })
+
+  /** Search events only; the list view event is covered on its own. */
+  const searches = (analytics: ReturnType<typeof fakeAnalytics>) =>
+    analytics.event.mock.calls.filter(
+      ([call]) => call.event.category === "Search",
+    )
+
+  beforeEach(() => {
+    state.params = new URLSearchParams("search=grant")
+    state.result = {
+      submissions: [],
+      totalCount: 0,
+      isLoading: true,
+      error: null,
+    }
+  })
+
+  it("reports a committed search once its results have loaded", () => {
+    const analytics = fakeAnalytics()
+    const { rerender } = analytics.render(<SubmissionListView />)
+    expect(searches(analytics)).toEqual([])
+
+    state.result = { ...state.result, isLoading: false, totalCount: 4 }
+    rerender(<SubmissionListView />)
+    rerender(<SubmissionListView />)
+
+    expect(searches(analytics)).toEqual([[searched(4)]])
+    expect(JSON.stringify(analytics.event.mock.calls)).not.toContain("grant")
+  })
+
+  it("reports each new search, but not a page change on the same search", () => {
+    state.result = { ...state.result, isLoading: false, totalCount: 2 }
+    const analytics = fakeAnalytics()
+    const { rerender } = analytics.render(<SubmissionListView />)
+
+    state.params = new URLSearchParams("search=grant&page=2")
+    rerender(<SubmissionListView />)
+    state.params = new URLSearchParams("search=housing")
+    rerender(<SubmissionListView />)
+
+    expect(searches(analytics)).toEqual([[searched(2)], [searched(2)]])
+  })
+
+  it("reports nothing when the search is cleared", () => {
+    state.params = new URLSearchParams()
+    state.result = { ...state.result, isLoading: false }
+    const analytics = fakeAnalytics()
+    analytics.render(<SubmissionListView />)
+
+    expect(searches(analytics)).toEqual([])
+  })
+
+  it("reports the list view once", () => {
+    state.params = new URLSearchParams()
+    const analytics = fakeAnalytics()
+    const { rerender } = analytics.render(<SubmissionListView />)
+    rerender(<SubmissionListView />)
+
+    expect(analytics.event.mock.calls).toEqual([
+      [
+        {
+          event: {
+            category: "Application",
+            name: "application-list-view",
+            action: "Applications List Viewed",
+          },
+        },
+      ],
+    ])
   })
 })

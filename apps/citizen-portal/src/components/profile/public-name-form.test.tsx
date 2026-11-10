@@ -73,6 +73,7 @@ vi.mock("@/components/layout/containers", () => ({
 }))
 
 import { PublicNameForm } from "@/components/profile/public-name-form"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 
 /**
  * `PublicNameForm` is the only mutation surface on `/en/my-profile`.
@@ -169,6 +170,59 @@ describe("PublicNameForm", () => {
     expect(toasterCreate).toHaveBeenCalledWith(
       expect.objectContaining({ variant: "danger" }),
     )
+  })
+
+  describe("analytics", () => {
+    const publicNameEvent = (name: string, action: string) => ({
+      event: { name, category: "Profile", action },
+    })
+
+    function submit(publicName: string) {
+      const analytics = fakeAnalytics()
+      analytics.render(
+        <PublicNameForm
+          publicName={publicName}
+          profileId='profile-1'
+          onUpdated={onUpdated}
+        />,
+      )
+      fireEvent.submit(screen.getByTestId("public-name-form"))
+      return analytics
+    }
+
+    it("tracks a successful public name update", async () => {
+      trigger.mockResolvedValueOnce(undefined)
+      const analytics = submit("Jane")
+
+      await waitFor(() =>
+        expect(analytics.event).toHaveBeenCalledWith(
+          publicNameEvent("profile-public-name-update", "Public Name Updated"),
+        ),
+      )
+      expect(analytics.event).toHaveBeenCalledTimes(1)
+    })
+
+    it("tracks a failed public name update", async () => {
+      trigger.mockRejectedValueOnce(new Error("network down"))
+      const analytics = submit("Jane")
+
+      await waitFor(() =>
+        expect(analytics.event).toHaveBeenCalledWith(
+          publicNameEvent(
+            "profile-public-name-update-error",
+            "Public Name Update Failed",
+          ),
+        ),
+      )
+      expect(analytics.event).toHaveBeenCalledTimes(1)
+    })
+
+    it("sends nothing when validation rejects an empty name", async () => {
+      const analytics = submit("")
+
+      await screen.findByTestId("public-name-validation-error")
+      expect(analytics.event).not.toHaveBeenCalled()
+    })
   })
 
   it("renders the helper as a paragraph", () => {

@@ -1,4 +1,4 @@
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 // https://docs.logto.io/docs/recipes/webhooks/securing-your-webhooks/
 const verifySignature = (
@@ -6,10 +6,16 @@ const verifySignature = (
   rawBody: Buffer,
   expectedSignature: string,
 ) => {
+  if (typeof expectedSignature !== "string") {
+    return false;
+  }
   const hmac = createHmac("sha256", signingKey);
   hmac.update(rawBody);
-  const signature = hmac.digest("hex");
-  return signature === expectedSignature;
+  const signature = Buffer.from(hmac.digest("hex"));
+  const expected = Buffer.from(expectedSignature);
+  return (
+    signature.length === expected.length && timingSafeEqual(signature, expected)
+  );
 };
 
 export { verifySignature };

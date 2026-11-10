@@ -2,6 +2,7 @@
 
 import "@ogcio/design-system-react/styles.css"
 import "@ogcio/theme-govie/theme.css"
+import "./link-no-visited.css"
 import {
   Button,
   Container,

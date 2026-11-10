@@ -1,3 +1,4 @@
+import type * as Crypto from "node:crypto";
 import type { S3Client } from "@aws-sdk/client-s3";
 import type { PostgresDb } from "@fastify/postgres";
 import fastify, { type FastifyInstance } from "fastify";
@@ -12,6 +13,13 @@ import {
   vi,
 } from "vitest";
 import { SCHEDULER_TOKEN } from "../../utils/storeConfig.js";
+
+const timingSafeEqual = vi.hoisted(() => vi.fn());
+vi.mock("node:crypto", async (importOriginal) => {
+  const actual = await importOriginal<typeof Crypto>();
+  timingSafeEqual.mockImplementation(actual.timingSafeEqual);
+  return { ...actual, default: actual, timingSafeEqual };
+});
 
 let usedParams: string[] = [];
 let markFilesAsDeletedCalled = false;
@@ -341,5 +349,21 @@ describe("scheduler", () => {
       },
     });
     expect(res.statusCode).toBe(401);
+  });
+
+  it("Should compare a same-length token in constant time", async () => {
+    app = await buildApp({
+      getConfigValue: () => Promise.resolve("schedulerToken"),
+    });
+    await app.ready();
+    timingSafeEqual.mockClear();
+
+    const res = await app.inject({
+      method: "POST",
+      url: "/",
+      body: { token: "schedulerTokex" },
+    });
+    expect(res.statusCode).toBe(401);
+    expect(timingSafeEqual).toHaveBeenCalledOnce();
   });
 });

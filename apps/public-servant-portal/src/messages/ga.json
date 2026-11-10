@@ -566,7 +566,7 @@
         "contactSupport": "Tacaíocht teagmhála"
       },
       "text": {
-        "trademark": "© 2025 Córas Deartha Rialtas na hÉireann"
+        "trademark": "© {year} Rialtas na hÉireann"
       }
     }
   },
@@ -678,7 +678,7 @@
       "contactSupport": "Cuir glaoch ar an tacaíocht"
     },
     "text": {
-      "trademark": "© 2025 Córas Dearaidh Rialtas na hÉireann"
+      "trademark": "© {year} Rialtas na hÉireann"
     }
   },
   "errors": {

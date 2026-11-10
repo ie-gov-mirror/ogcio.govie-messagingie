@@ -70,7 +70,7 @@ async function canUserAccessFiles(params: {
     });
 
     // Check if all files are shared with the user
-    const notSharedWithUser = fileIds.filter(
+    const notSharedWithUser = toCheckFileIds.filter(
       (fileId) => !sharingMap[fileId]?.includes(userToCheck),
     );
 
@@ -80,23 +80,11 @@ async function canUserAccessFiles(params: {
 
     // If some files are not shared with the user, check if they are shared with any of the linked profiles
     const profileSdk = new PersonalProfileSdkWrapper(logger, userData);
-    const linkedProfilesIds = await profileSdk.getLinkedProfileIds(
-      userData.userId,
+    const linkedProfilesIds = await profileSdk.getLinkedProfileIds(userToCheck);
+
+    return notSharedWithUser.every((fileId) =>
+      sharingMap[fileId]?.some((userId) => linkedProfilesIds.includes(userId)),
     );
-
-    for (const fileId of notSharedWithUser) {
-      if (!sharingMap[fileId]) {
-        continue;
-      }
-      const sharedWithLinkedProfile = sharingMap[fileId].some((userId) =>
-        linkedProfilesIds.includes(userId),
-      );
-      if (!sharedWithLinkedProfile) {
-        return false;
-      }
-    }
-
-    return true;
   } finally {
     client.release();
   }

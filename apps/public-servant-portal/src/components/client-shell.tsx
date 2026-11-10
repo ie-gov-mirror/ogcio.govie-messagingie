@@ -80,7 +80,7 @@ function ShellContent({ children }: { children: ReactNode }) {
   // `useOnboardingGuard`, which would classify them as a PS and bounce them
   // straight back.
   // `inactiveRedirectUrl` is intentionally unset: inactive PS users fall
-  // through to NotAuthorized (same as messaging-admin-next).
+  // through to NotAuthorized.
   const { resolved, authorized } = usePublicServantGuard({
     publicServantRoles: [MESSAGING_PUBLIC_SERVANT_ROLE_NAME],
     citizenRedirectUrl: env.NEXT_PUBLIC_MESSAGING_URL,

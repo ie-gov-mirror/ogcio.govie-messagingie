@@ -65,6 +65,23 @@ describe("messagesApi.listKey", () => {
   })
 })
 
+describe("messagesApi.detailKey", () => {
+  it("omits the deleted flag for an active message", () => {
+    expect(messagesApi.detailKey("msg-1")).toBe(
+      "/messaging/api/v1/messages/msg-1",
+    )
+    expect(messagesApi.detailKey("msg-1", { deleted: false })).toBe(
+      "/messaging/api/v1/messages/msg-1",
+    )
+  })
+
+  it("asks for the soft-deleted row when deleted is set", () => {
+    expect(messagesApi.detailKey("msg-1", { deleted: true })).toBe(
+      "/messaging/api/v1/messages/msg-1?deleted=true",
+    )
+  })
+})
+
 describe("useInboxMessages", () => {
   beforeEach(() => {
     gateway.data = []

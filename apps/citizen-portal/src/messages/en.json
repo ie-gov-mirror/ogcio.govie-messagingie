@@ -28,6 +28,29 @@
       "title": "Search for services or information",
       "description": "Gov.ie is your main access point to government services and information in Ireland. Here, you can find help with things like social welfare, employment, health, education, and housing. The site brings together updates on government policies and emergency announcements, and it makes it easier to find the right department or local office you may need. Whether you're looking for support, applying for services, or just trying to understand your entitlements, this is a good place to start.",
       "link": "Launch gov.ie"
+    },
+    "leCards": {
+      "welcome": "Welcome, <name></name>",
+      "intro": "Your life events, applications and messages from government in one place.",
+      "lifeEvents": {
+        "title": "Life events",
+        "viewAll": "View all life events"
+      },
+      "applications": {
+        "title": "Recent applications",
+        "viewAll": "View all applications",
+        "loading": "Loading applications",
+        "error": "Error loading applications: {message}",
+        "emptyTitle": "You have no applications",
+        "emptyText": "When you apply for a service through gov.ie, your application will appear here."
+      },
+      "viewAll": "View all",
+      "card": {
+        "lastUpdate": "Last update {date}",
+        "latestMessage": "Latest message",
+        "new": "New",
+        "noMessages": "No messages yet"
+      }
     }
   },
   "submissions": {
@@ -41,9 +64,12 @@
     },
     "empty": {
       "title": "You have no applications",
-      "description": "When you apply for a service through gov.ie, your application will appear here.",
-      "all": "You have no applications.",
-      "search": "No applications match your search."
+      "description": "When you apply for a service through gov.ie, your application will appear here."
+    },
+    "noResults": {
+      "title": "No applications match your search",
+      "description": "Check the spelling or try different words.",
+      "clear": "Clear search"
     },
     "table": {
       "column": {
@@ -64,13 +90,6 @@
       "processing": "Processing",
       "completed": "Completed",
       "cancelled": "Cancelled"
-    },
-    "recent": {
-      "title": "Your recent submissions",
-      "loading": "Loading submissions",
-      "empty": "You have no submissions yet.",
-      "error": "Error loading submissions: {message}",
-      "link": "View all submissions"
     },
     "detail": {
       "loading": "Loading application",
@@ -136,11 +155,25 @@
         "selectAll": "Select all messages on this page",
         "selectRow": "Select message from {sender}: {subject}"
       },
-      "empty": {
-        "unread": "You have no unread messages",
-        "read": "You have no read messages",
-        "all": "You have no messages",
-        "search": "No messages matched your search."
+      "loading": "Loading messages",
+      "noResults": {
+        "title": "No messages match your search",
+        "description": "Check the spelling or try different words, or change your filters.",
+        "clear": "Clear search"
+      }
+    },
+    "empty": {
+      "inbox": {
+        "title": "You have no messages",
+        "description": "When a government service sends you a message, it will appear here."
+      },
+      "deleted": {
+        "title": "You have no deleted messages",
+        "description": "Messages you delete will appear here."
+      },
+      "folder": {
+        "title": "This folder is empty",
+        "description": "Messages you move to this folder will appear here."
       }
     },
     "button": {
@@ -184,6 +217,7 @@
     },
     "folders": {
       "sidebarAriaLabel": "Message folders",
+      "inbox": "Inbox",
       "deleted": "Deleted",
       "createFolder": "Create new folder",
       "folderOptions": "Options for {folder}",
@@ -292,7 +326,7 @@
         "contactSupport": "Contact Support"
       },
       "text": {
-        "trademark": "© 2025 Government of Ireland Design System"
+        "trademark": "© {year} Government of Ireland"
       }
     }
   },

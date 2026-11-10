@@ -63,6 +63,15 @@ export const PutProfileSchema = {
 
 export const PatchProfileSchema = {
   ...PutProfileSchema,
+  querystring: Type.Object({
+    ...PutProfileSchema.querystring.properties,
+    messageId: Type.Optional(
+      Type.String({
+        description:
+          "ID of a message sent to the profile, required to link another profile",
+      }),
+    ),
+  }),
   body: PatchProfileBodySchema,
   operationId: "patchProfile",
 };

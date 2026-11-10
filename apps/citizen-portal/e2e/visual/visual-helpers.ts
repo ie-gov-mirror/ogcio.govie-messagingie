@@ -61,8 +61,7 @@ function volatileRegions(page: Page): Locator[] {
 /** Screenshots `page` once nothing on it is still loading. */
 export async function expectSettledScreenshot(page: Page, name: string) {
   await expect(page.locator(LOADING)).toHaveCount(0, { timeout: 30_000 })
-  await keepFirstPreviewCard(page, "Your recent messages")
-  await keepFirstPreviewCard(page, "Your recent submissions")
+  await keepFirstPreviewCard(page, "Your applications")
   await expect(page).toHaveScreenshot(name, {
     fullPage: true,
     maxDiffPixelRatio: MAX_DIFF_PIXEL_RATIO,

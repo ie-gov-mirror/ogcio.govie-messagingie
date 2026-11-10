@@ -7,10 +7,10 @@ import {
   Paragraph,
   Stack,
 } from "@ogcio/design-system-react"
-import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useLocale, useTranslations } from "next-intl"
 import type { ConsentStatuses as ProfileConsentStatuses } from "@/api/profile"
 import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 
 const ConsentStatuses = {
   OptedIn: "opted-in",
@@ -31,7 +31,7 @@ export function ConsentSection({
 }) {
   const t = useTranslations("consent")
   const locale = useLocale()
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
 
   const currentMessagingStatus = consentStatuses?.messaging?.status ?? null
   let translatedStatus = t("currentStatus.unset")
@@ -80,15 +80,7 @@ export function ConsentSection({
       <Link
         asButton={{ variant: "primary" }}
         href={`${messagingUrl}/${locale}/messages?force-consent=1`}
-        onClick={() =>
-          analyticsClient.trackEvent({
-            event: {
-              name: ANALYTICS.profile.consentChange.name,
-              category: ANALYTICS.profile.category,
-              action: ANALYTICS.profile.consentChange.action,
-            },
-          })
-        }
+        onClick={() => track.event(ANALYTICS.profile.consentChange)}
       >
         {t("actions.update.action")}
       </Link>

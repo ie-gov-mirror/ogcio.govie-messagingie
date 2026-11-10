@@ -13,15 +13,12 @@ import {
   toaster,
 } from "@ogcio/design-system-react"
 import { useGatewayFetch, useGatewayMutation } from "@ogcio/sag-client/react"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useMemo, useState } from "react"
 import { DeleteIcon } from "@/components/icons/delete"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { useOrganizationId } from "@/hooks/use-organization-id"
 import { messagingApi } from "@/util/api-paths"
 import { providerRoutes } from "@/util/routes"
@@ -65,7 +62,7 @@ export default function EmailProviders() {
       organizationId,
     })
 
-  const columns = useMemo<ColumnDef<EmailProviderRow>[]>(
+  const columns = useMemo<Column<EmailProviderRow>[]>(
     () => [
       {
         id: "name",
@@ -122,10 +119,10 @@ export default function EmailProviders() {
     [locale, t],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: providerFetchError ? [] : (providers ?? []),
     columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   useEffect(() => {

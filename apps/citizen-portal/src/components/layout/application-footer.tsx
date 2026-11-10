@@ -78,7 +78,9 @@ export function ApplicationFooter({
               {t("link.contactSupport")}
             </Link>
           ) : null}
-          <Text className='gi-text-sm'>{t("text.trademark")}</Text>
+          <Text className='gi-text-sm'>
+            {t("text.trademark", { year: new Date().getFullYear() })}
+          </Text>
         </Stack>
       }
     />

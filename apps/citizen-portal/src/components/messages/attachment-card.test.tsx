@@ -1,9 +1,13 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { AttachmentCard } from "@/components/messages/attachment-card"
+import { fakeAnalytics } from "../../../test/utils/analytics"
+
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
 
 const pushLogSpy = vi.fn()
-const trackEvent = vi.hoisted(() => vi.fn())
 const signIn = vi.hoisted(() => vi.fn())
 const authState = vi.hoisted(() => ({ authenticated: true, loading: false }))
 
@@ -54,10 +58,6 @@ vi.mock("@ogcio/sag-client/react", () => ({
       error: null,
     }
   },
-}))
-
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
 }))
 
 describe("AttachmentCard", () => {
@@ -135,6 +135,19 @@ describe("AttachmentCard", () => {
         name: "message-attachment-download",
         category: "Message",
         action: "Attachment Downloaded",
+      },
+    })
+  })
+
+  it("fires message-attachment-open when the attachment is opened in a new tab", () => {
+    render(<AttachmentCard id='file-123' />)
+    fireEvent.click(screen.getByTestId("attachment-preview-action"))
+    expect(trackEvent).toHaveBeenCalledTimes(1)
+    expect(trackEvent).toHaveBeenCalledWith({
+      event: {
+        name: "message-attachment-open",
+        category: "Message",
+        action: "Attachment Opened",
       },
     })
   })

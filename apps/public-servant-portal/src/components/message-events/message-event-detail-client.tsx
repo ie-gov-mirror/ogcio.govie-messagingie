@@ -2,11 +2,7 @@
 
 import { Heading, Paragraph, Spinner, Stack } from "@ogcio/design-system-react"
 import { useGatewayFetch } from "@ogcio/sag-client/react"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { useSearchParams } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo } from "react"
@@ -16,6 +12,7 @@ import {
   MessageStatusContext,
 } from "@/components/message-events/MessageStatus"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { messagingApi } from "@/util/api-paths"
 import { defaultFormGap, formatDate, formatTime } from "@/util/datetime"
 import {
@@ -48,7 +45,7 @@ export function MessageEventDetailClient() {
     [messageEvents],
   )
 
-  const columns = useMemo<ColumnDef<MessageEventDetailItem>[]>(
+  const columns = useMemo<Column<MessageEventDetailItem>[]>(
     () => [
       {
         id: "status",
@@ -88,10 +85,10 @@ export function MessageEventDetailClient() {
     [t, scheduledAt],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: messageEvents ?? [],
     columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   if (!eventId) {

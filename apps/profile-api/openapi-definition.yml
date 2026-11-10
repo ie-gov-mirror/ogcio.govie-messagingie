@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Life Events Profile API
   description: API for Life Events Profile Service
-  version: 0.1.3
+  version: 0.1.4
 components:
   securitySchemes:
     bearerAuth:
@@ -8463,6 +8463,12 @@ paths:
           name: organizationId
           required: false
           description: Organization ID owning the profile
+        - schema:
+            type: string
+          in: query
+          name: messageId
+          required: false
+          description: ID of a message sent to the profile, required to link another profile
         - schema:
             type: string
           in: path

@@ -73,7 +73,9 @@ export const ApplicationFooter = ({ profileUrl }: { profileUrl: string }) => {
           >
             {t("link.contactSupport")}
           </Link>
-          <div className='gi-text-sm'>{t("text.trademark")}</div>
+          <div className='gi-text-sm'>
+            {t("text.trademark", { year: new Date().getFullYear() })}
+          </div>
         </div>
       }
     />

@@ -106,6 +106,7 @@ vi.mock("@ogcio/design-system-react", async () => {
 })
 
 import pageTitleStyles from "@/components/page-title.module.css"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 import { MyProfile } from "./my-profile"
 
 describe("MyProfile", () => {
@@ -153,6 +154,33 @@ describe("MyProfile", () => {
     expect(screen.getByText("1234567A")).toBeInTheDocument()
     fireEvent.click(screen.getByText("profile.clickToHide"))
     expect(screen.queryByText("1234567A")).not.toBeInTheDocument()
+  })
+
+  it("tracks revealing the PPSN, but not hiding it", () => {
+    state.gateway.data = {
+      id: "profile-1",
+      primaryUserId: "user-1",
+      publicName: "Jane",
+      email: "jane@example.com",
+      details: { firstName: "Jane", lastName: "Doe", ppsn: "1234567A" },
+    }
+    const analytics = fakeAnalytics()
+    analytics.render(<MyProfile />)
+
+    fireEvent.click(screen.getByText("profile.clickToReveal"))
+    fireEvent.click(screen.getByText("profile.clickToHide"))
+
+    expect(analytics.event.mock.calls).toEqual([
+      [
+        {
+          event: {
+            name: "profile-ppsn-reveal",
+            category: "Profile",
+            action: "PPSN Revealed",
+          },
+        },
+      ],
+    ])
   })
 
   it("mounts data export controls only when the feature is enabled", () => {

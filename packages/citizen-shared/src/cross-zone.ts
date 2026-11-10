@@ -43,9 +43,8 @@ export function getCrossZoneHref(
  * so a session set on one citizen-portal zone (messages / profile / dashboard)
  * is readable by sibling subdomains.
  *
- * Adapted from `apps/messaging-admin-next/src/components/client-shell.tsx`,
- * but tightened to an explicit zone-prefix allowlist so we never leak the
- * scope to an unrelated host.
+ * Limited to an explicit zone-prefix allowlist so we never leak the scope
+ * to an unrelated host.
  *
  * Examples:
  *   localhost                            → undefined

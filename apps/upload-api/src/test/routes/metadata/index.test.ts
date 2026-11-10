@@ -1,4 +1,5 @@
 import type { PostgresDb } from "@fastify/postgres";
+import { httpErrors } from "@fastify/sensible";
 import type {
   FastifyInstance,
   FastifyPluginCallback,
@@ -385,6 +386,27 @@ describe("metadata", () => {
       });
 
       expect(response.statusCode).toBe(500);
+    });
+
+    it("Should keep a 403 raised while listing files as a 403", async () => {
+      app = await buildApp({
+        userData: {
+          accessToken: "",
+          isM2MApplication: false,
+          userId: "userId",
+        },
+        getSharedFiles: () => Promise.reject(httpErrors.forbidden("Forbidden")),
+      });
+
+      const response = await app.inject({
+        method: "GET",
+        url: "/metadata",
+        query: {
+          userId: "userId",
+        },
+      });
+
+      expect(response.statusCode).toBe(403);
     });
 
     it("getUserFiles should return files for the requested organization and user", async () => {

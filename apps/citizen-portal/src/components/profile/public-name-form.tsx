@@ -14,6 +14,8 @@ import { useTranslations } from "next-intl"
 import { type FormEvent, useCallback, useState } from "react"
 import { profileApi } from "@/api/profile"
 import { FullWidthContainer } from "@/components/layout/containers"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 import { writeNavName } from "@/util/nav-snapshot"
 
 export function PublicNameForm({
@@ -28,6 +30,7 @@ export function PublicNameForm({
   const t = useTranslations("profile")
   const [value, setValue] = useState(publicName)
   const [validationError, setValidationError] = useState<string | undefined>()
+  const track = useTrack()
   const { trigger, isLoading } = useGatewayMutation<
     unknown,
     { publicName: string }
@@ -48,6 +51,7 @@ export function PublicNameForm({
       try {
         await trigger({ publicName: trimmed })
         writeNavName(profileId, trimmed)
+        track.event(ANALYTICS.profile.publicNameUpdate)
 
         toaster.create({
           title: t("publicNameUpdatedToast"),
@@ -56,6 +60,7 @@ export function PublicNameForm({
         })
         onUpdated()
       } catch {
+        track.event(ANALYTICS.profile.publicNameUpdateError)
         toaster.create({
           title: t("publicNameFailedUpdatedToast"),
           position: { x: "right", y: "top" },
@@ -63,7 +68,7 @@ export function PublicNameForm({
         })
       }
     },
-    [value, t, onUpdated, trigger, profileId],
+    [value, t, onUpdated, trigger, profileId, track],
   )
 
   return (

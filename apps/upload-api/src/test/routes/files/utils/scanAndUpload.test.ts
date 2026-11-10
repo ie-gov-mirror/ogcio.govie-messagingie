@@ -262,6 +262,69 @@ describe("processUpload", () => {
     expect(values).toContain(true); // infected
   });
 
+  it("deletes the s3 object, stores no metadata and returns 503 when the scan fails", async () => {
+    const stream = buildUploadStream();
+    const { app, request, avPassthrough, s3Send, pgQuery } = buildTestBed({
+      data: { file: stream, filename: "unscanned.txt", fields: {} },
+    });
+
+    const resultPromise = processUpload(app, request, { scan: true });
+    const assertion = expect(resultPromise).rejects.toMatchObject({
+      statusCode: 503,
+    });
+
+    await nextTick();
+    stream.end(Buffer.from("content"));
+    await nextTick();
+    avPassthrough.emit("scan-complete", {
+      isInfected: false,
+      failed: true,
+      viruses: [],
+    });
+
+    await assertion;
+
+    expect(s3Send).toHaveBeenCalled();
+    const insertCall = pgQuery.mock.calls.find(([sql]) =>
+      sql.includes("INSERT INTO files"),
+    );
+    expect(insertCall).toBeUndefined();
+  });
+
+  it("still returns 503 when deleting the unscanned object fails", async () => {
+    const stream = buildUploadStream();
+    const { app, request, avPassthrough, s3Send, pgQuery } = buildTestBed({
+      data: { file: stream, filename: "unscanned.txt", fields: {} },
+    });
+    s3Send.mockRejectedValue(new Error("delete failed"));
+
+    const resultPromise = processUpload(app, request, { scan: true });
+    const assertion = expect(resultPromise).rejects.toMatchObject({
+      statusCode: 503,
+      message: "Antivirus scan unavailable",
+    });
+
+    await nextTick();
+    stream.end(Buffer.from("content"));
+    await nextTick();
+    avPassthrough.emit("scan-complete", {
+      isInfected: false,
+      failed: true,
+      viruses: [],
+    });
+
+    await assertion;
+
+    expect(request.log.error).toHaveBeenCalledWith(
+      expect.any(Error),
+      "error deleting unscanned file from s3",
+    );
+    const insertCall = pgQuery.mock.calls.find(([sql]) =>
+      sql.includes("INSERT INTO files"),
+    );
+    expect(insertCall).toBeUndefined();
+  });
+
   it("still stores infected metadata when the s3 delete fails", async () => {
     const stream = buildUploadStream();
     const { app, request, avPassthrough, s3Send, pgQuery } = buildTestBed({

@@ -15,6 +15,19 @@ interface PartialMessage {
   recipientUserId: string
 }
 
+// The messaging API returns this redacted shape (no `subject`) when the
+// logged-in user doesn't own the message but has onboarding permission to
+// see who it belongs to — the exact case the account-linking flow needs.
+interface FullMessage extends PartialMessage {
+  subject: string
+}
+
+function isFullMessage(
+  message: PartialMessage | FullMessage,
+): message is FullMessage {
+  return "subject" in message
+}
+
 type FlowState =
   | { step: "loading" }
   | { step: "redirect-to-message"; messageId: string }
@@ -50,7 +63,7 @@ export function SecureMessagePage() {
     data: userMessage,
     error: userMessageError,
     isLoading: userMessageLoading,
-  } = useGatewayFetch<PartialMessage>(
+  } = useGatewayFetch<PartialMessage | FullMessage>(
     messageId ? `/messaging/api/v1/messages/${messageId}` : null,
   )
 
@@ -65,23 +78,27 @@ export function SecureMessagePage() {
     [401, 403, 404].includes((userMessageError as SagFetchError).status)
 
   // 2. Fetch message via M2M (only when user-token fetch returned 401/403/404)
-  const {
-    data: m2mMessage,
-    error: m2mMessageError,
-    isLoading: m2mMessageLoading,
-  } = useGatewayFetch<PartialMessage>(
-    needsM2M ? `/messaging/api/v1/messages/${messageId}` : null,
-    { actorType: "m2m" },
-  )
+  const { data: m2mMessage, isLoading: m2mMessageLoading } =
+    useGatewayFetch<PartialMessage>(
+      needsM2M ? `/messaging/api/v1/messages/${messageId}` : null,
+      { actorType: "m2m" },
+    )
 
-  // 3. Fetch recipient profile via M2M (only when we have a recipientUserId)
-  const recipientUserId = m2mMessage?.recipientUserId
+  // 3. Fetch recipient profile via M2M (only when we have a recipientUserId).
+  // The redacted message can come from either fetch: the user's own token
+  // when they have onboarding permission, or the M2M fallback otherwise.
+  const partialMessage =
+    userMessage && !isFullMessage(userMessage) ? userMessage : m2mMessage
+  const recipientUserId = partialMessage?.recipientUserId
   const {
     data: linkedProfile,
     error: profileError,
     isLoading: profileLoading,
   } = useGatewayFetch<Profile>(
-    recipientUserId ? profileApi.detailKey(recipientUserId) : null,
+    // The gateway allows this M2M read only for the recipient of the message.
+    recipientUserId && messageId
+      ? `${profileApi.detailKey(recipientUserId)}?messageId=${encodeURIComponent(messageId)}`
+      : null,
     { actorType: "m2m" },
   )
 
@@ -101,8 +118,9 @@ export function SecureMessagePage() {
     // Still loading user-token message fetch
     if (userMessageLoading) return { step: "loading" }
 
-    // User owns the message — redirect to view it
-    if (userMessage && !userMessageError) {
+    // User owns the message (full response, not the redacted onboarding
+    // shape) — redirect to view it
+    if (userMessage && !userMessageError && isFullMessage(userMessage)) {
       return { step: "redirect-to-message", messageId }
     }
 
@@ -116,8 +134,9 @@ export function SecureMessagePage() {
       return { step: "loading" }
     }
 
-    // M2M message fetch failed
-    if (m2mMessageError || !m2mMessage) {
+    // Neither the own-token fetch nor the M2M fallback resolved a
+    // redacted message to derive a recipient from
+    if (!partialMessage) {
       return { step: "error" }
     }
 
@@ -149,8 +168,8 @@ export function SecureMessagePage() {
     userMessageLoading,
     needsM2M,
     m2mMessage,
-    m2mMessageError,
     m2mMessageLoading,
+    partialMessage,
     linkedProfile,
     profileError,
     profileLoading,

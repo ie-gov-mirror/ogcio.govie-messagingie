@@ -34,6 +34,7 @@ const buildFastify = (config: Record<string, unknown> = {}) => {
     decorate: (name: string, value: unknown) => {
       decorations[name] = value;
     },
+    decorateRequest: vi.fn(),
     addHook: (name: string, hook: Hook) => {
       hooks[name] = hooks[name] ?? [];
       hooks[name].push(hook);
@@ -171,20 +172,31 @@ describe("analytics-sdk plugin", async () => {
 });
 
 describe("pseudo-user-traces-hook plugin", async () => {
-  const plugin = (await import("../../plugins/pseudo-user-traces-hook.js"))
-    .default as unknown as Plugin;
+  const { default: plugin, captureServerSpan } = await import(
+    "../../plugins/pseudo-user-traces-hook.js"
+  );
 
   const runHook = async (request: unknown) => {
     const { fastify, hooks } = buildFastify();
-    await plugin(fastify);
+    await (plugin as unknown as Plugin)(fastify);
     await hooks.preHandler?.[0](request as FastifyRequest);
   };
 
+  it("captureServerSpan stores the active span on the request", () => {
+    const span = { setAttribute: vi.fn() };
+    getActiveSpanMock.mockReturnValue(span);
+    const request = {} as FastifyRequest;
+
+    captureServerSpan(undefined as never, request);
+
+    expect(request.serverSpan).toBe(span);
+  });
+
   it("sets span attributes for pseudo users", async () => {
     const setAttribute = vi.fn();
-    getActiveSpanMock.mockReturnValue({ setAttribute });
 
     await runHook({
+      serverSpan: { setAttribute },
       userData: { pseudoUser: { id: "pseudo-1", version: 2 } },
     });
 
@@ -193,12 +205,14 @@ describe("pseudo-user-traces-hook plugin", async () => {
   });
 
   it("does nothing without a pseudo user", async () => {
-    await runHook({ userData: {} });
-    expect(getActiveSpanMock).not.toHaveBeenCalled();
+    const setAttribute = vi.fn();
+
+    await runHook({ serverSpan: { setAttribute }, userData: {} });
+
+    expect(setAttribute).not.toHaveBeenCalled();
   });
 
-  it("does nothing without an active span", async () => {
-    getActiveSpanMock.mockReturnValue(undefined);
+  it("does nothing without a server span", async () => {
     await expect(
       runHook({ userData: { pseudoUser: { id: "p", version: 1 } } }),
     ).resolves.toBeUndefined();

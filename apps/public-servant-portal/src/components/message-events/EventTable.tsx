@@ -2,16 +2,13 @@
 
 import { Link, toaster } from "@ogcio/design-system-react"
 import { useGatewayFetch } from "@ogcio/sag-client/react"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useMemo } from "react"
 import PaginationWrapper from "@/components/PaginationWrapper"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { PAGINATION_LIMIT_DEFAULT } from "@/const"
 import { messagingApi, pagingMeta } from "@/util/api-paths"
 import { formatDate } from "@/util/datetime"
@@ -66,7 +63,7 @@ export default function EventTable() {
   const paging = pagingMeta(metadata?.totalCount ?? 0, page, size)
   const listParams = searchParams.toString()
 
-  const columns = useMemo<ColumnDef<MessageEventRow>[]>(
+  const columns = useMemo<Column<MessageEventRow>[]>(
     () => [
       {
         id: "scheduled",
@@ -123,10 +120,10 @@ export default function EventTable() {
     [listParams, locale, t],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: events ?? [],
     columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   useEffect(() => {

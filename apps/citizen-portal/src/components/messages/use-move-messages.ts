@@ -7,6 +7,8 @@ import {
   type AssignTagResponse,
   messagesApi,
 } from "@/api/messages"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 
 export interface MoveMessagesResult {
   ok: boolean
@@ -26,6 +28,7 @@ export interface UseMoveMessagesOptions {
  */
 export function useMoveMessages(options: UseMoveMessagesOptions = {}) {
   const { onSettled } = options
+  const track = useTrack()
   const { trigger, isLoading } = useGatewayMutation<
     AssignTagResponse,
     AssignTagBody
@@ -40,6 +43,7 @@ export function useMoveMessages(options: UseMoveMessagesOptions = {}) {
       const body = messagesApi.moveBody(ids, folderId)
       try {
         await trigger(body)
+        track.event(ANALYTICS.message.move, body.messageIds.length)
         const result: MoveMessagesResult = {
           ok: true,
           ids: body.messageIds,
@@ -59,7 +63,7 @@ export function useMoveMessages(options: UseMoveMessagesOptions = {}) {
         onSettled?.()
       }
     },
-    [trigger, onSettled],
+    [trigger, onSettled, track],
   )
 
   const dismissResult = useCallback(() => setLastResult(null), [])

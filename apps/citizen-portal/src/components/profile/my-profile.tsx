@@ -22,13 +22,16 @@ import { LifecycleTasks } from "@/components/lifecycle-tasks/lifecycle-tasks"
 import { PageLoading } from "@/components/page-loading"
 import pageTitleStyles from "@/components/page-title.module.css"
 import { PublicNameForm } from "@/components/profile/public-name-form"
+import { ANALYTICS } from "@/const/analytics"
 import { useIdleMount } from "@/hooks/use-idle-mount"
+import { useTrack } from "@/hooks/use-track"
 import { stringToAsterisk } from "@/util/strings"
 
 export function MyProfile() {
   const t = useTranslations("profile")
   const tErrors = useTranslations("errors")
   const [showPpsn, setShowPpsn] = useState(false)
+  const track = useTrack()
   const { user, loading: authLoading } = useAuth()
   // Runtime gate for the "export my data" feature (`export-user` Unleash
   // flag). Defaults OFF so the export UI — and the request/download actions
@@ -162,6 +165,7 @@ export function MyProfile() {
                 href='#'
                 onClick={(e) => {
                   e.preventDefault()
+                  if (!showPpsn) track.event(ANALYTICS.profile.ppsnReveal)
                   setShowPpsn((prev) => !prev)
                 }}
                 data-testid={showPpsn ? "ppsn-hide-link" : "ppsn-reveal-link"}

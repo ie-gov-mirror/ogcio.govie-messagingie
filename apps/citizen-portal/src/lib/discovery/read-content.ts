@@ -24,6 +24,43 @@ export function getDiscovery(
   )
 }
 
+export interface DashboardLifeEvent {
+  slug: string
+  title: string
+  category: string
+  icon: string
+}
+
+// ponytail: the design shows four cards but no selection rule. Highlighted
+// first, then one per category in CMS order. Replace when content decides.
+export function getDashboardLifeEvents(
+  discovery: DiscoveryContent,
+  limit = 4,
+): DashboardLifeEvent[] {
+  const bySlug = new Map(discovery.lifeEvents.map((le) => [le.slug, le]))
+  const categoryOf = (slug: string) =>
+    discovery.categories.find((c) => c.lifeEventSlugs.includes(slug))
+  const slugs = [
+    ...discovery.lifeEvents.filter((le) => le.highlighted).map((le) => le.slug),
+    ...discovery.categories.flatMap((c) => c.lifeEventSlugs.slice(0, 1)),
+  ]
+  return [...new Set(slugs)]
+    .flatMap((slug) => {
+      const lifeEvent = bySlug.get(slug)
+      const category = categoryOf(slug)
+      if (!lifeEvent || !category) return []
+      return [
+        {
+          slug,
+          title: lifeEvent.title,
+          category: category.title,
+          icon: category.icon,
+        },
+      ]
+    })
+    .slice(0, limit)
+}
+
 export function getLifeEvent(
   discovery: DiscoveryContent,
   slug: string,

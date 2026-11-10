@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useMoveMessages } from "@/components/messages/use-move-messages"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 
 const trigger = vi.fn()
 
@@ -60,5 +61,39 @@ describe("useMoveMessages", () => {
       result.current.dismissResult()
     })
     expect(result.current.lastResult).toBeNull()
+  })
+
+  it("tracks a successful move with the number of messages moved", async () => {
+    const analytics = fakeAnalytics()
+    const { result } = renderHook(() => useMoveMessages(), {
+      wrapper: analytics.wrapper,
+    })
+
+    await act(async () => {
+      await result.current.moveIds(["msg-1", "msg-2"], "tag-ehic")
+    })
+
+    expect(analytics.event).toHaveBeenCalledWith({
+      event: {
+        name: "message-move",
+        category: "Message",
+        action: "Messages Moved",
+        value: 2,
+      },
+    })
+  })
+
+  it("sends nothing when the move fails", async () => {
+    trigger.mockRejectedValueOnce(new Error("boom"))
+    const analytics = fakeAnalytics()
+    const { result } = renderHook(() => useMoveMessages(), {
+      wrapper: analytics.wrapper,
+    })
+
+    await act(async () => {
+      await result.current.moveIds(["msg-1"], null)
+    })
+
+    expect(analytics.event).not.toHaveBeenCalled()
   })
 })

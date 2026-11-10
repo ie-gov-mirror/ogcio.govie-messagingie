@@ -1,13 +1,3 @@
-/* Empty state — loading uses the shared <MessagesLoading /> spinner. */
-.emptyState {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--gieds-space-20) var(--gieds-space-4);
-  text-align: center;
-  color: var(--gieds-color-gray-600, #686d78);
-}
-
 /* ── Desktop table ── */
 /*
  * DS gap (no responsive scroll on `Table`): horizontal overflow.
@@ -136,7 +126,8 @@
  * convention-blue underlined link (same tone as the mobile `ListCard`
  * preview) and inherits the row's weight, so unread subjects render bold.
  */
-.rowLink {
+.rowLink,
+.rowLink:visited {
   font: inherit;
   color: var(--gieds-color-text-tone-convention-default, #2c55a2);
   text-decoration: underline;
@@ -441,15 +432,11 @@
   gap: var(--gieds-space-3);
   min-height: 3rem;
   /*
-   * Horizontal padding matches ListCard's var(--gieds-space-3) so the
-   * "unread count / Select" toolbar lines up with the row content below
-   * once the mobile list is full-bleed (no longer inside DS container
-   * gutters). Vertical padding stays small because min-height owns the
-   * row's baseline height. Height matches the desktop
-   * `DataTableSelectedRowsBanner` so entering/exiting select mode
-   * never shifts the list vertically.
+   * Horizontal padding matches the message card (16px, 24px from 768px)
+   * so the unread count and Select line up with the row content. The
+   * list is full-bleed below 1024px, which cancels the container gutter.
    */
-  padding: var(--gieds-space-2) var(--gieds-space-3);
+  padding: var(--gieds-space-2) var(--gieds-space-4);
   border-bottom: var(--gieds-border-width-100) solid
     var(--gieds-color-gray-200, #d8dadf);
 }
@@ -626,7 +613,15 @@
    * against the viewport edges while the rows below keep their indent.
    */
   .dataTableHeaderChrome {
-    padding: 0 var(--gieds-space-3);
+    padding: 0 var(--gieds-space-4);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .dataTableHeaderChrome,
+  .mobileSelectHeader {
+    padding-left: var(--gieds-space-6);
+    padding-right: var(--gieds-space-6);
   }
 }
 

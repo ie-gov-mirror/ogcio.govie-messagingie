@@ -1,7 +1,10 @@
 import crypto from "node:crypto";
 
+const GCM_PREFIX = "gcm:";
+const GCM_IV_HEX_LENGTH = 24;
+const GCM_TAG_HEX_LENGTH = 32;
+
 class CryptographyService {
-  private encryptionAlgorithm: string;
   private encryptionKey: Buffer;
 
   constructor(config: { EMAIL_PROVIDER_SMTP_ENCRYPTION_KEY: string }) {
@@ -17,35 +20,64 @@ class CryptographyService {
         "EMAIL_PROVIDER_SMTP_ENCRYPTION_KEY must be 32 bytes when decoded from base64",
       );
     }
-
-    this.encryptionAlgorithm = "aes-256-cbc";
   }
 
+  /** Returns `gcm:` + hex(12-byte IV, 16-byte auth tag, ciphertext). */
   encrypt(text: string): string {
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(
-      this.encryptionAlgorithm,
-      this.encryptionKey,
-      iv,
-    );
-    let encrypted = cipher.update(text, "utf8", "hex");
-    encrypted += cipher.final("hex");
+    const iv = crypto.randomBytes(GCM_IV_HEX_LENGTH / 2);
+    const cipher = crypto.createCipheriv("aes-256-gcm", this.encryptionKey, iv);
+    const encrypted = cipher.update(text, "utf8", "hex") + cipher.final("hex");
 
-    return iv.toString("hex") + encrypted;
+    return (
+      GCM_PREFIX +
+      iv.toString("hex") +
+      cipher.getAuthTag().toString("hex") +
+      encrypted
+    );
   }
 
   decrypt(encryptedText: string): string {
-    const iv = Buffer.from(encryptedText.slice(0, 32), "hex");
-    const encrypted = encryptedText.slice(32);
+    if (!encryptedText.startsWith(GCM_PREFIX)) {
+      return this.decryptLegacyCbc(encryptedText);
+    }
+
+    const payload = encryptedText.slice(GCM_PREFIX.length);
+    const iv = Buffer.from(payload.slice(0, GCM_IV_HEX_LENGTH), "hex");
+    const tag = Buffer.from(
+      payload.slice(GCM_IV_HEX_LENGTH, GCM_IV_HEX_LENGTH + GCM_TAG_HEX_LENGTH),
+      "hex",
+    );
     const decipher = crypto.createDecipheriv(
-      this.encryptionAlgorithm,
+      "aes-256-gcm",
+      this.encryptionKey,
+      iv,
+      { authTagLength: GCM_TAG_HEX_LENGTH / 2 },
+    );
+    decipher.setAuthTag(tag);
+
+    return (
+      decipher.update(
+        payload.slice(GCM_IV_HEX_LENGTH + GCM_TAG_HEX_LENGTH),
+        "hex",
+        "utf8",
+      ) + decipher.final("utf8")
+    );
+  }
+
+  // Values written before GCM: hex(16-byte IV) + hex(ciphertext), unauthenticated.
+  // They are rewritten as GCM the next time the provider is saved.
+  private decryptLegacyCbc(encryptedText: string): string {
+    const iv = Buffer.from(encryptedText.slice(0, 32), "hex");
+    const decipher = crypto.createDecipheriv(
+      "aes-256-cbc",
       this.encryptionKey,
       iv,
     );
-    let decrypted = decipher.update(encrypted, "hex", "utf8");
-    decrypted += decipher.final("utf8");
 
-    return decrypted;
+    return (
+      decipher.update(encryptedText.slice(32), "hex", "utf8") +
+      decipher.final("utf8")
+    );
   }
 }
 

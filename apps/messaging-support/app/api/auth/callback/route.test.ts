@@ -70,8 +70,23 @@ beforeEach(() => {
 })
 
 describe("GET /api/auth/callback", () => {
-  it("redirects with missing_code_or_state when params are absent", async () => {
+  it("redirects to /signed-out when Entra returns from logout (no code, no error)", async () => {
     const res = await GET(request({}))
+
+    expect(res.status).toBe(303)
+    expect(res.headers.get("location")).toBe("https://support.test/signed-out")
+  })
+
+  it("redirects with oauth_error when Entra reports an error", async () => {
+    const res = await GET(request({ error: "access_denied" }))
+
+    expect(res.headers.get("location")).toBe(
+      "https://support.test/auth/error?reason=oauth_error",
+    )
+  })
+
+  it("redirects with missing_code_or_state when code is present without state", async () => {
+    const res = await GET(request({ code: "c-1" }))
 
     expect(res.headers.get("location")).toBe(
       "https://support.test/auth/error?reason=missing_code_or_state",

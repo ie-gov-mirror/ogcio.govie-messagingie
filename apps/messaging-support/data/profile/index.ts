@@ -23,6 +23,7 @@ import {
 import {
   failure,
   GENERIC_USER_ERROR,
+  PROFILE_NOT_FOUND_FOR_ID,
   serializeErrorForLog,
   success,
 } from "../utils"
@@ -281,7 +282,8 @@ async function getMainProfile(profileId: string): Promise<Result<MainProfile>> {
           `[getMainProfile] no profile found for ${profileId}`,
         )
         span.recordException(error)
-        return failure(error, GENERIC_USER_ERROR)
+        logger.warn({ profileId }, "No profile found for id")
+        return { success: false, error, userMessage: PROFILE_NOT_FOUND_FOR_ID }
       }
 
       const mainProfile: MainProfile = {

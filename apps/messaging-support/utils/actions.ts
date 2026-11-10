@@ -2,14 +2,18 @@
 
 import { emitAuditOnce } from "@/data/audit"
 import { ProfileDataService } from "@/data/profile"
-import type { Consent } from "@/data/types"
-import { failure } from "@/data/utils"
+import type { Consent, Failure } from "@/data/types"
+import { failure, PROFILE_NOT_FOUND_FOR_ID } from "@/data/utils"
 import {
   serverMessagingFilterKeySelectOptions,
   serverProfileFilterKeySelectOptions,
 } from "./appliedFilter.server"
 import type { ClientFilterKeyOption } from "./appliedFilter.types"
 import { getIdentity } from "./session"
+
+function rejectUnresolvedProfile(error: Error): Failure {
+  return { success: false, error, userMessage: PROFILE_NOT_FOUND_FOR_ID }
+}
 
 export async function getMessagingFilterOptions(): Promise<
   ClientFilterKeyOption[]
@@ -40,7 +44,15 @@ export async function linkAccountsAction(params: {
     return failure(new Error("no user"), "unauthorized")
   }
 
-  const result = await ProfileDataService.createAccountLink(params)
+  const profile = await ProfileDataService.getMainProfile(params.profileId)
+  if (!profile.success) {
+    return rejectUnresolvedProfile(profile.error)
+  }
+
+  const result = await ProfileDataService.createAccountLink({
+    ...params,
+    profileId: profile.value.id,
+  })
   void emitAuditOnce(
     {
       actionName: "createAccountLink",
@@ -84,7 +96,15 @@ export async function updateProfileConsentDataAction(params: {
     return failure(new Error("no user"), "unauthorized")
   }
 
-  const result = await ProfileDataService.updateProfileConsentData(params)
+  const profile = await ProfileDataService.getMainProfile(params.profileId)
+  if (!profile.success) {
+    return rejectUnresolvedProfile(profile.error)
+  }
+
+  const result = await ProfileDataService.updateProfileConsentData({
+    ...params,
+    profileId: profile.value.id,
+  })
   void emitAuditOnce(
     {
       actionName: "updateProfileConsentData",
@@ -103,8 +123,13 @@ export async function deleteAccountAction(params: { profileId: string }) {
     return failure(new Error("no user"), "unauthorized")
   }
 
+  const profile = await ProfileDataService.getMainProfile(params.profileId)
+  if (!profile.success) {
+    return rejectUnresolvedProfile(profile.error)
+  }
+
   const result = await ProfileDataService.deleteAccount({
-    profileId: params.profileId,
+    profileId: profile.value.id,
     requesterUserId: user.sub,
   })
   void emitAuditOnce(
@@ -125,8 +150,13 @@ export async function requestDataExportAction(params: { profileId: string }) {
     return failure(new Error("no user"), "unauthorized")
   }
 
+  const profile = await ProfileDataService.getMainProfile(params.profileId)
+  if (!profile.success) {
+    return rejectUnresolvedProfile(profile.error)
+  }
+
   const result = await ProfileDataService.requestDataExport({
-    profileId: params.profileId,
+    profileId: profile.value.id,
     requesterUserId: user.sub,
   })
   void emitAuditOnce(

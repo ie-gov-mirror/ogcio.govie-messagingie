@@ -2,16 +2,16 @@
 
 import { useCrossZoneLink } from "@citizen-portal/shared"
 import { Link, Paragraph, Stack } from "@ogcio/design-system-react"
-import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useAuth, useGatewayFetch } from "@ogcio/sag-client/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { messagesApi } from "@/api/messages"
+import { DELETED_FOLDER_ID, messagesApi } from "@/api/messages"
 import { BackButton } from "@/components/button/back-button"
 import { CssSpinner } from "@/components/css-spinner"
 import { useFeatureFlags } from "@/components/feature-flags-provider"
 import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 import { isFoldersEnabled, isLeaEnabled } from "@/lib/feature-config"
 import { getMockAttachmentIds } from "@/mock/attachments"
 import { findMockMessageById } from "@/mock/messages"
@@ -51,12 +51,17 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   const { isSubmissionLinkingEnabled } = useFeatureFlags()
   const submissionLinkingEnabled = isLeaEnabled() && isSubmissionLinkingEnabled
   const submissionIdFromUrl = searchParams.get("submissionId")
+  const currentFolderId = searchParams.get("folder")
 
   const {
     data: apiData,
     error,
     isLoading,
-  } = useGatewayFetch<Message>(messagesApi.detailKey(id))
+  } = useGatewayFetch<Message>(
+    messagesApi.detailKey(id, {
+      deleted: currentFolderId === DELETED_FOLDER_ID,
+    }),
+  )
 
   const { data: metadataMessage } = useGatewayFetch<Message>(
     submissionLinkingEnabled && !submissionIdFromUrl
@@ -98,19 +103,15 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
 
   useMarkMessageAsRead(id, Boolean(data))
 
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
   const trackedDetail = useRef(false)
   useEffect(() => {
     if (!data || trackedDetail.current) return
     trackedDetail.current = true
-    analyticsClient.trackEvent({
-      event: {
-        name: ANALYTICS.message.detail.name,
-        category: ANALYTICS.message.category,
-        action: ANALYTICS.message.detail.action,
-      },
-    })
-  }, [data, analyticsClient])
+    track.event(ANALYTICS.message.detail)
+    // Application links carry `submissionId`; inbox links do not.
+    if (submissionIdFromUrl) track.event(ANALYTICS.application.messageOpen)
+  }, [data, track, submissionIdFromUrl])
 
   const foldersEnabled = isFoldersEnabled()
   const { deleteIds, isLoading: isDeleting } = useDeleteMessages()
@@ -119,7 +120,6 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [isMoveModalOpen, setMoveModalOpen] = useState(false)
 
-  const currentFolderId = searchParams.get("folder")
   const destinations = useMessageFolders({
     currentFolderId,
     inboxLabel: tMove("inbox"),

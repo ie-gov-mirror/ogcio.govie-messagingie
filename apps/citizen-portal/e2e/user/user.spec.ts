@@ -33,7 +33,7 @@ test.describe("User Features", () => {
 
   test("a user can switch language @smoke @regression", async () => {
     await page.goto("/ga")
-    await expect(page.getByRole("textbox", { name: "Cuardach" })).toBeVisible()
+    await expect(page.getByRole("textbox", { name: "Cuardaigh teachtaireachtaí" })).toBeVisible()
   })
 
   test("a user can logout @smoke @regression", async () => {

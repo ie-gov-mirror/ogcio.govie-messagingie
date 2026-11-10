@@ -77,6 +77,7 @@ vi.mock("./submission-related-messages", () => ({
 
 import messageStyles from "@/components/messages/message-detail.module.css"
 import pageTitleStyles from "@/components/page-title.module.css"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 import { SubmissionDetailView } from "./submission-detail-view"
 
 describe("SubmissionDetailView", () => {
@@ -191,5 +192,41 @@ describe("SubmissionDetailView", () => {
         name: "Apply for a school place",
       }),
     ).toBeInTheDocument()
+  })
+
+  describe("analytics", () => {
+    const viewed = {
+      event: {
+        category: "Application",
+        name: "application-detail",
+        action: "Application Viewed",
+      },
+    }
+
+    it("reports the application view once it has loaded, never its id", () => {
+      state.result.isLoading = true
+      const analytics = fakeAnalytics()
+      const { rerender } = analytics.render(
+        <SubmissionDetailView id='38BB94E3' />,
+      )
+      expect(analytics.event).not.toHaveBeenCalled()
+
+      state.result = { submission: SUBMISSION, isLoading: false, error: null }
+      rerender(<SubmissionDetailView id='38BB94E3' />)
+      rerender(<SubmissionDetailView id='38BB94E3' />)
+
+      expect(analytics.event.mock.calls).toEqual([[viewed]])
+      expect(JSON.stringify(analytics.event.mock.calls)).not.toContain(
+        "38BB94E3",
+      )
+    })
+
+    it("reports nothing when the application cannot be loaded", () => {
+      state.result.error = new Error("Submission unavailable")
+      const analytics = fakeAnalytics()
+      analytics.render(<SubmissionDetailView id='38BB94E3' />)
+
+      expect(analytics.event).not.toHaveBeenCalled()
+    })
   })
 })

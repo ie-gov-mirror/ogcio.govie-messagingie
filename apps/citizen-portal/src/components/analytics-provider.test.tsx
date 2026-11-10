@@ -111,6 +111,33 @@ describe("AnalyticsProvider", () => {
     )
   })
 
+  it("excludes the params carrying search text, ids and titles from tracked URLs before the tracker starts", async () => {
+    env.NEXT_PUBLIC_ANALYTICS_URL = "https://analytics.test"
+    env.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID = "site-1"
+    idle.ready = true
+    const paq = globalThis as { _paq?: unknown[] }
+    paq._paq = undefined
+    let queuedAtInit: unknown[] = []
+    analytics.initClientTracker.mockImplementation(async () => {
+      queuedAtInit = [...(paq._paq ?? [])]
+    })
+
+    render(
+      <AnalyticsProvider>
+        <span>content</span>
+      </AnalyticsProvider>,
+    )
+
+    await vi.waitFor(() =>
+      expect(analytics.initClientTracker).toHaveBeenCalled(),
+    )
+    expect(queuedAtInit).toContainEqual([
+      "setExcludedQueryParams",
+      ["search", "folder", "id", "submissionId", "submissionTitle"],
+    ])
+    paq._paq = undefined
+  })
+
   it("tracks a page view after analytics initialises", async () => {
     env.NEXT_PUBLIC_ANALYTICS_URL = "https://analytics.test"
     env.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID = "site-1"

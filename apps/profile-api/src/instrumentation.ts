@@ -1,5 +1,6 @@
 import { FastifyOtelInstrumentation } from "@fastify/otel";
 import { instrumentNode, type SDKLogLevel } from "@ogcio/o11y-sdk-node";
+import { captureServerSpan } from "./plugins/internal/pseudo-user-traces-hook.js";
 
 if (
   process.env.OTEL_COLLECTOR_URL &&
@@ -15,7 +16,11 @@ if (
     ],
     pseudoProfiling: { enabled: true },
     additionalInstrumentations: [
-      new FastifyOtelInstrumentation({ registerOnInitialization: true }),
+      new FastifyOtelInstrumentation({
+        registerOnInitialization: true,
+        // Captures the server span for the pseudo-user traces hook.
+        requestHook: captureServerSpan,
+      }),
     ],
   });
 }

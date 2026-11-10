@@ -1,13 +1,15 @@
 "use client"
 
-import { Button, Stack } from "@ogcio/design-system-react"
-import { useAnalytics } from "@ogcio/nextjs-analytics"
+import { Alert, Button, Paragraph, Stack } from "@ogcio/design-system-react"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { DELETED_FOLDER_ID, INBOX_FOLDER_ID } from "@/api/messages"
+import pageTitleStyles from "@/components/page-title.module.css"
 import { ANALYTICS } from "@/const/analytics"
 import { useIsMobile } from "@/hooks/use-is-mobile"
+import { useSearchTracking } from "@/hooks/use-search-tracking"
+import { useTrack } from "@/hooks/use-track"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import { isFoldersEnabled } from "@/lib/feature-config"
 import { BulkActionToolbar } from "./bulk-action-toolbar"
@@ -17,8 +19,7 @@ import { InboxLayout } from "./inbox-layout"
 import { InboxListChromeHeader } from "./inbox-list-chrome-header"
 import { DELETE_FLASH_KEY, MOVE_FLASH_KEY } from "./message-action-flash-keys"
 import { MessageDetailView } from "./message-detail-view"
-import { MessageFoldersSidebar } from "./message-folders-sidebar"
-import { MobileFolderPanel } from "./mobile-folder-panel"
+import { MessagesViewTabs } from "./messages-view-tabs"
 import { MoveMessageModal } from "./move-message-modal"
 import { MoveResultToast } from "./move-result-toast"
 import { DEFAULT_PAGE_SIZE, parsePageSize } from "./page-size"
@@ -49,19 +50,16 @@ export function UnifiedInboxPage() {
     [router, pathname, searchParams],
   )
 
-  const foldersEnabled = isFoldersEnabled()
-  const sidebar = foldersEnabled ? <MessageFoldersSidebar /> : null
-
   if (selectedId) {
     return (
-      <InboxLayout sidebar={sidebar}>
+      <InboxLayout>
         <MessageDetailView id={selectedId} />
       </InboxLayout>
     )
   }
 
   return (
-    <InboxLayout sidebar={sidebar}>
+    <InboxLayout>
       <UnifiedInboxListView onSelect={selectMessage} />
     </InboxLayout>
   )
@@ -75,21 +73,16 @@ function UnifiedInboxListView({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useUrlSearchParams()
+  const t = useTranslations("home")
   const tMove = useTranslations("home.move")
 
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
   const trackedListView = useRef(false)
   useEffect(() => {
     if (trackedListView.current) return
     trackedListView.current = true
-    analyticsClient.trackEvent({
-      event: {
-        name: ANALYTICS.message.listView.name,
-        category: ANALYTICS.message.category,
-        action: ANALYTICS.message.listView.action,
-      },
-    })
-  }, [analyticsClient])
+    track.event(ANALYTICS.message.listView)
+  }, [track])
 
   const isMobile = useIsMobile()
   const foldersEnabled = isFoldersEnabled()
@@ -97,7 +90,14 @@ function UnifiedInboxListView({
   const status = searchParams.get("status") || "all"
   const page = Number(searchParams.get("page")) || 1
   const pageSize = parsePageSize(searchParams.get("limit"))
-  const folderId = foldersEnabled ? searchParams.get("folder") : null
+  const requestedFolder = searchParams.get("folder")
+  // Inbox and Deleted are the list's own folders. Custom folders stay behind
+  // the flag; the sidebar that used to reach them is gone.
+  const folderId = foldersEnabled
+    ? requestedFolder
+    : requestedFolder === DELETED_FOLDER_ID
+      ? DELETED_FOLDER_ID
+      : null
   const isInboxView = !folderId || folderId === INBOX_FOLDER_ID
   const isDeletedView = folderId === DELETED_FOLDER_ID
 
@@ -127,6 +127,31 @@ function UnifiedInboxListView({
     loadMore,
     refresh,
   } = useInboxMessages({ isMobile, search, status, folderId, page, pageSize })
+  useSearchTracking(ANALYTICS.search.messages, search, {
+    isLoading,
+    totalCount,
+  })
+
+  // Nothing to search, filter or select in this folder: an alert replaces the
+  // list chrome. Only once the request has settled, so it never flashes.
+  const hasNoMessages =
+    !isLoading &&
+    messages.length === 0 &&
+    totalCount === 0 &&
+    !search &&
+    status === "all"
+  const tEmpty = useTranslations("home.empty")
+  const emptyCopy = isInboxView
+    ? { title: tEmpty("inbox.title"), description: tEmpty("inbox.description") }
+    : isDeletedView
+      ? {
+          title: tEmpty("deleted.title"),
+          description: tEmpty("deleted.description"),
+        }
+      : {
+          title: tEmpty("folder.title"),
+          description: tEmpty("folder.description"),
+        }
 
   const selection = useMessageSelection(messages)
   const {
@@ -157,7 +182,6 @@ function UnifiedInboxListView({
     useState<MoveMessagesResult | null>(null)
   const [pendingIds, setPendingIds] = useState<string[] | null>(null)
   const [isMoveModalOpen, setMoveModalOpen] = useState(false)
-  const [isFolderPanelOpen, setFolderPanelOpen] = useState(false)
   const [selectMode, setSelectMode] = useState(false)
 
   useEffect(() => {
@@ -267,6 +291,10 @@ function UnifiedInboxListView({
 
   return (
     <div className={styles.listRoot}>
+      <div className={`${styles.headingRow} ${styles.pageHeading}`}>
+        <h1 className={pageTitleStyles.pageTitle}>{t("heading")}</h1>
+        <MessagesViewTabs />
+      </div>
       <Stack
         direction='column'
         gap={6}
@@ -281,37 +309,45 @@ function UnifiedInboxListView({
           result={activeMoveResult}
           onDismiss={handleDismissMoveResult}
         />
-        <div className={styles.mobileFullBleed}>
-          <div className={tableStyles.listChrome}>
-            <InboxListChromeHeader
-              showToolbar={selection.selectedCount > 0}
-              bulkActionBar={bulkActionBar}
-            />
-            <UnifiedInboxTable
-              messages={messages}
-              isLoading={isLoading}
-              totalCount={totalCount}
-              onSelect={onSelect}
-              pageSize={pageSize}
-              onPageSizeChange={handlePageSizeChange}
-              hasMore={hasMore}
-              isLoadingMore={isLoadingMore}
-              onLoadMore={loadMore}
-              selection={selection}
-              selectMode={selectMode}
-              onEnterSelectMode={() => setSelectMode(true)}
-              onExitSelectMode={() => setSelectMode(false)}
-              onBulkDelete={() =>
-                openDeleteConfirmation(Array.from(selection.selectedIds))
-              }
-              onOpenFolders={
-                foldersEnabled ? () => setFolderPanelOpen(true) : undefined
-              }
-              onBulkMove={() => setMoveModalOpen(true)}
-              canMove={canMove}
-            />
+        {hasNoMessages ? (
+          <Alert
+            variant='info'
+            title={emptyCopy.title}
+            className={styles.emptyAlert}
+            data-testid='messages-empty'
+          >
+            <Paragraph>{emptyCopy.description}</Paragraph>
+          </Alert>
+        ) : (
+          <div className={styles.mobileFullBleed}>
+            <div className={tableStyles.listChrome}>
+              <InboxListChromeHeader
+                showToolbar={selection.selectedCount > 0}
+                bulkActionBar={bulkActionBar}
+              />
+              <UnifiedInboxTable
+                messages={messages}
+                isLoading={isLoading}
+                totalCount={totalCount}
+                onSelect={onSelect}
+                pageSize={pageSize}
+                onPageSizeChange={handlePageSizeChange}
+                hasMore={hasMore}
+                isLoadingMore={isLoadingMore}
+                onLoadMore={loadMore}
+                selection={selection}
+                selectMode={selectMode}
+                onEnterSelectMode={() => setSelectMode(true)}
+                onExitSelectMode={() => setSelectMode(false)}
+                onBulkDelete={() =>
+                  openDeleteConfirmation(Array.from(selection.selectedIds))
+                }
+                onBulkMove={() => setMoveModalOpen(true)}
+                canMove={canMove}
+              />
+            </div>
           </div>
-        </div>
+        )}
         <DeleteConfirmationModal
           isOpen={pendingIds !== null}
           count={pendingIds?.length ?? 0}
@@ -326,12 +362,6 @@ function UnifiedInboxListView({
             onConfirm={handleMove}
             destinations={destinations}
             isMoving={isMoving}
-          />
-        ) : null}
-        {foldersEnabled ? (
-          <MobileFolderPanel
-            isOpen={isFolderPanelOpen}
-            onClose={() => setFolderPanelOpen(false)}
           />
         ) : null}
       </Stack>

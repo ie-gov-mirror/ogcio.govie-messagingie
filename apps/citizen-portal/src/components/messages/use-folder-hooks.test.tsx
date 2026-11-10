@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useCreateFolder } from "@/components/messages/use-create-folder"
 import { useDeleteFolder } from "@/components/messages/use-delete-folder"
 import { useRenameFolder } from "@/components/messages/use-rename-folder"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 
 const createTrigger = vi.fn()
 const clientMutate = vi.fn()
@@ -123,5 +124,65 @@ describe("useDeleteFolder", () => {
     })
 
     expect(outcome!).toEqual({ ok: false })
+  })
+})
+
+describe("folder analytics", () => {
+  const folderEvent = (name: string, action: string) => ({
+    event: { name, category: "Folder", action },
+  })
+
+  async function run(action: () => Promise<unknown>) {
+    await act(async () => {
+      await action()
+    })
+  }
+
+  it("tracks a created folder, not a failed create (a duplicate name included)", async () => {
+    const analytics = fakeAnalytics()
+    const { result } = renderHook(() => useCreateFolder(), {
+      wrapper: analytics.wrapper,
+    })
+
+    createTrigger.mockResolvedValueOnce({ id: "tag-new" })
+    await run(() => result.current.createFolder("Bills"))
+    createTrigger.mockRejectedValueOnce(new FakeFetchError(409))
+    await run(() => result.current.createFolder("Bills"))
+
+    expect(analytics.event.mock.calls).toEqual([
+      [folderEvent("folder-create", "Folder Created")],
+    ])
+  })
+
+  it("tracks a renamed folder, not a failed rename", async () => {
+    const analytics = fakeAnalytics()
+    const { result } = renderHook(() => useRenameFolder(), {
+      wrapper: analytics.wrapper,
+    })
+
+    clientMutate.mockResolvedValueOnce({ data: { id: "tag-1" } })
+    await run(() => result.current.renameFolder("tag-1", "Renamed"))
+    clientMutate.mockRejectedValueOnce(new FakeFetchError(500))
+    await run(() => result.current.renameFolder("tag-1", "Renamed"))
+
+    expect(analytics.event.mock.calls).toEqual([
+      [folderEvent("folder-rename", "Folder Renamed")],
+    ])
+  })
+
+  it("tracks a deleted folder, not a failed delete", async () => {
+    const analytics = fakeAnalytics()
+    const { result } = renderHook(() => useDeleteFolder(), {
+      wrapper: analytics.wrapper,
+    })
+
+    clientMutate.mockResolvedValueOnce({ data: { id: "tag-1" } })
+    await run(() => result.current.deleteFolder("tag-1"))
+    clientMutate.mockRejectedValueOnce(new FakeFetchError(500))
+    await run(() => result.current.deleteFolder("tag-1"))
+
+    expect(analytics.event.mock.calls).toEqual([
+      [folderEvent("folder-delete", "Folder Deleted")],
+    ])
   })
 })

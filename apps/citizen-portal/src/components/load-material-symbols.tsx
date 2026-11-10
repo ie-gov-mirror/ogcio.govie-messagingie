@@ -4,8 +4,9 @@ import { Fragment } from "react"
  * Extends the DS Material Symbols preload with icons used in
  * citizen-portal that are not yet in `@ogcio/design-system-react`'s
  * `LoadMaterialSymbols` subset (e.g. `drive_file_move` on the message
- * detail toolbar, and the Life Events glyphs `school`, `blind`, and
- * `local_florist`, which are not in the Icon registry).
+ * detail toolbar, and the Life Events glyphs `school`, `blind`,
+ * `local_florist`, `article`, and `weekend`, which are not in the
+ * Icon registry).
  */
 export function LoadMaterialSymbols() {
   // NOTE: Google Fonts requires `icon_names` to be sorted alphabetically
@@ -41,6 +42,7 @@ const MATERIAL_SYMBOL_NAMES = [
   "arrow_outward",
   "arrow_right_alt",
   "arrow_upward",
+  "article",
   "attach_file",
   "blind",
   "block",
@@ -111,6 +113,7 @@ const MATERIAL_SYMBOL_NAMES = [
   "visibility_off",
   "volunteer_activism",
   "warning",
+  "weekend",
   "work",
 ] as const
 

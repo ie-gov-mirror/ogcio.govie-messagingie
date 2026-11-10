@@ -50,7 +50,13 @@ export default defineConfig({
         // The design system barrel uses `import { debounce } from "lodash"`,
         // a named import from a CJS module that Node's ESM loader can't resolve.
         // Inlining lets Vite transform it with proper CJS interop.
-        inline: [/@ogcio[/\\]design-system-react/],
+        // nextjs-analytics imports `./AnalyticsProvider` (a .jsx file) without
+        // an extension, which Node can't resolve; Vite can. Tests render
+        // through its real `AnalyticsContext` (test/utils/analytics.tsx).
+        inline: [
+          /@ogcio[/\\]design-system-react/,
+          /@ogcio[/\\]nextjs-analytics/,
+        ],
       },
     },
     browser: {

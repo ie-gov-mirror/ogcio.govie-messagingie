@@ -17,8 +17,22 @@
 
 .mobileList {
   margin: 0;
-  padding: 0 var(--gieds-space-3);
+  padding: 0 var(--gieds-space-4, 1rem);
   list-style: none;
+}
+
+/* Same gutter the search row restores once the list is full-bleed. */
+@media (min-width: 768px) {
+  .mobileList {
+    padding-left: var(--gieds-space-6, 1.5rem);
+    padding-right: var(--gieds-space-6, 1.5rem);
+  }
+}
+
+/* The list gutter is the inset; the shared skeleton card pads again for the inbox. */
+.skeletonCard.skeletonCard {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .mobileItem {
@@ -53,7 +67,8 @@
   flex: none;
 }
 
-.mobileItemLink {
+.mobileItemLink,
+.mobileItemLink:visited {
   align-self: flex-start;
   color: var(--gieds-color-text-tone-convention-default, #2c55a2);
   text-decoration: underline;

@@ -68,8 +68,8 @@ export const getDbEnvs = getDbEnv;
 /**
  * Resolve the node-postgres `ssl` option from a boolean flag. When SSL is off
  * returns `false`; when on, reads the caller-supplied CA bundle (the cert ships
- * per-app, so the path is never hardcoded here) and disables hostname
- * verification, mirroring the existing `@fastify/postgres` setup.
+ * per-app, so the path is never hardcoded here) and verifies the server
+ * certificate and hostname against it, mirroring the `@fastify/postgres` setup.
  */
 export const getSslConfig = (
   ssl: boolean | undefined,
@@ -82,7 +82,7 @@ export const getSslConfig = (
     throw new Error("getSslConfig: caCertPath is required when SSL is enabled");
   }
   return {
-    rejectUnauthorized: false,
+    rejectUnauthorized: true,
     ca: readFileSync(options.caCertPath),
   };
 };

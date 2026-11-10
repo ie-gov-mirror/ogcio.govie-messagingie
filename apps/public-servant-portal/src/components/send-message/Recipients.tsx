@@ -22,11 +22,7 @@ import {
   useGatewayMutation,
   useSagClient,
 } from "@ogcio/sag-client/react"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
@@ -35,6 +31,7 @@ import { FullWidthContainer } from "@/components/containers"
 import { AddCircleIcon } from "@/components/icons/add-circle"
 import { DeleteIcon } from "@/components/icons/delete"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { ANALYTICS } from "@/const/analytics"
 import { useOrganizationId } from "@/hooks/use-organization-id"
 import type { ProfilePayload } from "@/types/types"
@@ -393,7 +390,7 @@ export default function Recipients() {
     }
   }
 
-  const availableColumns = useMemo<ColumnDef<ProfilePayload>[]>(
+  const availableColumns = useMemo<Column<ProfilePayload>[]>(
     () => [
       {
         id: "recipient",
@@ -453,7 +450,7 @@ export default function Recipients() {
     [selectedRecipients, tRecipient, users.length],
   )
 
-  const selectedColumns = useMemo<ColumnDef<SelectedRecipient>[]>(
+  const selectedColumns = useMemo<Column<SelectedRecipient>[]>(
     () => [
       {
         id: "recipient",
@@ -486,16 +483,16 @@ export default function Recipients() {
     [selectedRecipients, tRecipient],
   )
 
-  const availableTable = useReactTable({
+  const availableTable = useTable({
+    features,
     data: users,
     columns: availableColumns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
-  const selectedTable = useReactTable({
+  const selectedTable = useTable({
+    features,
     data: selectedRecipients,
     columns: selectedColumns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   return (

@@ -1,4 +1,4 @@
-import { Container, Footer, Header } from "@ogcio/design-system-react"
+import { Container, Footer } from "@ogcio/design-system-react"
 import { AnalyticsProvider } from "@ogcio/nextjs-analytics"
 import type { Metadata } from "next"
 import { Suspense } from "react"
@@ -7,6 +7,7 @@ import "@ogcio/theme-govie/theme.css"
 import "../root.css"
 import favicon from "@/public/favicon.ico"
 import { getEnvConfig } from "@/utils/env"
+import { LogoutHeader } from "../components/LogoutHeader"
 import { ToastProvider } from "../components/ToastProvider"
 
 export const metadata: Metadata = {
@@ -41,18 +42,7 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <Header
-          title='Messaging Support'
-          items={[
-            {
-              label: "Log out",
-              icon: "logout",
-              href: "/api/auth/signout",
-              itemType: "link",
-              showItemMode: "always",
-            },
-          ]}
-        ></Header>
+        <LogoutHeader />
         <main>
           <Suspense>
             <AnalyticsProvider config={analyticsConfig}>

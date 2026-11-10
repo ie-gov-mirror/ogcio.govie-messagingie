@@ -124,7 +124,6 @@ describe("feature-config", () => {
       expect(isFoldersEnabled()).toBe(true)
     })
   })
-
   describe("getEnabledLandingZone", () => {
     it("returns the requested zone when it is enabled", () => {
       expect(getEnabledLandingZone("dashboard")).toBe("dashboard")

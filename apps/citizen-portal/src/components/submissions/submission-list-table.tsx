@@ -4,7 +4,6 @@ import {
   DataTableFooter,
   DataTableFooterEnd,
   DataTableFooterStart,
-  Paragraph,
   Table,
   TableBody,
   TableData,
@@ -16,19 +15,21 @@ import {
   SelectItem,
   SelectNative,
 } from "@ogcio/design-system-react/select/select-native"
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { flexRender, useTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo } from "react"
+import {
+  clearSearchHref,
+  ListNoResults,
+  SKELETON_ROWS,
+  SkeletonBar,
+  SkeletonCard,
+} from "@/components/list-states/list-states"
 import { InboxPagination } from "@/components/messages/inbox-pagination"
-import { MessagesLoading } from "@/components/messages/messages-loading"
 import inboxTableStyles from "@/components/messages/unified-inbox-table.module.css"
+import { type Column, features } from "@/components/tables/table-features"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import type { Submission } from "@/types"
 import { formatDate } from "@/util/datetime"
@@ -36,6 +37,13 @@ import { pickLocalized } from "./localized"
 import { SUBMISSIONS_PAGE_SIZE_OPTIONS } from "./pagination-utils"
 import styles from "./submission-list-table.module.css"
 import { SubmissionStatusTag } from "./submission-status-tag"
+
+const SKELETON_BAR_WIDTHS: Record<string, string> = {
+  title: "23.75rem",
+  status: "6rem",
+  date: "5rem",
+  id: "8.75rem",
+}
 
 export interface SubmissionListTableProps {
   submissions: Submission[]
@@ -76,10 +84,9 @@ export function SubmissionListTable({
   const locale = useLocale()
   const pathname = usePathname()
   const searchParams = useUrlSearchParams()
-  const searchValue = searchParams.get("search") ?? ""
   const isListLoading = isLoading && submissions.length === 0
 
-  const columns = useMemo<ColumnDef<Submission>[]>(
+  const columns = useMemo<Column<Submission>[]>(
     () => [
       {
         id: "title",
@@ -122,12 +129,10 @@ export function SubmissionListTable({
     [locale, pathname, tTable],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: submissions,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    pageCount: totalPages,
   })
 
   const columnSize = (id: string) =>
@@ -145,17 +150,19 @@ export function SubmissionListTable({
 
   return (
     <section className={`gi-w-full ${inboxTableStyles.tableRoot}`}>
-      {isListLoading ? (
-        <MessagesLoading />
-      ) : submissions.length > 0 ? (
+      {isListLoading || submissions.length > 0 ? (
         <div
           className={inboxTableStyles.listBody}
+          aria-busy={isListLoading || undefined}
           style={
             {
               "--inbox-list-page-size": pageSize,
             } as React.CSSProperties
           }
         >
+          {isListLoading ? (
+            <output className='gi-sr-only'>{t("loading")}</output>
+          ) : null}
           <div className={inboxTableStyles.desktopTable}>
             <Table
               data-testid='submissions-table'
@@ -179,6 +186,23 @@ export function SubmissionListTable({
                 ))}
               </TableHead>
               <TableBody>
+                {isListLoading
+                  ? SKELETON_ROWS.map((key) => (
+                      <TableRow
+                        key={key}
+                        data-testid='submission-skeleton-row'
+                        aria-hidden
+                      >
+                        {columns.map((column) => (
+                          <TableData key={column.id}>
+                            <SkeletonBar
+                              width={SKELETON_BAR_WIDTHS[column.id ?? ""]}
+                            />
+                          </TableData>
+                        ))}
+                      </TableRow>
+                    ))
+                  : null}
                 {table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
@@ -195,7 +219,7 @@ export function SubmissionListTable({
                   </TableRow>
                 ))}
               </TableBody>
-              {totalPages > 0 && (
+              {totalPages > 0 && !isListLoading && (
                 <DataTableFooter>
                   <DataTableFooterStart>
                     <div
@@ -233,6 +257,16 @@ export function SubmissionListTable({
             className={`${inboxTableStyles.mobileList} ${styles.mobileList}`}
             aria-label={tTable("aria.submissionList")}
           >
+            {isListLoading
+              ? SKELETON_ROWS.map((key) => (
+                  <li key={key} aria-hidden>
+                    <SkeletonCard
+                      className={styles.skeletonCard}
+                      testId='submission-skeleton-card'
+                    />
+                  </li>
+                ))
+              : null}
             {submissions.map((submission) => (
               <li key={submission.id} className={styles.mobileItem}>
                 <div className={styles.mobileItemHeader}>
@@ -255,11 +289,12 @@ export function SubmissionListTable({
           </ul>
         </div>
       ) : (
-        <div className={inboxTableStyles.emptyState}>
-          <Paragraph>
-            {searchValue ? t("empty.search") : t("empty.all")}
-          </Paragraph>
-        </div>
+        <ListNoResults
+          title={t("noResults.title")}
+          description={t("noResults.description")}
+          clearLabel={t("noResults.clear")}
+          clearHref={clearSearchHref(pathname, searchParams)}
+        />
       )}
 
       <InboxPagination totalPages={totalPages} />

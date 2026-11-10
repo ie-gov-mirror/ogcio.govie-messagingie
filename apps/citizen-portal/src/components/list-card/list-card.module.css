@@ -1,8 +1,8 @@
 /*
  * Mobile list card — single-row item for inbox-style lists.
- * Spec: 96px height, 12px padding, 320–1024px width, checkbox gap 10px,
- * attachment gap 8px. Read and unread share the white background + bottom
- * border; bold weight is the only unread cue (Gmail convention, WCAG 1.4.1).
+ * Spec: 96px height. Side padding is 16px, and 24px from 768px, so the
+ * card lines up with the page margin. Read and unread share the white
+ * background + bottom border; bold weight is the only unread cue.
  * Selected = tinted background, weight unchanged.
  */
 .card {
@@ -15,7 +15,7 @@
   min-width: 20rem;
   max-width: 64rem;
   height: 6rem;
-  padding: var(--gieds-space-3, 0.75rem);
+  padding: var(--gieds-space-3, 0.75rem) var(--gieds-space-4, 1rem);
   border: none;
   border-bottom: var(--gieds-border-width-100, 1px) solid
     var(--gieds-color-gray-200, #d8dadf);
@@ -24,6 +24,13 @@
   cursor: pointer;
   font: inherit;
   color: inherit;
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding-left: var(--gieds-space-6, 1.5rem);
+    padding-right: var(--gieds-space-6, 1.5rem);
+  }
 }
 
 /*

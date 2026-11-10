@@ -64,7 +64,7 @@ export const env = defineZoneEnv({
      * NOT citizen-portal zones; they stay as zone-local env vars.
      */
     NEXT_PUBLIC_MESSAGING_ADMIN_URL: requiredUrl.default(
-      "http://localhost:3022",
+      "http://localhost:4002",
     ),
     NEXT_PUBLIC_PROFILE_ADMIN_URL: requiredUrl.default("http://localhost:3033"),
     NEXT_PUBLIC_DASHBOARD_ADMIN_URL: requiredUrl.default(

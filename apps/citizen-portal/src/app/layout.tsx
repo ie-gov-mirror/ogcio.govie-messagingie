@@ -3,6 +3,7 @@ import { SwrProvider } from "@/components/swr-provider"
 import "@ogcio/design-system-react/styles.css"
 import "@ogcio/theme-govie/theme.css"
 import "./font-override.css"
+import "./link-no-visited.css"
 
 const lato = Lato({
   weight: ["400", "700"],

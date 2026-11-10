@@ -2,6 +2,8 @@
 
 import { useGatewayMutation } from "@ogcio/sag-client/react"
 import { useCallback } from "react"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 import { isConflictError } from "./folder-errors"
 
 export interface CreateFolderResult {
@@ -22,6 +24,7 @@ export interface UseCreateFolderOptions {
  */
 export function useCreateFolder(options: UseCreateFolderOptions = {}) {
   const { onSettled } = options
+  const track = useTrack()
   const { trigger, isLoading } = useGatewayMutation<
     { id: string },
     { label: string }
@@ -31,6 +34,7 @@ export function useCreateFolder(options: UseCreateFolderOptions = {}) {
     async (label: string): Promise<CreateFolderResult> => {
       try {
         const result = await trigger({ label })
+        track.event(ANALYTICS.folder.create)
         return { ok: true, id: result?.id }
       } catch (error) {
         return { ok: false, conflict: isConflictError(error) }
@@ -38,7 +42,7 @@ export function useCreateFolder(options: UseCreateFolderOptions = {}) {
         onSettled?.()
       }
     },
-    [trigger, onSettled],
+    [trigger, onSettled, track],
   )
 
   return { createFolder, isLoading }

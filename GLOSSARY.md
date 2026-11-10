@@ -104,7 +104,7 @@ A profile an organisation's import created that nobody has signed in to yet; it 
 _Avoid_: interim user, imported profile
 
 **Account linking**:
-Attaching a profile to a **Primary profile**: automatically when a sign-in's **PPSN** matches an **Interim profile**, by an operator in the **Super User Console**, or in bulk.
+Attaching a profile to a **Primary profile**: automatically when a sign-in's **PPSN** matches an **Interim profile**, by an operator in the **Support Console**, or in bulk.
 _Avoid_: merge, link (alone)
 
 **Profile import**:
@@ -222,6 +222,10 @@ Any signal a stakeholder needs that is not observed; "emitted but not observed" 
 The audit deliverable: a dated snapshot (with audited commit SHA) living at `docs/wiki/Analytics/MessagingIE-Metrics-Coverage-Map.md` in this repo, synced to the Azure DevOps wiki by the **Wiki sync** pipeline; gap rows link to the backlog items created from them.
 _Avoid_: treating the wiki copy as the source of truth, or the map as a living document
 
+**Event catalogue**:
+An app's list of every **Matomo** event it emits, each with a category, action and name; the source of truth for what that app tracks.
+_Avoid_: reading the **Coverage map** as the current list of events (it is a snapshot)
+
 **Gap priority**:
 `max(stakeholder visibility, operational importance)`, each scored high/medium/low — visibility by the PM, operational importance by engineering, in one shared session; the map shows a single collapsed Priority value plus a coarse effort tag (trivial / real work).
 _Avoid_: assigning a priority without the two-axis session behind it
@@ -254,7 +258,19 @@ A vitest `coverage.thresholds` value set just under the CI-measured **test cover
 
 **Support line**:
 One tier of production support: first line triages and resolves known issues, second line owns the hosting platform and infrastructure, third line owns the MessagingIE application.
-_Avoid_: bare "support" or "support team" (collides with **Support message** and **Super User Console**)
+_Avoid_: bare "support" or "support team" (collides with **Support message** and **Support Console**)
+
+**Service maintenance**:
+Recurring work that keeps MessagingIE secure and running whatever features ship. It continues for as long as MessagingIE is live.
+_Avoid_: "platform maintenance" (collides with **MessagingIE** as the platform and with the second line Platform team)
+
+**Project delivery**:
+Feature work funded by the delivery plan; it ends with the project.
+_Avoid_: "project maintenance"
+
+**Observability backfill**:
+The one-off work that brings monitoring up to an operable baseline, including open **Coverage gaps**. Keeping it there afterwards is **Service maintenance**.
+_Avoid_: "metrics backfill" (the replay of **DB event_log** history)
 
 ### Documentation
 
@@ -287,9 +303,9 @@ _Avoid_: per-service or per-capability rows (a cross-cutting capability like att
 The consolidated citizen-facing app (`apps/citizen-portal`: messages, profile, dashboard zones) — the canonical surface for citizen-side instrumentation.
 _Avoid_: "both citizen apps" (true at audit time, no longer the target)
 
-**Super User Console**:
+**Support Console**:
 The operator-facing support app (`apps/messaging-support`) for acting on citizen profiles: view, search, link/unlink, delete.
-_Avoid_: "support portal", "admin console" (that's the **Public Servant Portal**)
+_Avoid_: "Super User Console" (there is no super user), "support portal", "admin console" (that's the **Public Servant Portal**)
 
 **Public Servant Portal**:
 The consolidated public-servant app (`apps/public-servant-portal`), with the messaging-admin and profile-admin **Zones**.
@@ -303,11 +319,11 @@ _Avoid_: "zone" as a network or security zone
 A bilingual product-update notice shown to citizens until they acknowledge it, and listed in What's new.
 
 **Account Deletion**:
-Deletion of a citizen account, requested by the citizen via support ticket and executed by an operator in the **Super User Console**.
+Deletion of a citizen account, requested by the citizen via support ticket and executed by an operator in the **Support Console**.
 _Avoid_: "self-service deletion" (does not exist)
 
 **Data Export**:
-Citizen self-service export of their own data. The request/download UI lives in the **Citizen Portal** (`components/lifecycle-tasks`); task execution and the audit trail live in `profile-api`, also in this repo. Operators can also request an export through the **Super User Console**.
+Citizen self-service export of their own data. The request/download UI lives in the **Citizen Portal** (`components/lifecycle-tasks`); task execution and the audit trail live in `profile-api`, also in this repo. Operators can also request an export through the **Support Console**.
 _Avoid_: bundling with **Account Deletion** as one "Account Export/Deletion" feature — they have different actors and owners
 
 ## Relationships
@@ -341,5 +357,5 @@ _Avoid_: bundling with **Account Deletion** as one "Account Export/Deletion" fea
 - "Blacklisted" meant a profile forced to opted-out (profile-api) and any recipient excluded by consent or status (dp-proxy) — resolved: **Blocklisted profile** here, Ineligible recipient in dp-proxy.
 - "Grafana" was used to mean both "we emit an OTel metric" and "there is a dashboard" — resolved: record **Emitted** and **Observed** as separate columns in the coverage map.
 - "Matamo" appears in planning docs — resolved: the product is **Matomo**.
-- "Account Export/Deletion" was treated as one feature — resolved: **Data Export** (citizen self-service, profile repo) and **Account Deletion** (operator via **Super User Console**) are distinct rows in the coverage map.
+- "Account Export/Deletion" was treated as one feature — resolved: **Data Export** (citizen self-service, profile repo) and **Account Deletion** (operator via **Support Console**) are distinct rows in the coverage map.
 - "Delivered" meant the message reached the Inbox, its email was sent, or no email was needed — resolved: **Inbox delivery** is the first; the email's outcome is separate.

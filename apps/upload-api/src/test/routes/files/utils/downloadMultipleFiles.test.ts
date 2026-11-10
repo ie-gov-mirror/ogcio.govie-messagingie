@@ -1,4 +1,4 @@
-import type { PassThrough } from "node:stream";
+import { PassThrough } from "node:stream";
 import type { S3Client } from "@aws-sdk/client-s3";
 import type fastifyPostgres from "@fastify/postgres";
 import type { FastifyBaseLogger } from "fastify";
@@ -226,6 +226,41 @@ describe("downloadMultipleFiles", () => {
     );
 
     await expect(collectStream(stream)).rejects.toThrow("S3 exploded");
+  });
+
+  it("serves a stale file when the rescan fails and does not record it as scanned", async () => {
+    const send = vi.fn().mockResolvedValue({ Body: buildS3Body("payload") });
+    const passthrough = new PassThrough();
+    passthrough.on("data", () => {
+      passthrough.emit("scan-complete", {
+        isInfected: false,
+        failed: true,
+        viruses: [],
+      });
+    });
+    const params = buildParams({
+      rows: [buildFileRow("file-1", { antivirusDbVersion: "stale" })],
+      send,
+      fileIds: ["file-1"],
+    });
+    params.avClient = {
+      getVersion: vi
+        .fn()
+        .mockResolvedValue(`ClamAV 1.2.3/${AV_DB_VERSION}/Sun Aug 11 2024`),
+      passthrough: vi.fn(() => passthrough),
+    } as unknown as ClamavClient;
+    const updateQuery = vi.fn();
+    params.pg.query = updateQuery;
+
+    const { stream } = await downloadMultipleFiles(params);
+    const body = await collectStream(stream);
+
+    expect(body).toContain("payload");
+    expect(params.logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ fileId: "file-1" }),
+      "antivirus scan failed",
+    );
+    expect(updateQuery).not.toHaveBeenCalled();
   });
 
   it("skips a 404-by-status-code S3 error like a missing object", async () => {

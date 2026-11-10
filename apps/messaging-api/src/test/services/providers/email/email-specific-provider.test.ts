@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createCipheriv, randomBytes, randomUUID } from "node:crypto";
 import type { Pool } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { EnvConfig } from "../../../../plugins/external/env.js";
@@ -149,6 +149,46 @@ describe("Email Specific Provider", () => {
     const deletedRow = deletedResult.rows[0];
     expect(deletedRow.provider_name).toMatch(/deleted-\d+-/);
     expect(deletedRow.from_address).toMatch(/deleted-\d+-/);
+  });
+
+  it("rewrites a legacy CBC password as GCM on update", async () => {
+    const mockProvider = getMockToCreate();
+    const specificProvider = new EmailSpecificProvider(
+      pool,
+      "org-123",
+      getCryptographyService(),
+    );
+    const createdId = await specificProvider.create({
+      inputBody: mockProvider,
+    });
+    const key = Buffer.from(
+      process.env.EMAIL_PROVIDER_SMTP_ENCRYPTION_KEY as string,
+      "base64",
+    );
+    const iv = randomBytes(16);
+    const cipher = createCipheriv("aes-256-cbc", key, iv);
+    const legacy =
+      iv.toString("hex") +
+      cipher.update(mockProvider.password, "utf8", "hex") +
+      cipher.final("hex");
+    await pool.query("UPDATE email_providers SET pw = $1 WHERE id = $2", [
+      legacy,
+      createdId,
+    ]);
+
+    const updateWith = getMockToCreate() as ProviderUpdateBody;
+    delete updateWith.password;
+    await specificProvider.update({
+      inputBody: { ...updateWith, id: createdId },
+    });
+
+    const stored = await pool.query(
+      "SELECT pw FROM email_providers WHERE id = $1",
+      [createdId],
+    );
+    expect(stored.rows[0].pw).toMatch(/^gcm:/);
+    const got = await specificProvider.get({ providerId: createdId });
+    expect(got.password).toBe(mockProvider.password);
   });
 
   it("should list providers with pagination", async () => {

@@ -1,0 +1,82 @@
+.landing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gieds-space-8);
+  width: 100%;
+}
+
+/* Element-qualified so these beat the DS Heading's responsive gi-text-* sizes. */
+h1.title {
+  font-size: var(--gieds-font-size-800);
+  line-height: 1.25;
+}
+
+h2.sectionTitle {
+  font-size: var(--gieds-font-size-500);
+  line-height: 1.25;
+}
+
+.viewAll {
+  font-size: var(--gieds-font-size-400);
+}
+
+@media (min-width: 768px) {
+  h1.title {
+    font-size: var(--gieds-font-size-900);
+  }
+
+  h2.sectionTitle {
+    font-size: var(--gieds-font-size-600);
+  }
+}
+
+@media (min-width: 1024px) {
+  h1.title {
+    font-size: var(--gieds-font-size-1000);
+  }
+
+  h2.sectionTitle {
+    font-size: var(--gieds-font-size-700);
+  }
+}
+
+.grid {
+  display: grid;
+  gap: var(--gieds-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grid > li {
+  display: flex;
+  min-width: 0;
+}
+
+.lifeEvents {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.applications {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 768px) {
+  .lifeEvents {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .applications {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/*
+ * Three application cards (288px minimum each) only fit beside the side
+ * navigation from 1280px, so the third column starts there, not at 1024px.
+ */
+@media (min-width: 1280px) {
+  .applications {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { createDbFromPool, type Kysely } from "@ogcio/db-core";
 import type { Pool } from "pg";
 import type { DB } from "~/db/schema.js";
@@ -23,10 +24,14 @@ export class JobService {
     token: string;
   }): Promise<boolean> {
     const jobToken = await this.model.getJobToken(params.profileImportId);
-    if (!jobToken) {
+    if (!jobToken || typeof params.token !== "string") {
       return false;
     }
-    return jobToken === params.token;
+    const expected = Buffer.from(jobToken);
+    const received = Buffer.from(params.token);
+    return (
+      expected.length === received.length && timingSafeEqual(expected, received)
+    );
   }
 }
 

@@ -136,6 +136,63 @@ describe("userCanAccessMultipleFilesOrThrow", () => {
     ).rejects.toMatchObject({ statusCode: 403 });
   });
 
+  it("throws 403 for a file with no sharing record", async () => {
+    getLinkedProfileIds.mockResolvedValue([]);
+    const pg = makePg({ ownedFileIds: [], shares: [] });
+
+    await expect(
+      userCanAccessMultipleFilesOrThrow({
+        pg,
+        userToCheck: "citizen",
+        userData: { userId: "support-m2m", accessToken: "t" },
+        logger: fakeLogger,
+        fileIds: ["F1"],
+      }),
+    ).rejects.toMatchObject({ statusCode: 403 });
+  });
+
+  it("resolves linked profiles for the user to check, not the caller", async () => {
+    getLinkedProfileIds.mockImplementation(async (id) =>
+      id === "parent" ? ["child"] : [],
+    );
+    const pg = makePg({
+      ownedFileIds: [],
+      shares: [{ fileId: "F1", userId: "child" }],
+    });
+
+    await expect(
+      userCanAccessMultipleFilesOrThrow({
+        pg,
+        userToCheck: "parent",
+        userData: { userId: "support-m2m", accessToken: "t" },
+        logger: fakeLogger,
+        fileIds: ["F1"],
+      }),
+    ).resolves.toBeUndefined();
+    expect(getLinkedProfileIds).toHaveBeenCalledWith("parent");
+  });
+
+  it("resolves when owned files and files shared with the user are mixed", async () => {
+    const pg = makePg({
+      ownedFileIds: ["F1"],
+      shares: [{ fileId: "F2", userId: "ps-user" }],
+    });
+
+    await expect(
+      userCanAccessMultipleFilesOrThrow({
+        pg,
+        userToCheck: "ps-user",
+        userData: {
+          userId: "ps-user",
+          organizationId: "org-1",
+          accessToken: "t",
+        },
+        logger: fakeLogger,
+        fileIds: ["F1", "F2"],
+      }),
+    ).resolves.toBeUndefined();
+  });
+
   it("throws 403 when only part of the org files are owned and the rest is unshared", async () => {
     getLinkedProfileIds.mockResolvedValue([]);
     const pg = makePg({

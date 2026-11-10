@@ -199,7 +199,7 @@ export class EmailProviderService {
   async update(params: { inputBody: ProviderUpdateBody }): Promise<void> {
     const { inputBody } = params;
     // check if provider exists
-    await this.get({
+    const existing = await this.get({
       providerId: inputBody.id,
     });
 
@@ -211,11 +211,14 @@ export class EmailProviderService {
 
     let updatedCount = 0;
     try {
-      // Encrypt password before storing it, only when a new one is provided
-      const encryptedPassword =
+      // Re-encrypt the kept password too, so legacy CBC values are rewritten as GCM
+      const password =
         inputBody.password && inputBody.password.length > 0
-          ? this.cryptographyService.encrypt(inputBody.password)
-          : undefined;
+          ? inputBody.password
+          : existing.password;
+      const encryptedPassword = password
+        ? this.cryptographyService.encrypt(password)
+        : undefined;
 
       updatedCount = await this.model.updateProvider({
         organisationId: this.organisationId,

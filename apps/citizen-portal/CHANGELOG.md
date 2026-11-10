@@ -1,5 +1,46 @@
 # Changelog
 
+## [0.1.9](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.8...citizen-portal-v0.1.9) (2026-11-10)
+
+
+### Features
+
+* **citizen-portal:** add the LE Card dashboard AB[#44320](https://github.com/ogcio/govie-services-messaging/issues/44320) ([#1104](https://github.com/ogcio/govie-services-messaging/issues/1104)) ([397a36b](https://github.com/ogcio/govie-services-messaging/commit/397a36b1617d0dfc6cf97cbee88608da32174776))
+* **citizen-portal:** add user actions tracking AB[#44554](https://github.com/ogcio/govie-services-messaging/issues/44554) ([#1074](https://github.com/ogcio/govie-services-messaging/issues/1074)) ([d362f69](https://github.com/ogcio/govie-services-messaging/commit/d362f6929f3ab8114f563cb8ccd1baa526a1fd99))
+* **citizen-portal:** implement updated empty states AB[#45538](https://github.com/ogcio/govie-services-messaging/issues/45538) ([#1134](https://github.com/ogcio/govie-services-messaging/issues/1134)) ([8fca2c4](https://github.com/ogcio/govie-services-messaging/commit/8fca2c42e4a3c346c4c1ccc6fb6280ef4981b941))
+* **citizen-portal:** remove the LE Card dashboard flag AB[#45528](https://github.com/ogcio/govie-services-messaging/issues/45528) ([#1124](https://github.com/ogcio/govie-services-messaging/issues/1124)) ([a57d98a](https://github.com/ogcio/govie-services-messaging/commit/a57d98a1e081fbaa1e5ba5f3c4b0234237e43758))
+* **citizen-portal:** update the messages list screen AB[#45040](https://github.com/ogcio/govie-services-messaging/issues/45040) ([#1107](https://github.com/ogcio/govie-services-messaging/issues/1107)) ([48b6d19](https://github.com/ogcio/govie-services-messaging/commit/48b6d1954a97bf89502f69ac727b8e69f255b3c0))
+* enable carbon UAT environment transport AB[#43550](https://github.com/ogcio/govie-services-messaging/issues/43550) ([#1109](https://github.com/ogcio/govie-services-messaging/issues/1109)) ([7e55e6b](https://github.com/ogcio/govie-services-messaging/commit/7e55e6b943b762921944e2ae9f267302f6c45ef9))
+* event tracking for life-events and applications AB[#44552](https://github.com/ogcio/govie-services-messaging/issues/44552) ([#1130](https://github.com/ogcio/govie-services-messaging/issues/1130)) ([dd20f4c](https://github.com/ogcio/govie-services-messaging/commit/dd20f4c19e4de53fa745e813ea22360e06ea4d2a))
+* show the current year in the footer copyright AB[#45547](https://github.com/ogcio/govie-services-messaging/issues/45547) ([#1136](https://github.com/ogcio/govie-services-messaging/issues/1136)) ([a2a535a](https://github.com/ogcio/govie-services-messaging/commit/a2a535a1a60af63d85365f8a37672eaa69788206))
+
+
+### Bug Fixes
+
+* **citizen-portal:** keep visited links from turning purple AB[#45403](https://github.com/ogcio/govie-services-messaging/issues/45403) ([#1113](https://github.com/ogcio/govie-services-messaging/issues/1113)) ([b9d8874](https://github.com/ogcio/govie-services-messaging/commit/b9d88742b12bc0ac3b8728b0b25bdc7fdfc3e452))
+* **citizen-portal:** name the message when reading the recipient profile AB[#45753](https://github.com/ogcio/govie-services-messaging/issues/45753) ([#1155](https://github.com/ogcio/govie-services-messaging/issues/1155)) ([4e65bb9](https://github.com/ogcio/govie-services-messaging/commit/4e65bb91a3d6b54bfd34d0c14ea92209d5445d3e))
+* **citizen-portal:** open deleted messages AB[#45566](https://github.com/ogcio/govie-services-messaging/issues/45566) ([#1128](https://github.com/ogcio/govie-services-messaging/issues/1128)) ([29cf68a](https://github.com/ogcio/govie-services-messaging/commit/29cf68af94fea6c584be9073474333c9861a5042))
+* **citizen-portal:** point env sample at dev port AB[#45379](https://github.com/ogcio/govie-services-messaging/issues/45379) ([#1112](https://github.com/ogcio/govie-services-messaging/issues/1112)) ([d9884db](https://github.com/ogcio/govie-services-messaging/commit/d9884db63f8ad450585533340f10f378f627de19))
+* **citizen-portal:** return to the gateway sign-in after onboarding AB[#45455](https://github.com/ogcio/govie-services-messaging/issues/45455) ([#1123](https://github.com/ogcio/govie-services-messaging/issues/1123)) ([2c71c76](https://github.com/ogcio/govie-services-messaging/commit/2c71c76b7485e4557b554010db71079930acc339))
+* **deps:** update all non-major dependencies ([#1090](https://github.com/ogcio/govie-services-messaging/issues/1090)) ([c023980](https://github.com/ogcio/govie-services-messaging/commit/c023980bf98bd413a9f5ef44dc153bcbc4f97076))
+* **deps:** update all non-major dependencies ([#1116](https://github.com/ogcio/govie-services-messaging/issues/1116)) ([82f8357](https://github.com/ogcio/govie-services-messaging/commit/82f8357aff3f01ba39299a54e765de5e8bea10f6))
+* **deps:** update all non-major dependencies ([#1139](https://github.com/ogcio/govie-services-messaging/issues/1139)) ([ed428f5](https://github.com/ogcio/govie-services-messaging/commit/ed428f5c46c510f67115b244fc44e5931e2bd971))
+* **deps:** update all non-major dependencies ([#1161](https://github.com/ogcio/govie-services-messaging/issues/1161)) ([cc1f9c1](https://github.com/ogcio/govie-services-messaging/commit/cc1f9c1a00e38984cd931d50be0a6f4b7cfde362))
+* **deps:** update dependency @tanstack/react-table to v9 ([#1118](https://github.com/ogcio/govie-services-messaging/issues/1118)) ([4dc8d41](https://github.com/ogcio/govie-services-messaging/commit/4dc8d412c7fa4afa51998ee8531f9ae2954d8f7a))
+* **profile-api:** require a message to the profile before linking it AB[#45748](https://github.com/ogcio/govie-services-messaging/issues/45748) ([#1151](https://github.com/ogcio/govie-services-messaging/issues/1151)) ([859c93a](https://github.com/ogcio/govie-services-messaging/commit/859c93a2775073d59945e608fe695057871cfa28))
+* restore the secure-message account-linking confirmation AB[#45455](https://github.com/ogcio/govie-services-messaging/issues/45455) ([#1119](https://github.com/ogcio/govie-services-messaging/issues/1119)) ([78cfba9](https://github.com/ogcio/govie-services-messaging/commit/78cfba91637fe180521881d67e6f9cc6de26943c))
+* **upload-api:** serve XML and JSON attachments as a download AB[#45749](https://github.com/ogcio/govie-services-messaging/issues/45749) ([#1152](https://github.com/ogcio/govie-services-messaging/issues/1152)) ([775d396](https://github.com/ogcio/govie-services-messaging/commit/775d3960a2e1f3b516ea390c6484b898a7f51c3f))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency jsdom to v31 ([#1140](https://github.com/ogcio/govie-services-messaging/issues/1140)) ([eda968b](https://github.com/ogcio/govie-services-messaging/commit/eda968b82db28054d1a2d42be1db3b35e0e24aea))
+* remove messaging-admin-next app AB[#45379](https://github.com/ogcio/govie-services-messaging/issues/45379) ([#1108](https://github.com/ogcio/govie-services-messaging/issues/1108)) ([d0d978a](https://github.com/ogcio/govie-services-messaging/commit/d0d978a5ccd65702e94f927d59e9965dde60e013))
+* Update dashboard tests AB[#44810](https://github.com/ogcio/govie-services-messaging/issues/44810) ([#1106](https://github.com/ogcio/govie-services-messaging/issues/1106)) ([41831dd](https://github.com/ogcio/govie-services-messaging/commit/41831ddda65904b8e5c9a416dd291006891edb03))
+* Update messaging tests AB[#45040](https://github.com/ogcio/govie-services-messaging/issues/45040) ([#1127](https://github.com/ogcio/govie-services-messaging/issues/1127)) ([5838dcf](https://github.com/ogcio/govie-services-messaging/commit/5838dcf8f3ed59ec11d96f889736fe2d88f4acc2))
+* Update tests for updated empty state AB[#45538](https://github.com/ogcio/govie-services-messaging/issues/45538) ([#1138](https://github.com/ogcio/govie-services-messaging/issues/1138)) ([4475076](https://github.com/ogcio/govie-services-messaging/commit/4475076a19c09e613c0a5747ecf92c40e7bafcee))
+* update to node 26 AB[#45024](https://github.com/ogcio/govie-services-messaging/issues/45024) ([#1102](https://github.com/ogcio/govie-services-messaging/issues/1102)) ([9eb7de0](https://github.com/ogcio/govie-services-messaging/commit/9eb7de0493593c5242ba26ab14491fb6f87256ab))
+
 ## [0.1.8](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.7...citizen-portal-v0.1.8) (2026-10-23)
 
 

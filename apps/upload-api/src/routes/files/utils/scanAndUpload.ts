@@ -24,6 +24,8 @@ type UploadResult = Awaited<ReturnType<Upload["done"]>>;
 
 type ScanResult = {
   isInfected: boolean;
+  // ClamAV error or timeout: the file is neither clean nor infected.
+  failed?: boolean;
   viruses: string[];
 };
 
@@ -545,6 +547,18 @@ export async function processUpload(
       dbVersion,
     );
     throw app.httpErrors.badRequest("File is infected");
+  }
+
+  if (scanResult?.failed) {
+    request.log.error({ key: upload.fileKey }, "antivirus scan failed");
+    await deleteObject(
+      app.s3Client.client,
+      app.s3Client.bucketName,
+      upload.fileKey,
+    ).catch((error) => {
+      request.log.error(error, "error deleting unscanned file from s3");
+    });
+    throw app.httpErrors.serviceUnavailable("Antivirus scan unavailable");
   }
 
   return insertUploadedFileMetadata(

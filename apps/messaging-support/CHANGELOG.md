@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.10](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.9...messaging-support-v0.1.10) (2026-11-05)
+
+
+### Features
+
+* **messaging-support:** sign out of Entra ID with confirmation dialog AB[#34253](https://github.com/ogcio/govie-services-messaging/issues/34253) ([#1101](https://github.com/ogcio/govie-services-messaging/issues/1101)) ([aff8f3a](https://github.com/ogcio/govie-services-messaging/commit/aff8f3ac720effdcc278381cbf50ed4389955c89))
+
+
+### Bug Fixes
+
+* **deps:** pin @logto/node to 4.0.1 AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1100](https://github.com/ogcio/govie-services-messaging/issues/1100)) ([700444e](https://github.com/ogcio/govie-services-messaging/commit/700444e493b051e8fd27058ad44c93b487355da4))
+* **deps:** update all non-major dependencies ([#1090](https://github.com/ogcio/govie-services-messaging/issues/1090)) ([c023980](https://github.com/ogcio/govie-services-messaging/commit/c023980bf98bd413a9f5ef44dc153bcbc4f97076))
+* **deps:** update all non-major dependencies ([#1116](https://github.com/ogcio/govie-services-messaging/issues/1116)) ([82f8357](https://github.com/ogcio/govie-services-messaging/commit/82f8357aff3f01ba39299a54e765de5e8bea10f6))
+* **messaging-support:** reject unresolved profiles before mutation AB[#45552](https://github.com/ogcio/govie-services-messaging/issues/45552) ([#1125](https://github.com/ogcio/govie-services-messaging/issues/1125)) ([5fa87b7](https://github.com/ogcio/govie-services-messaging/commit/5fa87b780e1427965be893634b8126c83992058a))
+* **messaging-support:** treat an unresolved profile as a client error AB[#45552](https://github.com/ogcio/govie-services-messaging/issues/45552) ([#1126](https://github.com/ogcio/govie-services-messaging/issues/1126)) ([dcbb830](https://github.com/ogcio/govie-services-messaging/commit/dcbb830fa5a0a57abd4b15faa1dd9438d3643694))
+
+
+### Miscellaneous Chores
+
+* update to node 26 AB[#45024](https://github.com/ogcio/govie-services-messaging/issues/45024) ([#1102](https://github.com/ogcio/govie-services-messaging/issues/1102)) ([9eb7de0](https://github.com/ogcio/govie-services-messaging/commit/9eb7de0493593c5242ba26ab14491fb6f87256ab))
+
 ## [0.1.9](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.8...messaging-support-v0.1.9) (2026-10-23)
 
 

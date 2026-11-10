@@ -4,7 +4,7 @@ import { Tag, type TagType, TagTypeEnum } from "@ogcio/design-system-react"
 import { useTranslations } from "next-intl"
 import type { SubmissionStatus } from "@/types"
 
-function tagTypeForStatus(status: SubmissionStatus): TagType {
+export function tagTypeForStatus(status: SubmissionStatus): TagType {
   switch (status) {
     case "initiated":
       return TagTypeEnum.Warning

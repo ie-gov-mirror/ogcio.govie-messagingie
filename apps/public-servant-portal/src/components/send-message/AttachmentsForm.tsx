@@ -7,11 +7,7 @@ import {
   toaster,
 } from "@ogcio/design-system-react"
 import { useAnalytics } from "@ogcio/nextjs-analytics"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { useTranslations } from "next-intl"
 import {
   useCallback,
@@ -24,6 +20,7 @@ import {
 import { BackButton } from "@/components/BackButton"
 import { DeleteIcon } from "@/components/icons/delete"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { ANALYTICS } from "@/const/analytics"
 import { defaultFormGap } from "@/util/datetime"
 import { SendMessageContext } from "./SendMessageContext"
@@ -138,7 +135,7 @@ export default function AttachmentsForm() {
     onStep({ ...message, attachments: [] }, "next")
   }
 
-  const columns = useMemo<ColumnDef<AttachmentEntry>[]>(
+  const columns = useMemo<Column<AttachmentEntry>[]>(
     () => [
       {
         id: "fileName",
@@ -170,10 +167,10 @@ export default function AttachmentsForm() {
     [handleRemove, t],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: attachments,
     columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   return (

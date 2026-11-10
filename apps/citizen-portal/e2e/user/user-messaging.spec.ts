@@ -65,14 +65,4 @@ test.describe("User Messages page", () => {
     expect(path).not.toBeNull()
   })
 
-  test("a user can access a recent message from the dashboard @regression", async () => {
-    await page.goto(`${DASHBOARD_URL}/en/my-dashboard`)
-    await expect(
-      page.getByRole("heading", { name: "Welcome back, Toby Tobyson" }),
-    ).toBeVisible()
-    //wait for no new messages to be removed
-    await page.waitForSelector("text=No new messages", { state: "detached" })
-    await page.getByText("View all messages").click()
-    await expect(page.url()).toContain(`${BASE_URL}`)
-  })
 })

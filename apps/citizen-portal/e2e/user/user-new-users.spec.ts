@@ -104,7 +104,7 @@ test.describe("User Messaging page", () => {
     await setSafeLevel(page, "2")
     await expect(page.getByRole("dialog")).toBeVisible()
     await page.goto(`${DASHBOARD_URL}`)
-    await expect(page.getByText("Your recent messages")).toBeVisible()
+    await expect(page.getByText("Recent applications")).toBeVisible()
     // locator for dashboard when LEA is disabled  
     //await expect(page.getByText("Your messages")).toBeVisible()
   })

@@ -202,6 +202,8 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       const isCrossProfileCitizenRequest =
         requesterId !== request.params.profileId &&
         request.userData?.organizationId === undefined;
+      // The gateway's M2M onboarding client reads the recipient of a secure
+      // message before the citizen links it, so it is never "related" yet.
       const isRelatedOnboardingProfile =
         !isSuperAdmin &&
         isCrossProfileCitizenRequest &&
@@ -211,7 +213,12 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
           reply,
           permissions: [Permissions.UserOnboarding.Read],
         })) &&
-        (await areProfilesRelated(pool, requesterId, request.params.profileId));
+        (request.userData?.isM2MApplication === true ||
+          (await areProfilesRelated(
+            pool,
+            requesterId,
+            request.params.profileId,
+          )));
       const canAccessOtherProfiles = isSuperAdmin || isRelatedOnboardingProfile;
       ensureUserCanAccessGetProfile(
         request.userData,
@@ -302,7 +309,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
     async ({
       body: data,
       params: { profileId },
-      query: { organizationId },
+      query: { organizationId, messageId },
       userData,
       log,
     }: FastifyRequestTypebox<typeof PatchProfileSchema>) => {
@@ -313,6 +320,10 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
           toUpdateProfileId: profileId,
           organizationId,
           toSetProfileData: data,
+          linkProof: {
+            messageId,
+            getMessagingSupportSdk: fastify.getMessagingSupportSdk,
+          },
           getLogtoClient: fastify.getLogtoClient,
           logger: log,
         }),
@@ -390,9 +401,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify: FastifyInstance) => {
       throw httpErrors.unauthorized("Cannot access data for this organization");
     }
 
-    // Super admin must request token for resource, not for organization
+    // Only a token without an organisation may list across organisations
     const organisationId = isSuperAdmin
-      ? request.body.organizationId
+      ? (request.userData?.organizationId ?? request.body.organizationId)
       : withOrganizationId(request);
 
     return { organisationId };

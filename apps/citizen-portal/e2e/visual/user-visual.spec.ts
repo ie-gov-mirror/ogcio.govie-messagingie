@@ -50,7 +50,7 @@ test.describe("User Visual Regression", () => {
     await navigateAndVerifyHeading(
       page,
       `${DASHBOARD_URL}/en/my-dashboard`,
-      "Welcome back, E2E Citizen User",
+      "Welcome, E2E Citizen User",
     )
     await expectSettledScreenshot(page, "user-dashboard.png")
   })

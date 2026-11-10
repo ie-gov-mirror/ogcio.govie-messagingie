@@ -1,6 +1,14 @@
+import type * as Crypto from "node:crypto";
 import { createHmac } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { verifySignature } from "~/utils/verify-signature.js";
+
+const timingSafeEqual = vi.hoisted(() => vi.fn());
+vi.mock("node:crypto", async (importOriginal) => {
+  const actual = await importOriginal<typeof Crypto>();
+  timingSafeEqual.mockImplementation(actual.timingSafeEqual);
+  return { ...actual, default: actual, timingSafeEqual };
+});
 
 describe("verifySignature", () => {
   const signingKey = "test-secret-key";
@@ -49,6 +57,16 @@ describe("verifySignature", () => {
     const result = verifySignature("different-key", payload, signature);
 
     expect(result).toBe(false);
+  });
+
+  it("compares a same-length signature in constant time", () => {
+    const payload = Buffer.from('{"test":"data"}');
+    const signature = generateSignature(signingKey, payload);
+    const tampered = `${signature.slice(0, -1)}${signature.endsWith("0") ? "1" : "0"}`;
+    timingSafeEqual.mockClear();
+
+    expect(verifySignature(signingKey, payload, tampered)).toBe(false);
+    expect(timingSafeEqual).toHaveBeenCalledOnce();
   });
 
   it("should handle empty payload", () => {

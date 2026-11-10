@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.4](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.3...public-servant-portal-v0.1.4) (2026-11-06)
+
+
+### Features
+
+* show the current year in the footer copyright AB[#45547](https://github.com/ogcio/govie-services-messaging/issues/45547) ([#1136](https://github.com/ogcio/govie-services-messaging/issues/1136)) ([a2a535a](https://github.com/ogcio/govie-services-messaging/commit/a2a535a1a60af63d85365f8a37672eaa69788206))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1090](https://github.com/ogcio/govie-services-messaging/issues/1090)) ([c023980](https://github.com/ogcio/govie-services-messaging/commit/c023980bf98bd413a9f5ef44dc153bcbc4f97076))
+* **deps:** update all non-major dependencies ([#1116](https://github.com/ogcio/govie-services-messaging/issues/1116)) ([82f8357](https://github.com/ogcio/govie-services-messaging/commit/82f8357aff3f01ba39299a54e765de5e8bea10f6))
+* **deps:** update dependency @tanstack/react-table to v9 ([#1118](https://github.com/ogcio/govie-services-messaging/issues/1118)) ([4dc8d41](https://github.com/ogcio/govie-services-messaging/commit/4dc8d412c7fa4afa51998ee8531f9ae2954d8f7a))
+* **public-servant-portal:** default base URL to dev port AB[#45379](https://github.com/ogcio/govie-services-messaging/issues/45379) ([#1111](https://github.com/ogcio/govie-services-messaging/issues/1111)) ([07543d9](https://github.com/ogcio/govie-services-messaging/commit/07543d988b648d7a2fe6a68e044b6cfa15434d64))
+
+
+### Miscellaneous Chores
+
+* remove messaging-admin-next app AB[#45379](https://github.com/ogcio/govie-services-messaging/issues/45379) ([#1108](https://github.com/ogcio/govie-services-messaging/issues/1108)) ([d0d978a](https://github.com/ogcio/govie-services-messaging/commit/d0d978a5ccd65702e94f927d59e9965dde60e013))
+* update to node 26 AB[#45024](https://github.com/ogcio/govie-services-messaging/issues/45024) ([#1102](https://github.com/ogcio/govie-services-messaging/issues/1102)) ([9eb7de0](https://github.com/ogcio/govie-services-messaging/commit/9eb7de0493593c5242ba26ab14491fb6f87256ab))
+
 ## [0.1.3](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.2...public-servant-portal-v0.1.3) (2026-10-23)
 
 

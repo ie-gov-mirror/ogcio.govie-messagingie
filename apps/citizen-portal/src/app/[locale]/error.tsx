@@ -2,18 +2,18 @@
 
 import { faro } from "@grafana/faro-web-sdk"
 import { Button, Heading, Paragraph, Stack } from "@ogcio/design-system-react"
-import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useTranslations } from "next-intl"
 import { useEffect, useRef } from "react"
 import { AnalyticsProvider } from "@/components/analytics-provider"
 import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 import {
   isChunkLoadError,
   reloadOnceIfChunkLoadError,
 } from "@/util/chunk-error"
 
 function SystemErrorTracker() {
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
   const fired = useRef(false)
 
   useEffect(() => {
@@ -21,14 +21,8 @@ function SystemErrorTracker() {
     fired.current = true
     // No error message in the event — raw messages are PII/cardinality risk.
     // Faro (below) keeps the diagnostic detail.
-    analyticsClient.trackEvent({
-      event: {
-        name: ANALYTICS.system.error.name,
-        category: ANALYTICS.system.category,
-        action: ANALYTICS.system.error.action,
-      },
-    })
-  }, [analyticsClient])
+    track.event(ANALYTICS.system.error)
+  }, [track])
 
   return null
 }

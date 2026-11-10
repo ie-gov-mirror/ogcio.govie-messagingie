@@ -1,0 +1,105 @@
+.card {
+  box-sizing: border-box;
+}
+
+/* Fills a stretched grid row. Percentage height is auto when the parent is. */
+.fill {
+  height: 100%;
+}
+
+.lifeInlineDefault {
+  height: 133px;
+  min-width: 136px;
+}
+
+.lifeInlineCompact {
+  height: 109px;
+  min-width: 136px;
+}
+
+.lifeAboveDefault {
+  height: 181px;
+  min-width: 136px;
+}
+
+.lifeAboveCompact {
+  height: 145px;
+  min-width: 136px;
+}
+
+.footerDefault {
+  box-sizing: border-box;
+  min-height: 100px;
+}
+
+.footerCompact {
+  box-sizing: border-box;
+  min-height: 92px;
+}
+
+/*
+ * DS Link is inline-flex and fit-content, so a title cannot wrap.
+ * The anchor stays a block (focus ring is not clipped); the span clamps.
+ */
+.titleLink:global(.gi-link) {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.stretch:global(.gi-link) {
+  position: static;
+}
+
+.stretch:global(.gi-link)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.clamp {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+}
+
+.anywhere {
+  overflow-wrap: anywhere;
+}
+
+.oneLine:global(.gi-link) {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ellipsis {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+}
+
+/* No text utility for emerald-700. Same currentColor approach as discovery. */
+.iconFrame {
+  color: var(--gieds-color-emerald-700);
+}
+
+/*
+ * ponytail: no Icon size is 20px (md is 24). Width and height cover the
+ * SVG; the component passes font-size for the font fallback. Upgrade
+ * path: an Icon size of 20px.
+ */
+.glyph {
+  width: var(--gieds-space-5);
+  height: var(--gieds-space-5);
+}

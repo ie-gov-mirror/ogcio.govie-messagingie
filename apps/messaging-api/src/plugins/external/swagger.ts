@@ -4,11 +4,18 @@ import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { getPackageInfo } from "../../utils/get-package-info.js";
+
+// The OpenAPI contract version, bumped deliberately when this API's contract
+// changes. It is NOT the package.json version: release-please bumps that on
+// every release (a dependency bump included), which silently desynced the
+// committed openapi-definition.yml twice (AB#41456, AB#44058). release-please
+// cannot maintain the committed spec either — its YAML updater reserialises
+// with js-yaml and drops formatting, while @fastify/swagger emits with `yaml`.
+// upload-api and scheduler-api already carry a literal here; all four match.
+const OPENAPI_CONTRACT_VERSION = "1.3.0";
 
 export default fp(
   async (fastify: FastifyInstance, _opts: FastifyPluginAsync) => {
-    const packageInfo = await getPackageInfo();
     // Have to register the two plugins in the same file
     // because swaggerUi is dependent on Swagger
     await fastify.register(fastifySwagger, {
@@ -16,7 +23,7 @@ export default fp(
         info: {
           title: "OGCIO MessagingIE API",
           description: "API for OGCIO MessagingIE Service",
-          version: packageInfo.version,
+          version: OPENAPI_CONTRACT_VERSION,
         },
         components: {
           securitySchemes: {

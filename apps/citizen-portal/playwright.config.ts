@@ -1,5 +1,9 @@
 import path from "node:path"
 import { defineConfig, devices } from "@playwright/test"
+import dotenv from "dotenv"
+
+// Read from ".env" file.
+dotenv.config({ path: path.resolve(__dirname, ".env") })
 
 /**
  * Playwright configuration for the unified citizen-portal app.

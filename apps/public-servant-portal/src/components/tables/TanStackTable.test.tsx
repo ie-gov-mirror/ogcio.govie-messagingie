@@ -1,12 +1,9 @@
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { createColumnHelper, useTable } from "@tanstack/react-table"
 import { render, screen } from "@testing-library/react"
 import type { ReactNode } from "react"
 import { describe, expect, it, vi } from "vitest"
 import { TanStackTable } from "./TanStackTable"
+import { type Features, features } from "./table-features"
 
 vi.mock("@ogcio/design-system-react", () => ({
   Spinner: () => <span data-testid='spinner' />,
@@ -38,7 +35,7 @@ vi.mock("@ogcio/design-system-react", () => ({
 
 type Row = { name: string }
 
-const columnHelper = createColumnHelper<Row>()
+const columnHelper = createColumnHelper<Features, Row>()
 const columns = [
   columnHelper.accessor("name", {
     header: "Name",
@@ -55,11 +52,7 @@ function TableHarness({
   emptyMessage?: string
   errorMessage?: string
 }) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+  const table = useTable({ features, data, columns })
 
   return <TanStackTable table={table} aria-label='People' {...props} />
 }

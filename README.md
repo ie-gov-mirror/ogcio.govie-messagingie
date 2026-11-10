@@ -11,8 +11,8 @@ pnpm monorepo consolidating the messaging platform's backend APIs and citizen/ad
 | `scheduler-api` | Fastify API | 8005 | Task queue: webhook callbacks scheduled/retried via Postgres polling |
 | `upload-api` | Fastify API | 8008 | File uploads to S3 with ClamAV virus scanning |
 | `citizen-portal` | Next.js | 4001 | Unified citizen portal (messages + profile + dashboard zones, one deploy) |
-| `messaging-admin-next` | Next.js | 3022 | Public-servant admin frontend for messaging |
-| `messaging-support` | Next.js | 1337 | Internal support/superadmin app |
+| `public-servant-portal` | Next.js | 4002 | Unified public-servant portal (messaging-admin + profile-admin zones, one deploy) |
+| `messaging-support` | Next.js | 1337 | Internal support app (Support Console) |
 
 ## Packages
 
@@ -32,7 +32,7 @@ pnpm monorepo consolidating the messaging platform's backend APIs and citizen/ad
 ```bash
 pnpm install
 pnpm dev:setup      # init .env files, start Docker services, create + migrate every API DB
-pnpm dev            # run all four APIs + citizen-portal + admin-next concurrently
+pnpm dev            # run all four APIs + citizen-portal + public-servant-portal concurrently
 pnpm dev:health     # check services are up
 ```
 
@@ -46,7 +46,7 @@ pnpm db:up          # postgresql, redis, maildev (1080 UI), clamav, ministack (S
 
 | Command | What it does |
 |---|---|
-| `pnpm dev` | messaging-api (:8002), profile-api (:8003), scheduler-api (:8005), upload-api (:8008), citizen-portal (:4001), admin-next (:3022) |
+| `pnpm dev` | messaging-api (:8002), profile-api (:8003), scheduler-api (:8005), upload-api (:8008), citizen-portal (:4001), public-servant-portal (:4002) |
 | `pnpm build` | `pnpm -r build` (all workspaces) |
 | `pnpm test` | `pnpm -r test` (all workspaces) |
 | `pnpm lint` / `pnpm format` | Biome across all workspaces |
@@ -54,9 +54,9 @@ pnpm db:up          # postgresql, redis, maildev (1080 UI), clamav, ministack (S
 | `pnpm db:reset` | reset all API DBs (with confirmation) |
 | `pnpm env:init` / `pnpm env:update` | create / sync `.env` files from `.env.sample` |
 
-Per-app variants exist (e.g. `pnpm dev:api`, `pnpm dev:api:upload`, `pnpm build:admin-next`). Run every API on its own with `pnpm dev:apis`, or run an app directly with a filter: `pnpm --filter <app> <script>`.
+Per-app variants exist (e.g. `pnpm dev:api`, `pnpm dev:api:upload`, `pnpm build:public-servant-portal`). Run every API on its own with `pnpm dev:apis`, or run an app directly with a filter: `pnpm --filter <app> <script>`.
 
-`pnpm dev` covers the surfaces under active development. The app outside that set has its own script: `pnpm dev:support` (superadmin, :1337).
+`pnpm dev` covers the surfaces under active development. The app outside that set has its own script: `pnpm dev:support` (support-console, :1337).
 
 ## Documentation
 

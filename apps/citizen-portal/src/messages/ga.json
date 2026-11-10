@@ -28,6 +28,29 @@
       "title": "Cuardaigh gnéithe nó foinse",
       "description": "Is ardán Rialtas é seo - tascanna riachtanacha riaracháin a fháil ar an ardán seo.",
       "link": "Féach gov.ie"
+    },
+    "leCards": {
+      "welcome": "Fáilte, <name></name>",
+      "intro": "D'imeachtaí saoil, d'aighneachtaí agus teachtaireachtaí ón rialtas in aon áit amháin.",
+      "lifeEvents": {
+        "title": "Imeachtaí saoil",
+        "viewAll": "Féach ar gach imeacht saoil"
+      },
+      "applications": {
+        "title": "Aighneachtaí le déanaí",
+        "viewAll": "Féach ar gach aighneacht",
+        "loading": "Ag lódáil aighneachtaí",
+        "error": "Earráid agus aighneachtaí á lódáil: {message}",
+        "emptyTitle": "Níl aon aighneacht agat",
+        "emptyText": "Nuair a dhéanann tú iarratas ar sheirbhís trí gov.ie, beidh d'aighneacht le feiceáil anseo."
+      },
+      "viewAll": "Féach ar gach ceann",
+      "card": {
+        "lastUpdate": "Nuashonrú deireanach {date}",
+        "latestMessage": "An teachtaireacht is déanaí",
+        "new": "Nua",
+        "noMessages": "Níl aon teachtaireachtaí fós"
+      }
     }
   },
   "submissions": {
@@ -41,9 +64,12 @@
     },
     "empty": {
       "title": "Níl aon aighneacht agat",
-      "description": "Nuair a dhéanann tú iarratas ar sheirbhís trí gov.ie, beidh d'aighneacht le feiceáil anseo.",
-      "all": "Níl aon aighneacht agat.",
-      "search": "Níl aon aighneacht a mheaitseálann do chuardach."
+      "description": "Nuair a dhéanann tú iarratas ar sheirbhís trí gov.ie, beidh d'aighneacht le feiceáil anseo."
+    },
+    "noResults": {
+      "title": "Níl aon aighneacht a mheaitseálann do chuardach",
+      "description": "Seiceáil an litriú nó bain triail as focail eile.",
+      "clear": "Glan an cuardach"
     },
     "table": {
       "column": {
@@ -64,13 +90,6 @@
       "processing": "Á phróiseáil",
       "completed": "Críochnaithe",
       "cancelled": "Cealaithe"
-    },
-    "recent": {
-      "title": "D'aighneachtaí le déanaí",
-      "loading": "Ag lódáil aighneachtaí",
-      "empty": "Níl aon aighneacht agat go fóill.",
-      "error": "Earráid agus aighneachtaí á lódáil: {message}",
-      "link": "Féach ar gach aighneacht"
     },
     "detail": {
       "loading": "Ag lódáil aighneachta",
@@ -136,11 +155,25 @@
         "selectAll": "Roghnaigh gach teachtaireacht ar an leathanach seo",
         "selectRow": "Roghnaigh teachtaireacht ó {sender}: {subject}"
       },
-      "empty": {
-        "unread": "Níl aon teachtaireachtaí neamhléite agat",
-        "read": "Níl aon teachtaireachtaí léite agat",
-        "all": "Níl aon theachtaireachtaí agat",
-        "search": "Níor aimsíodh aon teachtaireacht."
+      "loading": "Teachtaireachtaí á lódáil",
+      "noResults": {
+        "title": "Níl aon teachtaireacht a mheaitseálann do chuardach",
+        "description": "Seiceáil an litriú nó bain triail as focail eile, nó athraigh do scagairí.",
+        "clear": "Glan an cuardach"
+      }
+    },
+    "empty": {
+      "inbox": {
+        "title": "Níl aon theachtaireachtaí agat",
+        "description": "Nuair a sheolann seirbhís rialtais teachtaireacht chugat, beidh sí le feiceáil anseo."
+      },
+      "deleted": {
+        "title": "Níl aon teachtaireachtaí scriosta agat",
+        "description": "Beidh na teachtaireachtaí a scriosann tú le feiceáil anseo."
+      },
+      "folder": {
+        "title": "Tá an fillteán seo folamh",
+        "description": "Beidh na teachtaireachtaí a bhogann tú chuig an bhfillteán seo le feiceáil anseo."
       }
     },
     "button": {
@@ -184,6 +217,7 @@
     },
     "folders": {
       "sidebarAriaLabel": "Fillteáin teachtaireachtaí",
+      "inbox": "Bosca isteach",
       "deleted": "Scriosta",
       "createFolder": "Cruthaigh fillteán nua",
       "folderOptions": "Roghanna do {folder}",
@@ -292,7 +326,7 @@
         "contactSupport": "Cuir glaoch ar an tacaíocht"
       },
       "text": {
-        "trademark": "© 2025 Córas Dearaidh Rialtas na hÉireann"
+        "trademark": "© {year} Rialtas na hÉireann"
       }
     }
   },

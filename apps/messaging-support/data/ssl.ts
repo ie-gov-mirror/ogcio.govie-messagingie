@@ -26,7 +26,7 @@ export const buildSslConfig = (
     return false
   }
   return {
-    rejectUnauthorized: false,
+    rejectUnauthorized: true,
     ca,
   }
 }

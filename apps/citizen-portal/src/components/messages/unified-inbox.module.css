@@ -39,6 +39,27 @@
   width: 100%;
 }
 
+/* Figma: 24px (`pt-[24px]`) between the heading row/divider and the
+ * search-and-filter row below it. */
+.pageHeading {
+  margin: 0 0 var(--gieds-space-6, 1.5rem);
+}
+
+/* Divider runs the full row width, under the H1 as well as the view tabs. */
+.headingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gieds-space-4, 1rem);
+  border-bottom: var(--gieds-border-width-100, 1px) solid
+    var(--gieds-color-border-system-neutral-subtle, #e9eaed);
+}
+
+/* Figma: the empty-folder Alert caps at 640px. */
+.emptyAlert {
+  max-width: 40rem;
+}
+
 /*
  * DS gap (no mobile full-bleed on Container): viewport-edge list on small
  * screens.

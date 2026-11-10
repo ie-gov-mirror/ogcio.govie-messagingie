@@ -88,6 +88,7 @@ vi.mock("@/components/messages/folder-form-modal", () => ({
 }))
 
 import { MobileFolderPanel } from "@/components/messages/mobile-folder-panel"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 
 describe("MobileFolderPanel", () => {
   beforeEach(() => {
@@ -174,5 +175,39 @@ describe("MobileFolderPanel", () => {
     expect(await screen.findByTestId("mobile-folder-error")).toHaveTextContent(
       "A folder with this name already exists",
     )
+  })
+})
+
+describe("MobileFolderPanel analytics", () => {
+  const listOpened = (name: string, category: string, action: string) => ({
+    event: { name, category, action },
+  })
+
+  it("sends nothing on first render", () => {
+    const analytics = fakeAnalytics()
+    analytics.render(<MobileFolderPanel isOpen onClose={vi.fn()} />)
+
+    expect(analytics.event).not.toHaveBeenCalled()
+  })
+
+  it("tracks opening the Inbox, a Folder or Deleted, never which Folder", () => {
+    const analytics = fakeAnalytics()
+    analytics.render(<MobileFolderPanel isOpen onClose={vi.fn()} />)
+
+    fireEvent.click(screen.getByText("Inbox"))
+    fireEvent.click(screen.getByTestId("mobile-folder-tag-ehic"))
+    fireEvent.click(screen.getByText("Deleted"))
+
+    expect(analytics.event.mock.calls).toEqual([
+      [listOpened("inbox-open", "Message", "Inbox Opened")],
+      [listOpened("folder-open", "Folder", "Folder Opened")],
+      [
+        listOpened(
+          "deleted-messages-open",
+          "Message",
+          "Deleted Messages Opened",
+        ),
+      ],
+    ])
   })
 })

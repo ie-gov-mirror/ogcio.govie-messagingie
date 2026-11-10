@@ -18,8 +18,10 @@ vi.mock("next-intl", () => ({
     (namespace: string) => (key: string, values?: Record<string, string>) => {
       const byNamespace: Record<string, Record<string, string>> = {
         submissions: {
-          "empty.all": "You have no applications.",
-          "empty.search": "No applications match your search.",
+          loading: "Loading applications",
+          "noResults.title": "No applications match your search",
+          "noResults.description": "Check the spelling or try different words.",
+          "noResults.clear": "Clear search",
         },
         "submissions.table": {
           "column.title": "Title",
@@ -114,17 +116,52 @@ describe("SubmissionListTable", () => {
     expect(item).toHaveTextContent("Last update 18/01/2026")
   })
 
-  it("renders the empty state when there are no submissions", () => {
+  it("shows skeleton rows under the table header while loading", () => {
     render(
       <SubmissionListTable
         submissions={[]}
-        isLoading={false}
+        isLoading
         totalPages={0}
         pageSize={10}
         onPageSizeChange={onPageSizeChange}
       />,
     )
 
-    expect(screen.getByText("You have no applications.")).toBeInTheDocument()
+    expect(screen.getByText("Loading applications")).toBeInTheDocument()
+    expect(
+      screen.getByRole("columnheader", { name: "Title" }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByTestId("submission-skeleton-row").length,
+    ).toBeGreaterThan(0)
+    expect(
+      screen.getAllByTestId("submission-skeleton-card").length,
+    ).toBeGreaterThan(0)
+  })
+
+  it("shows no-results copy with a Clear search link when a search matches nothing", () => {
+    currentSearchParams = new URLSearchParams("search=passport&page=2&limit=20")
+    render(
+      <SubmissionListTable
+        submissions={[]}
+        isLoading={false}
+        totalPages={0}
+        pageSize={20}
+        onPageSizeChange={onPageSizeChange}
+      />,
+    )
+
+    expect(
+      screen.getByRole("heading", {
+        name: "No applications match your search",
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText("Check the spelling or try different words."),
+    ).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Clear search" })).toHaveAttribute(
+      "href",
+      "/en/my-submissions?limit=20",
+    )
   })
 })

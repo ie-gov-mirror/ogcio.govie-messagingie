@@ -14,14 +14,14 @@ import { useEffect, useState } from "react"
 export const MOBILE_MEDIA_QUERY = "(max-width: 1023px)"
 
 /**
- * Reports whether the viewport is at or below the mobile breakpoint.
+ * Reports whether a media query matches.
  *
  * Defaults to `false` (desktop-first) on the server and the first client
  * render so SSR markup is stable and hydration never mismatches; the real
  * value is resolved from `matchMedia` in an effect and updated on resize.
  */
-export function useIsMobile(): boolean {
-  const [isMobile, setIsMobile] = useState(false)
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false)
 
   useEffect(() => {
     if (
@@ -31,13 +31,18 @@ export function useIsMobile(): boolean {
       return
     }
 
-    const mediaQueryList = window.matchMedia(MOBILE_MEDIA_QUERY)
-    const update = () => setIsMobile(mediaQueryList.matches)
+    const mediaQueryList = window.matchMedia(query)
+    const update = () => setMatches(mediaQueryList.matches)
 
     update()
     mediaQueryList.addEventListener("change", update)
     return () => mediaQueryList.removeEventListener("change", update)
-  }, [])
+  }, [query])
 
-  return isMobile
+  return matches
+}
+
+/** Reports whether the viewport is at or below the mobile breakpoint. */
+export function useIsMobile(): boolean {
+  return useMediaQuery(MOBILE_MEDIA_QUERY)
 }

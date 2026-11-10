@@ -46,8 +46,9 @@ vi.mock("@/env/env.client", () => ({
 }))
 
 vi.mock("@tanstack/react-table", () => ({
-  getCoreRowModel: () => vi.fn(),
-  useReactTable: (options: unknown) => options,
+  columnVisibilityFeature: {},
+  tableFeatures: (value: unknown) => value,
+  useTable: (options: unknown) => options,
 }))
 
 vi.mock("@/components/tables/TanStackTable", () => ({

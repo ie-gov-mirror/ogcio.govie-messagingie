@@ -77,10 +77,12 @@ function OnboardingContent() {
   // 401 against the profile-bound session (AB#40235).
   const client = useSagClient()
   const { hosts } = useEnv()
-  const source = resolveOnboardingSource(
-    searchParams.get("source"),
-    getTrustedRedirectOrigins(hosts),
-  )
+  // `useOnboardingGuard` sends the gateway sign-in URL as `source`; the
+  // gateway validates its own `redirectUrl`.
+  const source = resolveOnboardingSource(searchParams.get("source"), [
+    ...getTrustedRedirectOrigins(hosts),
+    client.gatewayUrl,
+  ])
 
   const [status, setStatus] = useState<OnboardingStatus>("idle")
   const [timedOut, setTimedOut] = useState(false)

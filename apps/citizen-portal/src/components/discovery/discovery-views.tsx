@@ -6,6 +6,9 @@ import type { ComponentProps, ReactNode } from "react"
 import { hasMaterialSymbol } from "@/components/load-material-symbols"
 import { AppLink } from "@/components/navigation/app-link"
 import pageTitleStyles from "@/components/page-title.module.css"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
+import { useTrackView } from "@/hooks/use-track-view"
 import type {
   ContentLink,
   DiscoveryContent,
@@ -78,14 +81,22 @@ function DiscoveryCard({
   title,
   description,
   external = false,
+  onClick,
 }: {
   href: string
   title: ReactNode
   description?: string
   external?: boolean
+  onClick?: () => void
 }) {
   const link = (
-    <AppLink className='gi-font-bold' external={external} href={href} size='md'>
+    <AppLink
+      className='gi-font-bold'
+      external={external}
+      href={href}
+      onClick={onClick}
+      size='md'
+    >
       {title}
     </AppLink>
   )
@@ -111,6 +122,7 @@ export function LifeEventsIndexView({
   const t = useTranslations("discovery")
   const locale = useLocale()
   const lifeEvents = new Map(discovery.lifeEvents.map((le) => [le.slug, le]))
+  useTrackView(ANALYTICS.lifeEvent.overviewView)
 
   return (
     <PageColumn>
@@ -184,6 +196,9 @@ export function LifeEventView({
     title: link.text,
     external: opensInNewTab(link),
   })
+  useTrackView(ANALYTICS.lifeEvent.view)
+  const track = useTrack()
+  const trackJourneyStart = () => track.event(ANALYTICS.lifeEvent.journeyStart)
 
   return (
     <PageColumn>
@@ -209,13 +224,17 @@ export function LifeEventView({
           </Stack>
           {lifeEvent.services.length > 0 ? (
             <ul className={discoveryListClass}>
-              {lifeEvent.services.map((service, i) => (
-                <DiscoveryCard
-                  key={i}
-                  description={service.description}
-                  {...cardLink(service.link)}
-                />
-              ))}
+              {lifeEvent.services.map((service, i) => {
+                const card = cardLink(service.link)
+                return (
+                  <DiscoveryCard
+                    key={i}
+                    description={service.description}
+                    onClick={card.external ? trackJourneyStart : undefined}
+                    {...card}
+                  />
+                )
+              })}
             </ul>
           ) : null}
         </Stack>
@@ -246,11 +265,17 @@ export function ServiceView({
   service: ServiceDetail
 }) {
   const locale = useLocale()
+  const track = useTrack()
   return (
     <PageColumn>
       <BackLink href={`/${locale}/discovery/${lifeEvent.slug}`} />
       <PageIntro eyebrow={lifeEvent.title} title={service.title}>
-        <ContentBlocks blocks={service.body} />
+        <ContentBlocks
+          blocks={service.body}
+          onExternalButtonClick={() =>
+            track.event(ANALYTICS.lifeEvent.journeyStart)
+          }
+        />
       </PageIntro>
     </PageColumn>
   )

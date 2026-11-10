@@ -1,6 +1,5 @@
 packages:
   - "apps/messaging-api"
-  - "apps/messaging-admin-next"
   - "apps/public-servant-portal"
   - "apps/messaging-support"
   - "apps/citizen-portal"
@@ -38,6 +37,10 @@ overrides:
   #   axios: 1.19.0 # GHSA-gcfj-64vw-6mp9 and axios 1.18.0 advisory set
   #   form-data: 4.0.6 # CVE-2026-12143, GHSA-hmw2-7cc7-3qxx
   uuid: 11.1.1 # CVE-2026-41907, GHSA-w5hq-g745-h8pq (last CJS line; 8/9/10 unpatched)
+  "brace-expansion@>=5 <5.0.12": 5.0.12 # CVE-2026-102276, CVE-2026-102278, GHSA-q2hr-2g5m-vwhr. Transitive via minimatch 11
+  "@sentry/nextjs@<10.75.2": 10.75.2 # CVE-2026-114139, GHSA-mchm-gjx6-7h55. Optional peer of @ogcio/o11y-sdk-node
+  glob: 14.0.2 # GHSA-3g3m-2fjr-6pw4, no fix below 14. Transitive via postgrator, @fastify/static, archiver-utils, rimraf, cacache, @sentry/bundler-plugins
+  minimatch: 11.0.1 # GHSA-g3hv-75wg-m249, no fix below 11. Transitive via glob, @fastify/otel, readdir-glob, nodemon, @redocly/openapi-core
 #   "@opentelemetry/core": 2.10.0 # CVE-2026-54285, GHSA-8988-4f7v-96qf
 allowUnusedPatches: true
 allowBuilds:

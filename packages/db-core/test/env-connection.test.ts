@@ -75,7 +75,7 @@ describe("getSslConfig", () => {
 
   it("reads the CA bundle when SSL is on", () => {
     const ssl = getSslConfig(true, { caCertPath: caPath });
-    expect(ssl).toMatchObject({ rejectUnauthorized: false });
+    expect(ssl).toMatchObject({ rejectUnauthorized: true });
     expect((ssl as { ca: Buffer }).ca.toString()).toBe("FAKE CA BUNDLE");
   });
 

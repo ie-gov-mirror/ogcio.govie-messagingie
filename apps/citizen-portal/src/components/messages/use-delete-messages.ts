@@ -7,6 +7,8 @@ import {
   type DeleteMessagesResponse,
   messagesApi,
 } from "@/api/messages"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 
 export interface DeleteMessagesResult {
   /** Whether the most recent delete succeeded. */
@@ -29,6 +31,7 @@ export interface UseDeleteMessagesOptions {
 export function useDeleteMessages(options: UseDeleteMessagesOptions = {}) {
   const { onSettled } = options
 
+  const track = useTrack()
   const { trigger, isLoading } = useGatewayMutation<
     DeleteMessagesResponse,
     DeleteMessagesBody
@@ -44,6 +47,7 @@ export function useDeleteMessages(options: UseDeleteMessagesOptions = {}) {
       try {
         await trigger(body)
         const result: DeleteMessagesResult = { ok: true, ids: body.ids }
+        track.event(ANALYTICS.message.delete, body.ids.length)
         setLastResult(result)
         return result
       } catch {
@@ -54,7 +58,7 @@ export function useDeleteMessages(options: UseDeleteMessagesOptions = {}) {
         onSettled?.()
       }
     },
-    [trigger, onSettled],
+    [trigger, onSettled, track],
   )
 
   const dismissResult = useCallback(() => setLastResult(null), [])

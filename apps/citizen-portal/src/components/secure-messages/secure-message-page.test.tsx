@@ -83,7 +83,10 @@ describe("SecureMessagePage", () => {
 
   it("redirects directly when the current user can access the message", async () => {
     mocks.fetchStates = [
-      { data: { recipientUserId: "current-user-id" }, isLoading: false },
+      {
+        data: { recipientUserId: "current-user-id", subject: "Hello" },
+        isLoading: false,
+      },
       idle(),
       idle(),
       idle(),
@@ -99,6 +102,27 @@ describe("SecureMessagePage", () => {
       "/messaging/api/v1/messages/message-id",
     ])
     expect(mocks.fetchCalls[1]).toEqual([null, { actorType: "m2m" }])
+  })
+
+  // AB#45455: the own-token fetch can succeed (200) with the redacted
+  // onboarding shape (no `subject`) when the citizen has onboarding
+  // permission but doesn't own the message. That must still show the
+  // account-linking confirmation, not redirect straight to the inbox.
+  it("shows account linking when the own-token fetch returns the redacted message", () => {
+    mocks.fetchStates = [
+      { data: { recipientUserId: "linked-user-id" }, isLoading: false },
+      idle(),
+      { data: profile("linked-user-id"), isLoading: false },
+      { data: profile("current-profile-id"), isLoading: false },
+    ]
+
+    render(<SecureMessagePage />)
+
+    expect(screen.getByTestId("account-linking")).toHaveTextContent(
+      "current-profile-id:linked-user-id:message-id",
+    )
+    expect(mocks.fetchCalls[1]).toEqual([null, { actorType: "m2m" }])
+    expect(mocks.replace).not.toHaveBeenCalled()
   })
 
   it("uses the M2M fallback and presents unlinked profiles", () => {
@@ -120,7 +144,10 @@ describe("SecureMessagePage", () => {
     expect(mocks.fetchCalls).toEqual([
       ["/messaging/api/v1/messages/message-id"],
       ["/messaging/api/v1/messages/message-id", { actorType: "m2m" }],
-      ["/profile/api/v1/profiles/linked-user-id", { actorType: "m2m" }],
+      [
+        "/profile/api/v1/profiles/linked-user-id?messageId=message-id",
+        { actorType: "m2m" },
+      ],
       ["/profile/api/v1/profiles/current-user-id"],
     ])
     expect(mocks.replace).not.toHaveBeenCalled()

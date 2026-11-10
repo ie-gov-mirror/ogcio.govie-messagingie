@@ -26,6 +26,15 @@ import routes from "./routes/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// The OpenAPI contract version, bumped deliberately when this API's contract
+// changes. It is NOT the package.json version: release-please bumps that on
+// every release (a dependency bump included), which silently desynced the
+// committed openapi-definition.yml twice (AB#41456, AB#44058). release-please
+// cannot maintain the committed spec either — its YAML updater reserialises
+// with js-yaml and drops formatting, while @fastify/swagger emits with `yaml`.
+// messaging-api and profile-api carry the same literal; all four match.
+const OPENAPI_CONTRACT_VERSION = "0.1.0";
+
 export async function build(opts?: FastifyServerOptions) {
   const app = fastify(opts).withTypeProvider<TypeBoxTypeProvider>();
 
@@ -48,7 +57,7 @@ export async function build(opts?: FastifyServerOptions) {
       info: {
         title: "OGCIO Scheduler API",
         description: "API for OGCIO Scheduler",
-        version: "0.1.0",
+        version: OPENAPI_CONTRACT_VERSION,
       },
     },
   });

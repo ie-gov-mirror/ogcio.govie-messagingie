@@ -1,9 +1,9 @@
 "use client"
 
 import { Icon, type IconProps, Link } from "@ogcio/design-system-react"
-import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useTranslations } from "next-intl"
 import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 import styles from "./message-detail.module.css"
 
 export interface MessageDetailToolbarProps {
@@ -24,7 +24,7 @@ export function MessageDetailToolbar({
   const tBack = useTranslations("home.button")
   const tMove = useTranslations("home.move")
   const tDetail = useTranslations("home.detail")
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
 
   const actionDisabled = isDeleting || isMoving
 
@@ -36,15 +36,7 @@ export function MessageDetailToolbar({
         href={backHref}
         className={styles.toolbarAction}
         aria-label={tBack("back")}
-        onClick={() =>
-          analyticsClient.trackEvent({
-            event: {
-              name: ANALYTICS.message.back.name,
-              category: ANALYTICS.message.category,
-              action: ANALYTICS.message.back.action,
-            },
-          })
-        }
+        onClick={() => track.event(ANALYTICS.message.back)}
       >
         <Icon
           icon='arrow_back'

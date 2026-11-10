@@ -9,8 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@ogcio/design-system-react"
-import { flexRender, type Table as ReactTable } from "@tanstack/react-table"
+import {
+  type CellData,
+  flexRender,
+  type RowData,
+  type TableFeatures,
+} from "@tanstack/react-table"
 import type { ComponentProps, ReactNode } from "react"
+import type { TableInstance } from "./table-features"
 
 export type TableColumnSize =
   | "xs-fixed"
@@ -21,15 +27,19 @@ export type TableColumnSize =
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData, TValue> {
+  interface ColumnMeta<
+    in out TFeatures extends TableFeatures,
+    in out TData extends RowData,
+    TValue extends CellData = CellData,
+  > {
     size?: TableColumnSize
     headerClassName?: string
     cellClassName?: string
   }
 }
 
-type TanStackTableProps<T> = {
-  table: ReactTable<T>
+type TanStackTableProps<T extends RowData> = {
+  table: TableInstance<T>
   isLoading?: boolean
   emptyMessage?: string
   errorMessage?: string
@@ -37,7 +47,7 @@ type TanStackTableProps<T> = {
   "aria-label"?: string
 } & Partial<Pick<ComponentProps<typeof Table>, "layout" | "noBorder">>
 
-export function TanStackTable<T>({
+export function TanStackTable<T extends RowData>({
   table,
   isLoading = false,
   emptyMessage,

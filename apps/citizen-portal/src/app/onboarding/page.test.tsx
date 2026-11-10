@@ -18,6 +18,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
  */
 
 const signIn = vi.fn()
+const nav = vi.hoisted(() => ({
+  search: "",
+  profile: null as { id: string } | null,
+}))
 
 vi.mock("@ogcio/sag-client/react", () => ({
   CONNECTOR_MYGOVID: "mygovid",
@@ -26,7 +30,7 @@ vi.mock("@ogcio/sag-client/react", () => ({
     loading: false,
     signIn,
   }),
-  useGatewayFetch: () => ({ data: null, refresh: vi.fn() }),
+  useGatewayFetch: () => ({ data: nav.profile, refresh: vi.fn() }),
   // The enclosing OnboardingShell provides the `profile` app identity.
   useSagClient: () => ({
     gatewayUrl: "http://sag.local.test:3333",
@@ -57,7 +61,7 @@ vi.mock("next-intl", () => ({
 }))
 
 vi.mock("next/navigation", () => ({
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams(nav.search),
 }))
 
 vi.mock("@/env/env.client", () => ({
@@ -109,5 +113,35 @@ describe("OnboardingPage — onboarding POST identity (AB#40235)", () => {
     // The load-bearing assertion: matches the provider-bound session app.
     expect(headers["X-Application"]).toBe("profile")
     expect(headers["X-Application"]).not.toBe("citizen-portal")
+  })
+})
+
+describe("OnboardingPage — return to the gateway sign-in source (AB#45455)", () => {
+  const originalFetch = globalThis.fetch
+  const originalLocation = window.location
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch
+    Object.defineProperty(window, "location", { value: originalLocation })
+    nav.search = ""
+    nav.profile = null
+  })
+
+  it("redirects to the gateway sign-in URL the onboarding guard sent, not the base URL", async () => {
+    const source =
+      "http://sag.local.test:3333/auth/sign-in?app=messaging&redirectUrl=" +
+      encodeURIComponent(
+        "http://messaging.local.test/en/secure-messages?id=msg-1",
+      )
+    nav.search = new URLSearchParams({ source }).toString()
+    nav.profile = { id: "user-1" }
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => ({}) }) as never
+    Object.defineProperty(window, "location", { value: { href: "" } })
+
+    render(<OnboardingPage />)
+
+    await waitFor(() => expect(window.location.href).toBe(source))
   })
 })

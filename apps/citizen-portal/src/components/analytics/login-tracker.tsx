@@ -1,8 +1,8 @@
 "use client"
 
-import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useEffect, useRef } from "react"
 import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 
 const SESSION_KEY = "citizen_portal_login_tracked"
 
@@ -12,7 +12,7 @@ const SESSION_KEY = "citizen_portal_login_tracked"
  * renders once the user is authenticated.
  */
 export function LoginTracker() {
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
   const fired = useRef(false)
 
   useEffect(() => {
@@ -26,14 +26,8 @@ export function LoginTracker() {
       return
     }
     fired.current = true
-    analyticsClient.trackEvent({
-      event: {
-        name: ANALYTICS.user.login.name,
-        category: ANALYTICS.user.category,
-        action: ANALYTICS.user.login.action,
-      },
-    })
-  }, [analyticsClient])
+    track.event(ANALYTICS.user.login)
+  }, [track])
 
   return null
 }

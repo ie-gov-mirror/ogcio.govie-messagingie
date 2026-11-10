@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
     ) => callback(),
   ),
   isLoading: false,
+  mutationPath: "",
 }))
 
 vi.mock("@ogcio/design-system-react", () => ({
@@ -38,10 +39,10 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mocks.replace }),
 }))
 vi.mock("@ogcio/sag-client/react", () => ({
-  useGatewayMutation: () => ({
-    trigger: mocks.trigger,
-    isLoading: mocks.isLoading,
-  }),
+  useGatewayMutation: (path: string) => {
+    mocks.mutationPath = path
+    return { trigger: mocks.trigger, isLoading: mocks.isLoading }
+  },
 }))
 vi.mock("@grafana/faro-web-sdk", () => ({
   faro: { api: { pushLog: mocks.pushLog } },
@@ -60,6 +61,7 @@ vi.mock("@/const/traces", () => ({
   },
 }))
 
+import { fakeAnalytics } from "../../../test/utils/analytics"
 import { ConfirmButton } from "./confirm-button"
 
 const props = {
@@ -73,6 +75,14 @@ describe("ConfirmButton", () => {
     vi.clearAllMocks()
     mocks.isLoading = false
     mocks.trigger.mockResolvedValue({ preferredLanguage: "ga" })
+  })
+
+  it("sends the secure message id as proof of the link", () => {
+    render(<ConfirmButton {...props} />)
+
+    expect(mocks.mutationPath).toBe(
+      "/profile/api/v1/profiles/target-id?messageId=message-id",
+    )
   })
 
   it("links the profile and routes using the returned preferred language", async () => {
@@ -168,5 +178,47 @@ describe("ConfirmButton", () => {
 
     expect(screen.getByRole("button", { name: /confirm/ })).toBeDisabled()
     expect(screen.getByLabelText("loading")).toBeInTheDocument()
+  })
+
+  describe("analytics", () => {
+    const linkingEvent = (name: string, action: string) => ({
+      event: { name, category: "Account Linking", action },
+    })
+
+    async function confirm() {
+      const analytics = fakeAnalytics()
+      analytics.render(<ConfirmButton {...props} />)
+      fireEvent.click(screen.getByRole("button", { name: "confirm" }))
+      await waitFor(() => expect(analytics.event).toHaveBeenCalled())
+      return analytics
+    }
+
+    it("tracks a successful link", async () => {
+      const analytics = await confirm()
+
+      expect(analytics.event.mock.calls).toEqual([
+        [linkingEvent("account-linking-confirm", "Account Linking Confirmed")],
+      ])
+    })
+
+    it.each([
+      ["a generic failure", new Error("gateway unavailable")],
+      [
+        "an already-owned profile",
+        Object.assign(new Error("Bad Request"), { status: 400 }),
+      ],
+    ])("tracks a failed link on %s", async (_, error) => {
+      mocks.trigger.mockRejectedValue(error)
+      const analytics = await confirm()
+
+      expect(analytics.event.mock.calls).toEqual([
+        [
+          linkingEvent(
+            "account-linking-confirm-error",
+            "Account Linking Failed",
+          ),
+        ],
+      ])
+    })
   })
 })

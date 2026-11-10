@@ -368,6 +368,25 @@ describe("GET /api/v1/profiles/{id} data", async () => {
     expect(response.statusCode).toBe(403);
   });
 
+  it("Returns the profile when an onboarding M2M application asks for an unrelated profile", async () => {
+    app = getServer({
+      userId: "gateway-m2m-app",
+      hasOnboardingPermissions: true,
+      organizationId: undefined,
+      isM2MApplication: true,
+    });
+
+    const response = await app.inject({
+      method: "GET",
+      url: `/api/v1/profiles/${loggedInUser}`,
+    });
+
+    expect(response.statusCode).toBe(200);
+    const responseBody = (await response.json()).data as ProfileWithDetails;
+    expect(responseBody.id).toBe(loggedInUser);
+    expect(responseBody.primaryUserId).toBe(loggedInUser);
+  });
+
   it("Returns expected data when a public servant asks for itself private details", async () => {
     const mainProfile = await createUser(
       pool,
@@ -543,12 +562,19 @@ function getServer({
   userId,
   hasOnboardingPermissions,
   organizationId,
+  isM2MApplication,
 }: {
   userId: string;
   hasOnboardingPermissions: boolean;
   organizationId: string | undefined;
+  isM2MApplication?: boolean;
 }): FastifyInstance {
-  setAuth({ userId, hasOnboardingPermissions, organizationId });
+  setAuth({
+    userId,
+    hasOnboardingPermissions,
+    organizationId,
+    isM2MApplication,
+  });
   return app;
 }
 

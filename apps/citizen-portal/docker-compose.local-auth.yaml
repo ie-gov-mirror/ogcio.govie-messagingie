@@ -53,7 +53,7 @@
 #   mirror (`428528001781.dkr.ecr.eu-west-1.amazonaws.com/...`) that
 #   contributors can't pull without AWS credentials. The local override
 #   in `local-auth/Dockerfile.sag-local` keeps the build steps identical
-#   but swaps the runner base to public `node:24-alpine`. See the
+#   but swaps the runner base to public `node:26-alpine`. See the
 #   comment block at the top of that file for the upkeep contract.
 
 services:
@@ -137,7 +137,7 @@ services:
   # scripts/dev/seed-local-logto.mjs for a wrapper that does it.
   logto:
     container_name: citizen-portal-logto
-    image: svhd/logto:1.38.0
+    image: svhd/logto:1.46.0
     depends_on:
       postgres:
         condition: service_healthy
@@ -196,7 +196,7 @@ services:
   # ── Secure API Gateway ──────────────────────────────────────────────
   # Built from the local override Dockerfile (see
   # local-auth/Dockerfile.sag-local for the rationale on the runner
-  # base swap from private ECR -> public node:24-alpine).
+  # base swap from private ECR -> public node:26-alpine).
   secure-api-gateway:
     container_name: citizen-portal-sag
     build:

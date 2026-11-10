@@ -110,6 +110,9 @@ export default async function routes(app: FastifyInstance) {
           "You are not authorized to access other users data",
         );
       } catch (e) {
+        if (e instanceof app.httpErrors.HttpError) {
+          throw e;
+        }
         throw app.httpErrors.createError(500, "Error getting files", {
           parent: e,
         });

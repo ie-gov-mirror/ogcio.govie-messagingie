@@ -1,0 +1,41 @@
+/*
+ * Inline Inbox/Deleted switch (Figma "View tabs", AB#45318 exploration).
+ * The full-width divider lives on `.headingRow` in unified-inbox.module.css
+ * (it runs under the H1 too, not just the tab pair); this is just the row
+ * of links.
+ */
+.viewTabs {
+  display: flex;
+  align-items: center;
+  height: 3.5rem;
+  gap: var(--gieds-space-4, 1rem);
+}
+
+.tab,
+.tab:visited {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--gieds-space-1, 0.25rem);
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  color: var(--gieds-color-text-system-neutral-interactive-muted, #686d78);
+  text-decoration: none;
+  border-bottom: var(--gieds-border-width-200, 2px) solid transparent;
+}
+
+.tab:hover,
+.tab:hover:visited {
+  color: var(--gieds-color-text-system-neutral-interactive-default, #0b0c0c);
+}
+
+.tabActive,
+.tabActive:visited,
+.tabActive:hover:visited {
+  font-weight: var(--gieds-font-weight-700, 700);
+  color: var(--gieds-color-text-system-neutral-interactive-default, #0b0c0c);
+  border-bottom-color: var(
+    --gieds-color-border-tone-primary-accent-selected,
+    #008971
+  );
+}

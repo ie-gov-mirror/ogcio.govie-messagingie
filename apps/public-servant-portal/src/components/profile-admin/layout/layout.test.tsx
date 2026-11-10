@@ -12,7 +12,10 @@ vi.mock("@ogcio/design-system-react", () => ({
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => (key: string, values?: { year?: number }) =>
+    key === "text.trademark"
+      ? `© ${values?.year ?? ""} Government of Ireland`
+      : key,
 }))
 
 vi.mock("@/env/env.client", () => ({
@@ -49,6 +52,8 @@ describe("profile-admin layout", () => {
       "https://profile.example/en/privacy-policy",
     )
     expect(screen.getAllByRole("link")).toHaveLength(5)
-    expect(screen.getByText("text.trademark")).toBeInTheDocument()
+    expect(
+      screen.getByText(`© ${new Date().getFullYear()} Government of Ireland`),
+    ).toBeInTheDocument()
   })
 })

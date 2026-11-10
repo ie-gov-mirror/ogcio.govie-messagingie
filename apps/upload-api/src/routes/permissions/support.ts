@@ -36,15 +36,21 @@ export default async function routes(app: FastifyInstance) {
         );
       }
 
-      const sharedWith =
-        "userIds" in request.body
-          ? request.body.userIds
-          : [request.body.userId];
-      await ensureShareTargetProfilesExist({
-        organizationId: request.userData.organizationId,
-        userIds: sharedWith,
-        logger: request.log,
-      });
+      // Org callers still have to name a profile in their organisation.
+      // The lifecycle worker is a platform app with no organisation, and the
+      // citizen it just loaded has none either, so that lookup 503s and the
+      // export never gets shared. It already resolved the profile.
+      if (request.userData.organizationId) {
+        const sharedWith =
+          "userIds" in request.body
+            ? request.body.userIds
+            : [request.body.userId];
+        await ensureShareTargetProfilesExist({
+          organizationId: request.userData.organizationId,
+          userIds: sharedWith,
+          logger: request.log,
+        });
+      }
 
       await addFileSharing(app.pg, request.body);
 

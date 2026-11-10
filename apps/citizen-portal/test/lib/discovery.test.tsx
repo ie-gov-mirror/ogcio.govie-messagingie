@@ -1,7 +1,7 @@
 import { mkdtemp, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { cleanup, render, screen } from "@testing-library/react"
+import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { NextIntlClientProvider } from "next-intl"
 import type { ReactNode } from "react"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
@@ -15,7 +15,11 @@ import styles from "@/components/discovery/discovery-views.module.css"
 import { LoadMaterialSymbols } from "@/components/load-material-symbols"
 import pageTitleStyles from "@/components/page-title.module.css"
 import type { ContentBlock } from "@/lib/discovery"
-import { getDiscovery, getLifeEvent } from "@/lib/discovery"
+import {
+  getDashboardLifeEvents,
+  getDiscovery,
+  getLifeEvent,
+} from "@/lib/discovery"
 import en from "@/messages/en.json"
 import ga from "@/messages/ga.json"
 import {
@@ -25,6 +29,7 @@ import {
 import { buildDiscoveryContent } from "../../scripts/static-content/pipeline/index.ts"
 import { createMockTransport } from "../../scripts/static-content/wagtail/index.ts"
 import { writeStaticContent } from "../../scripts/static-content/write.ts"
+import { fakeAnalytics } from "../utils/analytics"
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/en/discovery",
@@ -96,6 +101,31 @@ describe("getDiscovery", () => {
     expect(() => getLifeEvent(getDiscovery("en", outDir), "nope")).toThrow(
       'Unknown life event "nope"',
     )
+  })
+})
+
+describe("getDashboardLifeEvents", () => {
+  it("puts highlighted first, then one per category, four in total", () => {
+    const discovery = getDiscovery("en", outDir)
+    const [first, ...rest] = discovery.categories
+    const highlighted = rest[2].lifeEventSlugs[1]
+    const lifeEvents = discovery.lifeEvents.map((le) => ({
+      ...le,
+      highlighted: le.slug === highlighted,
+    }))
+
+    const picked = getDashboardLifeEvents({ ...discovery, lifeEvents })
+
+    expect(picked.map((le) => le.slug)).toEqual([
+      highlighted,
+      first.lifeEventSlugs[0],
+      rest[0].lifeEventSlugs[0],
+      rest[1].lifeEventSlugs[0],
+    ])
+    expect(picked[1]).toMatchObject({
+      category: first.title,
+      icon: first.icon,
+    })
   })
 })
 
@@ -555,5 +585,132 @@ describe("discovery views", () => {
     expect(screen.getByText("Lead sentence.").closest("article")).toHaveClass(
       "gi-prose",
     )
+  })
+})
+
+describe("discovery analytics", () => {
+  function renderTracked(ui: ReactNode) {
+    const analytics = fakeAnalytics()
+    analytics.render(
+      <NextIntlClientProvider locale='en' messages={en}>
+        {ui}
+      </NextIntlClientProvider>,
+    )
+    return analytics
+  }
+
+  it("reports the life events overview view", () => {
+    const analytics = renderTracked(
+      <LifeEventsIndexView discovery={getDiscovery("en", outDir)} />,
+    )
+    expect(analytics.event.mock.calls).toEqual([
+      [
+        {
+          event: {
+            category: "Life Event",
+            name: "discovery-view",
+            action: "Life Events Overview Viewed",
+          },
+        },
+      ],
+    ])
+  })
+
+  it("reports a life event view without saying which life event", () => {
+    const analytics = renderTracked(
+      <LifeEventView
+        lifeEvent={getLifeEvent(
+          getDiscovery("en", outDir),
+          "child-starting-school",
+        )}
+        categoryTitle='Education & Learning'
+      />,
+    )
+    expect(analytics.event.mock.calls).toEqual([
+      [
+        {
+          event: {
+            category: "Life Event",
+            name: "life-event-view",
+            action: "Life Event Viewed",
+          },
+        },
+      ],
+    ])
+    expect(JSON.stringify(analytics.event.mock.calls)).not.toMatch(/school/i)
+  })
+
+  const journeyStarted = [
+    {
+      event: {
+        category: "Life Event",
+        name: "journey-start",
+        action: "Journey Started",
+      },
+    },
+  ]
+
+  it("reports a journey start for an external service, not for guidance", () => {
+    const analytics = renderTracked(
+      <LifeEventView
+        lifeEvent={getLifeEvent(
+          getDiscovery("en", outDir),
+          "child-starting-school",
+        )}
+        categoryTitle='Education & Learning'
+      />,
+    )
+    analytics.event.mockClear()
+
+    fireEvent.click(
+      screen.getByRole("link", { name: "Choosing a primary school" }),
+    )
+    expect(analytics.event).not.toHaveBeenCalled()
+
+    fireEvent.click(
+      screen.getByRole("link", { name: "Apply for a school place" }),
+    )
+    expect(analytics.event.mock.calls).toEqual([journeyStarted])
+    expect(JSON.stringify(analytics.event.mock.calls)).not.toMatch(
+      /school|journey\.uat/i,
+    )
+  })
+
+  it("reports a journey start from an external button on a service page", () => {
+    const analytics = renderTracked(
+      <ServiceView
+        lifeEvent={{
+          slug: "child-starting-school",
+          title: "Child starting school",
+        }}
+        service={{
+          slug: "apply-for-a-school-place",
+          title: "Apply for a school place",
+          body: [
+            {
+              type: "buttonLinks",
+              links: [
+                {
+                  text: "Start application",
+                  href: SCHOOL_PLACE_JOURNEY_URL,
+                  internal: false,
+                },
+                {
+                  text: "Read the guide",
+                  href: "/discovery/child-starting-school",
+                  internal: true,
+                },
+              ],
+            },
+          ],
+        }}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("link", { name: "Read the guide" }))
+    expect(analytics.event).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole("link", { name: "Start application" }))
+    expect(analytics.event.mock.calls).toEqual([journeyStarted])
   })
 })

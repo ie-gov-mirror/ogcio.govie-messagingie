@@ -6,12 +6,14 @@ import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { mutate as swrMutate } from "swr"
 import { DELETED_FOLDER_ID, INBOX_FOLDER_ID, messagesApi } from "@/api/messages"
+import { useTrack } from "@/hooks/use-track"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import type { Folder } from "@/types/folder"
 import { DeleteFolderModal } from "./delete-folder-modal"
 import { FolderFormModal, type FolderSaveOutcome } from "./folder-form-modal"
 import { showFolderToast } from "./folder-toast"
 import { InboxUnreadBadge } from "./inbox-unread-badge"
+import { listOpenedEvent } from "./list-opened-event"
 import styles from "./message-folders-sidebar.module.css"
 import { useCreateFolder } from "./use-create-folder"
 import { useDeleteFolder } from "./use-delete-folder"
@@ -50,6 +52,7 @@ export function MessageFoldersSidebar() {
   const [deleteTarget, setDeleteTarget] = useState<Folder | null>(null)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
+  const track = useTrack()
   const navigateToFolder = useCallback(
     (folderId: string) => {
       const params = new URLSearchParams(searchParams)
@@ -63,9 +66,10 @@ export function MessageFoldersSidebar() {
       }
 
       const qs = params.toString()
+      track.event(listOpenedEvent(folderId))
       router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
     },
-    [pathname, router, searchParams],
+    [pathname, router, searchParams, track],
   )
 
   const handleCreateSubmit = useCallback(

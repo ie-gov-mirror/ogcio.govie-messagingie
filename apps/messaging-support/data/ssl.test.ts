@@ -59,10 +59,10 @@ describe("buildSslConfig", () => {
     expect(buildSslConfig(false, Buffer.from("ignored"))).toBe(false)
   })
 
-  it("returns an encrypted-but-unverified config when enabled", () => {
+  it("returns a config that verifies the server certificate when enabled", () => {
     const ca = Buffer.from("ca-bytes")
     expect(buildSslConfig(true, ca)).toStrictEqual({
-      rejectUnauthorized: false,
+      rejectUnauthorized: true,
       ca,
     })
   })

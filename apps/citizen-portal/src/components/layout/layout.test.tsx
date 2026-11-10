@@ -16,7 +16,10 @@ vi.mock("@citizen-portal/shared", () => ({
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => (key: string, values?: { year?: number }) =>
+    key === "text.trademark"
+      ? `© ${values?.year ?? ""} Government of Ireland`
+      : key,
 }))
 
 vi.mock("@ogcio/design-system-react", () => ({
@@ -34,7 +37,10 @@ vi.mock("@ogcio/design-system-react", () => ({
 describe("layout components", () => {
   it("renders every container without changing its content", () => {
     const { rerender } = render(<MainContainer>main</MainContainer>)
-    expect(screen.getByRole("main")).toHaveTextContent("main")
+    const main = screen.getByRole("main")
+    expect(main).toHaveTextContent("main")
+    expect(main).toHaveClass("gi-py-4", "md:gi-py-6", "lg:gi-py-8")
+    expect(main).not.toHaveStyle({ marginTop: "var(--gieds-space-10)" })
 
     rerender(<TwoColumnLayout>columns</TwoColumnLayout>)
     expect(screen.getByText("columns").closest("article")).toHaveClass(
@@ -60,6 +66,9 @@ describe("layout components", () => {
     ).toBeInTheDocument()
     expect(
       screen.getByRole("link", { name: "link.contactSupport" }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(`© ${new Date().getFullYear()} Government of Ireland`),
     ).toBeInTheDocument()
 
     rerender(

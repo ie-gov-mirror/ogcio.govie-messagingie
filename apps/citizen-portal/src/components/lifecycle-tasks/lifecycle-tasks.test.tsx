@@ -1,16 +1,16 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { LifecycleTasks } from "@/components/lifecycle-tasks/lifecycle-tasks"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 
-const trackEvent = vi.hoisted(() => vi.fn())
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
+
 const searchTrigger = vi.hoisted(() => vi.fn())
 const createTrigger = vi.hoisted(() => vi.fn())
 const downloadFn = vi.hoisted(() => vi.fn())
 const toasterCreate = vi.hoisted(() => vi.fn())
-
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
-}))
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
@@ -184,6 +184,45 @@ describe("LifecycleTasks analytics", () => {
           category: "Profile",
           action: "Data Export Downloaded",
         },
+      }),
+    )
+  })
+
+  it("fires export-download-error when the export download fails", async () => {
+    const futureDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 10)
+    searchTrigger.mockResolvedValue({
+      tasks: [
+        {
+          id: "task-1",
+          type: "export_user_data",
+          status: "completed",
+          metadata: {
+            uploadId: "file-1",
+            expiresAt: futureDate.toISOString(),
+          },
+        },
+      ],
+    })
+    downloadFn.mockRejectedValue(new Error("network down"))
+
+    render(<LifecycleTasks profileId='profile-1' locale='en' />)
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "button.download" }),
+    )
+
+    await waitFor(() =>
+      expect(trackEvent).toHaveBeenCalledWith({
+        event: {
+          name: "export-download-error",
+          category: "Profile",
+          action: "Data Export Download Failed",
+        },
+      }),
+    )
+    expect(trackEvent).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: expect.objectContaining({ name: "export-downloaded" }),
       }),
     )
   })

@@ -29,9 +29,6 @@
       "!apps/citizen-portal/**/e2e/**/*",
       "!apps/citizen-portal/**/k6/**/*",
       "!apps/citizen-portal/**/*.spec.*",
-      "!apps/messaging-admin-next/**/public/**/*",
-      "!apps/messaging-admin-next/**/test/**/*",
-      "!apps/messaging-admin-next/**/k6/**/*",
       "!apps/messaging-support/**/public/**/*",
       "!apps/public-servant-portal/**/public/**/*"
     ]

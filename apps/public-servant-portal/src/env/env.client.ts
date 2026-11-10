@@ -10,7 +10,7 @@ const optionalUrl = z.preprocess(
 
 export const env = createEnv({
   client: {
-    NEXT_PUBLIC_BASE_URL: requiredUrl.default("http://localhost:3022"),
+    NEXT_PUBLIC_BASE_URL: requiredUrl.default("http://localhost:4002"),
     NEXT_PUBLIC_SAG_URL: requiredUrl,
     // Fail closed in production (Faro URL posture) — localhost defaults live
     // in `.env.sample` for local/dev, not in the schema, so a production

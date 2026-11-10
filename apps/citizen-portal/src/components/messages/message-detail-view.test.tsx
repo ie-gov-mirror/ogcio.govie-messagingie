@@ -1,16 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import {
   DELETE_FLASH_KEY,
   MOVE_FLASH_KEY,
 } from "@/components/messages/message-action-flash-keys"
 import styles from "./message-detail.module.css"
-
-const trackEvent = vi.hoisted(() => vi.fn())
-
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
-}))
 
 const mockPush = vi.fn()
 const deleteIds = vi.fn()
@@ -326,6 +320,11 @@ vi.mock("@ogcio/design-system-react", async (importOriginal) => {
 
 import { MessageDetailView } from "@/components/messages/message-detail-view"
 import type { Message } from "@/types"
+import { fakeAnalytics } from "../../../test/utils/analytics"
+
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
 
 describe("MessageDetailView", () => {
   beforeEach(() => {
@@ -370,6 +369,47 @@ describe("MessageDetailView", () => {
         category: "Message",
         action: "Message Opened",
       },
+    })
+  })
+
+  it("also reports a message opened from an application, never which one", () => {
+    searchParams = new URLSearchParams({
+      id: "msg-1",
+      submissionId: "38BB94E3",
+      submissionTitle: "Apply for a school place",
+    })
+    render(<MessageDetailView id='msg-1' />)
+
+    expect(trackEvent.mock.calls).toEqual([
+      [
+        {
+          event: {
+            name: "message-detail",
+            category: "Message",
+            action: "Message Opened",
+          },
+        },
+      ],
+      [
+        {
+          event: {
+            name: "application-message-open",
+            category: "Application",
+            action: "Message Opened from Application",
+          },
+        },
+      ],
+    ])
+    const payload = JSON.stringify(trackEvent.mock.calls)
+    expect(payload).not.toContain("38BB94E3")
+    expect(payload).not.toContain("school")
+  })
+
+  it("does not report an application for a message opened from the inbox", () => {
+    render(<MessageDetailView id='msg-1' />)
+
+    expect(trackEvent).not.toHaveBeenCalledWith({
+      event: expect.objectContaining({ name: "application-message-open" }),
     })
   })
 
@@ -588,6 +628,25 @@ describe("MessageDetailView", () => {
     expect(
       screen.queryByRole("link", { name: "SCH-2025-073296" }),
     ).not.toBeInTheDocument()
+  })
+
+  it("fetches a deleted-folder message with the deleted flag", () => {
+    searchParams = new URLSearchParams({ folder: "deleted" })
+
+    render(<MessageDetailView id='msg-1' />)
+
+    expect(gatewayFetchKeys).toContain(
+      "/messaging/api/v1/messages/msg-1?deleted=true",
+    )
+  })
+
+  it("fetches an inbox message without the deleted flag", () => {
+    render(<MessageDetailView id='msg-1' />)
+
+    expect(gatewayFetchKeys).toContain("/messaging/api/v1/messages/msg-1")
+    expect(gatewayFetchKeys).not.toContain(
+      "/messaging/api/v1/messages/msg-1?deleted=true",
+    )
   })
 
   it("links the toolbar Back action to the messages list by default", () => {

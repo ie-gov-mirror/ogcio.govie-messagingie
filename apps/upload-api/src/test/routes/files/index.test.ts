@@ -741,6 +741,39 @@ describe("files", async () => {
       expect(response.statusCode).toBe(200);
     });
 
+    it("should not record a failed rescan as clean, so the next download rescans", async () => {
+      const responsePromise = app.inject({
+        method: "GET",
+        url: "/files/file-id",
+      });
+
+      await nextTick();
+      testContext.pgEventEmitter.emit("done", [
+        { fileName: "file.txt", antivirusDbVersion: "old" },
+      ]);
+      await nextTick();
+      const stream = new PassThrough();
+      testContext.s3SendEventEmitter.emit("sendComplete", {
+        Body: { transformToWebStream: () => stream },
+      });
+      await nextTick();
+      stream.end(Buffer.from("ab"));
+      await nextTick();
+      testContext.antivirusVersionEventEmitter.emit("version", "");
+      await nextTick();
+      antivirusPassthrough.emit("scan-complete", {
+        isInfected: false,
+        failed: true,
+        viruses: [],
+      });
+      await nextTick();
+
+      const response = await responsePromise;
+      expect(response.statusCode).toBe(200);
+      // A pending metadata update would be waiting on the pg mock.
+      expect(testContext.pgEventEmitter.listenerCount("done")).toBe(0);
+    });
+
     it("should preserve inline downloads with a safe content type", async () => {
       const responsePromise = app.inject({
         method: "GET",

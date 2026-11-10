@@ -1,8 +1,12 @@
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import ErrorPage from "@/app/[locale]/error"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 
-const trackEvent = vi.hoisted(() => vi.fn())
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
+
 const pushLog = vi.hoisted(() => vi.fn())
 const chunkError = vi.hoisted(() => ({ isChunk: false, reloads: false }))
 
@@ -24,13 +28,6 @@ vi.mock("@grafana/faro-web-sdk", () => ({
 vi.mock("@/util/chunk-error", () => ({
   isChunkLoadError: () => chunkError.isChunk,
   reloadOnceIfChunkLoadError: () => chunkError.reloads,
-}))
-
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
-  AnalyticsProvider: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
 }))
 
 vi.mock("@/components/analytics-provider", () => ({

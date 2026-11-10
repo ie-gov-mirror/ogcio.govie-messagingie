@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { MessageFoldersSidebar } from "@/components/messages/message-folders-sidebar"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 
 const mockPush = vi.fn()
 
@@ -197,5 +198,41 @@ describe("MessageFoldersSidebar", () => {
     expect(screen.getByTestId("delete-folder-modal")).toHaveTextContent(
       "Payslips",
     )
+  })
+})
+
+describe("MessageFoldersSidebar analytics", () => {
+  const listOpened = (name: string, category: string, action: string) => ({
+    event: { name, category, action },
+  })
+
+  it("sends nothing on first render", () => {
+    const analytics = fakeAnalytics()
+    analytics.render(<MessageFoldersSidebar />)
+
+    expect(analytics.event).not.toHaveBeenCalled()
+  })
+
+  it("tracks opening the Inbox, a Folder or Deleted, never which Folder", () => {
+    const analytics = fakeAnalytics()
+    analytics.render(<MessageFoldersSidebar />)
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Inbox, 1 unread message" }),
+    )
+    fireEvent.click(screen.getByRole("button", { name: "EHIC" }))
+    fireEvent.click(screen.getByRole("button", { name: "Deleted" }))
+
+    expect(analytics.event.mock.calls).toEqual([
+      [listOpened("inbox-open", "Message", "Inbox Opened")],
+      [listOpened("folder-open", "Folder", "Folder Opened")],
+      [
+        listOpened(
+          "deleted-messages-open",
+          "Message",
+          "Deleted Messages Opened",
+        ),
+      ],
+    ])
   })
 })

@@ -16,11 +16,7 @@ import {
 } from "@ogcio/design-system-react"
 import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useGatewayFetch, useGatewayMutation } from "@ogcio/sag-client/react"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import {
@@ -34,6 +30,7 @@ import {
 import { FullWidthContainer, TwoColumnLayout } from "@/components/containers"
 import { DeleteIcon } from "@/components/icons/delete"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { ANALYTICS } from "@/const/analytics"
 import { useOrganizationId } from "@/hooks/use-organization-id"
 import type { TemplateListItem } from "@/types/types"
@@ -101,7 +98,7 @@ export default function TemplatesList() {
       organizationId,
     })
 
-  const columns = useMemo<ColumnDef<TemplateListItem>[]>(
+  const columns = useMemo<Column<TemplateListItem>[]>(
     () => [
       {
         id: "name",
@@ -189,13 +186,13 @@ export default function TemplatesList() {
     [analyticsClient, locale, t],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     // SWR keeps the previous payload when a refetch 403s (e.g. after a
     // profile-admin → messaging-admin zone switch). Don't render that
     // stale list as if the fetch succeeded.
     data: error ? [] : (templates ?? []),
     columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   useEffect(() => {

@@ -1,0 +1,49 @@
+/*
+ * Ghost of the application card (Figma _LE Card skeleton). Fixed height is
+ * the designed card, so the grid does not jump when the submission arrives.
+ * The pulse is the Figma motion: opacity 1 → 0.4 → 1 over 2s, looping.
+ * The text Skeleton shimmer is a different placeholder and is not used here.
+ */
+.card {
+  box-sizing: border-box;
+  height: 273px;
+  min-width: 18rem;
+}
+
+.compact {
+  height: 237px;
+}
+
+.pulse {
+  animation: le-card-skeleton-pulse 2s ease-in-out infinite;
+}
+
+.bar {
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  border-radius: 4px;
+  background-color: var(--gieds-color-gray-100, #e9eaed);
+}
+
+.footerCompact {
+  box-sizing: border-box;
+  min-height: 92px;
+}
+
+@keyframes le-card-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}

@@ -72,9 +72,9 @@ describe("navigation primitives", () => {
       "href",
       "/profile",
     )
-    expect(screen.getByText("Profile")).toHaveStyle({
-      fontWeight: "var(--gieds-font-weight-700)",
-    })
+    expect(screen.getByText("Profile").style.fontWeight).toBe(
+      "var(--gieds-font-weight-700)",
+    )
   })
 
   it("renders organization options and reports changes", () => {

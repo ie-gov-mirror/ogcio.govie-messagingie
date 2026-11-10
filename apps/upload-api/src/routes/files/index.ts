@@ -191,7 +191,9 @@ export default async function routes(app: FastifyInstance) {
               "error on scanning for virus",
             );
 
-            // Rejecting here can cause html 5 video to throw ERR_STREAM_PREMATURE_CLOSE
+            // Rejecting here can cause html 5 video to throw ERR_STREAM_PREMATURE_CLOSE:
+            // the player aborts and re-requests ranges, which errors the scan stream.
+            // The file is served but its metadata is not updated, so it is rescanned.
 
             // return reject(
             //   new CustomError(
@@ -206,8 +208,18 @@ export default async function routes(app: FastifyInstance) {
 
           antivirusPassthrough.once("scan-complete", async (result) => {
             request.log.info("end: anti virus scan");
-            const { isInfected, viruses } = result;
+            const { isInfected, failed, viruses } = result;
             const infectionDescription = viruses.join(",");
+
+            // Same as a scan error: serve, but do not record the file as scanned.
+            if (failed) {
+              request.log.error(
+                { fileId, key: file.key },
+                "antivirus scan failed",
+              );
+              resolve();
+              return;
+            }
 
             let fileDeleted = false;
 

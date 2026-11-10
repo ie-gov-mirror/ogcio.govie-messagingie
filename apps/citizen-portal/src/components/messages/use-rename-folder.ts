@@ -2,6 +2,8 @@
 
 import { useSagClient } from "@ogcio/sag-client/react"
 import { useCallback, useState } from "react"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 import { isConflictError } from "./folder-errors"
 
 export interface RenameFolderResult {
@@ -22,6 +24,7 @@ export interface UseRenameFolderOptions {
 export function useRenameFolder(options: UseRenameFolderOptions = {}) {
   const { onSettled } = options
   const client = useSagClient()
+  const track = useTrack()
   const [isLoading, setIsLoading] = useState(false)
 
   const renameFolder = useCallback(
@@ -31,6 +34,7 @@ export function useRenameFolder(options: UseRenameFolderOptions = {}) {
         await client.mutate(`/messaging/api/v1/tags/${folderId}`, "PATCH", {
           label,
         })
+        track.event(ANALYTICS.folder.rename)
         return { ok: true }
       } catch (error) {
         return { ok: false, conflict: isConflictError(error) }
@@ -39,7 +43,7 @@ export function useRenameFolder(options: UseRenameFolderOptions = {}) {
         onSettled?.()
       }
     },
-    [client, onSettled],
+    [client, onSettled, track],
   )
 
   return { renameFolder, isLoading }

@@ -8,7 +8,9 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { type Profile, profileApi } from "@/api/profile"
 import { CssSpinner } from "@/components/css-spinner"
+import { ANALYTICS } from "@/const/analytics"
 import { TRACE_MESSAGES, TRACES } from "@/const/traces"
+import { useTrack } from "@/hooks/use-track"
 import { withFaroSpan } from "@/util/trace-helpers"
 
 /**
@@ -42,9 +44,10 @@ export function ConfirmButton({
   const router = useRouter()
   const pathname = usePathname()
   const [linkBlocked, setLinkBlocked] = useState(false)
+  const track = useTrack()
 
   const { trigger, isLoading } = useGatewayMutation<Profile>(
-    profileApi.patchPath(targetUserId),
+    profileApi.patchPath(targetUserId, { messageId }),
     { method: "PATCH" },
   )
 
@@ -55,6 +58,7 @@ export function ConfirmButton({
       async () => {
         try {
           const result = await trigger({ primaryUserId: currentUserId })
+          track.event(ANALYTICS.accountLinking.confirm)
           faro.api.pushLog([TRACE_MESSAGES.CONFIRM_ACCOUNT_LINKING.SUCCESS], {
             context: { currentUserId, targetUserId, messageId },
           })
@@ -66,6 +70,7 @@ export function ConfirmButton({
             : localePath
           router.replace(`${base}/messages?id=${messageId}`)
         } catch (error) {
+          track.event(ANALYTICS.accountLinking.confirmError)
           faro.api.pushLog([TRACE_MESSAGES.CONFIRM_ACCOUNT_LINKING.ERROR], {
             level: LogLevel.ERROR,
             context: {

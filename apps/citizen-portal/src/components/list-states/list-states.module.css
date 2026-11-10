@@ -1,0 +1,102 @@
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gieds-space-2);
+  padding-top: var(--gieds-space-2);
+}
+
+/*
+ * Below 1024px the list breaks out of the page gutter. The search row puts
+ * it back (16px, 24px from 768px); this block has to do the same or the
+ * heading starts on the viewport edge.
+ */
+@media (max-width: 1023px) {
+  .noResults {
+    padding-left: var(--gieds-space-4, 1rem);
+    padding-right: var(--gieds-space-4, 1rem);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .noResults {
+    padding-left: var(--gieds-space-6, 1.5rem);
+    padding-right: var(--gieds-space-6, 1.5rem);
+  }
+}
+
+.noResults > * {
+  margin: 0;
+}
+
+.noResultsText {
+  max-width: none;
+}
+
+/*
+ * Skeleton bars pulse 100% → 40% opacity over 2s and hold still for
+ * reduced-motion users.
+ */
+.bar {
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  height: var(--gieds-space-4, 1rem);
+  border-radius: var(--gieds-border-radius-100, 4px);
+  background-color: var(--gieds-color-neutral-100, #e9eaed);
+  animation: skeleton-pulse 2s ease-in-out infinite;
+}
+
+.checkbox {
+  width: var(--gieds-space-6, 1.5rem);
+  height: var(--gieds-space-6, 1.5rem);
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+  }
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--gieds-space-3);
+  height: 6rem;
+  padding: var(--gieds-space-3, 0.75rem) var(--gieds-space-4, 1rem);
+  border-bottom: var(--gieds-border-width-100) solid
+    var(--gieds-color-gray-200, #d8dadf);
+  background-color: var(--gieds-color-white, #ffffff);
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding-left: var(--gieds-space-6, 1.5rem);
+    padding-right: var(--gieds-space-6, 1.5rem);
+  }
+}
+
+.cardContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--gieds-space-3);
+}

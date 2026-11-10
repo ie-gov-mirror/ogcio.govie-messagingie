@@ -27,6 +27,7 @@ vi.mock("@/env/env.client", () => ({
   },
 }))
 
+import { fakeAnalytics } from "../../../test/utils/analytics"
 import { ReportButton } from "./report-button"
 
 let href = ""
@@ -58,5 +59,24 @@ describe("ReportButton", () => {
     expect(href).toBe(
       "https://forms.example.ie/base/report-problem?userEmail=citizen%2Btest%40example.ie",
     )
+  })
+
+  it("tracks the report, without the citizen's email in the event", () => {
+    const analytics = fakeAnalytics()
+    analytics.render(<ReportButton />)
+
+    fireEvent.click(screen.getByRole("button", { name: "report" }))
+
+    expect(analytics.event.mock.calls).toEqual([
+      [
+        {
+          event: {
+            name: "account-linking-report",
+            category: "Account Linking",
+            action: "Problem Reported",
+          },
+        },
+      ],
+    ])
   })
 })

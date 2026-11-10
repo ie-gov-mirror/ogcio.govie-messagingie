@@ -1,8 +1,7 @@
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
 import type { ReactNode } from "react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-const trackEvent = vi.hoisted(() => vi.fn())
 const capturedEvents = vi.hoisted(
   () =>
     ({}) as {
@@ -37,9 +36,6 @@ const authState = vi.hoisted(() => ({
 const sagSignIn = vi.hoisted(() => vi.fn())
 const chunkState = vi.hoisted(() => ({ failing: false }))
 
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
-}))
 vi.mock("@ogcio/consent/react", () => ({
   FORCE_CONSENT_PARAM: "force-consent",
   MESSAGING_CONSENT_SUBJECT: "messaging",
@@ -107,7 +103,7 @@ vi.mock("@citizen-portal/shared", () => ({
     sagProvider.appName = appName
     sagProvider.onSessionExpired = onSessionExpired
     return sagProvider.renderChildren ? (
-      <>{children}</>
+      children
     ) : (
       <div data-testid='sag-provider' />
     )
@@ -181,6 +177,11 @@ vi.mock("@/hooks/use-idle-mount", () => ({
 }))
 
 import { ClientShell, ConsentFlow } from "@/components/client-shell"
+import { fakeAnalytics } from "../../test/utils/analytics"
+
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
 
 describe("ConsentFlow analytics", () => {
   beforeEach(() => trackEvent.mockClear())

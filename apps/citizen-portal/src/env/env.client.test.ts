@@ -68,6 +68,14 @@ describe("client environment", () => {
     expect(env.NEXT_PUBLIC_ANALYTICS_DRY_RUN).toBe(true)
   })
 
+  it("sends public servants to the Public Servant Portal by default", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MESSAGING_ADMIN_URL", undefined)
+    vi.resetModules()
+    const { env } = await import("./env.client")
+
+    expect(env.NEXT_PUBLIC_MESSAGING_ADMIN_URL).toBe("http://localhost:4002")
+  })
+
   it("turns empty optional URLs into undefined", async () => {
     vi.stubEnv("NEXT_PUBLIC_UNLEASH_URL", "")
     vi.resetModules()

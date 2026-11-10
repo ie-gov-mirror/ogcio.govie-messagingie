@@ -81,7 +81,7 @@ export class ClamavPassthrough extends Transform {
 
     const isInfected = result.status === "infected";
     const viruses = result.viruses ?? [];
-    this.emit("scan-complete", { isInfected, viruses });
+    this.emit("scan-complete", { isInfected, failed: this.failed, viruses });
 
     if (this.socket && !this.socket.destroyed) {
       this.socket.destroy();

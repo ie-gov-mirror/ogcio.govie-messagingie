@@ -19,7 +19,6 @@ import {
   Stack,
   ToastProvider,
 } from "@ogcio/design-system-react"
-import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { signIn } from "@ogcio/sag-client"
 import {
   CONNECTOR_MYGOVID,
@@ -55,6 +54,7 @@ import { ANALYTICS } from "@/const/analytics"
 import { TRACE_MESSAGES } from "@/const/traces"
 import { env } from "@/env/env.client"
 import { useIdleMount } from "@/hooks/use-idle-mount"
+import { useTrack } from "@/hooks/use-track"
 import { useRouter } from "@/i18n/navigation"
 import { ZONE_CONFIG } from "@/lib/zone-config"
 import {
@@ -312,7 +312,7 @@ function StaleClaimsRefreshGate({
 /**
  * Wraps the shell body in consent + announcements. Extracted out of
  * `AuthenticatedShell` (which renders *above* `AnalyticsProvider`) so
- * `useAnalytics()` is legal here — `ConsentFlow` is only ever rendered
+ * `useTrack()` is legal here — `ConsentFlow` is only ever rendered
  * from inside `AuthenticatedShell`'s `<AnalyticsProvider>` subtree.
  * Exported for direct testing of the consent-decision analytics event.
  */
@@ -325,7 +325,7 @@ export function ConsentFlow({
   onLocaleChange: (locale: ConsentStatementLanguages) => void
   children: ReactNode
 }) {
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
 
   return (
     <ConsentProvider
@@ -342,13 +342,7 @@ export function ConsentFlow({
           const decision = accepted
             ? ANALYTICS.consent.accepted
             : ANALYTICS.consent.declined
-          analyticsClient.trackEvent({
-            event: {
-              name: decision.name,
-              category: ANALYTICS.consent.category,
-              action: decision.action,
-            },
-          })
+          track.event(decision)
 
           const url = new URL(window.location.href)
           if (url.searchParams.has(FORCE_CONSENT_PARAM)) {

@@ -18,8 +18,9 @@ export const EXTENSION_MIME_TYPES: Record<string, string> = {
   ".ods": "application/vnd.oasis.opendocument.spreadsheet",
   ".odp": "application/vnd.oasis.opendocument.presentation",
   ".rtf": "application/rtf",
-  ".xml": "application/xml",
-  ".json": "application/json",
+  // XML and JSON render as a page in the browser, so download them like SVG.
+  ".xml": "application/octet-stream",
+  ".json": "application/octet-stream",
   ".xls": "application/vnd.ms-excel",
   ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   ".jpg": "image/jpeg",

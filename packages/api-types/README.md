@@ -15,11 +15,12 @@ TypeBox schemas -> @fastify/swagger -> openapi-definition.yml -> openapi-typescr
 | File                 | Source spec                                 |
 | -------------------- | ------------------------------------------- |
 | `src/messaging.d.ts` | `apps/messaging-api/openapi-definition.yml` |
+| `src/profile.d.ts`   | `apps/profile-api/openapi-definition.yml`   |
 | `src/upload.d.ts`    | `apps/upload-api/openapi-definition.yml`    |
 | `src/scheduler.d.ts` | `apps/scheduler-api/openapi-definition.yml` |
 
-`src/index.ts` re-exports each spec under a namespace so future specs (e.g.
-`profile`) can coexist without `paths` / `components` name collisions.
+`src/index.ts` re-exports each spec under a namespace so further specs can
+coexist without `paths` / `components` name collisions.
 
 ## Usage
 
@@ -43,7 +44,17 @@ type Paths = messaging.paths
 
 - `pnpm codegen` — regenerate every `*.d.ts` from its spec.
 - `pnpm codegen:check` — CI drift guard; fails if committed output is stale.
+  Run by `.azure/pipeline-api-contracts.yml` on every PR that touches a spec or
+  this package.
 - `pnpm typecheck` — type-check the entry + generated output.
+
+## What guards what
+
+`codegen:check` only compares a committed `*.d.ts` against a committed spec. It
+cannot tell whether a committed spec still matches the API that emits it —
+`info.version`, for one, never reaches the generated types. That half is covered
+by each API's own `src/test/openapi-definition.test.ts`, which boots the app and
+asserts `app.swagger({ yaml: true })` equals the committed file.
 
 ## Adding a spec
 

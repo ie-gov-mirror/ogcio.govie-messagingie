@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.4.3](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.4.2...messaging-api-v1.4.3) (2026-11-05)
+
+
+### Bug Fixes
+
+* **deps:** pin @logto/node to 4.0.1 AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1100](https://github.com/ogcio/govie-services-messaging/issues/1100)) ([700444e](https://github.com/ogcio/govie-services-messaging/commit/700444e493b051e8fd27058ad44c93b487355da4))
+* **deps:** update all non-major dependencies ([#1090](https://github.com/ogcio/govie-services-messaging/issues/1090)) ([c023980](https://github.com/ogcio/govie-services-messaging/commit/c023980bf98bd413a9f5ef44dc153bcbc4f97076))
+* **deps:** update all non-major dependencies ([#1116](https://github.com/ogcio/govie-services-messaging/issues/1116)) ([82f8357](https://github.com/ogcio/govie-services-messaging/commit/82f8357aff3f01ba39299a54e765de5e8bea10f6))
+* restore the secure-message account-linking confirmation AB[#45455](https://github.com/ogcio/govie-services-messaging/issues/45455) ([#1119](https://github.com/ogcio/govie-services-messaging/issues/1119)) ([78cfba9](https://github.com/ogcio/govie-services-messaging/commit/78cfba91637fe180521881d67e6f9cc6de26943c))
+
+
+### Miscellaneous Chores
+
+* update to node 26 AB[#45024](https://github.com/ogcio/govie-services-messaging/issues/45024) ([#1102](https://github.com/ogcio/govie-services-messaging/issues/1102)) ([9eb7de0](https://github.com/ogcio/govie-services-messaging/commit/9eb7de0493593c5242ba26ab14491fb6f87256ab))
+
+## [1.4.2](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.4.1...messaging-api-v1.4.2) (2026-10-24)
+
+
+### Miscellaneous Chores
+
+* add logto dependency AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1087](https://github.com/ogcio/govie-services-messaging/issues/1087)) ([d496650](https://github.com/ogcio/govie-services-messaging/commit/d496650658ccf32fbc3eeaecdf84d4bcaddc50c0))
+
+## [1.4.1](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.4.0...messaging-api-v1.4.1) (2026-10-23)
+
+
+### Miscellaneous Chores
+
+* skip optional deps in API images AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1082](https://github.com/ogcio/govie-services-messaging/issues/1082)) ([cd34a47](https://github.com/ogcio/govie-services-messaging/commit/cd34a475044590cb86de4be257b4bf0a95fbc68e))
+
 ## [1.4.0](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.3.0...messaging-api-v1.4.0) (2026-10-23)
 
 

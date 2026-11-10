@@ -1,5 +1,6 @@
 import { FastifyOtelInstrumentation } from "@fastify/otel";
 import { instrumentNode, type SDKLogLevel } from "@ogcio/o11y-sdk-node";
+import { captureServerSpan } from "./plugins/pseudo-user-traces-hook.js";
 
 await instrumentNode({
   serviceName: process.env.OTEL_SERVER_SERVICE_NAME,
@@ -12,6 +13,10 @@ await instrumentNode({
     { type: "equals", url: "/health/startup" },
   ],
   additionalInstrumentations: [
-    new FastifyOtelInstrumentation({ registerOnInitialization: true }),
+    new FastifyOtelInstrumentation({
+      registerOnInitialization: true,
+      // Captures the server span for the pseudo-user traces hook.
+      requestHook: captureServerSpan,
+    }),
   ],
 });

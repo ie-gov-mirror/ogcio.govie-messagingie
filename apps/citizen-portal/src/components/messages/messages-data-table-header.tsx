@@ -9,6 +9,7 @@ import {
   DataTableHeaderFilterContentTitle,
   DataTableHeaderFilterList,
   DataTableHeaderSearch,
+  Icon,
   InputRadio,
   InputRadioGroup,
   Popover,
@@ -23,6 +24,8 @@ import {
   useRef,
   useState,
 } from "react"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import { InboxListSearchField } from "./inbox-list-search-field"
 import {
@@ -57,6 +60,7 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
   showSearchIcon,
 }: MessagesDataTableHeaderProps) {
   const tFilter = useTranslations("home.table.filter")
+  const tSearch = useTranslations("search")
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useUrlSearchParams()
@@ -82,6 +86,7 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
     [router, pathname],
   )
 
+  const track = useTrack()
   const onApplyFilters = useCallback(
     (filters: MessageFilterState) => {
       const params = new URLSearchParams(searchParamsRef.current)
@@ -89,6 +94,10 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
 
       const status = statusParamFromMessageFilters(filters)
       if (status) {
+        // Only a newly applied status counts as using the filter.
+        if (status !== params.get("status")) {
+          track.event(ANALYTICS.message.filter)
+        }
         params.set("status", status)
       } else {
         params.delete("status")
@@ -96,7 +105,7 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
 
       pushQuery(params)
     },
-    [pushQuery],
+    [pushQuery, track],
   )
 
   const filterOptions: {
@@ -165,7 +174,9 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
     <DataTableHeader
       showHeader={showHeader}
       showFilter={enableFilters}
-      className={enableFilters ? undefined : styles.searchOnlyChrome}
+      className={
+        enableFilters ? styles.messagesChrome : styles.searchOnlyChrome
+      }
     >
       <DataTableHeaderSearch
         className={enableFilters ? styles.searchBesideFilters : undefined}
@@ -174,7 +185,10 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
           searchInputTestId={searchInputTestId}
           inputId='messages-data-table-search'
           placeholder={searchPlaceholder}
-          ariaLabel={searchAriaLabel}
+          ariaLabel={
+            searchAriaLabel ??
+            (enableFilters ? tSearch("ariaLabel") : undefined)
+          }
           showSearchIcon={showSearchIcon}
         />
       </DataTableHeaderSearch>
@@ -186,9 +200,16 @@ export const MessagesDataTableHeader = memo(function MessagesDataTableHeader({
             onClick={handleFilterOpen}
             variant='secondary'
             appearance='dark'
+            className={styles.filterButton}
             data-testid='status-filter'
+            aria-expanded={filterOpen}
           >
-            {tFilter("button")}
+            <span className={styles.filterIcon} data-testid='filter-icon'>
+              <Icon icon='filter_list' ariaHidden />
+            </span>
+            <span className={styles.filterLabel} data-testid='filter-label'>
+              {tFilter("button")}
+            </span>
           </Button>
           <Popover
             triggerRef={triggerRef as RefObject<HTMLButtonElement>}

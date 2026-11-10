@@ -18,7 +18,7 @@ export const autoConfig = (fastify: FastifyInstance): PoolConfig => {
 
     const ca = readFileSync(certificatePath);
     sslConfig = {
-      rejectUnauthorized: false,
+      rejectUnauthorized: true,
       ca,
     };
   }

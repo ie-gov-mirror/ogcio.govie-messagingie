@@ -1,6 +1,7 @@
+import type * as Crypto from "node:crypto";
 import { randomUUID } from "node:crypto";
 import type { PoolClient } from "pg";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { verifyToken } from "~/services/jobs/verify-token.js";
 import { createProfileImport } from "~/services/profiles/sql/create-profile-import.js";
 import {
@@ -8,6 +9,13 @@ import {
   getPoolFromConnectionString,
 } from "~/test/build-testcontainer-pg.js";
 import { mockLogger } from "~/test/fixtures/common.js";
+
+const timingSafeEqual = vi.hoisted(() => vi.fn());
+vi.mock("node:crypto", async (importOriginal) => {
+  const actual = await importOriginal<typeof Crypto>();
+  timingSafeEqual.mockImplementation(actual.timingSafeEqual);
+  return { ...actual, default: actual, timingSafeEqual };
+});
 
 describe("verifyToken - Simple Tests", () => {
   const pool = getPoolFromConnectionString(process.env[DATABASE_TEST_URL_KEY]);
@@ -61,6 +69,22 @@ describe("verifyToken - Simple Tests", () => {
       });
 
       expect(result).toBe(false);
+    });
+
+    it("compares the job token in constant time and rejects a wrong length", async () => {
+      const { profileImportId, jobToken } = await createProfileImport(
+        client,
+        randomUUID().substring(0, 11),
+        "csv",
+      );
+      timingSafeEqual.mockClear();
+
+      const verify = (token: string) =>
+        verifyToken({ pool, logger: mockLogger, profileImportId, token });
+
+      expect(await verify(jobToken)).toBe(true);
+      expect(timingSafeEqual).toHaveBeenCalledOnce();
+      expect(await verify(jobToken.slice(1))).toBe(false);
     });
 
     it("should return false when profile import not found", async () => {

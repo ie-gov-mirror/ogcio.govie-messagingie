@@ -21,3 +21,53 @@
   max-width: 25rem;
   min-width: 0;
 }
+
+/* 16px between the search row and the list. Doubled class beats DS `gi-mb-2`. */
+.messagesChrome.messagesChrome {
+  margin-bottom: var(--gieds-space-4);
+}
+
+.filterIcon {
+  display: none;
+}
+
+.filterLabel {
+  line-height: var(--gieds-font-line-height-300, 1.5rem);
+}
+
+/*
+ * Icon-only below the tablet range (640px). The text stays in the DOM so
+ * the button's accessible name is still "Filters".
+ *
+ * The list root forces min-width: 0 on every descendant, which shrinks this
+ * button under the 24px icon so the glyph sits off-centre. Pin a square and
+ * centre the icon.
+ */
+@media (max-width: 639px) {
+  .filterButton.filterButton {
+    flex: none;
+    width: 2.5rem;
+    min-width: 2.5rem;
+    padding-inline: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .filterIcon {
+    display: inline-flex;
+    flex: none;
+    min-width: 1.5rem;
+  }
+
+  .filterLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

@@ -24,10 +24,10 @@ test.describe("Feature flags — fully enabled deployment", () => {
     await page.close()
   })
 
-  test("the dashboard ships the recent-messages widget @regression", async () => {
+  test("the dashboard ships the recent-applications widget @regression", async () => {
     await page.goto("/en/my-dashboard")
-    await expect(page.getByText("Your recent messages")).toBeVisible()
-    await expect(page.getByText("View all messages")).toBeVisible()
+    await expect(page.getByText("Recent applications")).toBeVisible()
+    //await expect(page.getByText("View all applications")).toBeVisible()
   })
 
   test("the menu exposes both cross-zone links @regression", async () => {

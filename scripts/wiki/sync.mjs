@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Publishes the Wiki docs (docs/wiki/** + root GLOSSARY.md) into the
 // configured subtree of the ADO wiki git repo. Refuses to destroy a
-// wiki-side edit: any wiki commit touching the subtree since the last sync
-// marker is a Sync conflict, and the script fails loudly with the diff
-// instead of pushing.
+// wiki-side edit: a wiki change to the subtree since the last sync marker
+// that the repo does not carry yet is a Sync conflict, and the script fails
+// loudly with the diff instead of pushing.
 import { execFileSync } from "node:child_process"
 import {
   existsSync,
@@ -82,10 +82,121 @@ function findLastSyncCommit(wikiDir, subtree) {
   return sha || null
 }
 
-function commitsTouchingSubtree(wikiDir, range, subtree) {
-  return git(wikiDir, ["log", "--oneline", range, "--", subtree])
+function commitsTouching(wikiDir, range, paths) {
+  return git(wikiDir, ["log", "--oneline", range, "--", ...paths])
     .split("\n")
     .filter(Boolean)
+}
+
+// Repo file published as the wiki page at `relPath` in the subtree, mirroring
+// writeGeneratedSubtree: Glossary.md comes from root GLOSSARY.md.
+function sourceFileFor(root, relPath) {
+  if (relPath === GLOSSARY_PAGE_NAME) {
+    return join(root, GLOSSARY_FILE_NAME)
+  }
+  return join(root, "docs", "wiki", relPath)
+}
+
+function readIfExists(file) {
+  return existsSync(file) ? readFileSync(file) : null
+}
+
+// Wiki file at `rev:path`, or null when it does not exist there. The clone is
+// blob:none, so the blob may be fetched on demand: hence `env` for the auth.
+function wikiBlobAt(wikiDir, rev, path, env) {
+  try {
+    return execFileSync("git", ["show", `${rev}:${path}`], {
+      cwd: wikiDir,
+      env,
+      stdio: ["ignore", "pipe", "ignore"],
+    })
+  } catch {
+    return null
+  }
+}
+
+function sameContent(a, b) {
+  if (a === null || b === null) {
+    return a === b
+  }
+  return a.equals(b)
+}
+
+// True when the repo already carries the wiki's edit from `base` to `wiki`:
+// merging that edit onto the repo version leaves it unchanged. e.g. the wiki
+// fixed line 2 and the repo has that fix plus its own change to line 5.
+function carriesWikiEdit(base, wiki, repo, scratchDir) {
+  if (sameContent(wiki, repo)) {
+    return true
+  }
+  if (base === null || wiki === null || repo === null) {
+    return false
+  }
+
+  const files = { repo, base, wiki }
+  for (const [name, content] of Object.entries(files)) {
+    writeFileSync(join(scratchDir, name), content)
+  }
+  try {
+    // Non-zero exit (conflicts, binary input) throws: not carried.
+    const merged = execFileSync(
+      "git",
+      ["merge-file", "-p", "repo", "base", "wiki"],
+      { cwd: scratchDir, stdio: ["ignore", "pipe", "ignore"] },
+    )
+    return merged.equals(repo)
+  } catch {
+    return false
+  }
+}
+
+// Wiki paths changed since the last sync, each with the path it had at the
+// sync marker (the old name for a rename, null for an added page). Rename
+// detection reads blobs the blob:none clone may lack: hence `env` for the auth.
+//   R100\0old\0new\0  M\0path\0  →  [{ path: old, basePath: old },
+//   { path: new, basePath: old }, { path, basePath: path }]
+function wikiChanges(wikiDir, range, subtree, env) {
+  const fields = git(
+    wikiDir,
+    ["diff", "--name-status", "-M", "-z", range, "--", subtree],
+    env,
+  ).split("\0")
+
+  const changes = []
+  for (let i = 0; i < fields.length - 1; ) {
+    const status = fields[i++]
+    if (status.startsWith("R")) {
+      const from = fields[i++]
+      const to = fields[i++]
+      changes.push({ path: from, basePath: from }, { path: to, basePath: from })
+      continue
+    }
+    const path = fields[i++]
+    changes.push({ path, basePath: status === "A" ? null : path })
+  }
+  return changes
+}
+
+// Subtree paths whose wiki-side edit since the last sync is not carried by
+// what this sync would publish. An edit already pulled into the repo, even
+// alongside repo-side changes to the same page, is no longer a conflict.
+function unresolvedWikiEdits(wikiDir, lastSyncCommit, subtree, root, env) {
+  const scratchDir = mkdtempSync(join(tmpdir(), "wiki-merge-"))
+  try {
+    const range = `${lastSyncCommit}..HEAD`
+    return wikiChanges(wikiDir, range, subtree, env)
+      .filter(({ path, basePath }) => {
+        const base = basePath
+          ? wikiBlobAt(wikiDir, lastSyncCommit, basePath, env)
+          : null
+        const wiki = readIfExists(join(wikiDir, path))
+        const repo = readIfExists(sourceFileFor(root, relative(subtree, path)))
+        return !carriesWikiEdit(base, wiki, repo, scratchDir)
+      })
+      .map(({ path }) => path)
+  } finally {
+    rmSync(scratchDir, { recursive: true, force: true })
+  }
 }
 
 // Builds the generated subtree content in place: docs/wiki/** copied verbatim
@@ -177,9 +288,16 @@ export function runSync({ repo, subtree, root, sourceSha, bootstrap } = {}) {
       }
     } else {
       const range = `${lastSyncCommit}..HEAD`
-      const conflicting = commitsTouchingSubtree(tmp, range, resolvedSubtree)
-      if (conflicting.length > 0) {
-        const diff = git(tmp, ["diff", range, "--", resolvedSubtree], gitEnv)
+      const unresolved = unresolvedWikiEdits(
+        tmp,
+        lastSyncCommit,
+        resolvedSubtree,
+        resolvedRoot,
+        gitEnv,
+      )
+      if (unresolved.length > 0) {
+        const conflicting = commitsTouching(tmp, range, unresolved)
+        const diff = git(tmp, ["diff", range, "--", ...unresolved], gitEnv)
         throw new Error(
           "Sync conflict: the wiki subtree has been edited since the last sync.\n\n" +
             `Conflicting commit(s):\n${conflicting.join("\n")}\n\n${diff}`,

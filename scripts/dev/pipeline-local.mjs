@@ -53,7 +53,6 @@ class LocalPipelineRunner {
       {
         name: "🧪 Unit Tests",
         commands: [
-          "pnpm --filter messaging-admin-next test",
           "pnpm --filter public-servant-portal test",
           "pnpm --filter messaging-api test",
         ],
@@ -63,14 +62,12 @@ class LocalPipelineRunner {
         name: "🏗️ Build Services",
         commands: [
           "pnpm build:api",
-          "pnpm build:admin-next",
           "pnpm build:public-servant-portal",
         ],
       },
       {
         name: "🐳 Docker Builds",
         commands: [
-          "docker build -f apps/messaging-admin-next/Dockerfile -t messaging-admin-next .",
           "docker build -f apps/public-servant-portal/Dockerfile -t public-servant-portal .",
           "docker build -f apps/messaging-api/Dockerfile -t messaging-api .",
         ],

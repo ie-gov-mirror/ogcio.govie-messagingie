@@ -2,7 +2,7 @@ FROM base-deps AS citizen-portal-base-deps
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN npm install -g corepack@latest && corepack enable
 
 FROM citizen-portal-base-deps AS builder
 WORKDIR /app
@@ -75,7 +75,7 @@ ENV NEXT_PUBLIC_SAG_URL=${NEXT_PUBLIC_SAG_URL:-http://sag.local.test:3333}
 # overrides are supplied (e.g. `pnpm docker:build:citizen-portal:local`).
 ENV NEXT_PUBLIC_MESSAGING_URL=${NEXT_PUBLIC_CITIZEN_PORTAL_BASE_URL:-http://messaging.local.test:8080}
 ENV NEXT_PUBLIC_PROFILE_URL=${NEXT_PUBLIC_PROFILE_SERVICE_ENTRY_POINT:-http://profile.local.test:8080}
-ENV NEXT_PUBLIC_MESSAGING_ADMIN_URL=${NEXT_PUBLIC_MESSAGING_ADMIN_SERVICE_ENTRY_POINT:-http://localhost:3022}
+ENV NEXT_PUBLIC_MESSAGING_ADMIN_URL=${NEXT_PUBLIC_MESSAGING_ADMIN_SERVICE_ENTRY_POINT:-http://localhost:4002}
 ENV NEXT_PUBLIC_DASHBOARD_URL=${NEXT_PUBLIC_DASHBOARD_SERVICE_ENTRY_POINT:-http://dashboard.local.test:8080}
 ENV NEXT_PUBLIC_FARO_URL=${NEXT_PUBLIC_FARO_URL:-http://localhost:12347/collect}
 ENV NEXT_PUBLIC_FARO_SERVICE_NAME=${NEXT_PUBLIC_FARO_SERVICE_NAME:-citizen-portal}

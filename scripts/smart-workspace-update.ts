@@ -20,13 +20,7 @@ interface PackageRules {
  * - `scoped`: skipped only when found in the listed workspace packages
  */
 const SKIP: PackageRules = {
-  global: [
-    "@logto/node",
-    "@logto/react",
-    "@logto/next",
-    "@ogcio/design-system-react",
-    "@ogcio/theme-govie",
-  ],
+  global: ["@ogcio/design-system-react", "@ogcio/theme-govie"],
   scoped: {
     // Example:
     // "@govie-services/profile-api": ["pg"],
@@ -56,7 +50,6 @@ const SEMVER_ONLY: PackageRules = {
     "typescript",
   ],
   scoped: {
-    "messaging-admin-next": ["use-intl"],
     // Example:
     // "@govie-services/profile": ["swr"],
   },

@@ -357,6 +357,9 @@ http {
     # zone, whose SAG audience is "messaging". Path under /_next/ per CloudFront/WAF.
     location /_next/files/ {
       add_header X-Trace-ID $otel_trace_id always;
+      # Attachments share the portal origin and session: never run them as a page.
+      add_header Content-Security-Policy "sandbox; default-src 'none'" always;
+      add_header X-Content-Type-Options "nosniff" always;
       # Runtime re-resolution as above; SAG is CloudFront-fronted too.
       set $sag_upstream "${NEXT_PUBLIC_SAG_URL}";
       rewrite ^/_next/files/(.*)$ /$1 break;

@@ -134,9 +134,9 @@ describe("profile-admin navigation", () => {
     )
     fireEvent.click(screen.getByText("Previous"))
     expect(onClick).toHaveBeenCalledOnce()
-    expect(screen.getByText("Drawer")).toHaveStyle({
-      fontWeight: "var(--gieds-font-weight-700)",
-    })
+    expect(screen.getByText("Drawer").style.fontWeight).toBe(
+      "var(--gieds-font-weight-700)",
+    )
   })
 
   it("renders no back control without children", () => {

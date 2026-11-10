@@ -4915,6 +4915,8 @@ export interface operations {
             query?: {
                 /** @description Organization ID owning the profile */
                 organizationId?: string;
+                /** @description ID of a message sent to the profile, required to link another profile */
+                messageId?: string;
             };
             header?: never;
             path: {

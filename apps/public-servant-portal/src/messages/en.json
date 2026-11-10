@@ -566,7 +566,7 @@
         "contactSupport": "Contact support"
       },
       "text": {
-        "trademark": "© 2025 Government of Ireland Design System"
+        "trademark": "© {year} Government of Ireland"
       }
     }
   },
@@ -678,7 +678,7 @@
       "contactSupport": "Contact Support"
     },
     "text": {
-      "trademark": "© 2025 Government of Ireland Design System"
+      "trademark": "© {year} Government of Ireland"
     }
   },
   "errors": {

@@ -54,10 +54,17 @@ vi.mock("../../../utils/authentication-factory.js", () => ({
     getProfile: vi.fn((id: string) => {
       const notFoundProfileId = "not-found";
       const linkedProfileId = "linked-id";
+      const forbiddenProfileId = "forbidden-id";
       if (id === notFoundProfileId) {
         return {
           data: undefined,
           error: { detail: "user not found", statusCode: 404 },
+        };
+      }
+      if (id === forbiddenProfileId) {
+        return {
+          data: undefined,
+          error: { detail: "Forbidden", statusCode: 403 },
         };
       }
       if (id === linkedProfileId) {
@@ -704,6 +711,28 @@ describe("Message Service", () => {
       await expect(retrievedMessage).rejects.toThrow(
         `No message with id ${messageId} for the logged in user does exist`,
       );
+    });
+
+    // AB#45455: a citizen whose own-token profile lookup comes back
+    // Forbidden (e.g. not yet linked to anything) must get the same 404
+    // "not linked" outcome as a citizen with no linked profiles at all —
+    // not a 503. A 503 isn't in the citizen portal's M2M-retry list, so it
+    // skipped the account-linking flow and showed a hard error instead.
+    it("should throw a 404, not a 503, when the linked-profiles lookup is forbidden", async () => {
+      const messageId = await insertMessage("not-linked", "org-A", pool);
+
+      const retrievedMessage = getMessage({
+        messageId,
+        pool,
+        loggedInUser: { userId: "forbidden-id", accessToken: "123" },
+        hasOnboardingPermission: false,
+        logger: getMockBaseLogger(),
+      });
+
+      await expect(retrievedMessage).rejects.toMatchObject({
+        statusCode: 404,
+        message: `No message with id ${messageId} for the logged in user does exist`,
+      });
     });
 
     it("should return 404 for a soft-deleted message by default", async () => {

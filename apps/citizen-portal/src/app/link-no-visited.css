@@ -1,0 +1,13 @@
+/*
+ * DS gap: `.gi-link:visited` outranks `.gi-link-no-visited:visited`, so the
+ * `noVisited` prop does not keep the resting colour. Every design-system
+ * link in this app should stay that colour after a visit. `noColor` and
+ * `appearance="light"` stay excluded, same as the design system.
+ *
+ * Removable when `.gi-link-no-visited:visited` wins that specificity fight.
+ */
+.gi-link:not(.gi-link-inherit):not(.gi-link-disabled):not(
+  .gi-link-light
+):visited {
+  color: var(--gieds-color-text-tone-convention-default);
+}

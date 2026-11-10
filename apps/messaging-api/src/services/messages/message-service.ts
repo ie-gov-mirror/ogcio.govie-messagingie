@@ -264,7 +264,7 @@ export class MessageService {
       };
     }
 
-    const linkedProfilesIds = await this.getLinkedProfiles({
+    const linkedProfilesIds = await this.getLinkedProfilesOrEmpty({
       ...loggedInUser,
       organizationId: undefined,
     });
@@ -279,6 +279,47 @@ export class MessageService {
     throw httpErrors.notFound(
       `No message with id ${messageId} for the logged in user does exist`,
     );
+  }
+
+  /**
+   * Same as {@link getLinkedProfiles}, but a Forbidden from the upstream
+   * profile SDK (the logged-in user's own-token lookup) is treated as "no
+   * linked profiles" rather than rethrown. ProfileSdkWrapper.getProfile maps
+   * any non-404 SDK error to a local 503, keeping the original status on
+   * `.parent`, so a Forbidden-sourced failure must be detected there.
+   * A citizen who isn't linked to anything gets Forbidden here, same as one
+   * who genuinely isn't linked — the citizen portal's account-linking flow
+   * needs a 404 to retry via M2M either way (AB#45455). A genuine profile-api
+   * outage (anything but a wrapped 403) still surfaces as 503.
+   */
+  private async getLinkedProfilesOrEmpty(
+    userData: LoggedInUserData,
+  ): Promise<string[]> {
+    try {
+      return await this.getLinkedProfiles(userData);
+    } catch (error) {
+      if (isHttpError(error) && this.isForbiddenFromProfileSdk(error)) {
+        this.logger.debug(
+          "Linked-profiles lookup was forbidden, treating as not linked",
+        );
+        return [];
+      }
+      throw error;
+    }
+  }
+
+  private isForbiddenFromProfileSdk(error: {
+    statusCode: number;
+    parent?: unknown;
+  }): boolean {
+    if (error.statusCode === 403) {
+      return true;
+    }
+    const parentStatus =
+      error.parent && typeof error.parent === "object"
+        ? (error.parent as { statusCode?: unknown }).statusCode
+        : undefined;
+    return error.statusCode === 503 && parentStatus === 403;
   }
 
   private groupMessagesByStatus(

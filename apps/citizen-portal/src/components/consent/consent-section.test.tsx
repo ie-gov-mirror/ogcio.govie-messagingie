@@ -1,11 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-
-const trackEvent = vi.hoisted(() => vi.fn())
-
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
-}))
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
@@ -40,6 +34,11 @@ vi.mock("next-intl", () => ({
 }))
 
 import { ConsentSection } from "@/components/consent/consent-section"
+import { fakeAnalytics } from "../../../test/utils/analytics"
+
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
 
 describe("ConsentSection", () => {
   const messagingUrl = "https://messaging.example.test"

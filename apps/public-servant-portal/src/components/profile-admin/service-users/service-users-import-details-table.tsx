@@ -1,14 +1,11 @@
 "use client"
 
 import { Stack } from "@ogcio/design-system-react"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { useTranslations } from "next-intl"
 import { useMemo } from "react"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { PAGINATION_LIMIT_DEFAULT } from "@/const"
 import type { ApiServiceUserImportProfileDetail } from "@/types"
 import { PaginationWrapper } from "./pagination-wrapper"
@@ -23,7 +20,7 @@ export function ServiceUsersImportDetailsTable({
 }) {
   const t = useTranslations("serviceUserImport")
 
-  const columns = useMemo<ColumnDef<ApiServiceUserImportProfileDetail>[]>(
+  const columns = useMemo<Column<ApiServiceUserImportProfileDetail>[]>(
     () => [
       {
         id: "recipient",
@@ -44,10 +41,10 @@ export function ServiceUsersImportDetailsTable({
     [t],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: details,
     columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   return (

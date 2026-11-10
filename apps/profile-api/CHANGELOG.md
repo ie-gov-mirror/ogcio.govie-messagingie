@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.7](https://github.com/ogcio/govie-services-messaging/compare/profile-api-v0.1.6...profile-api-v0.1.7) (2026-11-05)
+
+
+### Bug Fixes
+
+* **deps:** pin @logto/node to 4.0.1 AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1100](https://github.com/ogcio/govie-services-messaging/issues/1100)) ([700444e](https://github.com/ogcio/govie-services-messaging/commit/700444e493b051e8fd27058ad44c93b487355da4))
+* **deps:** update all non-major dependencies ([#1090](https://github.com/ogcio/govie-services-messaging/issues/1090)) ([c023980](https://github.com/ogcio/govie-services-messaging/commit/c023980bf98bd413a9f5ef44dc153bcbc4f97076))
+* **deps:** update all non-major dependencies ([#1116](https://github.com/ogcio/govie-services-messaging/issues/1116)) ([82f8357](https://github.com/ogcio/govie-services-messaging/commit/82f8357aff3f01ba39299a54e765de5e8bea10f6))
+* **profile-api:** allow M2M onboarding reads of unlinked profiles AB[#45455](https://github.com/ogcio/govie-services-messaging/issues/45455) ([#1122](https://github.com/ogcio/govie-services-messaging/issues/1122)) ([4a0e500](https://github.com/ogcio/govie-services-messaging/commit/4a0e5000975c18cb7f142d074e93d4f423bdb9df))
+
+
+### Miscellaneous Chores
+
+* update to node 26 AB[#45024](https://github.com/ogcio/govie-services-messaging/issues/45024) ([#1102](https://github.com/ogcio/govie-services-messaging/issues/1102)) ([9eb7de0](https://github.com/ogcio/govie-services-messaging/commit/9eb7de0493593c5242ba26ab14491fb6f87256ab))
+
+## [0.1.6](https://github.com/ogcio/govie-services-messaging/compare/profile-api-v0.1.5...profile-api-v0.1.6) (2026-10-23)
+
+
+### Miscellaneous Chores
+
+* skip optional deps in API images AB[#44878](https://github.com/ogcio/govie-services-messaging/issues/44878) ([#1082](https://github.com/ogcio/govie-services-messaging/issues/1082)) ([cd34a47](https://github.com/ogcio/govie-services-messaging/commit/cd34a475044590cb86de4be257b4bf0a95fbc68e))
+
 ## [0.1.5](https://github.com/ogcio/govie-services-messaging/compare/profile-api-v0.1.4...profile-api-v0.1.5) (2026-10-23)
 
 

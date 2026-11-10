@@ -5,9 +5,11 @@ import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { DELETED_FOLDER_ID, INBOX_FOLDER_ID } from "@/api/messages"
+import { useTrack } from "@/hooks/use-track"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import { FOLDER_NAME_MAX_LENGTH } from "./folder-form-modal"
 import { InboxUnreadBadge } from "./inbox-unread-badge"
+import { listOpenedEvent } from "./list-opened-event"
 import styles from "./mobile-panel.module.css"
 import { useCreateFolder } from "./use-create-folder"
 import { useFolders } from "./use-folders"
@@ -91,6 +93,7 @@ export function MobileFolderPanel({ isOpen, onClose }: MobileFolderPanelProps) {
     )
   }, [])
 
+  const track = useTrack()
   const navigateToFolder = useCallback(
     (folderId: string) => {
       const params = new URLSearchParams(searchParams)
@@ -102,10 +105,11 @@ export function MobileFolderPanel({ isOpen, onClose }: MobileFolderPanelProps) {
         params.set("folder", folderId)
       }
       const qs = params.toString()
+      track.event(listOpenedEvent(folderId))
       router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
       onClose()
     },
-    [pathname, router, searchParams, onClose],
+    [pathname, router, searchParams, track, onClose],
   )
 
   const trimmed = value.trim()

@@ -104,7 +104,7 @@ test.describe("Accessibility (a11y) checks @regression", () => {
     // navigation then destroys its execution context. Wait for content that
     // only the destination app renders.
     await expect(
-      page.getByRole("heading", { name: "Welcome back, E2E Citizen User" }),
+      page.getByRole("heading", { name: "Welcome, E2E Citizen User" }),
     ).toBeVisible()
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('iframe[title="reCAPTCHA"]')
@@ -138,7 +138,7 @@ test.describe("Accessibility (a11y) checks @regression", () => {
   }) => {
     const page = await createAuthenticatedPage(
       browser,
-      users.citizen1.email,
+      users.peterParker.email,
     )
     await page.goto(`${DASHBOARD_URL}/en/my-submissions`)
     await expect(page.getByRole("textbox", { name: "Search" })).toBeVisible()

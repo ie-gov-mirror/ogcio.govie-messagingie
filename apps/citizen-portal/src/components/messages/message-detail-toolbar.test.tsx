@@ -1,16 +1,14 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { MessageDetailToolbar } from "@/components/messages/message-detail-toolbar"
+import { fakeAnalytics } from "../../../test/utils/analytics"
 import styles from "./message-detail.module.css"
 
-const trackEvent = vi.hoisted(() => vi.fn())
-
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
-}))
-
-import { MessageDetailToolbar } from "@/components/messages/message-detail-toolbar"
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
 
 vi.mock("@ogcio/design-system-react", () => ({
   Icon: () => null,

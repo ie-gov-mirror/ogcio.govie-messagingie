@@ -1,4 +1,5 @@
 import { httpErrors } from "@fastify/sensible";
+import type { BuildingBlocksSDK } from "@ogcio/building-blocks-sdk";
 import type { FastifyBaseLogger } from "fastify";
 import type { Pool, PoolClient } from "pg";
 import type { LogtoClient } from "~/clients/logto.js";
@@ -26,6 +27,9 @@ export const updateProfile = async (params: {
   toUpdateProfileId: string;
   toSetProfileData: PatchProfileBody;
   organizationId?: string;
+  // Required for citizen requests; only the trusted PPSN merge job links
+  // another profile without it.
+  linkProof?: LinkProof;
   logger: FastifyBaseLogger;
   getLogtoClient: () => Promise<LogtoClient>;
 }): Promise<ProfileWithDetails> =>
@@ -53,11 +57,47 @@ export const updateProfile = async (params: {
     }),
   );
 
+type MessagingSupportSdk = BuildingBlocksSDK["messaging"]["support"];
+
+type LinkProof = {
+  messageId?: string;
+  getMessagingSupportSdk: () => MessagingSupportSdk;
+};
+
+const MESSAGES_PAGE_SIZE = 100;
+
+// ponytail: pages through every message of the recipient; fine for the
+// handful a never-signed-in profile has, add a by-id lookup if that grows.
+async function isMessageSentTo(params: {
+  messagingSupportSdk: MessagingSupportSdk;
+  messageId: string;
+  recipientUserId: string;
+}): Promise<boolean> {
+  for (let offset = 0; ; offset += MESSAGES_PAGE_SIZE) {
+    const response = await params.messagingSupportSdk.postMessagesSearch(
+      { limit: String(MESSAGES_PAGE_SIZE), offset: String(offset) },
+      { recipientUserIds: [params.recipientUserId] },
+    );
+    if (response.error || !response.data) {
+      throw httpErrors.internalServerError(
+        "Unable to verify the message recipient",
+      );
+    }
+    if (response.data.some((message) => message.id === params.messageId)) {
+      return true;
+    }
+    if (response.data.length < MESSAGES_PAGE_SIZE) {
+      return false;
+    }
+  }
+}
+
 async function validateOtherProfileInputs({
   updateRequestedById,
   toUpdateProfileId,
   toSetProfileData,
   organizationId,
+  linkProof,
   client,
   getLogtoClient,
 }: {
@@ -65,6 +105,7 @@ async function validateOtherProfileInputs({
   toUpdateProfileId: string;
   toSetProfileData: PatchProfileBody;
   organizationId?: string;
+  linkProof?: LinkProof;
   client: PoolClient;
   getLogtoClient: () => Promise<LogtoClient>;
 }): Promise<{
@@ -153,6 +194,20 @@ async function validateOtherProfileInputs({
   if (updateRequestedBy.id !== updateRequestedBy.primaryUserId) {
     throw httpErrors.badRequest(
       "You can't use your profile as primary user because it's already linked to a parent",
+    );
+  }
+
+  if (
+    linkProof &&
+    (!linkProof.messageId ||
+      !(await isMessageSentTo({
+        messagingSupportSdk: linkProof.getMessagingSupportSdk(),
+        messageId: linkProof.messageId,
+        recipientUserId: toUpdateProfileId,
+      })))
+  ) {
+    throw httpErrors.forbidden(
+      "A message sent to this profile is required to link it",
     );
   }
 

@@ -8,7 +8,6 @@ import {
   Icon,
   InputCheckbox,
   InputCheckboxTableCell,
-  Paragraph,
   Table,
   TableBody,
   TableData,
@@ -20,24 +19,26 @@ import {
   SelectItem,
   SelectNative,
 } from "@ogcio/design-system-react/select/select-native"
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { flexRender, useTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useCallback, useMemo } from "react"
 import { ListCard } from "@/components/list-card/list-card"
+import {
+  clearSearchHref,
+  ListNoResults,
+  SKELETON_ROWS,
+  SkeletonBar,
+  SkeletonCard,
+  SkeletonCheckbox,
+} from "@/components/list-states/list-states"
+import { type Column, features } from "@/components/tables/table-features"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import type { Message } from "@/types"
 import { formatDate } from "@/util/datetime"
 import { InboxInfiniteScrollFooter } from "./inbox-infinite-scroll-footer"
 import { InboxPagination } from "./inbox-pagination"
-import { messageFiltersFromStatusParam } from "./messages-data-table-filters"
-import { MessagesLoading } from "./messages-loading"
 import { SenderName } from "./sender-name"
 import styles from "./unified-inbox-table.module.css"
 import type { MessageSelection } from "./use-message-selection"
@@ -64,6 +65,12 @@ function selectionCheckboxProps(args: {
     indeterminate,
     "aria-checked": indeterminate ? ("mixed" as const) : !!allSelected,
   }
+}
+
+const SKELETON_BAR_WIDTHS: Record<string, string> = {
+  sender: "8.75rem",
+  details: "23.75rem",
+  date: "5rem",
 }
 
 export interface UnifiedInboxTableProps {
@@ -142,8 +149,6 @@ export function UnifiedInboxTable({
   const pathname = usePathname()
   const searchParams = useUrlSearchParams()
 
-  const searchValue = searchParams.get("search") ?? ""
-  const statusValue = searchParams.get("status")
   const defaultDetailHref = useCallback(
     (id: string) => {
       const params = new URLSearchParams(searchParams)
@@ -151,10 +156,6 @@ export function UnifiedInboxTable({
       return `${pathname}?${params.toString()}`
     },
     [pathname, searchParams],
-  )
-  const appliedFilters = useMemo(
-    () => messageFiltersFromStatusParam(statusValue),
-    [statusValue],
   )
   const totalPages = Math.ceil((totalCount ?? 0) / pageSize)
 
@@ -174,8 +175,8 @@ export function UnifiedInboxTable({
   const effectiveSelectMode =
     selectMode || Boolean(selection && selection.selectedCount > 0)
 
-  const columns = useMemo<ColumnDef<Message>[]>(() => {
-    const cols: ColumnDef<Message>[] = []
+  const columns = useMemo<Column<Message>[]>(() => {
+    const cols: Column<Message>[] = []
 
     if (selectionEnabled && selection) {
       cols.push({
@@ -308,18 +309,15 @@ export function UnifiedInboxTable({
     return cols
   }, [selectionEnabled, selection, t, buildDetailHref, defaultDetailHref])
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: messages,
     columns,
-    enableSorting: false,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    pageCount: totalPages,
   })
 
   type ColumnSize = "xs-fixed" | "sm-fixed" | "md-fixed" | "lg-flex" | "fluid"
 
-  const columnSize = (columnDef: ColumnDef<Message>) =>
+  const columnSize = (columnDef: Column<Message>) =>
     (columnDef.meta as { size?: ColumnSize } | undefined)?.size
 
   const mobileInSelectMode = Boolean(effectiveSelectMode && selection)
@@ -436,17 +434,19 @@ export function UnifiedInboxTable({
         </div>
       ) : null}
 
-      {isListLoading ? (
-        <MessagesLoading />
-      ) : messages.length > 0 ? (
+      {isListLoading || messages.length > 0 ? (
         <div
           className={styles.listBody}
+          aria-busy={isListLoading || undefined}
           style={
             {
               "--inbox-list-page-size": pageSize,
             } as React.CSSProperties
           }
         >
+          {isListLoading ? (
+            <output className='gi-sr-only'>{t("loading")}</output>
+          ) : null}
           <div className={styles.desktopTable}>
             <Table
               data-testid='unified-inbox-table'
@@ -477,6 +477,34 @@ export function UnifiedInboxTable({
                 ))}
               </TableHead>
               <TableBody>
+                {isListLoading
+                  ? SKELETON_ROWS.map((key) => (
+                      <TableRow
+                        key={key}
+                        data-testid='message-skeleton-row'
+                        aria-hidden
+                      >
+                        {columns.map((column) => (
+                          <TableData
+                            key={column.id}
+                            className={
+                              column.id === "select"
+                                ? styles.selectCell
+                                : undefined
+                            }
+                          >
+                            {column.id === "select" ? (
+                              <SkeletonCheckbox />
+                            ) : column.id && SKELETON_BAR_WIDTHS[column.id] ? (
+                              <SkeletonBar
+                                width={SKELETON_BAR_WIDTHS[column.id]}
+                              />
+                            ) : null}
+                          </TableData>
+                        ))}
+                      </TableRow>
+                    ))
+                  : null}
                 {table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
@@ -500,7 +528,7 @@ export function UnifiedInboxTable({
                   </TableRow>
                 ))}
               </TableBody>
-              {totalPages > 1 && (
+              {totalPages > 1 && !isListLoading && (
                 <DataTableFooter>
                   <DataTableFooterStart>
                     <div
@@ -533,6 +561,15 @@ export function UnifiedInboxTable({
           </div>
 
           <div className={styles.mobileList}>
+            {isListLoading
+              ? SKELETON_ROWS.map((key) => (
+                  <SkeletonCard
+                    key={key}
+                    withCheckbox
+                    testId='message-skeleton-card'
+                  />
+                ))
+              : null}
             {messages.map((message) => (
               <MobileMessageRow
                 key={message.id}
@@ -545,17 +582,12 @@ export function UnifiedInboxTable({
           </div>
         </div>
       ) : (
-        <div className={styles.emptyState}>
-          <Paragraph>
-            {searchValue
-              ? t("empty.search")
-              : appliedFilters.selectedStatuses.includes("unread")
-                ? t("empty.unread")
-                : appliedFilters.selectedStatuses.includes("read")
-                  ? t("empty.read")
-                  : t("empty.all")}
-          </Paragraph>
-        </div>
+        <ListNoResults
+          title={t("noResults.title")}
+          description={t("noResults.description")}
+          clearLabel={t("noResults.clear")}
+          clearHref={clearSearchHref(pathname, searchParams)}
+        />
       )}
 
       {/*

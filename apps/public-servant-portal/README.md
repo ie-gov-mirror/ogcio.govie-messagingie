@@ -71,7 +71,7 @@ unified nginx server block.
 ### 2. Build the shared `base-deps` image once
 
 The Dockerfile pulls `FROM base-deps`, a thin
-`node:24-alpine + libc6-compat` layer shared by all monorepo images.
+`node:26-alpine + libc6-compat` layer shared by all monorepo images.
 
 ```bash
 pnpm docker:build:base

@@ -57,9 +57,15 @@ export const profileApi = {
       : base
   },
 
-  /** Mutation path for patching a profile (e.g. account linking, public name). */
-  patchPath(userId: string): string {
-    return `${PROFILES_PATH}/${userId}`
+  /**
+   * Mutation path for patching a profile (e.g. account linking, public name).
+   * Linking another profile needs the id of a message sent to that profile.
+   */
+  patchPath(userId: string, opts?: { messageId?: string }): string {
+    const base = `${PROFILES_PATH}/${userId}`
+    return opts?.messageId
+      ? `${base}?messageId=${encodeURIComponent(opts.messageId)}`
+      : base
   },
 
   /** Mutation path for creating a lifecycle task. */

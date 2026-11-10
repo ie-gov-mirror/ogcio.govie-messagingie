@@ -8,6 +8,9 @@ import { InboxListChromeHeader } from "@/components/messages/inbox-list-chrome-h
 import { MessagesDataTableHeader } from "@/components/messages/messages-data-table-header"
 import inboxTableStyles from "@/components/messages/unified-inbox-table.module.css"
 import pageTitleStyles from "@/components/page-title.module.css"
+import { ANALYTICS } from "@/const/analytics"
+import { useSearchTracking } from "@/hooks/use-search-tracking"
+import { useTrackView } from "@/hooks/use-track-view"
 import { useUrlSearchParams } from "@/hooks/use-url-search-params"
 import type { Submission } from "@/types"
 import {
@@ -27,11 +30,16 @@ export function SubmissionListView() {
   const search = searchParams.get("search")
   const page = Number(searchParams.get("page")) || 1
   const pageSize = parseSubmissionPageSize(searchParams.get("limit"))
+  useTrackView(ANALYTICS.application.listView)
 
   const { submissions, totalCount, isLoading, error } = useSubmissionsList({
     search,
     page,
     pageSize,
+  })
+  useSearchTracking(ANALYTICS.search.submissions, search, {
+    isLoading,
+    totalCount,
   })
   const totalPages = computeTotalPages(totalCount, pageSize)
 
@@ -87,7 +95,6 @@ export function SubmissionListView() {
         <Heading as='h1' className={pageTitleStyles.pageTitle}>
           {t("heading")}
         </Heading>
-        <Paragraph size='lg'>{t("description")}</Paragraph>
       </div>
       {hasNoApplications ? (
         <Alert

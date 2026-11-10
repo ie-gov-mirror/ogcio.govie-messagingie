@@ -2,15 +2,12 @@
 
 import { Link, Stack } from "@ogcio/design-system-react"
 import { useGatewayFetch } from "@ogcio/sag-client/react"
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 import { useSearchParams } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo } from "react"
 import { TanStackTable } from "@/components/tables/TanStackTable"
+import { type Column, features } from "@/components/tables/table-features"
 import { PAGINATION_LIMIT_DEFAULT } from "@/const"
 import {
   buildPaging,
@@ -44,7 +41,7 @@ export function ServiceUsersImportsTable() {
   const imports = data ?? []
   const paging = buildPaging(metadata?.totalCount ?? 0, page, size)
 
-  const columns = useMemo<ColumnDef<ApiServiceUserImport>[]>(
+  const columns = useMemo<Column<ApiServiceUserImport>[]>(
     () => [
       {
         id: "fileName",
@@ -79,10 +76,10 @@ export function ServiceUsersImportsTable() {
     [t, url],
   )
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: imports,
     columns,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   return (

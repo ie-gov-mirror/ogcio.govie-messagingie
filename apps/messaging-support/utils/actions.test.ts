@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { emitAuditOnce } from "@/data/audit"
 import { ProfileDataService } from "@/data/profile"
+import { GENERIC_USER_ERROR, PROFILE_NOT_FOUND_FOR_ID } from "@/data/utils"
 import { getIdentity } from "./session"
 
 vi.mock("@/data/profile", () => ({
   ProfileDataService: {
+    getMainProfile: vi.fn(),
     requestDataExport: vi.fn(),
     createAccountLink: vi.fn(),
     getAccountLinkDetails: vi.fn(),
@@ -57,6 +59,14 @@ const signedInUser = {
 describe("requestDataExportAction", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: true,
+      value: {
+        id: "profile-1",
+        primaryUserId: "profile-1",
+        status: "active",
+      },
+    })
   })
 
   it("returns unauthorized and calls nothing when there is no session user", async () => {
@@ -67,6 +77,39 @@ describe("requestDataExportAction", () => {
     expect(result.success).toBe(false)
     expect(ProfileDataService.requestDataExport).not.toHaveBeenCalled()
     expect(emitAuditOnce).not.toHaveBeenCalled()
+  })
+
+  it("rejects an unknown profile before creating an export task", async () => {
+    vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: false,
+      error: new Error("profile not found"),
+      userMessage: "profile not found",
+    })
+
+    const result = await requestDataExportAction({
+      profileId: "nonexistent-15457-a",
+    })
+
+    expect(result.success).toBe(false)
+    expect(ProfileDataService.requestDataExport).not.toHaveBeenCalled()
+  })
+
+  it("rejects an unresolved profile with a stable not-found message", async () => {
+    vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: false,
+      error: new Error("[getMainProfile] no profile found for p-1"),
+      userMessage: GENERIC_USER_ERROR,
+    })
+
+    const result = await requestDataExportAction({ profileId: "p-1" })
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.userMessage).toBe(PROFILE_NOT_FOUND_FOR_ID)
+    }
+    expect(ProfileDataService.requestDataExport).not.toHaveBeenCalled()
   })
 
   it("passes the signed-in agent as the requester and audits the success", async () => {
@@ -150,8 +193,33 @@ describe("linkAccountsAction", () => {
     expect(ProfileDataService.createAccountLink).not.toHaveBeenCalled()
   })
 
+  it("rejects an unknown profile before linking accounts", async () => {
+    vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: false,
+      error: new Error("profile not found"),
+      userMessage: "profile not found",
+    })
+
+    const result = await linkAccountsAction({
+      profileId: "../../profiles/p-1",
+      primaryUserId: "u-1",
+    })
+
+    expect(result.success).toBe(false)
+    expect(ProfileDataService.createAccountLink).not.toHaveBeenCalled()
+  })
+
   it("links the accounts and audits the outcome", async () => {
     vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: true,
+      value: {
+        id: "p-1",
+        primaryUserId: "p-1",
+        status: "active",
+      },
+    })
     vi.mocked(ProfileDataService.createAccountLink).mockResolvedValue({
       success: true,
       value: undefined,
@@ -219,8 +287,33 @@ describe("updateProfileConsentDataAction", () => {
     expect(ProfileDataService.updateProfileConsentData).not.toHaveBeenCalled()
   })
 
+  it("rejects an unknown profile before updating consents", async () => {
+    vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: false,
+      error: new Error("profile not found"),
+      userMessage: "profile not found",
+    })
+
+    const result = await updateProfileConsentDataAction({
+      profileId: "../../profiles/p-1",
+      consents: [],
+    })
+
+    expect(result.success).toBe(false)
+    expect(ProfileDataService.updateProfileConsentData).not.toHaveBeenCalled()
+  })
+
   it("updates the consents and audits the outcome", async () => {
     vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: true,
+      value: {
+        id: "p-1",
+        primaryUserId: "p-1",
+        status: "active",
+      },
+    })
     vi.mocked(ProfileDataService.updateProfileConsentData).mockResolvedValue({
       success: true,
       value: [],
@@ -256,8 +349,32 @@ describe("deleteAccountAction", () => {
     expect(ProfileDataService.deleteAccount).not.toHaveBeenCalled()
   })
 
+  it("rejects an unknown profile before creating a delete task", async () => {
+    vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: false,
+      error: new Error("profile not found"),
+      userMessage: "profile not found",
+    })
+
+    const result = await deleteAccountAction({
+      profileId: "../../profiles/profile-1",
+    })
+
+    expect(result.success).toBe(false)
+    expect(ProfileDataService.deleteAccount).not.toHaveBeenCalled()
+  })
+
   it("passes the signed-in agent as the requester and audits", async () => {
     vi.mocked(getIdentity).mockResolvedValue(signedInUser)
+    vi.mocked(ProfileDataService.getMainProfile).mockResolvedValue({
+      success: true,
+      value: {
+        id: "p-1",
+        primaryUserId: "p-1",
+        status: "active",
+      },
+    })
     vi.mocked(ProfileDataService.deleteAccount).mockResolvedValue({
       success: true,
       value: undefined,

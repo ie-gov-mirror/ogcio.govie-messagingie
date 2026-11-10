@@ -11,13 +11,13 @@ import {
   type IconProps,
   Link,
 } from "@ogcio/design-system-react"
-import { useAnalytics } from "@ogcio/nextjs-analytics"
 import { useAuth, useGatewayFetch } from "@ogcio/sag-client/react"
 import { useTranslations } from "next-intl"
 import { type MouseEvent, useEffect, useRef } from "react"
 import { type FileMetadata, uploadApi } from "@/api/upload"
 import { ANALYTICS } from "@/const/analytics"
 import { TRACE_MESSAGES } from "@/const/traces"
+import { useTrack } from "@/hooks/use-track"
 import styles from "./attachment-card.module.css"
 
 /**
@@ -70,7 +70,7 @@ function getFileTypeLabel(fileName: string): string {
 
 export function AttachmentCard({ id }: { id: string }) {
   const t = useTranslations("home.detail.attachment")
-  const analyticsClient = useAnalytics()
+  const track = useTrack()
 
   const { authenticated, loading, signIn } = useAuth()
 
@@ -85,8 +85,8 @@ export function AttachmentCard({ id }: { id: string }) {
     }
   }
 
-  // useAnalytics() returns a new object every render, so it can't keep this
-  // effect's deps stable — guard so a single real failure is reported once.
+  // Guard so a single real failure is reported once, even if the fetch
+  // state churns between renders.
   const reportedMissing = useRef(false)
   useEffect(() => {
     if (isLoading || data || reportedMissing.current) return
@@ -98,14 +98,8 @@ export function AttachmentCard({ id }: { id: string }) {
       },
       level: LogLevel.WARN,
     })
-    analyticsClient.trackEvent({
-      event: {
-        name: ANALYTICS.message.attachmentError.name,
-        category: ANALYTICS.message.category,
-        action: ANALYTICS.message.attachmentError.action,
-      },
-    })
-  }, [data, error, id, isLoading, analyticsClient])
+    track.event(ANALYTICS.message.attachmentError)
+  }, [data, error, id, isLoading, track])
 
   if (!data) return null
 
@@ -145,13 +139,7 @@ export function AttachmentCard({ id }: { id: string }) {
               iconStart='download'
               aria-label={t("downloadFile", { fileName: data.fileName })}
               onClick={(e) => {
-                analyticsClient.trackEvent({
-                  event: {
-                    name: ANALYTICS.message.attachmentDownload.name,
-                    category: ANALYTICS.message.category,
-                    action: ANALYTICS.message.attachmentDownload.action,
-                  },
-                })
+                track.event(ANALYTICS.message.attachmentDownload)
                 reauthIfLoggedOut(e)
               }}
             >
@@ -164,7 +152,10 @@ export function AttachmentCard({ id }: { id: string }) {
               rel='noopener noreferrer'
               iconStart='open_in_new'
               aria-label={t("openFile", { fileName: data.fileName })}
-              onClick={reauthIfLoggedOut}
+              onClick={(e) => {
+                track.event(ANALYTICS.message.attachmentOpen)
+                reauthIfLoggedOut(e)
+              }}
             >
               {t("open")}
             </Link>

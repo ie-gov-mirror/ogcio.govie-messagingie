@@ -2,6 +2,8 @@
 
 import { useSagClient } from "@ogcio/sag-client/react"
 import { useCallback, useState } from "react"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrack } from "@/hooks/use-track"
 
 export interface DeleteFolderResult {
   ok: boolean
@@ -20,6 +22,7 @@ export interface UseDeleteFolderOptions {
 export function useDeleteFolder(options: UseDeleteFolderOptions = {}) {
   const { onSettled } = options
   const client = useSagClient()
+  const track = useTrack()
   const [isLoading, setIsLoading] = useState(false)
 
   const deleteFolder = useCallback(
@@ -27,6 +30,7 @@ export function useDeleteFolder(options: UseDeleteFolderOptions = {}) {
       setIsLoading(true)
       try {
         await client.mutate(`/messaging/api/v1/tags/${folderId}`, "DELETE")
+        track.event(ANALYTICS.folder.delete)
         return { ok: true }
       } catch {
         return { ok: false }
@@ -35,7 +39,7 @@ export function useDeleteFolder(options: UseDeleteFolderOptions = {}) {
         onSettled?.()
       }
     },
-    [client, onSettled],
+    [client, onSettled, track],
   )
 
   return { deleteFolder, isLoading }

@@ -127,9 +127,14 @@ export const messagesApi = {
     return `${MESSAGES_PATH}/?limit=${limit}`
   },
 
-  /** SWR key for a single message's detail. */
-  detailKey(id: string): string {
-    return `${MESSAGES_PATH}/${id}`
+  /**
+   * SWR key for a single message's detail. `deleted` asks for the soft-deleted
+   * row: the API 404s a live message when the flag is set, and a deleted
+   * message when it is not.
+   */
+  detailKey(id: string, opts?: { deleted?: boolean }): string {
+    const path = `${MESSAGES_PATH}/${id}`
+    return opts?.deleted ? `${path}?deleted=true` : path
   },
 
   /** Mutation path for soft-deleting messages. */

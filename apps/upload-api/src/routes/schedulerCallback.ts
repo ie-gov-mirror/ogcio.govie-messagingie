@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import { httpErrors } from "@fastify/sensible";
 import type { FastifyInstance } from "fastify";
@@ -9,6 +10,12 @@ import {
   markFilesAsDeleted,
   scheduleExpiredFilesForDeletion,
 } from "./metadata/utils/filesMetadata.js";
+
+const tokensMatch = (received: string, expected: string) => {
+  const a = Buffer.from(received);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+};
 
 export default async function scheduler(app: FastifyInstance) {
   app.post<{ Body: { token: string } }>(
@@ -23,7 +30,11 @@ export default async function scheduler(app: FastifyInstance) {
       );
 
       // Bad auth must be non-2xx so the scheduler does not mark the job delivered.
-      if (token !== expectedSchedulerToken) {
+      if (
+        typeof token !== "string" ||
+        typeof expectedSchedulerToken !== "string" ||
+        !tokensMatch(token, expectedSchedulerToken)
+      ) {
         throw httpErrors.unauthorized("Invalid scheduler token");
       }
 

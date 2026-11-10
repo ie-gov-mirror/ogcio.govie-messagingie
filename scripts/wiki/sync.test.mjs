@@ -154,6 +154,154 @@ test("sync conflict: a wiki-side edit to the subtree since the last sync fails l
   assert.equal(git(bare, ["rev-parse", "HEAD"]).trim(), before)
 })
 
+test("a wiki-side edit already pulled into the repo is not a conflict", () => {
+  const bare = initBareWiki()
+  const subtree = "Team/Docs"
+  seedSyncedWiki(bare, subtree, {
+    "page.md": "original\n",
+    "other.md": "other\n",
+  })
+  editWikiDirectly(bare, {
+    [join(subtree, "page.md")]: "edited on the wiki\n",
+  })
+
+  // The repo carries the wiki edit plus a change of its own.
+  const root = initSourceRoot({
+    "page.md": "edited on the wiki\n",
+    "other.md": "updated in repo\n",
+  })
+  const result = runSyncCli(root, ["--repo", bare, "--subtree", subtree])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(readWikiFile(bare, subtree, "page.md"), "edited on the wiki\n")
+  assert.equal(readWikiFile(bare, subtree, "other.md"), "updated in repo\n")
+})
+
+// Base page plus its wiki-side and repo-side edits, apart enough to merge.
+const BASE_PAGE = "one\ntwo\nthree\nfour\nfive\n"
+const WIKI_PAGE = "one\ntwo on the wiki\nthree\nfour\nfive\n"
+const MERGED_PAGE = "one\ntwo on the wiki\nthree\nfour\nfive in repo\n"
+
+function renameOnWiki(bare, from, to) {
+  const scratch = freshDir("wiki-rename")
+  git(scratch, ["clone", "--quiet", bare, "."])
+  git(scratch, ["config", "user.email", "editor@example.com"])
+  git(scratch, ["config", "user.name", "Editor"])
+  git(scratch, ["mv", from, to])
+  git(scratch, ["commit", "--quiet", "-m", "Renamed page"])
+  git(scratch, ["push", "--quiet", "origin", "main"])
+}
+
+test("a wiki-side edit merged into a page the repo also changed is not a conflict", () => {
+  const bare = initBareWiki()
+  const subtree = "Team/Docs"
+  seedSyncedWiki(bare, subtree, { "page.md": BASE_PAGE })
+  editWikiDirectly(bare, { [join(subtree, "page.md")]: WIKI_PAGE })
+
+  const root = initSourceRoot({ "page.md": MERGED_PAGE })
+  const result = runSyncCli(root, ["--repo", bare, "--subtree", subtree])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(readWikiFile(bare, subtree, "page.md"), MERGED_PAGE)
+})
+
+test("a wiki-side edit the repo has not taken is a conflict, even when it would merge cleanly", () => {
+  const bare = initBareWiki()
+  const subtree = "Team/Docs"
+  seedSyncedWiki(bare, subtree, { "page.md": BASE_PAGE })
+  editWikiDirectly(bare, { [join(subtree, "page.md")]: WIKI_PAGE })
+  const before = git(bare, ["rev-parse", "HEAD"]).trim()
+
+  const root = initSourceRoot({
+    "page.md": "one\ntwo\nthree\nfour\nfive in repo\n",
+  })
+  const result = runSyncCli(root, ["--repo", bare, "--subtree", subtree])
+
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /conflict/i)
+  assert.match(result.stderr, /two on the wiki/)
+  assert.equal(git(bare, ["rev-parse", "HEAD"]).trim(), before)
+})
+
+test("a wiki-side rename and edit merged into a page the repo also changed is not a conflict", () => {
+  const bare = initBareWiki()
+  const subtree = "Team/Docs"
+  seedSyncedWiki(bare, subtree, { "page.md": BASE_PAGE })
+  editWikiDirectly(bare, { [join(subtree, "page.md")]: WIKI_PAGE })
+  renameOnWiki(bare, join(subtree, "page.md"), join(subtree, "renamed.md"))
+
+  const root = initSourceRoot({ "renamed.md": MERGED_PAGE })
+  const result = runSyncCli(root, ["--repo", bare, "--subtree", subtree])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(readWikiFile(bare, subtree, "renamed.md"), MERGED_PAGE)
+  assert.throws(() => readWikiFile(bare, subtree, "page.md"))
+})
+
+// Serves `bare` like the ADO wiki: partial clones allowed, and every request
+// refused unless the caller carries the ADO_PAT auth header config, so a git
+// call missing the auth env fails as it does in CI.
+function authGatedUrl(bare) {
+  git(bare, ["config", "uploadpack.allowFilter", "true"])
+  git(bare, ["config", "uploadpack.allowAnySHA1InWant", "true"])
+  return `ext::sh -c test% -n% "$GIT_CONFIG_VALUE_0"% &&% git% %s% ${bare}`
+}
+
+test("a lazily fetched wiki blob is fetched with the ADO auth", () => {
+  const bare = initBareWiki()
+  const subtree = "Team/Docs"
+  seedSyncedWiki(bare, subtree, { "page.md": BASE_PAGE })
+  editWikiDirectly(bare, { [join(subtree, "page.md")]: WIKI_PAGE })
+  // Rename plus edit: rename detection needs the old blob, which the
+  // blob:none clone has to fetch.
+  renameOnWiki(bare, join(subtree, "page.md"), join(subtree, "renamed.md"))
+
+  const root = initSourceRoot({ "renamed.md": MERGED_PAGE })
+  const result = spawnSync(
+    process.execPath,
+    [
+      SYNC_SCRIPT,
+      "--root",
+      root,
+      "--source-sha",
+      "a".repeat(40),
+      "--repo",
+      authGatedUrl(bare),
+      "--subtree",
+      subtree,
+    ],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        ADO_PAT: "test-pat",
+        GIT_CONFIG_PARAMETERS: "'protocol.ext.allow'='always'",
+      },
+    },
+  )
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(readWikiFile(bare, subtree, "renamed.md"), MERGED_PAGE)
+})
+
+test("a wiki-side page rename is a conflict until the repo renames it too", () => {
+  const bare = initBareWiki()
+  const subtree = "Team/Docs"
+  seedSyncedWiki(bare, subtree, { "page.md": "content\n" })
+
+  renameOnWiki(bare, join(subtree, "page.md"), join(subtree, "renamed.md"))
+
+  const stale = initSourceRoot({ "page.md": "content\n" })
+  const refused = runSyncCli(stale, ["--repo", bare, "--subtree", subtree])
+  assert.notEqual(refused.status, 0)
+  assert.match(refused.stderr, /conflict/i)
+
+  const pulled = initSourceRoot({ "renamed.md": "content\n" })
+  const synced = runSyncCli(pulled, ["--repo", bare, "--subtree", subtree])
+  assert.equal(synced.status, 0, synced.stderr)
+  assert.equal(readWikiFile(bare, subtree, "renamed.md"), "content\n")
+})
+
 test("moved subtree: a sync marker recorded under the old subtree does not count as already-synced", () => {
   const bare = initBareWiki()
   // A prior sync ran against a different (old) subtree path.

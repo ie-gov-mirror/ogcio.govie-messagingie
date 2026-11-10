@@ -33,6 +33,13 @@ vi.mock("@/lib/feature-config", () => ({
   isZoneEnabled: () => flags.dashboard,
 }))
 
+// The page reads discovery whenever LEA is on. CI has no generated
+// `.static-content`, and these tests only care about the route shell.
+vi.mock("@/lib/discovery", () => ({
+  getDiscovery: () => ({ lifeEvents: [] }),
+  getDashboardLifeEvents: () => [],
+}))
+
 vi.mock("@/lib/zone-config", () => ({
   ZONE_CONFIG: { messages: { rootPath: "/messages" } },
 }))
@@ -107,16 +114,16 @@ describe("authenticated app routes", () => {
     expect(screen.getByText("Messages en")).toBeInTheDocument()
   })
 
-  it("renders the dashboard view when its zone is enabled", () => {
-    render(<MyDashboardPage />)
+  it("renders the dashboard view when its zone is enabled", async () => {
+    render(await MyDashboardPage({ params: Promise.resolve({ locale: "en" }) }))
 
     expect(screen.getByText("Dashboard")).toBeInTheDocument()
   })
 
-  it("redirects away from the dashboard when its zone is disabled", () => {
+  it("redirects away from the dashboard when its zone is disabled", async () => {
     flags.dashboard = false
 
-    render(<MyDashboardPage />)
+    render(await MyDashboardPage({ params: Promise.resolve({ locale: "en" }) }))
 
     expect(screen.getByText("Loading")).toBeInTheDocument()
     expect(locationReplace).toHaveBeenCalledWith("/en/messages")

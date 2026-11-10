@@ -24,7 +24,7 @@ const inboxRecipient = users.peterParker
  * masquerade as the inbox.
  */
 async function openNewestTestSubject(page: Page) {
-  const inboxSearch = page.getByRole("textbox", { name: "Search", exact: true })
+  const inboxSearch = page.getByRole("textbox", { name: "Search messages", exact: true })
   // loginAsCitizen settles on any portal app host; hop to the inbox when the
   // post-logout redirect_uri was not /en/messages.
   if (!(await inboxSearch.isVisible().catch(() => false))) {
@@ -204,21 +204,7 @@ test.describe("Admin Message Sending > Citizen Viewing", () => {
     await logout(authenticatedPage)
     await previewRecentMessageEmail(authenticatedPage, "me")
     await waitForMockLoginForm(authenticatedPage)
-    await authenticatedPage
-      .locator(
-        "#login-form > div > div.gi-w-full > div:nth-child(1) > div.gi-accordion > div",
-      )
-      .click()
-    await authenticatedPage.locator("#sub").fill("932d94fc69be147f6fcb")
-    await authenticatedPage
-      .locator(
-        "#login-form > div > div.gi-w-full > div:nth-child(2) > div.gi-accordion > div",
-      )
-      .click()
-    await authenticatedPage.locator("#firstName").fill("Andrew")
-    await authenticatedPage.locator("#lastName").fill("Parker")
-    await authenticatedPage.locator("#email").fill(users.peterParker.email)
-    await authenticatedPage.getByRole("button", { name: "LOGIN" }).click()
+    await loginAsCitizen(authenticatedPage, inboxRecipient.email)
     await expect(
       authenticatedPage.getByRole("heading", {
         name: "Test Subject",

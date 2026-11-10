@@ -76,7 +76,7 @@ function ShellContent({ children }: { children: ReactNode }) {
   // get `authorized=false` here and see the NotAuthorized panel below,
   // which avoids the cross-app redirect loop with profile-next.
   // `inactiveRedirectUrl` is intentionally unset: inactive PS users fall
-  // through to NotAuthorized (same as messaging-admin-next / messaging shell).
+  // through to NotAuthorized (same as the messaging shell).
   const { resolved, authorized } = usePublicServantGuard({
     publicServantRoles: [PROFILE_PUBLIC_SERVANT_ROLE_NAME],
     citizenRedirectUrl: env.NEXT_PUBLIC_PROFILE_URL,

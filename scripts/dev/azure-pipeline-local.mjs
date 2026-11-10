@@ -111,7 +111,6 @@ class AzurePipelineLocal {
         name: "Unit Tests",
         commands: [
           "pnpm test",
-          "pnpm --filter messaging-admin-next test",
           "pnpm --filter public-servant-portal test",
           "pnpm --filter messaging-api test",
         ],
@@ -120,14 +119,12 @@ class AzurePipelineLocal {
         name: "Build Services",
         commands: [
           "pnpm build:api",
-          "pnpm build:admin-next",
           "pnpm build:public-servant-portal",
         ],
       },
       {
         name: "Docker Builds",
         commands: [
-          "docker build -f apps/messaging-admin-next/Dockerfile -t messaging-admin-next .",
           "docker build -f apps/public-servant-portal/Dockerfile -t public-servant-portal .",
           "docker build -f apps/messaging-api/Dockerfile -t messaging-api .",
         ],
@@ -326,7 +323,6 @@ jobs:
 
     console.log("\n📦 Services:")
     console.log("- messaging-api")
-    console.log("- messaging-admin-next")
     console.log("- public-servant-portal")
 
     console.log("\n🔧 Local Equivalents:")

@@ -19,7 +19,14 @@ import type {
  * `gi-prose` on the article sets type and spacing for every heading and
  * paragraph. Those elements stay unclassed so the prose rules apply.
  */
-export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
+export function ContentBlocks({
+  blocks,
+  onExternalButtonClick,
+}: {
+  blocks: ContentBlock[]
+  /** Called when the citizen follows a button that opens another site. */
+  onExternalButtonClick?: () => void
+}) {
   if (blocks.length === 0) return null
 
   return (
@@ -28,7 +35,11 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
         block.type === "buttonLinks" ? (
           <Stack key={i} direction='row' gap={4} wrap>
             {block.links.map((link) => (
-              <ButtonLink key={link.href} link={link} />
+              <ButtonLink
+                key={link.href}
+                link={link}
+                onExternalClick={onExternalButtonClick}
+              />
             ))}
           </Stack>
         ) : (
@@ -74,9 +85,20 @@ export function opensInNewTab({
   return !internal && !href.startsWith("mailto:")
 }
 
-function ButtonLink({ link }: { link: ContentLink }) {
+function ButtonLink({
+  link,
+  onExternalClick,
+}: {
+  link: ContentLink
+  onExternalClick?: () => void
+}) {
+  const external = opensInNewTab(link)
   return (
-    <LinkButton external={opensInNewTab(link)} href={useHref(link)}>
+    <LinkButton
+      external={external}
+      href={useHref(link)}
+      onClick={external ? onExternalClick : undefined}
+    >
       {link.text}
     </LinkButton>
   )

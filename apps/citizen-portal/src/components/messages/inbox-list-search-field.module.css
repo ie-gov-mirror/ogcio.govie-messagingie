@@ -3,6 +3,12 @@
   min-width: 0;
 }
 
+.searchInput :global(input) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /*
  * Desktop: cap the search field at a fixed width so it does not stretch the
  * full width of the list header (per design). Mobile keeps it full width so

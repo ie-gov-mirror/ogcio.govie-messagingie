@@ -23,8 +23,11 @@ vi.mock("@ogcio/nextjs-analytics", () => ({
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
-  useTranslations: (namespace: string) => (key: string) =>
-    `${namespace}.${key}`,
+  useTranslations:
+    (namespace: string) => (key: string, values?: { year?: number }) =>
+      key === "text.trademark"
+        ? `© ${values?.year ?? ""} Government of Ireland`
+        : `${namespace}.${key}`,
 }))
 
 vi.mock("@ogcio/design-system-react", () => ({
@@ -79,6 +82,9 @@ describe("component primitives", () => {
     fireEvent.click(privacy)
     expect(trackEvent).toHaveBeenCalledOnce()
     expect(screen.getAllByRole("link")).toHaveLength(5)
+    expect(
+      screen.getByText(`© ${new Date().getFullYear()} Government of Ireland`),
+    ).toBeInTheDocument()
   })
 
   it("renders back controls, invokes callbacks, and tracks clicks", () => {

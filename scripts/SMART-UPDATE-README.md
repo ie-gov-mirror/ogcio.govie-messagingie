@@ -43,7 +43,7 @@ Deps that must **never** be upgraded automatically.
 
 ```ts
 const SKIP: PackageRules = {
-  global: ["@logto/node", "@logto/react"],
+  global: ["some-package"],
   scoped: {
     "my-app": ["pg"],
   },

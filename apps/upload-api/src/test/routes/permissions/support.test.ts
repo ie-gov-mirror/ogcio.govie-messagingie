@@ -57,6 +57,7 @@ vi.mock("../../../utils/authentication-factory.js", async () => {
 describe("permissions support routes", async () => {
   let app: FastifyInstance;
   let isM2MApplication = true;
+  let organizationId: string | undefined = "ogcio";
 
   const { build } = await import("../../../app.js");
   const routes = await import("../../../routes/permissions/support.js");
@@ -70,6 +71,7 @@ describe("permissions support routes", async () => {
         .map((id) => ({ id })),
     }));
     isM2MApplication = true;
+    organizationId = "ogcio";
 
     app = await build();
     app.addHook("onRequest", async (req: FastifyRequest) => {
@@ -81,7 +83,7 @@ describe("permissions support routes", async () => {
         request.userData = {
           userId: "userId",
           accessToken: "accessToken",
-          organizationId: "ogcio",
+          organizationId,
           isM2MApplication,
           scopes: [],
         };
@@ -163,6 +165,24 @@ describe("permissions support routes", async () => {
 
     expect(response.statusCode).toBe(503);
     expect(addFileSharingMock).not.toHaveBeenCalled();
+  });
+
+  it("shares without an organisation for the lifecycle worker", async () => {
+    organizationId = undefined;
+    addFileSharingMock.mockResolvedValue(undefined);
+
+    const response = await app.inject({
+      method: "POST",
+      url: "/support/permissions",
+      payload,
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(addFileSharingMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining(payload),
+    );
+    expect(selectProfilesMock).not.toHaveBeenCalled();
   });
 
   it("rejects non-M2M callers with 403", async () => {

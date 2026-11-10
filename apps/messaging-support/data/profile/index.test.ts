@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { ProfileQueryBase, ProfileQueryRow } from "../types"
+import { PROFILE_NOT_FOUND_FOR_ID } from "../utils"
 
 vi.mock("@ogcio/o11y-sdk-node", () => ({
   withSpan: ({ fn }: { fn: (span: unknown) => unknown }) =>
@@ -407,6 +408,17 @@ describe("getMainProfile", () => {
     const result = await ProfileDataService.getMainProfile("user-1")
 
     expect(result.success).toBe(false)
+  })
+
+  it("reports a stable not-found message when no profile matches", async () => {
+    vi.mocked(queryProfile).mockResolvedValue({ success: true, value: [] })
+
+    const result = await ProfileDataService.getMainProfile("user-1")
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.userMessage).toBe(PROFILE_NOT_FOUND_FOR_ID)
+    }
   })
 
   it("propagates a query failure", async () => {

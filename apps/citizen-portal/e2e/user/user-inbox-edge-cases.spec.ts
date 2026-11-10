@@ -169,7 +169,7 @@ test.describe("Unified Inbox edge cases @regression", () => {
     await page.getByTestId("search-input").press("Enter")
 
     await expect(
-      page.getByText("No messages matched your search."),
+      page.getByText("No messages match your search"),
     ).toBeVisible()
     await expect(page.locator('[data-testid^="select-row-"]')).toHaveCount(0)
 
@@ -186,7 +186,7 @@ test.describe("Unified Inbox edge cases @regression", () => {
     await page.getByTestId("search-input").press("Enter")
 
     await expect(
-      page.getByText("No messages matched your search."),
+      page.getByText("No messages match your search"),
     ).toBeVisible()
 
     await page.getByRole("button", { name: "Clear input" }).click()
@@ -207,7 +207,7 @@ test.describe("Unified Inbox edge cases @regression", () => {
     await page.getByTestId("search-input").press("Enter")
 
     await expect(
-      page.getByText("No messages matched your search."),
+      page.getByText("No messages match your search"),
     ).toBeVisible()
 
     await page.reload()

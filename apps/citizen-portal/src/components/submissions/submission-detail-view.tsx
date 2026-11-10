@@ -11,6 +11,8 @@ import messageStyles from "@/components/messages/message-detail.module.css"
 import pageTitleStyles from "@/components/page-title.module.css"
 import { Skeleton } from "@/components/skeleton/skeleton"
 import { LANG_GA } from "@/const"
+import { ANALYTICS } from "@/const/analytics"
+import { useTrackView } from "@/hooks/use-track-view"
 import { formatDate } from "@/util/datetime"
 import { pickLocalized } from "./localized"
 import styles from "./submission-detail.module.css"
@@ -56,6 +58,7 @@ export function SubmissionDetailView({ id }: { id: string }) {
   const t = useTranslations("submissions.detail")
   const { submission, isLoading, error } = useSubmission(id)
   const listHref = pathname.split("?")[0]
+  useTrackView(ANALYTICS.application.detail, Boolean(submission) && !error)
 
   if (isLoading && !submission) {
     return (

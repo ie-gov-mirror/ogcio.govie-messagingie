@@ -1,13 +1,11 @@
-import { render } from "@testing-library/react"
-import { beforeEach, describe, expect, it, vi } from "vitest"
-
-const trackEvent = vi.hoisted(() => vi.fn())
-
-vi.mock("@ogcio/nextjs-analytics", () => ({
-  useAnalytics: () => ({ trackEvent }),
-}))
+import { beforeEach, describe, expect, it } from "vitest"
 
 import { LoginTracker } from "@/components/analytics/login-tracker"
+import { fakeAnalytics } from "../../../test/utils/analytics"
+
+const analytics = fakeAnalytics()
+const { render } = analytics
+const trackEvent = analytics.event
 
 describe("LoginTracker", () => {
   beforeEach(() => {

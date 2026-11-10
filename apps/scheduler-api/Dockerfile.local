@@ -1,8 +1,8 @@
 # Local-development variant of ./Dockerfile.
 #
 # Identical to the production Dockerfile except for the runner base image: this
-# one uses the public `node:24-alpine3.24` instead of the hardened
-# `dhi.io/node:24-alpine3.24` mirror in ECR, which needs AWS credentials most
+# one uses the public `node:26-alpine3.24` instead of the hardened
+# `dhi.io/node:26-alpine3.24` mirror in ECR, which needs AWS credentials most
 # developers do not have locally.
 #
 # Keep this file in sync with ./Dockerfile. The ONLY line that should ever
@@ -17,7 +17,7 @@ FROM base-deps AS scheduler-api-base-deps
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN npm install -g corepack@latest && corepack enable
 
 FROM scheduler-api-base-deps AS builder
 WORKDIR /app
@@ -32,7 +32,7 @@ RUN pnpm --filter scheduler-api run build
 
 RUN pnpm deploy --filter=scheduler-api --prod /app/deploy
 
-FROM node:24-alpine3.24 AS runner
+FROM node:26-alpine3.24 AS runner
 WORKDIR /app
 
 USER node
