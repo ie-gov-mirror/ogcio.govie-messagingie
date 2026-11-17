@@ -59,6 +59,7 @@ Removing the legacy routes before the app has its own takes both hostnames offli
 ## Remaining: prod cutover
 
 Tracked in AB#45028:
+
 - Give the app its own prod Gateway, Certificate and VirtualService for both hostnames, under
   `public-servant-portal` in `messaging-k8s-apps`. Hostnames and certificates stay the same.
 - Then remove the `messaging-admin-next` and `profile-admin-next` prod workloads, ArgoCD apps,

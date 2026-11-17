@@ -42,6 +42,11 @@ const MAX_ATTACHMENT_SIZE_BYTES = MAX_ATTACHMENT_SIZE_MB * 1024 * 1024
 const MAX_ATTACHMENT_COUNT = 3
 const ALLOWED_FORMATS = ".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
 
+// Row ids only need to be unique on the page. crypto.randomUUID exists only in
+// secure contexts (https, localhost), so a plain-http host would throw.
+let lastAttachmentId = 0
+const newAttachmentId = () => `attachment-${++lastAttachmentId}`
+
 export default function AttachmentsForm() {
   const t = useTranslations("message.wizard.step.attachments")
   const { message, onStep, canUploadFiles, pendingFiles, setPendingFiles } =
@@ -49,7 +54,7 @@ export default function AttachmentsForm() {
   const [attachments, setAttachments] = useState<AttachmentEntry[]>(
     () =>
       pendingFiles.map((f) => ({
-        id: crypto.randomUUID(),
+        id: newAttachmentId(),
         fileName: f.name,
         fileSize: f.size,
       })) ?? [],
@@ -93,7 +98,7 @@ export default function AttachmentsForm() {
       return
     }
 
-    const id = crypto.randomUUID()
+    const id = newAttachmentId()
     setPendingFiles((prev) => [...prev, file])
     setAttachments((prev) => [
       ...prev,

@@ -22,6 +22,13 @@ export interface DeletionRow {
   id: string;
   deletedAt: Date | null;
   recipientUserId: string;
+  organisationId: string;
+}
+
+export interface AttachmentShare {
+  attachmentId: string;
+  recipientUserId: string;
+  organisationId: string;
 }
 
 /**
@@ -72,6 +79,7 @@ export class MessageModel extends BaseModel<DB, "messages"> {
     }
 
     builder = builder.where("messages.userId", "in", recipientUserIds);
+    builder = builder.where("messages.erasedAt", "is", null);
     builder = builder.where(sql<boolean>`messages.scheduled_at <= now()`);
 
     if (query.deletedAfterDateTime) {
@@ -168,6 +176,7 @@ export class MessageModel extends BaseModel<DB, "messages"> {
         ),
       )
       .where("messages.id", "=", params.messageId)
+      .where("messages.erasedAt", "is", null)
       .where(sql<boolean>`messages.scheduled_at <= now()`);
 
     builder =
@@ -199,7 +208,11 @@ export class MessageModel extends BaseModel<DB, "messages"> {
     return row as ReadMessage | undefined;
   }
 
-  /** Fetch id/deletedAt/recipientUserId for the given ids (delete validation). */
+  /**
+   * Fetch id/deletedAt/recipientUserId/organisationId for the given ids
+   * (delete, restore and erase validation). Erased messages are gone for the
+   * citizen, so they never come back here.
+   */
   async findForDeletion(ids: string[]): Promise<DeletionRow[]> {
     const rows = await this.db
       .selectFrom("messages")
@@ -207,8 +220,10 @@ export class MessageModel extends BaseModel<DB, "messages"> {
         "messages.id as id",
         "messages.deletedAt as deletedAt",
         "messages.userId as recipientUserId",
+        "messages.organisationId as organisationId",
       ])
       .where("messages.id", "in", ids)
+      .where("messages.erasedAt", "is", null)
       .execute();
     return rows as DeletionRow[];
   }
@@ -220,6 +235,53 @@ export class MessageModel extends BaseModel<DB, "messages"> {
       .set({ deletedAt: sql<Date>`now()`, updatedAt: sql<Date>`now()` })
       .where("messages.id", "in", ids)
       .execute();
+  }
+
+  /** Restore the given soft-deleted messages to the inbox. */
+  async restoreByIds(ids: string[]): Promise<void> {
+    await this.db
+      .updateTable("messages")
+      .set({ deletedAt: null, updatedAt: sql<Date>`now()` })
+      .where("messages.id", "in", ids)
+      .execute();
+  }
+
+  /**
+   * Erase the given messages for their recipient. The row stays: it is the
+   * sender's record; `erased_at` only removes it from the recipient's view.
+   */
+  async eraseByIds(ids: string[]): Promise<void> {
+    await this.db
+      .updateTable("messages")
+      .set({ erasedAt: sql<Date>`now()`, updatedAt: sql<Date>`now()` })
+      .where("messages.id", "in", ids)
+      .execute();
+  }
+
+  /**
+   * Attachments of the given messages the recipient would lose access to:
+   * those no other, non-erased message of the same recipient still carries.
+   */
+  async findAttachmentsToUnshare(ids: string[]): Promise<AttachmentShare[]> {
+    const { rows } = await sql<AttachmentShare>`
+      select distinct
+        am.attachment_id as "attachmentId",
+        m.user_id as "recipientUserId",
+        m.organisation_id as "organisationId"
+      from attachments_messages am
+      join messages m on m.id = am.message_id
+      where m.id in (${sql.join(ids)})
+        and not exists (
+          select 1
+          from attachments_messages other_am
+          join messages other_m on other_m.id = other_am.message_id
+          where other_am.attachment_id = am.attachment_id
+            and other_m.user_id = m.user_id
+            and other_m.erased_at is null
+            and other_m.id not in (${sql.join(ids)})
+        )
+    `.execute(this.db);
+    return rows;
   }
 
   /** Fetch id/userId for the given ids (tag-assignment validation). */

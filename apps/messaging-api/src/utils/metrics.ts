@@ -2,6 +2,7 @@ import { getMetric } from "@ogcio/o11y-sdk-node";
 import type { FastifyBaseLogger } from "fastify";
 import type { Pool } from "pg";
 import { getPendingJobPerOrganization } from "../services/jobs/job-service.js";
+import type { MessageSentLabels } from "../types/message-sent.js";
 
 /// Metric to track the number of messages sent, tagged by organization ID.
 export const messagesSentCounter = getMetric<
@@ -11,6 +12,17 @@ export const messagesSentCounter = getMetric<
   meterName: "message_delivery",
   metricName: "messages_sent",
 });
+
+/// Emails accepted by the Email provider, per the o11y contract
+/// bb.messaging.message.sent; labels come from messageSentLabels.
+export const bbMessageSentCounter = getMetric<"counter", MessageSentLabels>(
+  "counter",
+  {
+    meterName: "message_delivery",
+    metricName: "bb.messaging.message.sent",
+    options: { unit: "{message}" },
+  },
+);
 
 /// Metric to track the number of messages read, tagged by organization ID.
 export const messagesReadCounter = getMetric<

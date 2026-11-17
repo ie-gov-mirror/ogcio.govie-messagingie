@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1/message-events?search={{messageSubject}}
+  url: {{baseUrl}}/api/v1/message-events?search={{messageSubject}}&dateFrom={{messageScheduleDate}}
   body: none
   auth: bearer
 }
 
 params:query {
   search: {{messageSubject}}
+  dateFrom: {{messageScheduleDate}}
 }
 
 auth:bearer {
@@ -27,4 +28,9 @@ vars:post-response {
 assert {
   res.body: isJson
   res.status: eq 200
+  res.body.data.length: gt 0
+}
+
+docs {
+  `dateFrom`: the event search only covers the last 30 days unless given a start date
 }

@@ -95,6 +95,7 @@ associated to the sending org only on send.)
 
 **Where to get the E2E Tester secret** (never commit it — use a placeholder in
 `.env`):
+
 - **dev**: profile repo Bruno env file
   `@ogcio/govie-services-profile/apps/profile-api/e2e/.env.dev`.
 - **uat**: the UAT block in
@@ -150,6 +151,7 @@ Required scopes: `upload:file:*`, `messaging:message:*`, `profile:user:read`
 Verification is manual: user1 (**andrea**) is a real MyGovID account, so the
 leak is confirmed by logging into the citizen portal and downloading a data
 export. After `seed`:
+
 1. Log into the **citizen portal** for the target environment as **andrea**
    (dev `andrea.pregnolato+testdev@nearform.com`, uat `andrea.pregnolato@pm.me`)
    via MyGovID.

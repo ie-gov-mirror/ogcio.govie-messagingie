@@ -10,6 +10,7 @@ import {
   type CreateMessageBody,
   CreateMessageReqSchema,
   DeleteMessagesReqSchema,
+  EraseMessagesReqSchema,
   type GenericIdResponse,
   GetEventsForMessageReqSchema,
   type GetMessageParams,
@@ -20,6 +21,7 @@ import {
   ListMessagesReqGetSchema,
   type ListMessagesReqParams,
   ListMessagesReqPostSchema,
+  RestoreMessagesReqSchema,
 } from "../../types/messages.js";
 import { Permissions } from "../../types/permissions.js";
 import { parseBooleanEnum } from "../../types/schemaDefinitions.js";
@@ -29,6 +31,7 @@ import type {
 } from "../../types/shared.js";
 import { AssignTagReqSchema } from "../../types/tags.js";
 import { getM2MAnalyticsSdk } from "../../utils/authentication-factory.js";
+import { requestGeohash } from "../../utils/geo.js";
 import {
   formatAPIResponse,
   sanitizePagination,
@@ -257,6 +260,7 @@ export default async function messages(app: FastifyInstance) {
         logger: request.log,
         message: request.body,
         sender: senderUser,
+        geohash: requestGeohash(),
       });
 
       reply.statusCode = 201;
@@ -317,6 +321,64 @@ export default async function messages(app: FastifyInstance) {
 
       const messageIds = request.body.ids;
       await new MessageService(app.db, request.log).delete({
+        messageIds,
+        loggedInUser: userData,
+      });
+
+      return reply.status(200).send({ data: { ids: messageIds } });
+    },
+  );
+
+  app.post(
+    "/restore",
+    {
+      preValidation: (req, reply) =>
+        app.checkPermissions(
+          req,
+          reply,
+          [Permissions.MessageSelf.Write, Permissions.OnboardedCitizen],
+          { method: "AND" },
+        ),
+      schema: RestoreMessagesReqSchema,
+    },
+    async function restoreMessagesHandler(
+      request: FastifyRequestTypebox<typeof RestoreMessagesReqSchema>,
+      reply: FastifyReplyTypebox<typeof RestoreMessagesReqSchema>,
+    ) {
+      const userData = request.ensureUserIsSet();
+      request.ensureIsCitizen();
+
+      const messageIds = request.body.ids;
+      await new MessageService(app.db, request.log).restore({
+        messageIds,
+        loggedInUser: userData,
+      });
+
+      return reply.status(200).send({ data: { ids: messageIds } });
+    },
+  );
+
+  app.post(
+    "/erase",
+    {
+      preValidation: (req, reply) =>
+        app.checkPermissions(
+          req,
+          reply,
+          [Permissions.MessageSelf.Write, Permissions.OnboardedCitizen],
+          { method: "AND" },
+        ),
+      schema: EraseMessagesReqSchema,
+    },
+    async function eraseMessagesHandler(
+      request: FastifyRequestTypebox<typeof EraseMessagesReqSchema>,
+      reply: FastifyReplyTypebox<typeof EraseMessagesReqSchema>,
+    ) {
+      const userData = request.ensureUserIsSet();
+      request.ensureIsCitizen();
+
+      const messageIds = request.body.ids;
+      await new MessageService(app.db, request.log).erase({
         messageIds,
         loggedInUser: userData,
       });

@@ -184,7 +184,9 @@
         "ariaLabel": "Gníomhartha mórchóir",
         "selectedCount": "{count} roghnaithe",
         "delete": "Scrios",
-        "clearSelection": "Glan an roghnúchán"
+        "clearSelection": "Glan an roghnúchán",
+        "restore": "Athchóirigh",
+        "erase": "Léirscrios"
       },
       "confirm": {
         "title": "{count, plural, one {Scrios an teachtaireacht?} other {Scrios # teachtaireacht?}}",
@@ -271,6 +273,28 @@
         "savedToDevice": "Sábháilte ar an ngléas",
         "previewUnavailable": "Níl réamhamharc ar fáil",
         "downloadFailed": "Theip ar an íoslódáil"
+      },
+      "restore": "Athchóirigh",
+      "erase": "Léirscrios",
+      "deletedTag": "Scriosta"
+    },
+    "restore": {
+      "alert": {
+        "success": "{count, plural, one {Cuireadh an teachtaireacht ar ais sa bhosca isteach} other {Cuireadh # teachtaireacht ar ais sa bhosca isteach}}",
+        "failure": "{count, plural, one {Níorbh fhéidir # teachtaireacht a athchóiriú} other {Níorbh fhéidir # teachtaireacht a athchóiriú}}"
+      }
+    },
+    "erase": {
+      "confirm": {
+        "title": "{count, plural, one {Scrios an teachtaireacht seo go buan?} other {Scrios # teachtaireacht go buan?}}",
+        "body": "{count, plural, one {Ní bheidh tú in ann an teachtaireacht seo a fheiceáil i do chuntas a thuilleadh. Ní chuirfear san áireamh í má onnmhairíonn tú do shonraí amach anseo.} other {Ní bheidh tú in ann na teachtaireachtaí seo a fheiceáil i do chuntas a thuilleadh. Ní chuirfear san áireamh iad má onnmhairíonn tú do shonraí amach anseo.}}",
+        "cta": "Scrios go buan",
+        "cancel": "Cealaigh",
+        "close": "Dún"
+      },
+      "alert": {
+        "success": "{count, plural, one {Scriosadh # teachtaireacht go buan} other {Scriosadh # teachtaireacht go buan}}",
+        "failure": "{count, plural, one {Níorbh fhéidir # teachtaireacht a scriosadh go buan} other {Níorbh fhéidir # teachtaireacht a scriosadh go buan}}"
       }
     }
   },

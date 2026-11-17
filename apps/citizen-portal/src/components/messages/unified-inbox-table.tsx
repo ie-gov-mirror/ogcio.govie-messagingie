@@ -93,6 +93,11 @@ export interface UnifiedInboxTableProps {
    */
   onBulkDelete?: () => void
   /**
+   * Deleted folder: the mobile select-mode header shows Restore and Erase in
+   * place of Delete.
+   */
+  deletedActions?: { onRestore: () => void; onErase: () => void }
+  /**
    * Opens the mobile folder panel. When provided, a `Folders` button is
    * rendered in the non-select mobile header (the desktop sidebar that hosts
    * folder navigation is hidden on mobile).
@@ -134,6 +139,7 @@ export function UnifiedInboxTable({
   onEnterSelectMode,
   onExitSelectMode,
   onBulkDelete,
+  deletedActions,
   onOpenFolders,
   onBulkMove,
   canMove = false,
@@ -366,19 +372,44 @@ export function UnifiedInboxTable({
                     {tMove("moveTo")}
                   </Button>
                 ) : null}
-                <Button
-                  data-testid='bulk-delete-button-mobile'
-                  variant='secondary'
-                  appearance='light'
-                  size='small'
-                  disabled={selection.selectedCount === 0}
-                  onClick={() => {
-                    if (selection.selectedCount === 0) return
-                    onBulkDelete?.()
-                  }}
-                >
-                  {tToolbar("delete")}
-                </Button>
+                {deletedActions ? (
+                  <>
+                    <Button
+                      data-testid='bulk-restore-button-mobile'
+                      variant='secondary'
+                      appearance='light'
+                      size='small'
+                      disabled={selection.selectedCount === 0}
+                      onClick={deletedActions.onRestore}
+                    >
+                      {tToolbar("restore")}
+                    </Button>
+                    <Button
+                      data-testid='bulk-erase-button-mobile'
+                      variant='secondary'
+                      appearance='light'
+                      size='small'
+                      disabled={selection.selectedCount === 0}
+                      onClick={deletedActions.onErase}
+                    >
+                      {tToolbar("erase")}
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    data-testid='bulk-delete-button-mobile'
+                    variant='secondary'
+                    appearance='light'
+                    size='small'
+                    disabled={selection.selectedCount === 0}
+                    onClick={() => {
+                      if (selection.selectedCount === 0) return
+                      onBulkDelete?.()
+                    }}
+                  >
+                    {tToolbar("delete")}
+                  </Button>
+                )}
                 <Button
                   data-testid='mobile-select-close'
                   variant='secondary'

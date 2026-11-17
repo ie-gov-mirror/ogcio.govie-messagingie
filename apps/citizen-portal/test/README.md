@@ -6,6 +6,7 @@ at the repo root:
 > **[`docs/internal/testing.md`](../../../docs/internal/testing.md)**
 
 That file covers:
+
 - the full test pyramid (vitest → smoke e2e → full local e2e → dev e2e)
 - every `pnpm` script the suite ships and what infra each needs
 - how to stand up the local-auth chain (Logto + mygovid-mock + SAG +
@@ -20,6 +21,7 @@ stops the per-app guide and the repo-level guide from drifting apart
 that lived here before the consolidation).
 
 Tests under this directory:
+
 - `test/components/**` — React Testing Library + vitest (jsdom)
 - `test/util/**` — pure-function vitest specs
 - `test/hooks/**` — `@testing-library/react`-style hook tests

@@ -3,7 +3,12 @@ import { httpErrors } from "@fastify/sensible";
 import type { FastifyBaseLogger } from "fastify";
 import type { Pool, PoolClient } from "pg";
 import sanitizeHtml from "sanitize-html";
-import type { CreateMessageBody, SenderUser } from "../../types/messages.js";
+import type {
+  CreateMessageBody,
+  MessageMetadata,
+  SenderUser,
+  StoredMessageMetadata,
+} from "../../types/messages.js";
 import { getM2MSchedulerSdk } from "../../utils/authentication-factory.js";
 import {
   messagesFailedCounter,
@@ -26,6 +31,7 @@ export class MessagesProcessor {
   async processMessage(params: {
     message: CreateMessageBody;
     senderUser: SenderUser;
+    geohash?: string;
   }): Promise<{ jobId: string; userId: string; messageId: string }> {
     const { message, senderUser } = params;
     const { recipientProfile, senderProfile, senderApplication } =
@@ -51,6 +57,7 @@ export class MessagesProcessor {
         senderUser,
         client,
         messagingEventLogger,
+        geohash: params.geohash,
       });
       created = true;
       const scheduledMessages = await this.scheduleMessage({
@@ -87,6 +94,7 @@ export class MessagesProcessor {
     senderUser: SenderUser;
     client: PoolClient;
     messagingEventLogger: MessagingEventLogger;
+    geohash?: string;
   }) {
     const {
       message,
@@ -101,6 +109,7 @@ export class MessagesProcessor {
       messageBody: message,
       senderUser,
       client,
+      geohash: params.geohash,
     });
 
     messagingEventLogger.log(MessagingEventType.createRawMessage, {
@@ -251,6 +260,7 @@ export class MessagesProcessor {
     messageBody: CreateMessageBody;
     senderUser: SenderUser;
     client: PoolClient;
+    geohash?: string;
   }) {
     const { messageBody, senderUser, client } = params;
     const valueArray = [
@@ -302,6 +312,15 @@ export class MessagesProcessor {
 
     if (!message) {
       throw new Error("no message id generated");
+    }
+
+    // Kept for the delivery job, which labels the sent count with the
+    // journey and the citizen's geohash; a geohash alone labels nothing
+    if (messageBody.metadata) {
+      await client.query(
+        "insert into message_metadata(message_id, metadata) values ($1, $2)",
+        [message.id, storedMetadata(messageBody.metadata, params.geohash)],
+      );
     }
 
     if (params.messageBody.attachments?.length) {
@@ -492,4 +511,18 @@ export class MessagesProcessor {
       return false;
     }
   }
+}
+
+// The metadata as sent, with the baggage geohash added to its journey, e.g.
+// { journey: { submissionId: "s-1" } } and "gcpv" give
+// { journey: { submissionId: "s-1", geohash: "gcpv" } }
+function storedMetadata(
+  metadata: MessageMetadata,
+  geohash: string | undefined,
+): StoredMessageMetadata {
+  if (!metadata.journey || !geohash) {
+    return metadata;
+  }
+
+  return { ...metadata, journey: { ...metadata.journey, geohash } };
 }

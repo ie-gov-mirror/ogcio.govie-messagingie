@@ -7,6 +7,7 @@ A CLI script that sends a batch messaging campaign to a list of recipients from 
 ## How it works
 
 Each invocation is identified by a **run fingerprint** derived from:
+
 - `RECIPIENTS_CSV_PATH`
 - `HTML_TEMPLATE_PATH` / `TXT_TEMPLATE_PATH`
 - `MESSAGE_SUBJECT`
@@ -163,6 +164,7 @@ The script manages its own Postgres database (`POSTGRES_DB_NAME`) and runs local
 The default console entrypoint is now optimized for human operators rather than raw lifecycle logs.
 
 During `run`, it prints:
+
 - Batch Run creation or resume context
 - recipient-resolution summaries with grouped exclusions
 - batch-level send progress
@@ -174,6 +176,7 @@ During `run`, it prints:
 The `status` command now prints a sectioned report instead of a flat counter dump.
 
 Sections:
+
 - operator headline
 - attention needed
 - progress snapshot

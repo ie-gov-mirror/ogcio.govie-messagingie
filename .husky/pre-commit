@@ -1,2 +1,27 @@
+#!/usr/bin/env sh
+set -eu
+
+GITLEAKS_IMAGE="ghcr.io/gitleaks/gitleaks:v8.28.0@sha256:cdbb7c955abce02001a9f6c9f602fb195b7fadc1e812065883f695d1eeaba854"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCAN_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/gitleaks-precommit.XXXXXX")"
+
+cleanup() {
+  rm -rf "$SCAN_ROOT"
+}
+trap cleanup EXIT HUP INT TERM
+
+# Scan the staged content of tracked files: what is committed.
+cd "$REPO_ROOT"
+git checkout-index --all --prefix="$SCAN_ROOT/"
+
+docker run --rm \
+  -v "$SCAN_ROOT:/src" \
+  "$GITLEAKS_IMAGE" \
+  dir /src \
+  --verbose \
+  --redact \
+  --no-banner
+
+# Same checks as CI, without rewriting files.
 pnpm lint
 pnpm wiki:check

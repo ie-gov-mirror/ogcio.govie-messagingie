@@ -171,6 +171,7 @@ curl -i -H "Host: somewhere-else.local.test" http://localhost:8080/
 ```
 
 If a hostname renders the wrong content, double-check:
+
 - `MESSAGING_HOST` / `PROFILE_HOST` / `DASHBOARD_HOST` in
   `docker-compose.yaml` match your `/etc/hosts` line.
 - The `docker compose` build picked up your latest changes
@@ -369,6 +370,7 @@ the live visibility of the linked UI within such a build.)
 ### URL-content parity via canonicalisation
 
 The unified `nginx.conf.template` declares two `map` directives:
+
 - `map $uri $canonical_host` maps every owned URI prefix to the
   hostname that owns it (e.g. `/<locale>/messages*` → `${MESSAGING_HOST}`,
   `/<locale>/my-profile*` → `${PROFILE_HOST}`,

@@ -389,6 +389,36 @@ paths:
                     Set to true to bypass recipient messaging consent checks. Requires
                     platform:messaging:write; omitted or false preserves normal
                     consent enforcement.
+                metadata:
+                  type: object
+                  minProperties: 1
+                  properties:
+                    journey:
+                      type: object
+                      required:
+                        - submissionId
+                      properties:
+                        journeyId:
+                          type: string
+                          format: uuid
+                          description: Identifier of the journey that triggered this message
+                        submissionId:
+                          type: string
+                          minLength: 8
+                          maxLength: 8
+                          description: Identifier of the journey submission of this message
+                        journeyStep:
+                          type: integer
+                          minimum: 0
+                          maximum: 100
+                          description: Position, counted from 0, of the journey step
+                        messageTemplateId:
+                          type: string
+                          minLength: 1
+                          maxLength: 128
+                          description:
+                            Id of the journey's template the message was produced from (not a
+                            MessagingIE template)
       responses:
         "201":
           description: Default Response
@@ -1422,6 +1452,272 @@ paths:
                           type: string
                           format: date-time
                           description: Date and time which describes when the event has been recorded
+        5XX:
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - detail
+                  - requestId
+                  - name
+                  - statusCode
+                properties:
+                  code:
+                    type: string
+                    description: Code used to categorize the error
+                  detail:
+                    type: string
+                    description: Description of the error
+                  requestId:
+                    type: string
+                    description:
+                      Unique request id. This one will be used to troubleshoot the
+                      problems
+                  name:
+                    type: string
+                    description: Name of the error type
+                  validation:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - fieldName
+                        - message
+                      properties:
+                        fieldName:
+                          type: string
+                        message:
+                          type: string
+                    description: List of the validation errors
+                  validationContext:
+                    type: string
+                  statusCode:
+                    type: number
+        4XX:
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - detail
+                  - requestId
+                  - name
+                  - statusCode
+                properties:
+                  code:
+                    type: string
+                    description: Code used to categorize the error
+                  detail:
+                    type: string
+                    description: Description of the error
+                  requestId:
+                    type: string
+                    description:
+                      Unique request id. This one will be used to troubleshoot the
+                      problems
+                  name:
+                    type: string
+                    description: Name of the error type
+                  validation:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - fieldName
+                        - message
+                      properties:
+                        fieldName:
+                          type: string
+                        message:
+                          type: string
+                    description: List of the validation errors
+                  validationContext:
+                    type: string
+                  statusCode:
+                    type: number
+  /api/v1/messages/restore:
+    post:
+      tags: *a1
+      description: Moves the deleted messages with the given ids back to the inbox
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: List of message ids to delete
+                  minItems: 1
+                  maxItems: 100
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - ids
+                    properties:
+                      ids:
+                        type: array
+                        items:
+                          type: string
+                          format: uuid
+                        description: List of message ids to delete
+                        minItems: 1
+                        maxItems: 100
+        5XX:
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - detail
+                  - requestId
+                  - name
+                  - statusCode
+                properties:
+                  code:
+                    type: string
+                    description: Code used to categorize the error
+                  detail:
+                    type: string
+                    description: Description of the error
+                  requestId:
+                    type: string
+                    description:
+                      Unique request id. This one will be used to troubleshoot the
+                      problems
+                  name:
+                    type: string
+                    description: Name of the error type
+                  validation:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - fieldName
+                        - message
+                      properties:
+                        fieldName:
+                          type: string
+                        message:
+                          type: string
+                    description: List of the validation errors
+                  validationContext:
+                    type: string
+                  statusCode:
+                    type: number
+        4XX:
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - detail
+                  - requestId
+                  - name
+                  - statusCode
+                properties:
+                  code:
+                    type: string
+                    description: Code used to categorize the error
+                  detail:
+                    type: string
+                    description: Description of the error
+                  requestId:
+                    type: string
+                    description:
+                      Unique request id. This one will be used to troubleshoot the
+                      problems
+                  name:
+                    type: string
+                    description: Name of the error type
+                  validation:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - fieldName
+                        - message
+                      properties:
+                        fieldName:
+                          type: string
+                        message:
+                          type: string
+                    description: List of the validation errors
+                  validationContext:
+                    type: string
+                  statusCode:
+                    type: number
+  /api/v1/messages/erase:
+    post:
+      tags: *a1
+      description:
+        Erases the deleted messages with the given ids from the recipient's
+        account, attachments included. The sender's record is kept
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: List of message ids to delete
+                  minItems: 1
+                  maxItems: 100
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - ids
+                    properties:
+                      ids:
+                        type: array
+                        items:
+                          type: string
+                          format: uuid
+                        description: List of message ids to delete
+                        minItems: 1
+                        maxItems: 100
         5XX:
           description: Default Response
           content:
@@ -5065,6 +5361,36 @@ paths:
                     Set to true to bypass recipient messaging consent checks. Requires
                     platform:messaging:write; omitted or false preserves normal
                     consent enforcement.
+                metadata:
+                  type: object
+                  minProperties: 1
+                  properties:
+                    journey:
+                      type: object
+                      required:
+                        - submissionId
+                      properties:
+                        journeyId:
+                          type: string
+                          format: uuid
+                          description: Identifier of the journey that triggered this message
+                        submissionId:
+                          type: string
+                          minLength: 8
+                          maxLength: 8
+                          description: Identifier of the journey submission of this message
+                        journeyStep:
+                          type: integer
+                          minimum: 0
+                          maximum: 100
+                          description: Position, counted from 0, of the journey step
+                        messageTemplateId:
+                          type: string
+                          minLength: 1
+                          maxLength: 128
+                          description:
+                            Id of the journey's template the message was produced from (not a
+                            MessagingIE template)
       responses:
         "201":
           description: Default Response

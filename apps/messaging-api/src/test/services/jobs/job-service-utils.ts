@@ -6,6 +6,7 @@ import type {
 } from "../../../services/jobs/job-service.js";
 import type { AvailableTransports } from "../../../services/users/shared-users.js";
 import { JobTypes } from "../../../types/jobs.js";
+import type { StoredMessageMetadata } from "../../../types/messages.js";
 import type { SecurityLevels } from "../../../types/security-levels.js";
 import { getCurrentUTCDate } from "../../../utils/date-times.js";
 import { utils } from "../../../utils/utils.js";
@@ -69,12 +70,14 @@ export async function insertMockMessage({
   transports,
   securityLevel,
   subject,
+  messageMetadata,
 }: {
   pool: Pool;
   organizationId: string;
   transports: AvailableTransports[];
   securityLevel?: SecurityLevels;
   subject?: string;
+  messageMetadata?: StoredMessageMetadata;
 }): Promise<{ id: string; user_id: string; organisation_id: string }> {
   const valueArray = [
     false,
@@ -120,7 +123,16 @@ export async function insertMockMessage({
     valueArray,
   );
 
-  return insertQueryResult.rows[0];
+  // Stored as the create path stores it, for the delivery job to read
+  const message = insertQueryResult.rows[0];
+  if (message && messageMetadata) {
+    await pool.query(
+      "insert into message_metadata(message_id, metadata) values ($1, $2)",
+      [message.id, messageMetadata],
+    );
+  }
+
+  return message;
 }
 
 export async function getJob(

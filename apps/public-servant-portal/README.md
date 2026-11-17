@@ -94,6 +94,7 @@ curl -H "Host: profile-admin.local.test"   http://localhost:8080/health
 ```
 
 And in a browser:
+
 - http://messaging-admin.local.test:8080/
 - http://profile-admin.local.test:8080/
 

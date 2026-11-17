@@ -22,6 +22,7 @@ import type {
 import CryptographyService from "../../utils/cryptography-service.js";
 import type { I18n } from "../../utils/i18n.js";
 import {
+  bbMessageSentCounter,
   messageDeliveryDurationHistogram,
   messagesFailedCounter,
   messagesSentCounter,
@@ -42,6 +43,7 @@ import type {
   ProfileSdkWrapper,
 } from "../users/profile-sdk-wrapper.js";
 import { AvailableTransports } from "../users/shared-users.js";
+import { messageSentLabels } from "./message-sent-labels.js";
 import { prepareForSecureDelivery } from "./secure-message-processor.js";
 
 export type ScheduledMessageStatus =
@@ -559,8 +561,10 @@ async function getMessageToDeliver(params: {
     m.rich_text as "richText",
     aid.attachment_id AS "attachmentId",
     m.external_id as "externalId",
-    m.created_at as "createdAt"
+    m.created_at as "createdAt",
+    mm.metadata as "messageMetadata"
     FROM messages m
+    LEFT JOIN message_metadata mm ON mm.message_id = m.id
     LEFT JOIN (
         SELECT attachment_id, message_id 
         FROM attachments_messages
@@ -588,6 +592,7 @@ async function getMessageToDeliver(params: {
         richText: row.richText || undefined,
         externalId: row.externalId || undefined,
         createdAt: row.createdAt || undefined,
+        messageMetadata: row.messageMetadata ?? undefined,
       };
     }
   }
@@ -775,6 +780,29 @@ function recordSentEmail(params: {
     }
   } catch (err) {
     params.logger.error({ error: err }, "Failed to record sent email");
+  }
+
+  countMessageSent(params);
+}
+
+// Counts bb.messaging.message.sent in its own guard: a messages_sent or
+// duration failure must not skip it, nor its failure skip them
+function countMessageSent(params: {
+  organizationId: string;
+  messageData: MessageToDeliver;
+  logger: FastifyBaseLogger;
+}) {
+  try {
+    bbMessageSentCounter.add(
+      1,
+      messageSentLabels({
+        organizationId: params.organizationId,
+        securityLevel: params.messageData.securityLevel,
+        messageMetadata: params.messageData.messageMetadata,
+      }),
+    );
+  } catch (err) {
+    params.logger.error({ error: err }, "Failed to count message sent");
   }
 }
 

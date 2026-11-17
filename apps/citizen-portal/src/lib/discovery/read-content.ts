@@ -31,7 +31,7 @@ export interface DashboardLifeEvent {
   icon: string
 }
 
-// ponytail: the design shows four cards but no selection rule. Highlighted
+// The design shows four cards but no selection rule. Highlighted
 // first, then one per category in CMS order. Replace when content decides.
 export function getDashboardLifeEvents(
   discovery: DiscoveryContent,

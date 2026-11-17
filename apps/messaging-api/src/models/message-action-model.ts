@@ -24,7 +24,7 @@ export class MessageActionModel extends BaseModel<DB, "messages"> {
       recipientUserId: string;
       organizationId: string;
     }>`
-    select user_id as "recipientUserId", organisation_id as "organizationId" from messages where id = ${messageId} AND deleted_at IS NULL
+    select user_id as "recipientUserId", organisation_id as "organizationId" from messages where id = ${messageId} AND deleted_at IS NULL AND erased_at IS NULL
     `.execute(this.db);
     return rows.at(0);
   }
@@ -52,6 +52,7 @@ export class MessageActionModel extends BaseModel<DB, "messages"> {
             and m.id = ${params.messageId}
             and ${params.isSeen} != m.is_seen
             and m.deleted_at IS NULL
+            and m.erased_at IS NULL
     )
     update messages set is_seen = ${params.isSeen}
     where id = any(select id from message_selection)

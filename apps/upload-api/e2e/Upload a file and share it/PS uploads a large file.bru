@@ -26,3 +26,7 @@ assert {
   res.status: eq 400
   res.body.detail: eq File is too large
 }
+
+docs {
+  The fixture is 37.6 MB. The 400 holds only while the upload API `MAX_FILE_SIZE` is below that (dev: 27000000); a larger local limit returns 201.
+}

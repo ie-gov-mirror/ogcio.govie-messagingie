@@ -1,5 +1,6 @@
 import path from "node:path"
 import { defineConfig, devices } from "@playwright/test"
+import { DUBLIN_TIMEZONE } from "./src/types/shared"
 
 // Use environment URL or fallback to local dev
 // Must match the port the `dev` script binds (PORT=4002), otherwise the
@@ -48,6 +49,10 @@ export default defineConfig({
     // Use baseURL so to make navigations relative.
     // More information: https://playwright.dev/docs/api/class-testoptions#test-options-base-url
     baseURL,
+    // The schedule form reads the typed time in the browser's zone and the
+    // page shows it in Dublin time: pin the browser to Dublin so the shown
+    // time matches the typed one on any machine.
+    timezoneId: DUBLIN_TIMEZONE,
 
     // Retry a test if its failing with enabled tracing. This allows you to analyze the DOM, console logs, network traffic etc.
     // More information: https://playwright.dev/docs/trace-viewer
@@ -73,16 +78,16 @@ export default defineConfig({
     //     ...devices['Desktop Safari'],
     //   },
     // },
-    // Test against mobile viewports.
-    // {
-    //   name: "Mobile Chrome",
-    //   use: {
-    //     ...devices["Pixel 5"],
-    //   },
-    // },
-    // {
-    //   name: "Mobile Safari",
-    //   use: devices["iPhone 12"],
-    // },
+    // Mobile emulation, opt-in: run only when picked with `--project`.
+    {
+      name: "Mobile Chrome",
+      default: false,
+      use: devices["Pixel 9"],
+    },
+    {
+      name: "Mobile Safari",
+      default: false,
+      use: devices["iPhone 16"],
+    },
   ],
 })

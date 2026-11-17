@@ -1,5 +1,6 @@
-import { expect, test, type Browser, type Page } from "@playwright/test"
+import { expect, type Browser, type Page } from "@playwright/test"
 import type { Message } from "@/types"
+import { test } from "../android/fixtures"
 import { ids, urls, users } from "../fixtures"
 import { createPageWithVideo } from "../helpers/browser-context"
 import {
@@ -142,7 +143,7 @@ async function openStubbedInbox(
 }
 
 test.describe("Unified Inbox edge cases @regression", () => {
-  test("empty inbox renders the empty state and no rows", async ({
+  test("empty inbox renders the empty state and no rows @mobile", async ({
     browser,
   }) => {
     const page = await openStubbedInbox(browser, { messages: [] })

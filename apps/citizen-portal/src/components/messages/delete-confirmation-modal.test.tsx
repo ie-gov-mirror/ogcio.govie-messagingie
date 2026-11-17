@@ -2,8 +2,12 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string, values?: { count: number }) =>
-    values ? `${key}:${values.count}` : key,
+  // Erase copy is told apart by an `erase.` prefix on the key.
+  useTranslations:
+    (namespace: string) => (key: string, values?: { count: number }) => {
+      const k = namespace === "home.erase.confirm" ? `erase.${key}` : key
+      return values ? `${k}:${values.count}` : k
+    },
 }))
 
 vi.mock("@ogcio/design-system-react", () => ({
@@ -50,6 +54,25 @@ describe("DeleteConfirmationModal", () => {
     fireEvent.click(screen.getByTestId("delete-confirmation-cancel"))
     fireEvent.click(screen.getByTestId("delete-confirmation-confirm"))
     expect(onClose).toHaveBeenCalledOnce()
+    expect(onConfirm).toHaveBeenCalledOnce()
+  })
+
+  it("uses the erase copy and test ids for the erase variant", () => {
+    const onConfirm = vi.fn()
+    render(
+      <DeleteConfirmationModal
+        isOpen
+        variant='erase'
+        count={2}
+        onClose={vi.fn()}
+        onConfirm={onConfirm}
+      />,
+    )
+
+    expect(screen.getByTestId("erase-confirmation-modal")).toBeInTheDocument()
+    expect(screen.getByRole("heading")).toHaveTextContent("erase.title:2")
+    expect(screen.getByText("erase.body:2")).toBeInTheDocument()
+    fireEvent.click(screen.getByTestId("erase-confirmation-confirm"))
     expect(onConfirm).toHaveBeenCalledOnce()
   })
 

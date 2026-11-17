@@ -8,7 +8,8 @@ import { expect, type Locator, type Page } from "@playwright/test"
 export async function appNav(page: Page): Promise<Locator> {
   const sideNav = page.getByRole("navigation", { name: "Main" })
   const menu = page.getByRole("button", { name: "Menu", exact: true })
-  await expect(sideNav.or(menu)).toBeVisible()
+  // Both match while the header still shows Menu on desktop.
+  await expect(sideNav.or(menu).first()).toBeVisible()
   if (await sideNav.isVisible()) return sideNav
   await menu.click()
   return page.getByRole("dialog")

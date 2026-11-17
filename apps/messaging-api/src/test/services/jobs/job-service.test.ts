@@ -24,10 +24,17 @@ import {
 } from "../../../services/messages/event-logger.js";
 import { EmailSpecificProvider } from "../../../services/providers/email/email-specific-provider.js";
 import { AvailableTransports } from "../../../services/users/shared-users.js";
+import type { StoredMessageMetadata } from "../../../types/messages.js";
 import { ProviderTypes } from "../../../types/providers.js";
+import {
+  ConfidentialSecurity,
+  PublicSecurity,
+  type SecurityLevels,
+} from "../../../types/security-levels.js";
 import CryptographyService from "../../../utils/cryptography-service.js";
 import { Translator } from "../../../utils/i18n.js";
 import {
+  bbMessageSentCounter,
   messageDeliveryDurationHistogram,
   messagesFailedCounter,
   messagesSentCounter,
@@ -47,6 +54,7 @@ import {
 
 vi.mock("../../../utils/metrics.js", () => ({
   messagesSentCounter: { add: vi.fn() },
+  bbMessageSentCounter: { add: vi.fn() },
   messagesReadCounter: { add: vi.fn() },
   messagesCreatedCounter: { add: vi.fn() },
   messagesQueueGauge: { record: vi.fn() },
@@ -218,6 +226,7 @@ beforeEach(() => {
   hoisted.state.smtpResponse = hoisted.sesAcceptance;
   cache.flushAll();
   vi.mocked(messagesFailedCounter.add).mockClear();
+  vi.mocked(bbMessageSentCounter.add).mockClear();
 });
 
 afterEach(async () => {
@@ -2115,5 +2124,260 @@ describe("Execute job", () => {
     expect(pendingSecondOrgJob).toBeDefined();
     expect(pendingOrgJob?.counter).toBe(1);
     expect(pendingSecondOrgJob?.counter).toBe(1);
+  });
+});
+
+describe("bb.messaging.message.sent", () => {
+  // Runs the job of a new message, sent to the Email transport by default
+  async function runMessageJob({
+    securityLevel,
+    transports = [AvailableTransports.EMAIL],
+    messageMetadata,
+  }: {
+    securityLevel?: SecurityLevels;
+    transports?: AvailableTransports[];
+    messageMetadata?: StoredMessageMetadata;
+  }) {
+    const config = await createPrimaryProvider(organizationId);
+    const insertedMessage = await insertMockMessage({
+      pool,
+      organizationId,
+      transports,
+      securityLevel,
+      messageMetadata,
+    });
+    const insertedJob = await insertMockJob({
+      pool,
+      organizationId,
+      entityId: insertedMessage.id,
+      userId: insertedMessage.user_id,
+    });
+
+    await runJob(insertedJob, config);
+
+    return { insertedJob, config };
+  }
+
+  // The counter's increments, as [value, labels]
+  function sentCounts() {
+    return vi.mocked(bbMessageSentCounter.add).mock.calls;
+  }
+
+  const journey = {
+    journeyId: "11111111-1111-1111-1111-111111111111",
+    submissionId: "submission-42",
+    journeyStep: 2,
+  };
+
+  it("counts an accepted Non-secure email as email", async () => {
+    await runMessageJob({ securityLevel: PublicSecurity });
+
+    expect(sentCounts()).toStrictEqual([
+      [
+        1,
+        {
+          organization_id: organizationId,
+          message_type: "email",
+          message_id: "NO_TEMPLATE",
+        },
+      ],
+    ]);
+  });
+
+  it("counts an accepted Secure email as secure_message", async () => {
+    await runMessageJob({ securityLevel: ConfidentialSecurity });
+
+    expect(sentCounts()).toStrictEqual([
+      [
+        1,
+        {
+          organization_id: organizationId,
+          message_type: "secure_message",
+          message_id: "NO_TEMPLATE",
+        },
+      ],
+    ]);
+  });
+
+  it("labels an accepted journey email with its journey", async () => {
+    await runMessageJob({
+      securityLevel: PublicSecurity,
+      messageMetadata: { journey: { ...journey, geohash: "gcpv" } },
+    });
+
+    expect(sentCounts()).toStrictEqual([
+      [
+        1,
+        {
+          organization_id: organizationId,
+          message_type: "email",
+          message_id: "NO_TEMPLATE",
+          journey_id: journey.journeyId,
+          journey_step: 2,
+          geohash: "gcpv",
+        },
+      ],
+    ]);
+  });
+
+  it.each([
+    {
+      name: "step 0 when the sender gave no step",
+      journey: { ...journey, journeyStep: undefined, geohash: "gcpv" },
+      labels: {
+        journey_id: journey.journeyId,
+        journey_step: 0,
+        geohash: "gcpv",
+      },
+    },
+    {
+      name: "NO_GEOHASH when the baggage carried no geohash",
+      journey,
+      labels: {
+        journey_id: journey.journeyId,
+        journey_step: 2,
+        geohash: "NO_GEOHASH",
+      },
+    },
+    {
+      name: "no journey labels without a journey id",
+      journey: { submissionId: journey.submissionId, geohash: "gcpv" },
+      labels: {},
+    },
+    {
+      name: "its External template but no journey labels without a journey id",
+      journey: {
+        submissionId: journey.submissionId,
+        messageTemplateId: "journey-template-7",
+      },
+      labels: { message_id: "journey-template-7" },
+    },
+    {
+      name: "its External template beside the journey",
+      journey: {
+        ...journey,
+        messageTemplateId: "journey-template-7",
+        geohash: "gcpv",
+      },
+      labels: {
+        message_id: "journey-template-7",
+        journey_id: journey.journeyId,
+        journey_step: 2,
+        geohash: "gcpv",
+      },
+    },
+  ])("labels a journey email with $name", async (example) => {
+    await runMessageJob({
+      securityLevel: PublicSecurity,
+      messageMetadata: { journey: example.journey },
+    });
+
+    expect(sentCounts()).toStrictEqual([
+      [
+        1,
+        {
+          organization_id: organizationId,
+          message_type: "email",
+          message_id: "NO_TEMPLATE",
+          ...example.labels,
+        },
+      ],
+    ]);
+  });
+
+  it("counts nothing when the email fails", async () => {
+    hoisted.state.mustEmailSendingFail = true;
+
+    await runMessageJob({ securityLevel: PublicSecurity });
+
+    expect(sentCounts()).toStrictEqual([]);
+  });
+
+  it("counts nothing for an Inbox delivery alone", async () => {
+    const { insertedJob } = await runMessageJob({ transports: [] });
+
+    const job = await getJob(pool, insertedJob.jobId, organizationId);
+    expect(job?.status).toStrictEqual(JobStatus.Delivered);
+    expect(sentCounts()).toStrictEqual([]);
+  });
+
+  it("counts a re-run job's email once", async () => {
+    hoisted.state.mustEmailSendingFail = true;
+    const { insertedJob, config } = await runMessageJob({
+      securityLevel: PublicSecurity,
+    });
+
+    // The scheduler calls back again; each callback has its own event logger
+    hoisted.state.mustEmailSendingFail = false;
+    eventLogger = new MessagingEventLogger(pool, mockLogger);
+    await runJob(insertedJob, config);
+
+    const job = await getJob(pool, insertedJob.jobId, organizationId);
+    expect(job?.status).toStrictEqual(JobStatus.Delivered);
+    expect(sentCounts()).toHaveLength(1);
+  });
+
+  it("keeps messages_sent labelled with organizationId only", async () => {
+    vi.mocked(messagesSentCounter.add).mockClear();
+
+    await runMessageJob({ securityLevel: ConfidentialSecurity });
+
+    expect(vi.mocked(messagesSentCounter.add).mock.calls).toStrictEqual([
+      [1, { organizationId }],
+    ]);
+  });
+
+  it("keeps an accepted email when the counter fails", async () => {
+    vi.mocked(messagesSentCounter.add).mockClear();
+    vi.mocked(bbMessageSentCounter.add).mockImplementationOnce(() => {
+      throw new Error("metrics unavailable");
+    });
+
+    const { insertedJob } = await runMessageJob({
+      securityLevel: PublicSecurity,
+    });
+
+    const job = await getJob(pool, insertedJob.jobId, organizationId);
+    expect(job?.status).toStrictEqual(JobStatus.Delivered);
+
+    expect(await loggedEvents()).toStrictEqual([
+      deliveryPending,
+      inboxDelivered,
+      emailAccepted,
+    ]);
+    expect(failedStages()).toStrictEqual([]);
+    expect(hoisted.state.sentEmails).toHaveLength(1);
+
+    // The counter has its own guard, so messages_sent is still recorded
+    expect(messagesSentCounter.add).toHaveBeenCalledTimes(1);
+  });
+
+  it("counts an accepted email when messages_sent fails", async () => {
+    vi.mocked(messagesSentCounter.add).mockImplementationOnce(() => {
+      throw new Error("metrics unavailable");
+    });
+
+    const { insertedJob } = await runMessageJob({
+      securityLevel: PublicSecurity,
+    });
+
+    const job = await getJob(pool, insertedJob.jobId, organizationId);
+    expect(job?.status).toStrictEqual(JobStatus.Delivered);
+    expect(await loggedEvents()).toStrictEqual([
+      deliveryPending,
+      inboxDelivered,
+      emailAccepted,
+    ]);
+
+    expect(sentCounts()).toStrictEqual([
+      [
+        1,
+        {
+          organization_id: organizationId,
+          message_type: "email",
+          message_id: "NO_TEMPLATE",
+        },
+      ],
+    ]);
   });
 });

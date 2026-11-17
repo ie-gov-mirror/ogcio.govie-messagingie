@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.1.8](https://github.com/ogcio/govie-services-messaging/compare/profile-api-v0.1.7...profile-api-v0.1.8) (2026-11-17)
+
+
+### Features
+
+* run the e2e suites against the local stack AB[#46019](https://github.com/ogcio/govie-services-messaging/issues/46019) ([#1174](https://github.com/ogcio/govie-services-messaging/issues/1174)) ([fdfdba0](https://github.com/ogcio/govie-services-messaging/commit/fdfdba01842807af89d9b9f84cd8a606cb366e52))
+
+
+### Bug Fixes
+
+* compare webhook and job secrets in constant time AB[#45756](https://github.com/ogcio/govie-services-messaging/issues/45756) ([#1156](https://github.com/ogcio/govie-services-messaging/issues/1156)) ([3bdc97b](https://github.com/ogcio/govie-services-messaging/commit/3bdc97bb4965427018dd3044f75f41422f53a35f))
+* **deps:** update all non-major dependencies ([#1139](https://github.com/ogcio/govie-services-messaging/issues/1139)) ([ed428f5](https://github.com/ogcio/govie-services-messaging/commit/ed428f5c46c510f67115b244fc44e5931e2bd971))
+* **deps:** update all non-major dependencies ([#1161](https://github.com/ogcio/govie-services-messaging/issues/1161)) ([cc1f9c1](https://github.com/ogcio/govie-services-messaging/commit/cc1f9c1a00e38984cd931d50be0a6f4b7cfde362))
+* **deps:** update all non-major dependencies ([#1172](https://github.com/ogcio/govie-services-messaging/issues/1172)) ([bf0692c](https://github.com/ogcio/govie-services-messaging/commit/bf0692cc793562487a1b15bddae4e0c3f228662a))
+* **deps:** update dependency @fastify/otel to v1 ([#1141](https://github.com/ogcio/govie-services-messaging/issues/1141)) ([a119965](https://github.com/ogcio/govie-services-messaging/commit/a11996590217faeb70ae7a5aad32d721d810b1ea))
+* **deps:** update dependency @ogcio/o11y-sdk-node to v0.15.0 ([#1173](https://github.com/ogcio/govie-services-messaging/issues/1173)) ([b0afe66](https://github.com/ogcio/govie-services-messaging/commit/b0afe66d808f052ee205ffb0ba507c12f8c4eadd))
+* keep Fastify spans in the request trace AB[#45791](https://github.com/ogcio/govie-services-messaging/issues/45791) ([#1162](https://github.com/ogcio/govie-services-messaging/issues/1162)) ([0bba2e9](https://github.com/ogcio/govie-services-messaging/commit/0bba2e9d0da4bae3a7c4f9dae2b9632d191d7e82))
+* **profile-api:** keep POST /profiles inside the token organisation AB[#45747](https://github.com/ogcio/govie-services-messaging/issues/45747) ([#1150](https://github.com/ogcio/govie-services-messaging/issues/1150)) ([b7be1bc](https://github.com/ogcio/govie-services-messaging/commit/b7be1bca36b23e7c84e59a077f294eab0f1ce73e))
+* **profile-api:** require a message to the profile before linking it AB[#45748](https://github.com/ogcio/govie-services-messaging/issues/45748) ([#1151](https://github.com/ogcio/govie-services-messaging/issues/1151)) ([859c93a](https://github.com/ogcio/govie-services-messaging/commit/859c93a2775073d59945e608fe695057871cfa28))
+* stop the per-request analytics event in four APIs AB[#46135](https://github.com/ogcio/govie-services-messaging/issues/46135) ([#1175](https://github.com/ogcio/govie-services-messaging/issues/1175)) ([d85f9bc](https://github.com/ogcio/govie-services-messaging/commit/d85f9bcd0536337be43bd1c49decec4fb142b5d3))
+* verify the Postgres server certificate AB[#45757](https://github.com/ogcio/govie-services-messaging/issues/45757) ([#1157](https://github.com/ogcio/govie-services-messaging/issues/1157)) ([17f38ab](https://github.com/ogcio/govie-services-messaging/commit/17f38ab8691e4b32637cfb7614769b6151623ec7))
+
+
+### Miscellaneous Chores
+
+* align repo tooling AB[#45916](https://github.com/ogcio/govie-services-messaging/issues/45916) ([#1167](https://github.com/ogcio/govie-services-messaging/issues/1167)) ([84bd822](https://github.com/ogcio/govie-services-messaging/commit/84bd8225f385e29707925ba76b4f243eb8817dc3))
+* update comments AB[#45996](https://github.com/ogcio/govie-services-messaging/issues/45996) ([#1169](https://github.com/ogcio/govie-services-messaging/issues/1169)) ([feb0842](https://github.com/ogcio/govie-services-messaging/commit/feb084240d290aa9330ea0f1e971a2f89858dc47))
+
 ## [0.1.7](https://github.com/ogcio/govie-services-messaging/compare/profile-api-v0.1.6...profile-api-v0.1.7) (2026-11-05)
 
 

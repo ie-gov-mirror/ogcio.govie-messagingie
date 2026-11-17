@@ -49,6 +49,15 @@ export type DeleteMessagesBody = NonNullable<
 export type DeleteMessagesResponse =
   paths["/api/v1/messages/"]["delete"]["responses"][200]["content"]["application/json"]
 
+/** Body for `POST /messaging/api/v1/messages/restore` and `/erase` — `{ ids }`. */
+export type RestoreEraseMessagesBody = NonNullable<
+  paths["/api/v1/messages/restore"]["post"]["requestBody"]
+>["content"]["application/json"]
+
+/** Response for restore and erase — echoes the ids. */
+export type RestoreEraseMessagesResponse =
+  paths["/api/v1/messages/restore"]["post"]["responses"][200]["content"]["application/json"]
+
 /** Body for `POST /messaging/api/v1/messages/tags` — assigns/removes a tag. */
 export type AssignTagBody =
   operations["AssignTagToMessages"]["requestBody"]["content"]["application/json"]
@@ -145,6 +154,16 @@ export const messagesApi = {
   /** Build the delete request body from a set of ids (de-duplicated). */
   deleteBody(ids: string[]): DeleteMessagesBody {
     return { ids: Array.from(new Set(ids)) }
+  },
+
+  /** Mutation path for moving deleted messages back to the inbox. */
+  restorePath(): string {
+    return `${MESSAGES_PATH}/restore`
+  },
+
+  /** Mutation path for erasing deleted messages for good. */
+  erasePath(): string {
+    return `${MESSAGES_PATH}/erase`
   },
 
   /** Mutation path for assigning/removing a folder tag. */

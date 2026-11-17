@@ -1,6 +1,7 @@
 import { FastifyOtelInstrumentation } from "@fastify/otel";
 import { instrumentNode, type SDKLogLevel } from "@ogcio/o11y-sdk-node";
 import { captureServerSpan } from "./plugins/internal/pseudo-user-traces-hook.js";
+import { ViewerLocationPropagator } from "./utils/viewer-location-propagator.js";
 
 if (
   process.env.OTEL_COLLECTOR_URL &&
@@ -15,6 +16,10 @@ if (
       { type: "equals", url: "/health/ready" },
     ],
     pseudoProfiling: { enabled: true },
+    // Reads the Viewer location the public API passes on in baggage, which
+    // labels bb.messaging.message.sent; cleaned by the propagator
+    geoEnrichment: { enabled: true },
+    additionalPropagators: [new ViewerLocationPropagator()],
     additionalInstrumentations: [
       new FastifyOtelInstrumentation({
         registerOnInitialization: true,

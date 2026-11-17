@@ -89,7 +89,10 @@ test.describe("User can link a new email address to an account", () => {
     await authenticatedPage.getByRole("button", { name: "LOGIN" }).click()
     //Confirm consent
     await giveConsent(authenticatedPage)
-    // Confirm link account
+    // The service-error screen also has a Report an Issue button
+    await expect(
+      authenticatedPage.getByRole("heading", { name: "Is this you?" }),
+    ).toBeVisible()
     await clickButton(authenticatedPage, "Report an Issue")
     //Disabled as forms url is not configured in dev
     //const url = await authenticatedPage.url()

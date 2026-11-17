@@ -1,7 +1,9 @@
-import { screen } from "@testing-library/react"
+import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const mockPush = vi.hoisted(() => vi.fn())
+const restoreRun = vi.hoisted(() => vi.fn())
+const eraseRun = vi.hoisted(() => vi.fn())
 
 let currentSearchParams = new URLSearchParams()
 
@@ -79,20 +81,34 @@ vi.mock("@/components/messages/message-detail-view", () => ({
 vi.mock("@/components/messages/unified-inbox-table", () => ({
   UnifiedInboxTable: ({
     canMove,
+    deletedActions,
+    selection,
     onOpenFolders,
     onSelect,
   }: {
     canMove?: boolean
+    deletedActions?: { onRestore: () => void; onErase: () => void }
+    selection?: { toggleAll: () => void }
     onOpenFolders?: () => void
     onSelect: (id: string) => void
   }) => (
     <div
       data-testid='inbox-table'
       data-can-move={String(Boolean(canMove))}
+      data-has-deleted-actions={String(Boolean(deletedActions))}
       data-can-open-folders={String(Boolean(onOpenFolders))}
     >
       <button type='button' onClick={() => onSelect("msg-1")}>
         Open message
+      </button>
+      <button type='button' onClick={() => selection?.toggleAll()}>
+        Select all
+      </button>
+      <button type='button' onClick={() => deletedActions?.onRestore()}>
+        Restore selected
+      </button>
+      <button type='button' onClick={() => deletedActions?.onErase()}>
+        Erase selected
       </button>
     </div>
   ),
@@ -103,7 +119,22 @@ vi.mock("@/components/messages/bulk-action-toolbar", () => ({
 }))
 
 vi.mock("@/components/messages/delete-confirmation-modal", () => ({
-  DeleteConfirmationModal: () => null,
+  DeleteConfirmationModal: ({
+    isOpen,
+    variant = "delete",
+    count,
+    onConfirm,
+  }: {
+    isOpen: boolean
+    variant?: string
+    count: number
+    onConfirm: () => void
+  }) =>
+    isOpen ? (
+      <button type='button' onClick={onConfirm}>
+        {`Confirm ${variant} ${count}`}
+      </button>
+    ) : null,
 }))
 
 vi.mock("@/components/messages/delete-result-toast", () => ({
@@ -125,6 +156,25 @@ vi.mock("@/components/messages/move-result-toast", () => ({
 vi.mock("@/components/messages/use-delete-messages", () => ({
   useDeleteMessages: () => ({
     deleteIds: vi.fn(),
+    isLoading: false,
+    lastResult: null,
+    dismissResult: vi.fn(),
+  }),
+}))
+
+vi.mock("@/components/messages/restore-erase-result-toast", () => ({
+  RestoreEraseResultToast: () => null,
+}))
+
+vi.mock("@/components/messages/use-restore-erase-messages", () => ({
+  useRestoreMessages: () => ({
+    run: restoreRun,
+    isLoading: false,
+    lastResult: null,
+    dismissResult: vi.fn(),
+  }),
+  useEraseMessages: () => ({
+    run: eraseRun,
     isLoading: false,
     lastResult: null,
     dismissResult: vi.fn(),
@@ -378,5 +428,52 @@ describe("UnifiedInboxPage folders flag (AB#42582)", () => {
     expect(
       screen.queryByRole("heading", { level: 1, name: "heading" }),
     ).not.toBeInTheDocument()
+  })
+})
+
+describe("UnifiedInboxPage Deleted folder actions (AB#45839)", () => {
+  beforeEach(() => {
+    currentSearchParams = new URLSearchParams({ folder: "deleted" })
+    listState.data = [ONE_MESSAGE]
+    listState.isLoading = false
+    restoreRun.mockReset().mockResolvedValue({ ok: true, ids: ["msg-1"] })
+    eraseRun.mockReset().mockResolvedValue({ ok: true, ids: ["msg-1"] })
+  })
+
+  it("offers Restore and Erase in Deleted but not in the Inbox", () => {
+    const { unmount } = render(<UnifiedInboxPage />)
+    expect(screen.getByTestId("inbox-table")).toHaveAttribute(
+      "data-has-deleted-actions",
+      "true",
+    )
+    unmount()
+
+    currentSearchParams = new URLSearchParams()
+    render(<UnifiedInboxPage />)
+    expect(screen.getByTestId("inbox-table")).toHaveAttribute(
+      "data-has-deleted-actions",
+      "false",
+    )
+  })
+
+  it("restores the selected messages without asking", async () => {
+    render(<UnifiedInboxPage />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Select all" }))
+    fireEvent.click(screen.getByRole("button", { name: "Restore selected" }))
+
+    await waitFor(() => expect(restoreRun).toHaveBeenCalledWith(["msg-1"]))
+    expect(eraseRun).not.toHaveBeenCalled()
+  })
+
+  it("erases only after the confirmation modal is confirmed", async () => {
+    render(<UnifiedInboxPage />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Select all" }))
+    fireEvent.click(screen.getByRole("button", { name: "Erase selected" }))
+
+    expect(eraseRun).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole("button", { name: "Confirm erase 1" }))
+    await waitFor(() => expect(eraseRun).toHaveBeenCalledWith(["msg-1"]))
   })
 })

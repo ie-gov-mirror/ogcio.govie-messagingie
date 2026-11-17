@@ -46,6 +46,7 @@ vi.mock("next-intl", () => ({
         from: "From:",
         date: "Date:",
         noSubject: "(no subject)",
+        deletedTag: "Deleted",
       },
       "home.table": {
         unknownSender: "Unknown sender",
@@ -90,5 +91,30 @@ describe("MessageDetailHeader", () => {
     expect(
       screen.getByRole("heading", { name: "(no subject)" }),
     ).toBeInTheDocument()
+  })
+
+  it("tags a message opened from the Deleted folder", () => {
+    render(
+      <MessageDetailHeader
+        subject='Payslip'
+        organisationId='org-edu'
+        createdAt='2026-04-17T10:00:00Z'
+        deleted
+      />,
+    )
+
+    expect(screen.getByTestId("deleted-tag")).toHaveTextContent("Deleted")
+  })
+
+  it("has no tag for a live message", () => {
+    render(
+      <MessageDetailHeader
+        subject='Payslip'
+        organisationId='org-edu'
+        createdAt='2026-04-17T10:00:00Z'
+      />,
+    )
+
+    expect(screen.queryByTestId("deleted-tag")).not.toBeInTheDocument()
   })
 })

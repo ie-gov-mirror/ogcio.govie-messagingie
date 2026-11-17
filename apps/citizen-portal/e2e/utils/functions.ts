@@ -9,6 +9,9 @@ const ADMIN_URL = urls.admin
 const AUTH_URL = urls.auth
 const PROFILE_URL = urls.profile
 
+/** A file built in memory, as `setInputFiles` accepts it. */
+export type Attachment = { name: string; mimeType: string; buffer: Buffer }
+
 export const generateTestData = () => ({
   uuid: crypto.randomUUID(),
   timestamp: `${Date.now()}-${crypto.randomUUID()}`,
@@ -20,7 +23,7 @@ export async function sendE2ETemplateMessage(page: Page, nonSecure = false) {
     `${ADMIN_URL}/en/send-a-message`,
     "Send a message",
   )
-  await page.selectOption("select#template-select", templates.e2e)
+  await selectE2ETemplate(page)
   //if nonsecure message click button
   if (nonSecure) {
     await page.getByRole("radio", { name: "Non-secured" }).click()
@@ -154,18 +157,20 @@ export async function confirmGlobalSignout(page: Page) {
  * inbox the deep-link tests poll. Optional `recipientEmail` overrides the
  * search; callers that read the inbox back must sign in as the profile that
  * owns that contact (for messagingie2 that is `users.peterParker`).
+ * Optional `attachment` is uploaded instead of skipping the attachments step.
  */
 export async function sendMessageToDevCitizen(
   page: Page,
   nonSecure = false,
   recipientEmail = "messagingie2@gmail.com",
+  attachment?: Attachment,
 ) {
   await navigateAndVerifyHeading(
     page,
     `${ADMIN_URL}/en/send-a-message`,
     "Send a message",
   )
-  await page.selectOption("select#template-select", templates.e2e)
+  await selectE2ETemplate(page)
   //if nonsecure message click button
   if (nonSecure) {
     await page.getByRole("radio", { name: "Non-secured" }).click()
@@ -202,8 +207,40 @@ export async function sendMessageToDevCitizen(
   await expect(addRecipient).toBeEnabled({ timeout: 10_000 })
   await addRecipient.click()
   await clickButton(page, "Continue to Attachments")
-  await clickButton(page, "Skip")
+  await attachOrSkip(page, attachment)
   await sendMessageAndVerify(page)
+}
+
+/**
+ * Selects the E2E template once the form lists it. Re-selecting the
+ * template already shown, e.g. when it is the only one, leaves "Continue to
+ * recipients" disabled, so it is selected only when another one is shown.
+ */
+async function selectE2ETemplate(page: Page) {
+  const select = page.locator("select#template-select")
+  await expect(
+    select.getByRole("option", { name: templates.e2e, exact: true }),
+  ).toBeAttached()
+
+  const shown = await select.locator("option:checked").textContent()
+  if (shown === templates.e2e) {
+    return
+  }
+
+  await select.selectOption(templates.e2e)
+}
+
+/** Uploads the attachment and moves on, or skips the step without one. */
+async function attachOrSkip(page: Page, attachment?: Attachment) {
+  if (!attachment) {
+    await clickButton(page, "Skip")
+    return
+  }
+
+  await page.locator('input[type="file"]').setInputFiles(attachment)
+  await expect(page.getByText(attachment.name)).toBeVisible()
+  // Exact: `next dev` adds an "Open Next.js Dev Tools" button
+  await page.getByRole("button", { name: "Next", exact: true }).click()
 }
 
 export async function sendMessageToNewEmailAddress(

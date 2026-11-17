@@ -49,8 +49,16 @@ vi.mock("@/components/layout/containers", () => ({
   ),
 }))
 vi.mock("@/components/profile/public-name-form", () => ({
-  PublicNameForm: ({ publicName }: { publicName: string }) => (
-    <div>public name:{publicName}</div>
+  PublicNameForm: ({
+    publicName,
+    profileId,
+  }: {
+    publicName: string
+    profileId: string
+  }) => (
+    <div>
+      public name:{publicName} for:{profileId}
+    </div>
   ),
 }))
 vi.mock("@/components/consent/consent-section", () => ({
@@ -124,6 +132,14 @@ describe("MyProfile", () => {
     expect(screen.getByLabelText("Loading profile")).toBeInTheDocument()
   })
 
+  it("reserves a full viewport while loading so the footer does not shift", () => {
+    state.gateway.isLoading = true
+    render(<MyProfile />)
+    expect(screen.getByLabelText("Loading profile").style.minHeight).toBe(
+      "100vh",
+    )
+  })
+
   it("shows the generic server error when the profile fetch fails", () => {
     state.gateway.error = new Error("boom")
     render(<MyProfile />)
@@ -147,13 +163,23 @@ describe("MyProfile", () => {
       expect(heading).toHaveClass("gi-text-lg", "xl:gi-text-xl")
       expect(heading.className).not.toContain("xl:gi-text-2xl")
     }
-    expect(screen.getByText("public name:Jane")).toBeInTheDocument()
+    expect(screen.getByText(/^public name:Jane/)).toBeInTheDocument()
     expect(screen.getByText("jane@example.com")).toBeInTheDocument()
     expect(screen.queryByText("1234567A")).not.toBeInTheDocument()
     fireEvent.click(screen.getByText("profile.clickToReveal"))
     expect(screen.getByText("1234567A")).toBeInTheDocument()
     fireEvent.click(screen.getByText("profile.clickToHide"))
     expect(screen.queryByText("1234567A")).not.toBeInTheDocument()
+  })
+
+  it("updates the public name of the signed-in profile when it is linked to another", () => {
+    state.gateway.data = {
+      id: "user-1",
+      primaryUserId: "parent-1",
+      publicName: "Jane",
+    }
+    render(<MyProfile />)
+    expect(screen.getByText("public name:Jane for:user-1")).toBeInTheDocument()
   })
 
   it("tracks revealing the PPSN, but not hiding it", () => {

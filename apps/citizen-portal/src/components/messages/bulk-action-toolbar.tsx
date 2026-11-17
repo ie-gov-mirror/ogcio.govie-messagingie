@@ -8,6 +8,11 @@ import styles from "./unified-inbox-table.module.css"
 export interface BulkActionToolbarProps {
   selectedCount: number
   onDelete: () => void
+  /**
+   * Deleted folder: Restore and Erase replace Delete, which would only
+   * soft-delete a message that is already deleted.
+   */
+  deletedActions?: { onRestore: () => void; onErase: () => void }
   onClearSelection?: () => void
   /**
    * Slot for additional bulk actions (e.g. the upcoming `Move to folder`
@@ -36,6 +41,7 @@ export interface BulkActionToolbarProps {
 export function BulkActionToolbar({
   selectedCount,
   onDelete,
+  deletedActions,
   onClearSelection,
   extraActions,
 }: BulkActionToolbarProps) {
@@ -55,15 +61,38 @@ export function BulkActionToolbar({
             {t("selectedCount", { count: selectedCount })}
           </span>
           {extraActions}
-          <Button
-            data-testid='bulk-delete-button'
-            variant='secondary'
-            appearance='light'
-            size='small'
-            onClick={onDelete}
-          >
-            {t("delete")}
-          </Button>
+          {deletedActions ? (
+            <>
+              <Button
+                data-testid='bulk-restore-button'
+                variant='secondary'
+                appearance='light'
+                size='small'
+                onClick={deletedActions.onRestore}
+              >
+                {t("restore")}
+              </Button>
+              <Button
+                data-testid='bulk-erase-button'
+                variant='secondary'
+                appearance='light'
+                size='small'
+                onClick={deletedActions.onErase}
+              >
+                {t("erase")}
+              </Button>
+            </>
+          ) : (
+            <Button
+              data-testid='bulk-delete-button'
+              variant='secondary'
+              appearance='light'
+              size='small'
+              onClick={onDelete}
+            >
+              {t("delete")}
+            </Button>
+          )}
           {onClearSelection ? (
             <Button
               data-testid='bulk-clear-selection-button'

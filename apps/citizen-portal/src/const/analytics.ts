@@ -48,6 +48,10 @@ export const ANALYTICS = {
     filter: { name: "message-filter", action: "Filter Applied" },
     /** On success only. Value: number of messages deleted (bulk from the list, or 1 from detail). */
     delete: { name: "message-delete", action: "Messages Deleted" },
+    /** On success only. Value: number of deleted messages returned to the inbox. */
+    restore: { name: "message-restore", action: "Messages Restored" },
+    /** On success only. Value: number of deleted messages erased for good. */
+    erase: { name: "message-erase", action: "Messages Erased" },
     /** On success only. Value: number of messages moved, into a folder or back to the inbox. */
     move: { name: "message-move", action: "Messages Moved" },
     /** The citizen navigated to the Inbox (not on page load). */

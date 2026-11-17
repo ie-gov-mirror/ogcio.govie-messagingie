@@ -221,6 +221,7 @@ function TableWithSelection(
     onOpenFolders?: () => void
     onBulkMove?: () => void
     canMove?: boolean
+    deletedActions?: { onRestore: () => void; onErase: () => void }
     bulkActionBar?: ReactNode
   } = {},
 ) {
@@ -245,6 +246,7 @@ function TableWithSelection(
         onOpenFolders={props.onOpenFolders}
         onBulkMove={props.onBulkMove}
         canMove={props.canMove}
+        deletedActions={props.deletedActions}
       />
     </InboxListChrome>
   )
@@ -690,6 +692,22 @@ describe("UnifiedInboxTable", () => {
     expect(
       screen.queryByTestId("bulk-move-button-mobile"),
     ).not.toBeInTheDocument()
+  })
+
+  it("shows mobile Restore and Erase instead of Delete when deletedActions is set", () => {
+    const onRestore = vi.fn()
+    const onErase = vi.fn()
+    render(<TableWithSelection deletedActions={{ onRestore, onErase }} />)
+
+    fireEvent.click(screen.getByTestId("select-row-msg-1"))
+
+    expect(
+      screen.queryByTestId("bulk-delete-button-mobile"),
+    ).not.toBeInTheDocument()
+    fireEvent.click(screen.getByTestId("bulk-restore-button-mobile"))
+    fireEvent.click(screen.getByTestId("bulk-erase-button-mobile"))
+    expect(onRestore).toHaveBeenCalledTimes(1)
+    expect(onErase).toHaveBeenCalledTimes(1)
   })
 
   it("mobile Close button exits select mode and clears selection", () => {

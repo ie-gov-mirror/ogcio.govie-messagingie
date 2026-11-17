@@ -16,7 +16,8 @@ auth:bearer {
 
 vars:post-response {
   profileId: res.body.data && res.body.data[0] ?  res.body.data[0].id : undefined
-  anotherProfileId: res.body.data && res.body.data[1] ?  res.body.data[1].id : undefined
+  firstListedProfileId: res.body.data && res.body.data[0] ?  res.body.data[0].id : undefined
+  secondListedProfileId: res.body.data && res.body.data[1] ?  res.body.data[1].id : undefined
   citizenEmail: res.body.data && res.body.data[0] ?  res.body.data[0].email : undefined
 }
 

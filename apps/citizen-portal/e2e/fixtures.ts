@@ -56,10 +56,15 @@ export function getUserByEmail(email: string) {
 
 const dockerPort = process.env.DOCKER_PORT ?? "8080"
 
+// Local Logto started with the stack; runs against other hosts set AUTH_URL or E2E_AUTH_URL.
+const authUrl = process.env.AUTH_URL || "http://localhost:3301"
+
 export const urls = Object.freeze({
   messaging: process.env.BASE_URL || "http://localhost:3001",
   localMessaging: process.env.BASE_URL ?? "http://localhost:4001",
   admin: process.env.ADMIN_URL || "http://localhost:3001",
+  auth: authUrl,
+  authSignIn: process.env.E2E_AUTH_URL?.trim() || `${authUrl}/sign-in`,
   mock: process.env.MOCK_URL || "http://localhost:3005",
   profile: process.env.PROFILE_URL || "http://localhost:3003",
   profileVisual: process.env.PROFILE_URL || "http://localhost:3004",
@@ -84,7 +89,6 @@ export const urls = Object.freeze({
 })
 
 export const ids = Object.freeze({
-  secureMessage: "becb3e86-6a5c-48e1-8bf7-c1cb884df69c",
   canonicalSecureMessage: "0494ff56-58b0-47c7-9868-8446b242863f",
   mockMessage: "test-message-id",
   mockUser: "test-user-id",

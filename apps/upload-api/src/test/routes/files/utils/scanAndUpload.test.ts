@@ -376,6 +376,37 @@ describe("processUpload", () => {
     expect(insertCall).toBeDefined();
   });
 
+  it("returns 500 without an unhandled rejection when the version lookup fails mid-scan", async () => {
+    const unhandled: unknown[] = [];
+    const onUnhandled = (reason: unknown) => unhandled.push(reason);
+    process.on("unhandledRejection", onUnhandled);
+
+    const stream = buildUploadStream();
+    const { app, request, avPassthrough } = buildTestBed({
+      data: { file: stream, filename: "clean.txt", fields: {} },
+    });
+    // clamd resets the version connection, e.g. while it restarts
+    vi.mocked(app.avClient.getVersion).mockRejectedValue(
+      Object.assign(new Error("read ECONNRESET"), { code: "ECONNRESET" }),
+    );
+
+    const resultPromise = processUpload(app, request, { scan: true });
+    const assertion = expect(resultPromise).rejects.toMatchObject({
+      statusCode: 500,
+    });
+
+    // The lookup fails while the upload and the scan are still running
+    await nextTick();
+    await nextTick();
+    stream.end(Buffer.from("clean content"));
+    await nextTick();
+    avPassthrough.emit("scan-complete", { isInfected: false, viruses: [] });
+
+    await assertion;
+    process.off("unhandledRejection", onUnhandled);
+    expect(unhandled).toEqual([]);
+  });
+
   it("maps a stream error to a 500 during a scanned upload", async () => {
     const stream = buildUploadStream();
     const { app, request } = buildTestBed({

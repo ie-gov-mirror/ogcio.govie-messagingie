@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.11](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.10...messaging-support-v0.1.11) (2026-11-17)
+
+
+### Features
+
+* run the e2e suites against the local stack AB[#46019](https://github.com/ogcio/govie-services-messaging/issues/46019) ([#1174](https://github.com/ogcio/govie-services-messaging/issues/1174)) ([fdfdba0](https://github.com/ogcio/govie-services-messaging/commit/fdfdba01842807af89d9b9f84cd8a606cb366e52))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1139](https://github.com/ogcio/govie-services-messaging/issues/1139)) ([ed428f5](https://github.com/ogcio/govie-services-messaging/commit/ed428f5c46c510f67115b244fc44e5931e2bd971))
+* **deps:** update all non-major dependencies ([#1161](https://github.com/ogcio/govie-services-messaging/issues/1161)) ([cc1f9c1](https://github.com/ogcio/govie-services-messaging/commit/cc1f9c1a00e38984cd931d50be0a6f4b7cfde362))
+* **deps:** update all non-major dependencies ([#1172](https://github.com/ogcio/govie-services-messaging/issues/1172)) ([bf0692c](https://github.com/ogcio/govie-services-messaging/commit/bf0692cc793562487a1b15bddae4e0c3f228662a))
+* **deps:** update dependency @ogcio/o11y-sdk-node to v0.15.0 ([#1173](https://github.com/ogcio/govie-services-messaging/issues/1173)) ([b0afe66](https://github.com/ogcio/govie-services-messaging/commit/b0afe66d808f052ee205ffb0ba507c12f8c4eadd))
+* **messaging-support:** verify the session cookie before server actions AB[#45745](https://github.com/ogcio/govie-services-messaging/issues/45745) ([#1149](https://github.com/ogcio/govie-services-messaging/issues/1149)) ([e2f116e](https://github.com/ogcio/govie-services-messaging/commit/e2f116ed93f7c01e7f04aaaac77eb296c24a87e4))
+* verify the Postgres server certificate AB[#45757](https://github.com/ogcio/govie-services-messaging/issues/45757) ([#1157](https://github.com/ogcio/govie-services-messaging/issues/1157)) ([17f38ab](https://github.com/ogcio/govie-services-messaging/commit/17f38ab8691e4b32637cfb7614769b6151623ec7))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency jsdom to v31 ([#1140](https://github.com/ogcio/govie-services-messaging/issues/1140)) ([eda968b](https://github.com/ogcio/govie-services-messaging/commit/eda968b82db28054d1a2d42be1db3b35e0e24aea))
+
 ## [0.1.10](https://github.com/ogcio/govie-services-messaging/compare/messaging-support-v0.1.9...messaging-support-v0.1.10) (2026-11-05)
 
 

@@ -301,6 +301,202 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/messages/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Moves the deleted messages with the given ids back to the inbox */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description List of message ids to delete */
+                        ids: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                /** @description List of message ids to delete */
+                                ids: string[];
+                            };
+                        };
+                    };
+                };
+                /** @description Default Response */
+                "5XX": {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @description Code used to categorize the error */
+                            code: string;
+                            /** @description Description of the error */
+                            detail: string;
+                            /** @description Unique request id. This one will be used to troubleshoot the problems */
+                            requestId: string;
+                            /** @description Name of the error type */
+                            name: string;
+                            /** @description List of the validation errors */
+                            validation?: {
+                                fieldName: string;
+                                message: string;
+                            }[];
+                            validationContext?: string;
+                            statusCode: number;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                "4XX": {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @description Code used to categorize the error */
+                            code: string;
+                            /** @description Description of the error */
+                            detail: string;
+                            /** @description Unique request id. This one will be used to troubleshoot the problems */
+                            requestId: string;
+                            /** @description Name of the error type */
+                            name: string;
+                            /** @description List of the validation errors */
+                            validation?: {
+                                fieldName: string;
+                                message: string;
+                            }[];
+                            validationContext?: string;
+                            statusCode: number;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/messages/erase": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Erases the deleted messages with the given ids from the recipient's account, attachments included. The sender's record is kept */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description List of message ids to delete */
+                        ids: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data: {
+                                /** @description List of message ids to delete */
+                                ids: string[];
+                            };
+                        };
+                    };
+                };
+                /** @description Default Response */
+                "5XX": {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @description Code used to categorize the error */
+                            code: string;
+                            /** @description Description of the error */
+                            detail: string;
+                            /** @description Unique request id. This one will be used to troubleshoot the problems */
+                            requestId: string;
+                            /** @description Name of the error type */
+                            name: string;
+                            /** @description List of the validation errors */
+                            validation?: {
+                                fieldName: string;
+                                message: string;
+                            }[];
+                            validationContext?: string;
+                            statusCode: number;
+                        };
+                    };
+                };
+                /** @description Default Response */
+                "4XX": {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @description Code used to categorize the error */
+                            code: string;
+                            /** @description Description of the error */
+                            detail: string;
+                            /** @description Unique request id. This one will be used to troubleshoot the problems */
+                            requestId: string;
+                            /** @description Name of the error type */
+                            name: string;
+                            /** @description List of the validation errors */
+                            validation?: {
+                                fieldName: string;
+                                message: string;
+                            }[];
+                            validationContext?: string;
+                            statusCode: number;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/messages/tags": {
         parameters: {
             query?: never;
@@ -1322,6 +1518,21 @@ export interface operations {
                      * @default false
                      */
                     bypassConsent?: boolean;
+                    metadata?: {
+                        journey?: {
+                            /**
+                             * Format: uuid
+                             * @description Identifier of the journey that triggered this message
+                             */
+                            journeyId?: string;
+                            /** @description Identifier of the journey submission of this message */
+                            submissionId: string;
+                            /** @description Position, counted from 0, of the journey step */
+                            journeyStep?: number;
+                            /** @description Id of the journey's template the message was produced from (not a MessagingIE template) */
+                            messageTemplateId?: string;
+                        };
+                    };
                 };
             };
         };
@@ -3232,6 +3443,21 @@ export interface operations {
                      * @default false
                      */
                     bypassConsent?: boolean;
+                    metadata?: {
+                        journey?: {
+                            /**
+                             * Format: uuid
+                             * @description Identifier of the journey that triggered this message
+                             */
+                            journeyId?: string;
+                            /** @description Identifier of the journey submission of this message */
+                            submissionId: string;
+                            /** @description Position, counted from 0, of the journey step */
+                            journeyStep?: number;
+                            /** @description Id of the journey's template the message was produced from (not a MessagingIE template) */
+                            messageTemplateId?: string;
+                        };
+                    };
                 };
             };
         };

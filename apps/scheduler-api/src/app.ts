@@ -14,7 +14,6 @@ import { initializeLoggingHooks } from "@ogcio/fastify-logging-wrapper";
 import fastify, { type FastifyServerOptions } from "fastify";
 import { envSchema } from "./config.js";
 import { getSslConfig } from "./migrations/scripts/shared.js";
-import analyticsPlugin from "./plugins/analytics-sdk.js";
 import apiAuth from "./plugins/api-auth.js";
 import cache from "./plugins/cache.js";
 import kyselyPlugin, {
@@ -45,8 +44,6 @@ export async function build(opts?: FastifyServerOptions) {
     schema: envSchema,
     dotenv: true,
   });
-
-  await app.register(analyticsPlugin);
 
   await app.register(cache);
 

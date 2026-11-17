@@ -11,18 +11,6 @@ vi.mock("@ogcio/o11y-sdk-node", () => ({
   getActiveSpan: () => getActiveSpanMock(),
 }));
 
-const trackEventMock = vi.fn();
-vi.mock("../../utils/authentication-factory.js", async () => {
-  const actual = await vi.importActual<
-    typeof import("../../utils/authentication-factory.js")
-  >("../../utils/authentication-factory.js");
-  return {
-    ...actual,
-    getM2MAnalyticsSdk: () =>
-      Promise.resolve({ track: { event: trackEventMock } }),
-  };
-});
-
 type Hook = (request: FastifyRequest, reply?: unknown) => Promise<void>;
 type Plugin = (fastify: FastifyInstance) => Promise<void> | void;
 
@@ -124,50 +112,6 @@ describe("secrets-manager plugin", async () => {
     await expect(client.config.credentials()).resolves.toMatchObject({
       accessKeyId: "key",
     });
-  });
-});
-
-describe("analytics-sdk plugin", async () => {
-  const plugin = (await import("../../plugins/analytics-sdk.js"))
-    .default as unknown as Plugin;
-
-  it("does nothing when ANALYTICS_URL is not set", async () => {
-    vi.stubEnv("ANALYTICS_URL", "");
-    const { fastify, hooks } = buildFastify();
-
-    await plugin(fastify);
-
-    expect(hooks.onRequest).toBeUndefined();
-    vi.unstubAllEnvs();
-  });
-
-  it("tracks non-health requests", async () => {
-    vi.stubEnv("ANALYTICS_URL", "http://analytics.local");
-    const { fastify, hooks } = buildFastify();
-
-    await plugin(fastify);
-
-    const hook = hooks.onRequest[0];
-    await hook({
-      originalUrl: "/files",
-      method: "post",
-    } as unknown as FastifyRequest);
-    expect(trackEventMock).toHaveBeenCalledWith({
-      event: {
-        action: "POST",
-        category: "API",
-        name: "/files",
-        value: 1,
-      },
-    });
-
-    trackEventMock.mockClear();
-    await hook({
-      originalUrl: "/health",
-      method: "get",
-    } as unknown as FastifyRequest);
-    expect(trackEventMock).not.toHaveBeenCalled();
-    vi.unstubAllEnvs();
   });
 });
 

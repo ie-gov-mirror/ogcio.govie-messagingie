@@ -210,6 +210,30 @@ describe(AttachmentsForm.name, () => {
     expect(setPendingFiles).toHaveBeenCalled()
   })
 
+  // Browsers expose crypto.randomUUID only on https or localhost, so a
+  // plain-http host such as the local stack has none
+  it("lists attachments outside a secure context", async () => {
+    // Shadows the prototype method; deleting the own property restores it
+    Object.defineProperty(globalThis.crypto, "randomUUID", {
+      value: undefined,
+      configurable: true,
+    })
+
+    try {
+      renderForm(true, [new File(["1"], "kept.pdf")])
+
+      await userEvent.upload(
+        screen.getByLabelText("attachment"),
+        new File(["2"], "added.pdf", { type: "application/pdf" }),
+      )
+
+      expect(screen.getByText("kept.pdf")).toBeInTheDocument()
+      expect(screen.getByText("added.pdf")).toBeInTheDocument()
+    } finally {
+      Reflect.deleteProperty(globalThis.crypto, "randomUUID")
+    }
+  })
+
   it("rejects attachments over the size limit", async () => {
     renderForm()
     const file = new File([new Uint8Array(5 * 1024 * 1024 + 1)], "large.pdf", {

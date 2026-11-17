@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1/metadata?userId=e2e-user-1
+  url: {{baseUrl}}/api/v1/metadata?userId={{process.env.CITIZEN_USER_PROFILE_ID}}
   body: none
   auth: none
 }
 
 params:query {
-  userId: e2e-user-1
+  userId: {{process.env.CITIZEN_USER_PROFILE_ID}}
 }
 
 headers {

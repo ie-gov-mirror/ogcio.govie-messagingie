@@ -81,6 +81,7 @@ export interface MessageEventSummary {
 export interface Messages {
   createdAt: Generated<Timestamp>;
   deletedAt: Timestamp | null;
+  erasedAt: Timestamp | null;
   excerpt: string | null;
   externalId: string | null;
   id: Generated<string>;
@@ -99,6 +100,12 @@ export interface Messages {
   threadName: string | null;
   updatedAt: Generated<Timestamp>;
   userId: string;
+}
+
+export interface MessageMetadata {
+  createdAt: Generated<Timestamp>;
+  messageId: string;
+  metadata: Json;
 }
 
 export interface MessageTemplateContents {
@@ -156,6 +163,7 @@ export interface DB {
   emailProviders: EmailProviders;
   jobs: Jobs;
   messageEventSummary: MessageEventSummary;
+  messageMetadata: MessageMetadata;
   messages: Messages;
   messageTemplateContents: MessageTemplateContents;
   messageTemplateMeta: MessageTemplateMeta;

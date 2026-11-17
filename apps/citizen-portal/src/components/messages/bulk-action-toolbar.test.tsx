@@ -11,6 +11,8 @@ vi.mock("next-intl", () => ({
         return `${count} selected`
       }
       if (key === "delete") return "Delete"
+      if (key === "restore") return "Restore"
+      if (key === "erase") return "Erase"
       if (key === "ariaLabel") return "Bulk actions"
       return key
     },
@@ -42,5 +44,25 @@ describe("BulkActionToolbar", () => {
       />,
     )
     expect(screen.getByTestId("extra-slot")).toBeInTheDocument()
+  })
+
+  it("offers Restore and Erase instead of Delete in the Deleted folder", () => {
+    const onRestore = vi.fn()
+    const onErase = vi.fn()
+    const onDelete = vi.fn()
+    render(
+      <BulkActionToolbar
+        selectedCount={2}
+        onDelete={onDelete}
+        deletedActions={{ onRestore, onErase }}
+      />,
+    )
+
+    expect(screen.queryByTestId("bulk-delete-button")).not.toBeInTheDocument()
+    fireEvent.click(screen.getByTestId("bulk-restore-button"))
+    fireEvent.click(screen.getByTestId("bulk-erase-button"))
+    expect(onRestore).toHaveBeenCalledTimes(1)
+    expect(onErase).toHaveBeenCalledTimes(1)
+    expect(onDelete).not.toHaveBeenCalled()
   })
 })

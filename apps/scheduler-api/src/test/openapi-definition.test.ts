@@ -23,7 +23,6 @@ describe("openapi-definition.yml", () => {
   beforeEach(() => {
     vi.resetModules();
     Object.assign(process.env, REQUIRED_ENV);
-    delete process.env.ANALYTICS_URL;
     vi.doMock("../plugins/api-auth.js", () => ({ default: async () => {} }));
   });
 

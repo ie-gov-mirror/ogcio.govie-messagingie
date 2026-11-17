@@ -13,7 +13,7 @@ import { mapWithConcurrency } from "./concurrency.ts"
 import { describePage, type IssueCollector, reportZodError } from "./issues.ts"
 import type { ContentTree, Localised } from "./validate.ts"
 
-// ponytail: a service page is the EN page id on the link. A GA-only
+// A service page is the EN page id on the link. A GA-only
 // publication id stays an outbound link until the EN page links to it too.
 export async function loadServicePages(
   client: WagtailClient,

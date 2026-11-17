@@ -1,5 +1,6 @@
-import { expect, test } from "@playwright/test"
+import { expect, type Locator, type Page } from "@playwright/test"
 import type { Message } from "@/types"
+import { test } from "./android/fixtures"
 import { ids, users } from "./fixtures"
 import {
   createAuthenticatedPage,
@@ -21,6 +22,7 @@ import {
 
 const UNREAD_MESSAGE_ID = "e2e-mark-read-1"
 const READ_MESSAGE_ID = "e2e-mark-read-2"
+const OPEN_ME_SUBJECT = /Open me to mark as read/i
 
 const buildMessage = (
   overrides: Partial<Message> & Pick<Message, "id">,
@@ -127,8 +129,32 @@ async function stubMessagingApis(
   })
 }
 
+/**
+ * A message in the list, unread or read. A wide screen lists table rows, whose
+ * CSS Module class is hashed at build time but keeps the `unreadRow` substring
+ * through the Next.js loader. A narrow screen lists buttons named
+ * "Unread|Read <sender> <date> <subject>".
+ */
+function inboxMessage(
+  page: Page,
+  subject: RegExp,
+  readState: "Unread" | "Read",
+): Locator {
+  const row = page.getByRole("row", { name: subject })
+  const unreadClass = page.locator('[class*="unreadRow"]')
+  const tableRow =
+    readState === "Unread"
+      ? row.and(unreadClass)
+      : row.and(page.locator(':not([class*="unreadRow"])'))
+  const button = page.getByRole("button", {
+    name: new RegExp(`^${readState} .*${subject.source}`, "i"),
+  })
+
+  return tableRow.or(button)
+}
+
 test.describe("Unified inbox: mark-as-read on open", () => {
-  test("opens a message, fires the seen marker and the row reads as seen on navigate-back @smoke @regression", async ({
+  test("opens a message, fires the seen marker and the row reads as seen on navigate-back @smoke @regression @mobile", async ({
     browser,
   }) => {
     const page = await createAuthenticatedPage(browser, users.peterParker.email)
@@ -139,18 +165,18 @@ test.describe("Unified inbox: mark-as-read on open", () => {
     // the shell against that form (nightly 117543, build 125157).
     await settleMessagingInbox(page, users.peterParker.email)
 
-    // The row's CSS Module class is hashed at build time, but the `unreadRow`
-    // substring is preserved by the Next.js CSS Modules loader — making it a
-    // safe regex match across local and CI builds.
-    const unreadRow = page.getByRole("row", {
-      name: /Open me to mark as read/i,
-    })
-    await expect(unreadRow).toHaveClass(/unreadRow/)
+    await expect(inboxMessage(page, OPEN_ME_SUBJECT, "Unread")).toBeVisible()
 
     // Subject <Link> is the real navigation target (row ::after stretches it).
     // Do not key off data-testid — dest may lag the branch that added it.
-    await unreadRow
-      .getByRole("link", { name: /Open me to mark as read/i })
+    // On a narrow screen the message itself is the button to press.
+    await page
+      .getByRole("link", { name: OPEN_ME_SUBJECT })
+      .or(
+        page.getByRole("button", {
+          name: new RegExp(`^Unread .*${OPEN_ME_SUBJECT.source}`, "i"),
+        }),
+      )
       .click()
 
     // Detail view rendered. Asserted before the seen marker so a click that
@@ -190,12 +216,12 @@ test.describe("Unified inbox: mark-as-read on open", () => {
     // dropped the stale entry or already revalidated, so the row picks up
     // `isSeen: true` and loses the unread styling without waiting on focus /
     // reconnect heuristics.
-    await expect(unreadRow).not.toHaveClass(/unreadRow/)
+    await expect(
+      inboxMessage(page, OPEN_ME_SUBJECT, "Read"),
+    ).toBeVisible()
 
     // The other row was already read and must stay that way.
-    await expect(
-      page.getByRole("row", { name: /Already read/i }),
-    ).not.toHaveClass(/unreadRow/)
+    await expect(inboxMessage(page, /Already read/i, "Read")).toBeVisible()
 
     await page.close()
   })

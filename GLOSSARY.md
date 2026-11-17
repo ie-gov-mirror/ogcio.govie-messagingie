@@ -201,6 +201,10 @@ A reusable, bilingual message owned by an **Organisation**.
 A named placeholder declared on a **Message template** and filled per recipient at send time.
 _Avoid_: illegal variable (an undeclared placeholder, which is rejected)
 
+**External template**:
+The sender system's template a message was produced from, named by that system (today journey-api); not a **Message template**.
+_Avoid_: template (alone), template id
+
 ### Observability
 
 **Metric source**:
@@ -359,3 +363,5 @@ _Avoid_: bundling with **Account Deletion** as one "Account Export/Deletion" fea
 - "Matamo" appears in planning docs — resolved: the product is **Matomo**.
 - "Account Export/Deletion" was treated as one feature — resolved: **Data Export** (citizen self-service, profile repo) and **Account Deletion** (operator via **Support Console**) are distinct rows in the coverage map.
 - "Delivered" meant the message reached the Inbox, its email was sent, or no email was needed — resolved: **Inbox delivery** is the first; the email's outcome is separate.
+- `messageTemplateId` in a message's journey metadata reads as the id of a MessagingIE **Message template** — resolved: it names the **External template**, the journey's own.
+- The o11y contracts' `message_type` label reads as a channel (email or Inbox) — resolved: every counted message was emailed; `secure_message` marks a **Secure** message, whose email is the **Secure notification**, and `email` a **Non-secure** one.

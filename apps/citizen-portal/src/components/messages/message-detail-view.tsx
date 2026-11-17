@@ -19,7 +19,11 @@ import { findMockSubmissionIdForRelatedMessage } from "@/mock/related-messages"
 import type { Message } from "@/types"
 import { AttachmentCard } from "./attachment-card"
 import { DeleteConfirmationModal } from "./delete-confirmation-modal"
-import { DELETE_FLASH_KEY, MOVE_FLASH_KEY } from "./message-action-flash-keys"
+import {
+  DELETE_FLASH_KEY,
+  MOVE_FLASH_KEY,
+  RESTORE_ERASE_FLASH_KEY,
+} from "./message-action-flash-keys"
 import styles from "./message-detail.module.css"
 import { MessageDetailBody } from "./message-detail-body"
 import { MessageDetailHeader } from "./message-detail-header"
@@ -29,6 +33,10 @@ import { useDeleteMessages } from "./use-delete-messages"
 import { useMarkMessageAsRead } from "./use-mark-message-as-read"
 import { useMessageFolders } from "./use-message-folders"
 import { useMoveMessages } from "./use-move-messages"
+import {
+  useEraseMessages,
+  useRestoreMessages,
+} from "./use-restore-erase-messages"
 
 export interface MessageDetailViewProps {
   id: string
@@ -116,8 +124,12 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   const foldersEnabled = isFoldersEnabled()
   const { deleteIds, isLoading: isDeleting } = useDeleteMessages()
   const { moveIds, isLoading: isMoving } = useMoveMessages()
+  const { run: restoreIds, isLoading: isRestoring } = useRestoreMessages()
+  const { run: eraseIds, isLoading: isErasing } = useEraseMessages()
+  const isDeletedView = currentFolderId === DELETED_FOLDER_ID
 
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [isEraseConfirmOpen, setEraseConfirmOpen] = useState(false)
   const [isMoveModalOpen, setMoveModalOpen] = useState(false)
 
   const destinations = useMessageFolders({
@@ -126,7 +138,10 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
   })
 
   const listPath = pathname.split("?")[0]
-  const backHref = listPath
+  // A deleted message goes back to the Deleted list, not the Inbox.
+  const backHref = isDeletedView
+    ? `${listPath}?folder=${DELETED_FOLDER_ID}`
+    : listPath
 
   const handleDelete = useCallback(async () => {
     setDeleteConfirmOpen(false)
@@ -136,6 +151,22 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
     }
     router.push(listPath)
   }, [deleteIds, id, listPath, router])
+
+  // Back to the Deleted list, which shows the outcome as a toast.
+  const handleRestoreErase = useCallback(
+    async (action: "restore" | "erase") => {
+      setEraseConfirmOpen(false)
+      const result = await (action === "restore" ? restoreIds : eraseIds)([id])
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          RESTORE_ERASE_FLASH_KEY,
+          JSON.stringify({ action, ...result }),
+        )
+      }
+      router.push(backHref)
+    },
+    [restoreIds, eraseIds, id, router, backHref],
+  )
 
   const handleMove = useCallback(
     async (folderId: string | null) => {
@@ -179,7 +210,15 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
         backHref={backHref}
         onMove={foldersEnabled ? () => setMoveModalOpen(true) : undefined}
         onDelete={() => setDeleteConfirmOpen(true)}
-        isDeleting={isDeleting}
+        deletedActions={
+          isDeletedView
+            ? {
+                onRestore: () => handleRestoreErase("restore"),
+                onErase: () => setEraseConfirmOpen(true),
+              }
+            : undefined
+        }
+        isDeleting={isDeleting || isRestoring || isErasing}
         isMoving={isMoving}
       />
 
@@ -188,6 +227,7 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
           subject={data.subject}
           organisationId={data.organisationId}
           createdAt={data.createdAt}
+          deleted={isDeletedView}
         />
 
         <MessageDetailBody
@@ -222,6 +262,15 @@ export function MessageDetailView({ id }: MessageDetailViewProps) {
         onClose={() => setDeleteConfirmOpen(false)}
         onConfirm={handleDelete}
         isDeleting={isDeleting}
+      />
+
+      <DeleteConfirmationModal
+        variant='erase'
+        isOpen={isEraseConfirmOpen}
+        count={1}
+        onClose={() => setEraseConfirmOpen(false)}
+        onConfirm={() => handleRestoreErase("erase")}
+        isDeleting={isErasing}
       />
 
       {foldersEnabled ? (

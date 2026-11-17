@@ -1,7 +1,8 @@
-import type { Page } from "@playwright/test"
+import type { Browser, Page } from "@playwright/test"
 import { expect, test } from "@playwright/test"
-import { ids, urls, users } from "../fixtures"
+import { urls, users } from "../fixtures"
 import { runLighthouseAudit, THRESHOLDS } from "../helpers/lighthouse.helper"
+import { ownMessageQuery } from "../helpers/message-sender"
 import { loginAsCitizen } from "../helpers/user-auth.helper"
 
 const BASE_URL = urls.messaging
@@ -13,6 +14,8 @@ type AuditCase = {
   auditUrl: string
   reportName: string
   citizen: string
+  /** Query string the audit URL needs, built when the test runs. */
+  query?: (browser: Browser) => Promise<string>
   /** Warm cookies / wait for UI before Lighthouse opens the URL. */
   prepare?: (page: Page) => Promise<void>
   /** Per-audit override of the shared `THRESHOLDS`. */
@@ -28,10 +31,11 @@ const auditCases: AuditCase[] = [
   },
   {
     title: "secure message detail",
-    // Canonical `?id=` avoids the legacy path redirect in next.config.
-    auditUrl: `${BASE_URL}/en/secure-messages?id=${ids.secureMessage}`,
+    // The message is the test's own: no fixed message exists everywhere.
+    auditUrl: `${BASE_URL}/en/secure-messages`,
     reportName: "lighthouse-en-secure-messages",
     citizen: users.peterParker.email,
+    query: (browser) => ownMessageQuery(browser, users.peterParker),
   },
   {
     title: "consent",
@@ -105,9 +109,10 @@ const auditCases: AuditCase[] = [
 
 test.describe("Lighthouse Audit @regression", () => {
   for (const auditCase of auditCases) {
-    test(`citizen - audit ${auditCase.title}`, async () => {
+    test(`citizen - audit ${auditCase.title}`, async ({ browser }) => {
+      const search = (await auditCase.query?.(browser)) ?? ""
       await runLighthouseAudit({
-        auditUrl: auditCase.auditUrl,
+        auditUrl: `${auditCase.auditUrl}${search}`,
         reportName: auditCase.reportName,
         thresholds: auditCase.thresholds,
         authenticate: async (page) => {

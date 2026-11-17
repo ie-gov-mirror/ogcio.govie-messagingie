@@ -1,6 +1,12 @@
 import path from "node:path"
 import { defineConfig, devices } from "@playwright/test"
 
+// Build dir of the flags dev server. Next allows one `next dev` per build
+// dir, so a separate one lets it run next to the app's own dev server.
+// Defined here, not under e2e/: the image build type-checks this config
+// without the e2e folder.
+const FLAGS_DIST_DIR = ".next/flags"
+
 /**
  * Playwright config for the disabled-topology e2e run (AB#39580).
  *
@@ -25,6 +31,12 @@ export default defineConfig({
   testMatch: /standalone-topology\.spec\.ts/,
   retries: 1,
   outputDir: "test-results-flags/",
+  globalTeardown: path.join(
+    __dirname,
+    "e2e",
+    "feature-flags",
+    "restore-next-env.ts",
+  ),
   reporter: [["list"]],
 
   // App-only topology flags injected into the dev server. The standalone
@@ -35,6 +47,8 @@ export default defineConfig({
     timeout: 180 * 1000,
     reuseExistingServer: !process.env.CI,
     env: {
+      // Own build dir, so it starts while the app's `next dev` runs
+      CITIZEN_PORTAL_DIST_DIR: FLAGS_DIST_DIR,
       NEXT_PUBLIC_ENABLE_DASHBOARD: "false",
       NEXT_PUBLIC_ENABLE_MESSAGING: "true",
       NEXT_PUBLIC_ENABLE_JOURNEY_INTEGRATION: "true",

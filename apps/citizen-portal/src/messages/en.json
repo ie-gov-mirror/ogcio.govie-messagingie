@@ -184,7 +184,9 @@
         "ariaLabel": "Bulk actions",
         "selectedCount": "{count} selected",
         "delete": "Delete",
-        "clearSelection": "Clear selection"
+        "clearSelection": "Clear selection",
+        "restore": "Restore",
+        "erase": "Erase"
       },
       "confirm": {
         "title": "{count, plural, one {Delete message?} other {Delete # messages?}}",
@@ -271,6 +273,28 @@
         "savedToDevice": "Saved to device",
         "previewUnavailable": "Preview unavailable",
         "downloadFailed": "Download failed"
+      },
+      "restore": "Restore",
+      "erase": "Erase",
+      "deletedTag": "Deleted"
+    },
+    "restore": {
+      "alert": {
+        "success": "{count, plural, one {Message returned to Inbox} other {# messages returned to Inbox}}",
+        "failure": "{count, plural, one {# message could not be restored} other {# messages could not be restored}}"
+      }
+    },
+    "erase": {
+      "confirm": {
+        "title": "{count, plural, one {Delete this message permanently?} other {Delete # messages permanently?}}",
+        "body": "{count, plural, one {You will no longer be able to view this message in your account. It will not be included if you export your data in future.} other {You will no longer be able to view these messages in your account. They will not be included if you export your data in future.}}",
+        "cta": "Delete permanently",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "alert": {
+        "success": "{count, plural, one {# message has been permanently deleted} other {# messages have been permanently deleted}}",
+        "failure": "{count, plural, one {# message could not be permanently deleted} other {# messages could not be permanently deleted}}"
       }
     }
   },

@@ -27,6 +27,9 @@ function withBundleAnalyzerIfEnabled(config: NextConfig): NextConfig {
 
 const nextConfig: NextConfig = {
   output: "export",
+  // Overridden only by the flags e2e server, so it runs next to `next dev`;
+  // unset keeps Next's default
+  distDir: process.env.CITIZEN_PORTAL_DIST_DIR || undefined,
   // LEA-only routes (discovery) are `page.lea.tsx`: they are not routes at
   // all unless the flag is on, so a flag-off export has no trace of them.
   pageExtensions: [
@@ -97,6 +100,48 @@ function withAnalyticsApiDevProxy(
   }
 }
 
+/** Gateway app for attachment downloads; matches nginx's `X-Application`. */
+const FILES_SAG_APP = "messaging"
+const FILES_SOURCE = "/_next/files/:path*"
+/** Local gateway, used when `NEXT_PUBLIC_SAG_URL` is unset. */
+const DEFAULT_SAG_URL = "http://localhost:3333"
+
+type Rewrite = { source: string; destination: string }
+
+/**
+ * Dev-only stand-in for nginx's `/_next/files/` gateway proxy (see
+ * docker/nginx.conf.template), which `next dev` lacks. Rewrites cannot set
+ * request headers, so the app goes as `?app=`, which the gateway accepts in
+ * place of `X-Application`. Cookies and the response stream pass through.
+ * nginx's sandbox CSP and nosniff are not replicated: Next drops custom
+ * headers on proxied responses.
+ */
+function withFilesDevProxy(config: NextConfig, phase: string): NextConfig {
+  if (phase !== PHASE_DEVELOPMENT_SERVER) {
+    return config
+  }
+
+  const sagUrl = (process.env.NEXT_PUBLIC_SAG_URL ?? DEFAULT_SAG_URL).replace(
+    /\/$/,
+    "",
+  )
+  const { rewrites } = config
+
+  return {
+    ...config,
+    async rewrites() {
+      // The analytics dev proxy, the only earlier rewrite, returns a list
+      const previous = (rewrites ? await rewrites() : []) as Rewrite[]
+      const filesRewrite = {
+        source: FILES_SOURCE,
+        destination: `${sagUrl}/:path*?app=${FILES_SAG_APP}`,
+      }
+
+      return [...previous, filesRewrite]
+    },
+  }
+}
+
 /**
  * Legacy email links use `/[locale]/secure-messages/<messageId>`; the app
  * page reads `?id=`. Production handles this in nginx (see
@@ -150,7 +195,7 @@ export default function citizenPortalConfig(phase: string): NextConfig {
     withNextIntl(
       withApplicationsToSubmissionsRedirect(
         withSecureMessagesLegacyRedirect(
-          withAnalyticsApiDevProxy(nextConfig, phase),
+          withFilesDevProxy(withAnalyticsApiDevProxy(nextConfig, phase), phase),
         ),
       ),
     ),

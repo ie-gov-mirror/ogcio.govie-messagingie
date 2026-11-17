@@ -34,6 +34,10 @@ test.describe("Feature flags — MessagingIE + Profile, Dashboard disabled", () 
     // Dashboard zone is absent: the route guard steers to the first
     // enabled landing zone (messages) instead of rendering the dashboard.
     await expect(page).toHaveURL(/\/en\/messages/)
+    // The first messages load still signs in to the messages zone and comes
+    // back to the same URL. Wait for the inbox, which renders only after that
+    // sign-in, so the next test's goto does not abort it.
+    await expect(page.getByTestId("search-input")).toBeVisible()
   })
 
   test("the menu drops the Dashboard link but keeps Messages", async () => {

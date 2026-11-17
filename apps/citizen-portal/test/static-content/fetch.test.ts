@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { execFile } from "node:child_process"
-import { mkdtemp, readdir, rm } from "node:fs/promises"
+import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { promisify } from "node:util"
@@ -73,5 +73,63 @@ describe("fetch:static-content", () => {
       "discovery.ga.json",
       "manifest.json",
     ])
+  })
+
+  describe("prebuilt mode", () => {
+    const prebuilt = {
+      NEXT_PUBLIC_ENABLE_LEA: "true",
+      STATIC_CONTENT_MODE: "prebuilt",
+    }
+
+    async function writeProxyContent() {
+      await fetchStaticContent({ NEXT_PUBLIC_ENABLE_LEA: "true" })
+      const file = join(outputDir, "manifest.json")
+      const manifest = JSON.parse(await readFile(file, "utf8"))
+      await writeFile(file, JSON.stringify({ ...manifest, mode: "proxy" }))
+    }
+
+    it("uses the content already in place, unchanged", async () => {
+      await writeProxyContent()
+      const before = await readFile(
+        join(outputDir, "discovery.en.json"),
+        "utf8",
+      )
+
+      const { stdout } = await fetchStaticContent(prebuilt)
+
+      expect(stdout).toContain("static-content: using prebuilt content")
+      expect(await readFile(join(outputDir, "discovery.en.json"), "utf8")).toBe(
+        before,
+      )
+    })
+
+    it("fails without the content, writing nothing", async () => {
+      const error = await fetchStaticContent(prebuilt).catch(
+        (e: { stderr: string }) => e,
+      )
+      expect(error.stderr).toContain(
+        "static-content: failed: STATIC_CONTENT_MODE=prebuilt found no content",
+      )
+      expect(await readdir(root)).toEqual([])
+    })
+
+    it("fails on content that wasn't fetched from the CMS", async () => {
+      await fetchStaticContent({ NEXT_PUBLIC_ENABLE_LEA: "true" })
+
+      const error = await fetchStaticContent(prebuilt).catch(
+        (e: { stderr: string }) => e,
+      )
+      expect(error.stderr).toContain("was written in mock mode, not proxy")
+    })
+
+    it("fails on content missing a locale file", async () => {
+      await writeProxyContent()
+      await rm(join(outputDir, "discovery.ga.json"))
+
+      const error = await fetchStaticContent(prebuilt).catch(
+        (e: { stderr: string }) => e,
+      )
+      expect(error.stderr).toContain("discovery.ga.json")
+    })
   })
 })

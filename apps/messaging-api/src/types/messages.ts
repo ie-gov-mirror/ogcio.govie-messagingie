@@ -73,6 +73,61 @@ export type CreateMessageOptions = Static<typeof CreateMessageOptionsSchema>;
 
 /** Create message */
 
+// Caps the id's length; the set of ids stays open, as the journey owns them
+const MESSAGE_TEMPLATE_ID_MAX_LENGTH = 128;
+
+// Journey submission ids are always 8 characters
+const SUBMISSION_ID_LENGTH = 8;
+
+// The step becomes a metric label: the cap bounds its values, 0 to 100
+const JOURNEY_STEP_MAX = 100;
+
+// The journey part of the public API's Message metadata, same shape
+const MessageMetadataSchema = Type.Object(
+  {
+    journey: Type.Optional(
+      Type.Object({
+        journeyId: Type.Optional(
+          Type.String({
+            format: "uuid",
+            description:
+              "Identifier of the journey that triggered this message",
+          }),
+        ),
+        submissionId: Type.String({
+          minLength: SUBMISSION_ID_LENGTH,
+          maxLength: SUBMISSION_ID_LENGTH,
+          description: "Identifier of the journey submission of this message",
+        }),
+        journeyStep: Type.Optional(
+          Type.Integer({
+            minimum: 0,
+            maximum: JOURNEY_STEP_MAX,
+            description: "Position, counted from 0, of the journey step",
+          }),
+        ),
+        messageTemplateId: Type.Optional(
+          Type.String({
+            minLength: 1,
+            maxLength: MESSAGE_TEMPLATE_ID_MAX_LENGTH,
+            description:
+              "Id of the journey's template the message was produced from (not a MessagingIE template)",
+          }),
+        ),
+      }),
+    ),
+  },
+  { minProperties: 1 },
+);
+
+export type MessageMetadata = Static<typeof MessageMetadataSchema>;
+
+// Message metadata as MessagingIE keeps it: the journey also carries the
+// citizen's geohash, read from the create request's baggage
+export type StoredMessageMetadata = {
+  journey?: NonNullable<MessageMetadata["journey"]> & { geohash?: string };
+};
+
 export const CreateMessageBodySchema = Type.Object({
   preferredTransports: Type.Array(AllProviderTypesSchema, {
     description:
@@ -101,6 +156,7 @@ export const CreateMessageBodySchema = Type.Object({
         "Set to true to bypass recipient messaging consent checks. Requires platform:messaging:write; omitted or false preserves normal consent enforcement.",
     }),
   ),
+  metadata: Type.Optional(MessageMetadataSchema),
 });
 
 export type CreateMessageBody = Static<typeof CreateMessageBodySchema>;
@@ -316,6 +372,7 @@ export type MessageToDeliverWoAttachments = {
   richText?: string;
   externalId?: string;
   createdAt?: string;
+  messageMetadata?: StoredMessageMetadata;
 };
 
 export type MessageToDeliver = MessageToDeliverWoAttachments & {
@@ -357,5 +414,21 @@ export const DeleteMessagesReqSchema = {
     "5xx": HttpError,
     "4xx": HttpError,
   },
+  body: DeleteMessagesIdsSchema,
+};
+
+export const RestoreMessagesReqSchema = {
+  description:
+    "Moves the deleted messages with the given ids back to the inbox",
+  tags: MESSAGES_TAGS,
+  response: DeleteMessagesReqSchema.response,
+  body: DeleteMessagesIdsSchema,
+};
+
+export const EraseMessagesReqSchema = {
+  description:
+    "Erases the deleted messages with the given ids from the recipient's account, attachments included. The sender's record is kept",
+  tags: MESSAGES_TAGS,
+  response: DeleteMessagesReqSchema.response,
   body: DeleteMessagesIdsSchema,
 };

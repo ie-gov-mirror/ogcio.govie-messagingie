@@ -1,6 +1,6 @@
 {
   "name": "support-console",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": true,
   "scripts": {
     "dev": "next dev -p 1337",
@@ -12,19 +12,19 @@
     "test:e2e:local": "playwright test"
   },
   "dependencies": {
-    "@azure/msal-node": "7.2.1",
+    "@azure/msal-node": "7.2.2",
     "@ogcio/building-blocks-sdk": "0.2.127",
     "@ogcio/design-system-react": "1.42.0",
     "@ogcio/nextjs-analytics": "1.1.5",
     "@ogcio/nextjs-o11y": "0.1.1",
-    "@ogcio/o11y-sdk-node": "0.14.2",
+    "@ogcio/o11y-sdk-node": "0.15.0",
     "@ogcio/o11y-sdk-react": "0.14.0",
     "@ogcio/theme-govie": "1.21.7",
     "@types/pg": "8.23.1",
     "dayjs": "1.11.23",
     "import-in-the-middle": "3.6.0",
-    "jose": "6.2.16",
-    "next": "16.4.5",
+    "jose": "6.2.17",
+    "next": "16.4.6",
     "pg": "8.23.1",
     "pino": "10.4.0",
     "react": "19.3.1",
@@ -32,14 +32,14 @@
     "require-in-the-middle": "8.0.1"
   },
   "devDependencies": {
-    "@playwright/test": "1.65.0",
+    "@playwright/test": "1.65.1",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@vitejs/plugin-react": "6.2.1",
+    "@vitejs/plugin-react": "6.3.0",
     "@vitest/browser-playwright": "5.1.0",
-    "jsdom": "31.0.0",
+    "jsdom": "31.0.1",
     "vitest-browser-react": "2.3.0"
   }
 }

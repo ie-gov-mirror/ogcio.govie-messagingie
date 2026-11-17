@@ -15,7 +15,7 @@ import {
   createMockTransport,
   type Transport,
 } from "./wagtail/index.ts"
-import { writeStaticContent } from "./write.ts"
+import { readPrebuiltManifest, writeStaticContent } from "./write.ts"
 
 async function main(): Promise<number> {
   // Flag off, the discovery routes aren't built, so their content mustn't be
@@ -26,6 +26,14 @@ async function main(): Promise<number> {
   }
 
   const config = readConfig(process.env)
+  if (config.mode === "prebuilt") {
+    const manifest = await readPrebuiltManifest(config.outputDir)
+    console.log(
+      `static-content: using prebuilt content (fetched in proxy mode at ${manifest.generatedAt})`,
+    )
+    return 0
+  }
+
   console.log(
     `static-content: fetching discovery content (mode=${config.mode}${config.mode === "proxy" ? `, api=${config.api.baseUrl}` : ""})`,
   )
@@ -57,7 +65,9 @@ async function main(): Promise<number> {
   return 0
 }
 
-function createTransport(config: StaticContentConfig): Transport {
+function createTransport(
+  config: Exclude<StaticContentConfig, { mode: "prebuilt" }>,
+): Transport {
   // TODO: back to MOCK_FIXTURES_DIR once UAT is flagged as stable.
   if (config.mode === "mock") return createMockTransport(UAT_FIXTURES_DIR)
   const { baseUrl, tokenUrl, clientId, clientSecret } = config.api

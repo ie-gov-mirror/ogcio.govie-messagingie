@@ -5,22 +5,17 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1/profiles/select-profiles?ids=jcotlljr66g9,h1mtwsg8qdx0
+  url: {{baseUrl}}/api/v1/profiles/select-profiles?ids={{firstListedProfileId}},{{secondListedProfileId}}
   body: none
   auth: bearer
 }
 
 params:query {
-  ids: jcotlljr66g9,h1mtwsg8qdx0
+  ids: {{firstListedProfileId}},{{secondListedProfileId}}
 }
 
 auth:bearer {
   token: {{accessToken}}
-}
-
-vars:pre-request {
-  profileId: jcotlljr66g9
-  anotherProfileId: h1mtwsg8qdx0
 }
 
 assert {

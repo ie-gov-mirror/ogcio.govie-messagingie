@@ -13,6 +13,7 @@ import {
   type SupportQueryParams,
 } from "../../types/messages-support.js";
 import { Permissions } from "../../types/permissions.js";
+import { requestGeohash } from "../../utils/geo.js";
 import {
   formatAPIResponse,
   sanitizePagination,
@@ -101,6 +102,7 @@ export default async function supportMessages(app: FastifyInstance) {
         logger: request.log,
         message: request.body,
         sender: senderUser,
+        geohash: requestGeohash(),
       });
 
       reply.statusCode = 201;

@@ -1,30 +1,47 @@
 import AxeBuilder from "@axe-core/playwright"
 import { createHtmlReport } from "axe-html-reporter"
-import { expect, test } from "@playwright/test"
-import { ids, urls, users } from "../fixtures"
+import { type Browser, expect, test } from "@playwright/test"
+import { urls, users } from "../fixtures"
+import { MESSAGE_SUBJECT, ownMessageQuery } from "../helpers/message-sender"
 import { createAuthenticatedPage } from "../helpers/user-auth.helper"
 import fs from "fs"
 
 const PROFILE_URL = urls.profileVisual
 const DASHBOARD_URL = urls.dashboardVisual
 
-const citizenPages = [
+type CitizenPage = {
+  url: string
+  citizen: string
+  /** Query string the page needs, built when the test runs. */
+  query?: (browser: Browser) => Promise<string>
+  /** Heading the page shows once loaded, when `main` shows earlier. */
+  heading?: string
+}
+
+const citizenPages: CitizenPage[] = [
   { url: "/en/messages", citizen: users.citizen1.email },
   {
-    // Canonical `?id=` avoids the legacy path redirect in next.config.
-    url: `/en/secure-messages?id=${ids.secureMessage}`,
+    // The message is the test's own: no fixed message exists everywhere.
+    url: "/en/secure-messages",
     citizen: users.peterParker.email,
+    query: (browser) => ownMessageQuery(browser, users.peterParker),
+    // The page shows a loading shell until it redirects to the message
+    heading: MESSAGE_SUBJECT,
   },
 ]
 
 test.describe("Accessibility (a11y) checks @regression", () => {
-  for (const { url, citizen } of citizenPages) {
+  for (const { url, citizen, query, heading } of citizenPages) {
     test(`citizen - should have no SERIOUS a11y violations on ${url}`, async ({
       browser,
     }) => {
+      const search = (await query?.(browser)) ?? ""
       const page = await createAuthenticatedPage(browser, citizen)
-      await page.goto(url)
+      await page.goto(`${url}${search}`)
       await expect(page.locator("main")).toBeVisible()
+      if (heading) {
+        await expect(page.getByRole("heading", { name: heading })).toBeVisible()
+      }
       const accessibilityScanResults = await new AxeBuilder({ page })
         .exclude('iframe[title="reCAPTCHA"]')
         .analyze()

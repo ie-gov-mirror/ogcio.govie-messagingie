@@ -20,6 +20,7 @@ exist.
 
 A file legitimately belongs to someone if it was **attached to a message sent to
 them**. We use the message history as the source of truth:
+
 - **Keep** every file-to-person link that matches a real message.
 - **Remove** links where a person has a file but no message ever gave it to them.
 
@@ -43,6 +44,7 @@ access — that's handled automatically elsewhere and isn't affected.
 
 The cleanup is a short sequence of scripts, run in order. The first ones only
 _look_; only one of them actually _removes_ anything.
+
 1. **Build the "correct list."** We read the message history and make a list of
    every file paired with the person who legitimately received it. This is our
    reference for what's allowed.

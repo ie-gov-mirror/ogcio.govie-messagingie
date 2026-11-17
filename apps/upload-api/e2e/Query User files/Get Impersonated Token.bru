@@ -18,12 +18,21 @@ headers {
 body:form-urlencoded {
   grant_type: urn:ietf:params:oauth:grant-type:token-exchange
   scope: upload:file.self:read
-  organization_id: first-testing
+  organization_id: {{citizenOrganizationId}}
   resource: {{process.env.UPLOAD_API_RESOURCE_INDICATOR}}
   resource: {{process.env.UPLOAD_API_RESOURCE_INDICATOR}}
   client_id: {{process.env.BRUNO_UPLOAD_APP_ID}}
   subject_token: {{subjectToken}}
   subject_token_type: urn:ietf:params:oauth:token-type:access_token
+}
+
+script:pre-request {
+  // Hosted citizens read files through the organisation they belong to.
+  // A local citizen belongs to none, so the local environment leaves the
+  // organisation unset and the field is dropped.
+  if (!bru.getEnvVar("citizenOrganizationId")) {
+    req.setBody(req.getBody().filter((field) => field.name !== "organization_id"))
+  }
 }
 
 vars:post-response {

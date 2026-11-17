@@ -42,7 +42,7 @@ export class ConfigError extends Error {
   name = "ConfigError"
 }
 
-export type StaticContentMode = "mock" | "proxy"
+export type StaticContentMode = "mock" | "proxy" | "prebuilt"
 
 // The gov.ie Integration API: Wagtail's pages API behind OAuth2 client
 // credentials, with the token endpoint on the same host.
@@ -56,14 +56,15 @@ export type CmsApiConfig = {
 export type StaticContentConfig =
   | { mode: "mock"; indexPageId: number; outputDir: string }
   | { mode: "proxy"; indexPageId: number; outputDir: string; api: CmsApiConfig }
+  | { mode: "prebuilt"; outputDir: string }
 
 export function readConfig(
   env: Record<string, string | undefined>,
 ): StaticContentConfig {
   const mode = env.STATIC_CONTENT_MODE?.trim() || "mock"
-  if (mode !== "mock" && mode !== "proxy") {
+  if (mode !== "mock" && mode !== "proxy" && mode !== "prebuilt") {
     throw new ConfigError(
-      `STATIC_CONTENT_MODE must be "mock" or "proxy", got "${mode}"`,
+      `STATIC_CONTENT_MODE must be "mock", "proxy" or "prebuilt", got "${mode}"`,
     )
   }
 
@@ -75,6 +76,7 @@ export function readConfig(
     // TODO: back to MOCK_INDEX_PAGE_ID once UAT is flagged as stable.
     return { mode, indexPageId: UAT_INDEX_PAGE_ID, outputDir }
   }
+  if (mode === "prebuilt") return { mode, outputDir }
   return { mode, outputDir, ...readProxyConfig(env) }
 }
 

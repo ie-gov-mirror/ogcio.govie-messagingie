@@ -9,14 +9,10 @@ import {
 import type { FastifyBaseLogger } from "fastify";
 
 const sdkPerOrganisation: { [organizationId: string]: SetupSdks } = {};
-let analytics: BuildingBlocksSDK["analytics"] | undefined;
 
 type SetupSdks = DefinedServices<{
   services: {
     scheduler: {
-      baseUrl: string;
-    };
-    analytics?: {
       baseUrl: string;
     };
     profile: { baseUrl: string };
@@ -58,18 +54,6 @@ export const getSchedulerSdk = async (
   return loadBuildingBlocksSdk(organizationId, logger).scheduler;
 };
 
-export const getM2MAnalyticsSdk = async (
-  logger: FastifyBaseLogger,
-): Promise<BuildingBlocksSDK["analytics"]> => {
-  if (analytics) return analytics;
-
-  analytics = loadBuildingBlocksSdk(
-    process.env.LOGTO_M2M_ANALYTICS_ORGANIZATION_ID ?? "",
-    logger,
-  ).analytics;
-  return analytics;
-};
-
 const loadBuildingBlocksSdk = (
   organizationId: string,
   logger?: FastifyBaseLogger,
@@ -78,15 +62,6 @@ const loadBuildingBlocksSdk = (
     sdkPerOrganisation[organizationId] = getBuildingBlockSDK({
       services: {
         scheduler: { baseUrl: process.env.SCHEDULER_BACKEND_URL ?? "" },
-        analytics: {
-          baseUrl: process.env.ANALYTICS_URL ?? "",
-          matomoToken: process.env.ANALYTICS_MATOMO_TOKEN,
-          trackingWebsiteId: process.env.ANALYTICS_WEBSITE_ID,
-          organizationId: process.env.LOGTO_M2M_ANALYTICS_ORGANIZATION_ID,
-          dryRun:
-            process.env.ANALYTICS_DRY_RUN === "true" ||
-            process.env.ANALYTICS_DRY_RUN === "1",
-        },
         profile: { baseUrl: process.env.PROFILE_BACKEND_URL ?? "" },
       },
       getTokenFn: getM2MTokenFn({
@@ -103,20 +78,6 @@ const loadBuildingBlocksSdk = (
               ...getBaseSchedulerConfig(),
               scopes: ["scheduler:jobs:write"],
               organizationId,
-            },
-          },
-          analytics: {
-            getOrganizationTokenParams: {
-              applicationId: process.env.LOGTO_M2M_ANALYTICS_APP_ID ?? "",
-              applicationSecret:
-                process.env.LOGTO_M2M_ANALYTICS_APP_SECRET ?? "",
-              logtoOidcEndpoint: process.env.LOGTO_OIDC_ENDPOINT ?? "",
-              organizationId:
-                process.env.LOGTO_M2M_ANALYTICS_ORGANIZATION_ID ??
-                organizationId,
-              scopes: process.env.LOGTO_M2M_ANALYTICS_SCOPES
-                ? process.env.LOGTO_M2M_ANALYTICS_SCOPES.split(",")
-                : undefined,
             },
           },
         },
@@ -153,10 +114,6 @@ const loadPersonalSdk = (
       },
       upload: {
         baseUrl: process.env.UPLOAD_BACKEND_URL ?? "",
-      },
-      analytics: {
-        baseUrl: process.env.ANALYTICS_URL ?? "",
-        organizationId: process.env.LOGTO_M2M_ANALYTICS_ORGANIZATION_ID,
       },
     },
     getTokenFn: async (serviceName: string): Promise<string> => {

@@ -362,6 +362,10 @@ async function runScannedUpload(
   fileTooLargePromise: Promise<never>,
 ): Promise<UploadExecutionResult> {
   const getDbVersionPromise = getDbVersion(app.avClient, app.nodeCache);
+  // Awaited only once the upload settles; a failure before then (e.g. clamd
+  // resetting the connection) would otherwise crash the process as an
+  // unhandled rejection. The await below still fails the upload.
+  getDbVersionPromise.catch(() => {});
   const antivirusPassthrough = app.avClient.passthrough({
     emitReadable: false,
   });

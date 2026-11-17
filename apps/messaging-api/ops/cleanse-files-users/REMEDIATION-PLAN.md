@@ -7,6 +7,7 @@
 ## 1. Executive Summary
 
 Following the recent production incident, we identified two areas of intervention:
+
 - **Fix the export feature** so that it returns only the data associated with a
   user's messages.
 - **Sanitise the incorrect file–user associations** in the upload-api database.
@@ -42,6 +43,7 @@ still go through the existing `upload.support.getFiles({ fileIds, userId })` bat
 endpoint, which enforces a per-id ACL check as defence-in-depth.
 
 Concretely:
+
 - Adds a pure extractor `getAttachmentFileIdsByUserId(messagesByUserId)` (dedupes
   per user, omits users with no attachments).
 - Fetches messages first, then derives `fileIdsByUserId` from message

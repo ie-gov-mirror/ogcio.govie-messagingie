@@ -24,6 +24,21 @@ async function goToProfileAdminServiceUsers(p: Page) {
   await expect(p.getByRole("heading", { name: /service users/i })).toBeVisible()
 }
 
+// Waits out the cross-host hop like the service users page, then for the
+// profile details: the page first shows a loading state in their place.
+async function goToProfileAdminMyProfile(p: Page) {
+  await p.goto(`${urls.profileAdmin}/my-profile`)
+  await p.waitForURL(
+    (url) =>
+      url.hostname.includes("profile-admin") &&
+      url.pathname.includes("/my-profile"),
+  )
+  await expect(p.getByRole("heading", { name: "My Profile" })).toBeVisible()
+  await expect(
+    p.getByRole("heading", { name: "Contact details" }),
+  ).toBeVisible()
+}
+
 test.describe("Admin Visual Regression", () => {
   test.beforeAll(async ({ browser }) => {
     page = await createPageWithVideo(browser)
@@ -75,11 +90,7 @@ test.describe("Admin Visual Regression", () => {
   })
 
   test("admin profile page visual snapshot @visual", async () => {
-    await navigateAndVerifyHeading(
-      page,
-      `${urls.profileAdmin}/my-profile`,
-      "My Profile",
-    )
+    await goToProfileAdminMyProfile(page)
     await expect(page).toHaveScreenshot("admin-profile.png", {
       fullPage: true,
       maxDiffPixelRatio: maxDiff,

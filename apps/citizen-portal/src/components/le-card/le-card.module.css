@@ -95,7 +95,7 @@
 }
 
 /*
- * ponytail: no Icon size is 20px (md is 24). Width and height cover the
+ * No Icon size is 20px (md is 24). Width and height cover the
  * SVG; the component passes font-size for the font fallback. Upgrade
  * path: an Icon size of 20px.
  */

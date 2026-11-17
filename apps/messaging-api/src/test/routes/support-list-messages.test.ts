@@ -190,6 +190,59 @@ describe("POST /api/v1/support/messages/search", {}, () => {
     expect(ids).not.toContain(activeId);
     expect(ids).not.toContain(olderThanDaysId);
   });
+
+  it("should not return an erased message that is still in the inbox", async () => {
+    const recipientId = randomUUID().substring(0, 12);
+    const orgId = randomUUID().substring(0, 10);
+    const liveId = await insertMessage(recipientId, orgId, pool);
+    const erasedId = await insertMessage(recipientId, orgId, pool);
+    await pool.query("UPDATE messages SET erased_at = now() WHERE id = $1", [
+      erasedId,
+    ]);
+
+    app = await getServer(randomUUID().substring(0, 12), undefined, true);
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/v1/support/messages/search",
+      payload: { recipientUserIds: [recipientId] },
+    });
+
+    expect(res.statusCode).toBe(200);
+    const ids = res.json().data.map((m: { id: string }) => m.id);
+    expect(ids).toContain(liveId);
+    expect(ids).not.toContain(erasedId);
+  });
+
+  it("should not return an erased message, even when listing deleted ones", async () => {
+    const recipientId = randomUUID().substring(0, 12);
+    const orgId = randomUUID().substring(0, 10);
+    const deletedId = await insertMessage(recipientId, orgId, pool);
+    const erasedId = await insertMessage(recipientId, orgId, pool);
+    await pool.query("UPDATE messages SET deleted_at = now() WHERE id = $1", [
+      deletedId,
+    ]);
+    await pool.query(
+      "UPDATE messages SET deleted_at = now(), erased_at = now() WHERE id = $1",
+      [erasedId],
+    );
+
+    app = await getServer(randomUUID().substring(0, 12), undefined, true);
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/v1/support/messages/search",
+      query: {
+        deletedAfterDateTime: new Date(
+          Date.now() - 24 * 60 * 60 * 1000,
+        ).toISOString(),
+      },
+      payload: { recipientUserIds: [recipientId] },
+    });
+
+    expect(res.statusCode).toBe(200);
+    const ids = res.json().data.map((m: { id: string }) => m.id);
+    expect(ids).toContain(deletedId);
+    expect(ids).not.toContain(erasedId);
+  });
 });
 
 async function getServer(

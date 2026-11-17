@@ -47,7 +47,10 @@ test.describe("Admin Message Sending", () => {
     await expect(
       authenticatedPage.getByText("Attachments uploaded"),
     ).toBeVisible()
-    await clickButton(authenticatedPage, "Next")
+    // Exact: `next dev` adds an "Open Next.js Dev Tools" button
+    await authenticatedPage
+      .getByRole("button", { name: "Next", exact: true })
+      .click()
 
     await sendMessageAndVerify(authenticatedPage)
   })

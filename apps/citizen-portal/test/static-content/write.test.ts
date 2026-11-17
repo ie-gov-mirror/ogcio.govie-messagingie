@@ -86,8 +86,17 @@ describe("readConfig", () => {
 
   it("rejects unknown modes", () => {
     expect(() => readConfig({ STATIC_CONTENT_MODE: "live" })).toThrow(
-      /must be "mock" or "proxy"/,
+      /must be "mock", "proxy" or "prebuilt"/,
     )
+  })
+
+  it("reads prebuilt mode with only the output directory", () => {
+    expect(
+      readConfig({
+        STATIC_CONTENT_MODE: "prebuilt",
+        STATIC_CONTENT_DIR: "/tmp/out",
+      }),
+    ).toEqual({ mode: "prebuilt", outputDir: "/tmp/out" })
   })
 
   describe("proxy mode", () => {

@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.1.10](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.9...citizen-portal-v0.1.10) (2026-11-17)
+
+
+### Features
+
+* **citizen-portal:** fetch UAT discovery content before the docker build AB[#45705](https://github.com/ogcio/govie-services-messaging/issues/45705) ([#1160](https://github.com/ogcio/govie-services-messaging/issues/1160)) ([a08e4ac](https://github.com/ogcio/govie-services-messaging/commit/a08e4ac5c0cbd505e328632a403d913999912c2f))
+* run the e2e suites against the local stack AB[#46019](https://github.com/ogcio/govie-services-messaging/issues/46019) ([#1174](https://github.com/ogcio/govie-services-messaging/issues/1174)) ([fdfdba0](https://github.com/ogcio/govie-services-messaging/commit/fdfdba01842807af89d9b9f84cd8a606cb366e52))
+
+
+### Bug Fixes
+
+* **citizen-portal:** reserve a full viewport while the profile loads AB[#45895](https://github.com/ogcio/govie-services-messaging/issues/45895) ([#1165](https://github.com/ogcio/govie-services-messaging/issues/1165)) ([5f6daf2](https://github.com/ogcio/govie-services-messaging/commit/5f6daf21a778399f6b65cda174f972a280523a6b))
+* **citizen-portal:** show restore and erase icons on a deleted message AB[#45839](https://github.com/ogcio/govie-services-messaging/issues/45839) ([#1170](https://github.com/ogcio/govie-services-messaging/issues/1170)) ([675024e](https://github.com/ogcio/govie-services-messaging/commit/675024e4dc97c445c935505a76141a0edd0ff163))
+* **citizen-portal:** update the public name of the signed-in profile AB[#46063](https://github.com/ogcio/govie-services-messaging/issues/46063) ([#1171](https://github.com/ogcio/govie-services-messaging/issues/1171)) ([b4f389a](https://github.com/ogcio/govie-services-messaging/commit/b4f389a2950f257f08f0b7725d1115e20d146c87))
+* **deps:** update all non-major dependencies ([#1172](https://github.com/ogcio/govie-services-messaging/issues/1172)) ([bf0692c](https://github.com/ogcio/govie-services-messaging/commit/bf0692cc793562487a1b15bddae4e0c3f228662a))
+* restore and erase deleted messages AB[#45839](https://github.com/ogcio/govie-services-messaging/issues/45839) ([#1164](https://github.com/ogcio/govie-services-messaging/issues/1164)) ([b982f8f](https://github.com/ogcio/govie-services-messaging/commit/b982f8f30755398037b9fb3583c3de6c81f5bd2b))
+
+
+### Miscellaneous Chores
+
+* align repo tooling AB[#45916](https://github.com/ogcio/govie-services-messaging/issues/45916) ([#1167](https://github.com/ogcio/govie-services-messaging/issues/1167)) ([84bd822](https://github.com/ogcio/govie-services-messaging/commit/84bd8225f385e29707925ba76b4f243eb8817dc3))
+* update comments AB[#45996](https://github.com/ogcio/govie-services-messaging/issues/45996) ([#1169](https://github.com/ogcio/govie-services-messaging/issues/1169)) ([feb0842](https://github.com/ogcio/govie-services-messaging/commit/feb084240d290aa9330ea0f1e971a2f89858dc47))
+
 ## [0.1.9](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.8...citizen-portal-v0.1.9) (2026-11-10)
 
 

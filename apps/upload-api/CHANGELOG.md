@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.4.0](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.3.2...upload-api-v1.4.0) (2026-11-17)
+
+
+### Features
+
+* run the e2e suites against the local stack AB[#46019](https://github.com/ogcio/govie-services-messaging/issues/46019) ([#1174](https://github.com/ogcio/govie-services-messaging/issues/1174)) ([fdfdba0](https://github.com/ogcio/govie-services-messaging/commit/fdfdba01842807af89d9b9f84cd8a606cb366e52))
+
+
+### Bug Fixes
+
+* compare webhook and job secrets in constant time AB[#45756](https://github.com/ogcio/govie-services-messaging/issues/45756) ([#1156](https://github.com/ogcio/govie-services-messaging/issues/1156)) ([3bdc97b](https://github.com/ogcio/govie-services-messaging/commit/3bdc97bb4965427018dd3044f75f41422f53a35f))
+* **deps:** update all non-major dependencies ([#1139](https://github.com/ogcio/govie-services-messaging/issues/1139)) ([ed428f5](https://github.com/ogcio/govie-services-messaging/commit/ed428f5c46c510f67115b244fc44e5931e2bd971))
+* **deps:** update all non-major dependencies ([#1161](https://github.com/ogcio/govie-services-messaging/issues/1161)) ([cc1f9c1](https://github.com/ogcio/govie-services-messaging/commit/cc1f9c1a00e38984cd931d50be0a6f4b7cfde362))
+* **deps:** update all non-major dependencies ([#1172](https://github.com/ogcio/govie-services-messaging/issues/1172)) ([bf0692c](https://github.com/ogcio/govie-services-messaging/commit/bf0692cc793562487a1b15bddae4e0c3f228662a))
+* **deps:** update dependency @fastify/otel to v1 ([#1141](https://github.com/ogcio/govie-services-messaging/issues/1141)) ([a119965](https://github.com/ogcio/govie-services-messaging/commit/a11996590217faeb70ae7a5aad32d721d810b1ea))
+* **deps:** update dependency @ogcio/o11y-sdk-node to v0.15.0 ([#1173](https://github.com/ogcio/govie-services-messaging/issues/1173)) ([b0afe66](https://github.com/ogcio/govie-services-messaging/commit/b0afe66d808f052ee205ffb0ba507c12f8c4eadd))
+* keep Fastify spans in the request trace AB[#45791](https://github.com/ogcio/govie-services-messaging/issues/45791) ([#1162](https://github.com/ogcio/govie-services-messaging/issues/1162)) ([0bba2e9](https://github.com/ogcio/govie-services-messaging/commit/0bba2e9d0da4bae3a7c4f9dae2b9632d191d7e82))
+* stop the per-request analytics event in four APIs AB[#46135](https://github.com/ogcio/govie-services-messaging/issues/46135) ([#1175](https://github.com/ogcio/govie-services-messaging/issues/1175)) ([d85f9bc](https://github.com/ogcio/govie-services-messaging/commit/d85f9bcd0536337be43bd1c49decec4fb142b5d3))
+* **upload-api:** deny batch download of files with no sharing record AB[#45752](https://github.com/ogcio/govie-services-messaging/issues/45752) ([#1154](https://github.com/ogcio/govie-services-messaging/issues/1154)) ([c90ae04](https://github.com/ogcio/govie-services-messaging/commit/c90ae049a8e9fd27f6ff02f71f9ad9ba6228ea42))
+* **upload-api:** keep http errors from GET /metadata AB[#45759](https://github.com/ogcio/govie-services-messaging/issues/45759) ([#1159](https://github.com/ogcio/govie-services-messaging/issues/1159)) ([bc4bfcc](https://github.com/ogcio/govie-services-messaging/commit/bc4bfccc5f8ba0fb339ec8703b7e0942aec859ac))
+* **upload-api:** reject uploads when the antivirus scan fails AB[#45750](https://github.com/ogcio/govie-services-messaging/issues/45750) ([#1153](https://github.com/ogcio/govie-services-messaging/issues/1153)) ([1609521](https://github.com/ogcio/govie-services-messaging/commit/16095218507fe32fb1f3189d26f00dbd900e04e8))
+* **upload-api:** serve XML and JSON attachments as a download AB[#45749](https://github.com/ogcio/govie-services-messaging/issues/45749) ([#1152](https://github.com/ogcio/govie-services-messaging/issues/1152)) ([775d396](https://github.com/ogcio/govie-services-messaging/commit/775d3960a2e1f3b516ea390c6484b898a7f51c3f))
+
 ## [1.3.2](https://github.com/ogcio/govie-services-messaging/compare/upload-api-v1.3.1...upload-api-v1.3.2) (2026-11-05)
 
 

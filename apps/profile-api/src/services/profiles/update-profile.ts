@@ -66,7 +66,7 @@ type LinkProof = {
 
 const MESSAGES_PAGE_SIZE = 100;
 
-// ponytail: pages through every message of the recipient; fine for the
+// Pages through every message of the recipient; fine for the
 // handful a never-signed-in profile has, add a by-id lookup if that grows.
 async function isMessageSentTo(params: {
   messagingSupportSdk: MessagingSupportSdk;

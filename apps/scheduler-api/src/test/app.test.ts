@@ -20,8 +20,6 @@ describe("app", () => {
   beforeEach(() => {
     vi.resetModules();
     Object.assign(process.env, REQUIRED_ENV);
-    // Keep the analytics plugin on its disabled path.
-    delete process.env.ANALYTICS_URL;
     // The real api-auth plugin talks to logto; it has its own unit tests.
     vi.doMock("../plugins/api-auth.js", () => ({
       default: async () => {},

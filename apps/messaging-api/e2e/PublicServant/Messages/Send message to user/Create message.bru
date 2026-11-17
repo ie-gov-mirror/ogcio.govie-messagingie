@@ -28,11 +28,15 @@ script:pre-request {
   const uuid = require("uuid")
   const messageSubject = uuid.v4()
   bru.setVar("messageSubject", messageSubject)
+
+  const scheduleAt = "2024-08-26T10:05:04.865Z"
+  bru.setVar("messageScheduleDate", scheduleAt.slice(0, 10))
+
   req.setBody({
     "preferredTransports": ["lifeEvent"],
     "recipientUserId": bru.getVar("importedUserId"),
     "security": "public",
-    "scheduleAt": "2024-08-26T10:05:04.865Z",
+    "scheduleAt": scheduleAt,
     "message": {
       "threadName": "threadName",
       "subject": messageSubject,

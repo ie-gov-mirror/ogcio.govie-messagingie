@@ -28,12 +28,14 @@ export class SupportMessageModel extends BaseModel<DB, "messages"> {
     const hasDeletedAfter =
       deletedAfterDateTime !== undefined && Date.parse(deletedAfterDateTime);
 
+    // erased_at hides the row from the recipient for good, including the
+    // data export, which reads this search. The sender's own views do not.
     const deletedAtClause = hasDeletedAfter
-      ? sql`AND m.deleted_at >= ${deletedAfterDateTime}`
-      : sql`AND m.deleted_at IS NULL`;
+      ? sql`AND m.deleted_at >= ${deletedAfterDateTime} AND m.erased_at IS NULL`
+      : sql`AND m.deleted_at IS NULL AND m.erased_at IS NULL`;
     const deletedAtClauseNoAlias = hasDeletedAfter
-      ? sql`AND deleted_at >= ${deletedAfterDateTime}`
-      : sql`AND deleted_at IS NULL`;
+      ? sql`AND deleted_at >= ${deletedAfterDateTime} AND erased_at IS NULL`
+      : sql`AND deleted_at IS NULL AND erased_at IS NULL`;
 
     const countQueryResult = await sql<{ count: string }>`
     SELECT COUNT(*) as count

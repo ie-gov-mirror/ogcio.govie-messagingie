@@ -17,12 +17,20 @@ import { DeleteConfirmationModal } from "./delete-confirmation-modal"
 import { DeleteResultToast } from "./delete-result-toast"
 import { InboxLayout } from "./inbox-layout"
 import { InboxListChromeHeader } from "./inbox-list-chrome-header"
-import { DELETE_FLASH_KEY, MOVE_FLASH_KEY } from "./message-action-flash-keys"
+import {
+  DELETE_FLASH_KEY,
+  MOVE_FLASH_KEY,
+  RESTORE_ERASE_FLASH_KEY,
+} from "./message-action-flash-keys"
 import { MessageDetailView } from "./message-detail-view"
 import { MessagesViewTabs } from "./messages-view-tabs"
 import { MoveMessageModal } from "./move-message-modal"
 import { MoveResultToast } from "./move-result-toast"
 import { DEFAULT_PAGE_SIZE, parsePageSize } from "./page-size"
+import {
+  type RestoreEraseAction,
+  RestoreEraseResultToast,
+} from "./restore-erase-result-toast"
 import styles from "./unified-inbox.module.css"
 import { UnifiedInboxTable } from "./unified-inbox-table"
 import tableStyles from "./unified-inbox-table.module.css"
@@ -34,6 +42,11 @@ import { useInboxMessages } from "./use-inbox-messages"
 import { useMessageFolders } from "./use-message-folders"
 import { useMessageSelection } from "./use-message-selection"
 import { type MoveMessagesResult, useMoveMessages } from "./use-move-messages"
+import {
+  type RestoreEraseResult,
+  useEraseMessages,
+  useRestoreMessages,
+} from "./use-restore-erase-messages"
 
 export function UnifiedInboxPage() {
   const router = useRouter()
@@ -167,6 +180,18 @@ function UnifiedInboxListView({
     dismissResult: dismissMoveResult,
   } = useMoveMessages({ onSettled: () => refresh() })
 
+  const {
+    run: restoreIds,
+    lastResult: restoreLastResult,
+    dismissResult: dismissRestoreResult,
+  } = useRestoreMessages({ onSettled: () => refresh() })
+  const {
+    run: eraseIds,
+    isLoading: isErasing,
+    lastResult: eraseLastResult,
+    dismissResult: dismissEraseResult,
+  } = useEraseMessages({ onSettled: () => refresh() })
+
   // Destinations exclude the current folder; the Deleted view is never a move
   // source, so Move is hidden there regardless of available folders.
   const currentFolderId = isInboxView ? null : folderId
@@ -180,7 +205,11 @@ function UnifiedInboxListView({
     useState<DeleteMessagesResult | null>(null)
   const [moveFlashResult, setMoveFlashResult] =
     useState<MoveMessagesResult | null>(null)
+  const [restoreEraseFlash, setRestoreEraseFlash] = useState<
+    (RestoreEraseResult & { action: RestoreEraseAction }) | null
+  >(null)
   const [pendingIds, setPendingIds] = useState<string[] | null>(null)
+  const [pendingEraseIds, setPendingEraseIds] = useState<string[] | null>(null)
   const [isMoveModalOpen, setMoveModalOpen] = useState(false)
   const [selectMode, setSelectMode] = useState(false)
 
@@ -195,6 +224,19 @@ function UnifiedInboxListView({
         // Ignore malformed values silently.
       } finally {
         window.sessionStorage.removeItem(DELETE_FLASH_KEY)
+      }
+    }
+
+    const restoreEraseRaw = window.sessionStorage.getItem(
+      RESTORE_ERASE_FLASH_KEY,
+    )
+    if (restoreEraseRaw) {
+      try {
+        setRestoreEraseFlash(JSON.parse(restoreEraseRaw))
+      } catch {
+        // Ignore malformed values silently.
+      } finally {
+        window.sessionStorage.removeItem(RESTORE_ERASE_FLASH_KEY)
       }
     }
 
@@ -218,6 +260,19 @@ function UnifiedInboxListView({
     dismissDeleteResult()
   }, [dismissDeleteResult])
 
+  const flashFor = (action: RestoreEraseAction) =>
+    restoreEraseFlash?.action === action ? restoreEraseFlash : null
+
+  const handleDismissRestore = useCallback(() => {
+    setRestoreEraseFlash(null)
+    dismissRestoreResult()
+  }, [dismissRestoreResult])
+
+  const handleDismissErase = useCallback(() => {
+    setRestoreEraseFlash(null)
+    dismissEraseResult()
+  }, [dismissEraseResult])
+
   const handleDismissMoveResult = useCallback(() => {
     setMoveFlashResult(null)
     dismissMoveResult()
@@ -238,6 +293,38 @@ function UnifiedInboxListView({
       setSelectMode(false)
     }
   }, [pendingIds, deleteIds, selection])
+
+  const finishDeletedAction = useCallback(
+    (result: RestoreEraseResult) => {
+      if (!result.ok) return
+      selection.clear()
+      setSelectMode(false)
+    },
+    [selection],
+  )
+
+  const handleRestore = useCallback(async () => {
+    finishDeletedAction(await restoreIds(Array.from(selection.selectedIds)))
+  }, [restoreIds, selection.selectedIds, finishDeletedAction])
+
+  const confirmErase = useCallback(async () => {
+    if (!pendingEraseIds) return
+    const ids = pendingEraseIds
+    setPendingEraseIds(null)
+    finishDeletedAction(await eraseIds(ids))
+  }, [pendingEraseIds, eraseIds, finishDeletedAction])
+
+  const deletedActions = useMemo(
+    () =>
+      isDeletedView
+        ? {
+            onRestore: handleRestore,
+            onErase: () =>
+              setPendingEraseIds(Array.from(selection.selectedIds)),
+          }
+        : undefined,
+    [isDeletedView, handleRestore, selection.selectedIds],
+  )
 
   const handleMove = useCallback(
     async (destFolderId: string | null) => {
@@ -261,6 +348,7 @@ function UnifiedInboxListView({
           onDelete={() =>
             openDeleteConfirmation(Array.from(selection.selectedIds))
           }
+          deletedActions={deletedActions}
           onClearSelection={() => {
             selection.clear()
             setSelectMode(false)
@@ -284,6 +372,7 @@ function UnifiedInboxListView({
       selection.selectedCount,
       selection.selectedIds,
       openDeleteConfirmation,
+      deletedActions,
       canMove,
       tMove,
     ],
@@ -304,6 +393,16 @@ function UnifiedInboxListView({
         <DeleteResultToast
           result={activeDeleteResult}
           onDismiss={handleDismissDeleteResult}
+        />
+        <RestoreEraseResultToast
+          action='restore'
+          result={restoreLastResult ?? flashFor("restore")}
+          onDismiss={handleDismissRestore}
+        />
+        <RestoreEraseResultToast
+          action='erase'
+          result={eraseLastResult ?? flashFor("erase")}
+          onDismiss={handleDismissErase}
         />
         <MoveResultToast
           result={activeMoveResult}
@@ -342,6 +441,7 @@ function UnifiedInboxListView({
                 onBulkDelete={() =>
                   openDeleteConfirmation(Array.from(selection.selectedIds))
                 }
+                deletedActions={deletedActions}
                 onBulkMove={() => setMoveModalOpen(true)}
                 canMove={canMove}
               />
@@ -354,6 +454,14 @@ function UnifiedInboxListView({
           onClose={() => setPendingIds(null)}
           onConfirm={confirmDelete}
           isDeleting={isDeleting}
+        />
+        <DeleteConfirmationModal
+          variant='erase'
+          isOpen={pendingEraseIds !== null}
+          count={pendingEraseIds?.length ?? 0}
+          onClose={() => setPendingEraseIds(null)}
+          onConfirm={confirmErase}
+          isDeleting={isErasing}
         />
         {foldersEnabled ? (
           <MoveMessageModal

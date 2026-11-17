@@ -23,6 +23,30 @@ const baseURL = process.env.BASE_URL || "http://messaging.local.test:4001"
  */
 const isDockerHarness = /local\.test/.test(baseURL)
 
+/**
+ * Specs that only pass behind the docker harness's nginx (port 8080, host
+ * redirects). A run against another stack sets E2E_SKIP_NGINX_ONLY to skip
+ * them; the docker harness leaves it unset and runs them.
+ */
+const nginxOnlySpecs = /\/e2e\/smoke\/canonicalisation\.spec\.ts$/
+const skipNginxOnly = Boolean(process.env.E2E_SKIP_NGINX_ONLY)
+
+/** Specs ignored by every project of the current run. */
+const ignoredSpecs = skipNginxOnly ? [nginxOnlySpecs] : []
+
+/** Specs that need an Android emulator; only the `android` project runs them. */
+const androidSpecs = /\/e2e\/android\/.*\.spec\.ts$/
+
+/**
+ * Specs the `android` project skips: the emulator has one browser context.
+ *   user-new-users          signs in a second session while the first is open
+ *   user-receive-messages   signs in as a public servant and as a citizen
+ *   user-link-account       signs in as a public servant and as a citizen
+ *   user-messaging          opens an attachment in a second tab
+ */
+const twoSessionSpecs =
+  /\/e2e\/user\/user-(new-users|receive-messages|link-account|messaging)\.spec\.ts$/
+
 export default defineConfig({
   globalTimeout: 3480000, // 58 minutes
   expect: {
@@ -57,6 +81,7 @@ export default defineConfig({
   projects: [
     {
       name: "Desktop Chrome",
+      testIgnore: [androidSpecs, ...ignoredSpecs],
       use: {
         ...devices["Desktop Chrome"],
       },
@@ -77,8 +102,38 @@ export default defineConfig({
     {
       name: "Desktop WebKit",
       testMatch: /user-message-mark-as-read\.spec\.ts/,
+      testIgnore: ignoredSpecs,
       use: {
         ...devices["Desktop Safari"],
+      },
+    },
+    // Mobile emulation, opt-in: run only when picked with `--project`.
+    {
+      name: "Mobile Chrome",
+      default: false,
+      testIgnore: [androidSpecs, ...ignoredSpecs],
+      use: devices["Pixel 9"],
+    },
+    {
+      name: "Mobile Safari",
+      default: false,
+      testIgnore: [androidSpecs, ...ignoredSpecs],
+      use: devices["iPhone 16"],
+    },
+    /**
+     * Opt-in only: `--project=android`. Runs the `@mobile` tests in Chrome on
+     * a running Android emulator; e2e/android/fixtures.ts drives it. Artifacts
+     * are off until capture from the emulator's single context is proven.
+     */
+    {
+      name: "android",
+      default: false,
+      grep: /@mobile/,
+      testIgnore: [twoSessionSpecs, ...ignoredSpecs],
+      use: {
+        screenshot: "off",
+        video: "off",
+        trace: "off",
       },
     },
   ],

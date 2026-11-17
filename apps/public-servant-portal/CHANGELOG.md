@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.5](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.4...public-servant-portal-v0.1.5) (2026-11-17)
+
+
+### Features
+
+* run the e2e suites against the local stack AB[#46019](https://github.com/ogcio/govie-services-messaging/issues/46019) ([#1174](https://github.com/ogcio/govie-services-messaging/issues/1174)) ([fdfdba0](https://github.com/ogcio/govie-services-messaging/commit/fdfdba01842807af89d9b9f84cd8a606cb366e52))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1139](https://github.com/ogcio/govie-services-messaging/issues/1139)) ([ed428f5](https://github.com/ogcio/govie-services-messaging/commit/ed428f5c46c510f67115b244fc44e5931e2bd971))
+* **deps:** update all non-major dependencies ([#1172](https://github.com/ogcio/govie-services-messaging/issues/1172)) ([bf0692c](https://github.com/ogcio/govie-services-messaging/commit/bf0692cc793562487a1b15bddae4e0c3f228662a))
+
+
+### Miscellaneous Chores
+
+* align repo tooling AB[#45916](https://github.com/ogcio/govie-services-messaging/issues/45916) ([#1167](https://github.com/ogcio/govie-services-messaging/issues/1167)) ([84bd822](https://github.com/ogcio/govie-services-messaging/commit/84bd8225f385e29707925ba76b4f243eb8817dc3))
+* **deps:** update dependency jsdom to v31 ([#1140](https://github.com/ogcio/govie-services-messaging/issues/1140)) ([eda968b](https://github.com/ogcio/govie-services-messaging/commit/eda968b82db28054d1a2d42be1db3b35e0e24aea))
+
 ## [0.1.4](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.3...public-servant-portal-v0.1.4) (2026-11-06)
 
 

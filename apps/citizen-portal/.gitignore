@@ -10,6 +10,7 @@ zones/*/tsconfig.tsbuildinfo
 docker/nginx.conf
 results.xml
 test-results/
+test-results-flags/
 playwright-report/
 demo-videos/
 downloads/

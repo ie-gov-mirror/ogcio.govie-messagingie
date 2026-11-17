@@ -3,12 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import {
   DELETE_FLASH_KEY,
   MOVE_FLASH_KEY,
+  RESTORE_ERASE_FLASH_KEY,
 } from "@/components/messages/message-action-flash-keys"
 import styles from "./message-detail.module.css"
 
 const mockPush = vi.fn()
 const deleteIds = vi.fn()
 const moveIds = vi.fn()
+const restoreRun = vi.fn()
+const eraseRun = vi.fn()
 const useMessageFolders = vi.hoisted(() => vi.fn(() => []))
 const findMockMessageById = vi.fn<(id: string) => typeof MESSAGE | null>()
 
@@ -109,11 +112,21 @@ vi.mock("next-intl", () => ({
         cancel: "Cancel",
         close: "Close",
       },
+      "home.erase.confirm": {
+        title: "Delete this message permanently?",
+        body: "You will no longer be able to view this message in your account.",
+        cta: "Delete permanently",
+        cancel: "Cancel",
+        close: "Close",
+      },
       "home.detail": {
         from: "From",
         to: "To",
         date: "Date",
         delete: "Delete",
+        restore: "Restore",
+        erase: "Erase",
+        deletedTag: "Deleted",
         toolbarAriaLabel: "Message actions",
         relatesToSubmission:
           "Message relates to submission <link>{submissionId}</link>",
@@ -229,6 +242,11 @@ vi.mock("@/components/messages/use-delete-messages", () => ({
   }),
 }))
 
+vi.mock("@/components/messages/use-restore-erase-messages", () => ({
+  useRestoreMessages: () => ({ run: restoreRun, isLoading: false }),
+  useEraseMessages: () => ({ run: eraseRun, isLoading: false }),
+}))
+
 vi.mock("@/components/messages/use-move-messages", () => ({
   useMoveMessages: () => ({
     moveIds,
@@ -331,6 +349,8 @@ describe("MessageDetailView", () => {
     mockPush.mockReset()
     deleteIds.mockReset()
     moveIds.mockReset()
+    restoreRun.mockReset().mockResolvedValue({ ok: true, ids: ["msg-1"] })
+    eraseRun.mockReset().mockResolvedValue({ ok: true, ids: ["msg-1"] })
     useMessageFolders.mockClear()
     findMockMessageById.mockReset()
     findMockMessageById.mockReturnValue(null)
@@ -659,5 +679,65 @@ describe("MessageDetailView", () => {
     expect(
       screen.getByRole("navigation", { name: "Message actions" }).parentElement,
     ).toHaveClass(styles.detailOffset)
+  })
+
+  describe("message opened from the Deleted folder (AB#45839)", () => {
+    beforeEach(() => {
+      searchParams = new URLSearchParams({ folder: "deleted" })
+    })
+
+    it("tags the message, swaps the actions and goes back to the Deleted list", () => {
+      render(<MessageDetailView id='msg-1' />)
+
+      expect(screen.getByTestId("deleted-tag")).toHaveTextContent("Deleted")
+      expect(
+        screen.queryByTestId("detail-delete-button"),
+      ).not.toBeInTheDocument()
+      expect(screen.queryByTestId("detail-move-button")).not.toBeInTheDocument()
+      expect(screen.getByTestId("detail-restore-button")).toBeInTheDocument()
+      expect(screen.getByTestId("detail-erase-button")).toBeInTheDocument()
+      expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute(
+        "href",
+        "/en/messages?folder=deleted",
+      )
+    })
+
+    it("restores without asking and returns to the Deleted list with a flash", async () => {
+      render(<MessageDetailView id='msg-1' />)
+
+      fireEvent.click(screen.getByTestId("detail-restore-button"))
+
+      await waitFor(() => expect(restoreRun).toHaveBeenCalledWith(["msg-1"]))
+      expect(
+        JSON.parse(sessionStorage.getItem(RESTORE_ERASE_FLASH_KEY) ?? "null"),
+      ).toEqual({ action: "restore", ok: true, ids: ["msg-1"] })
+      expect(mockPush).toHaveBeenCalledWith("/en/messages?folder=deleted")
+    })
+
+    it("erases only after the confirmation modal is confirmed", async () => {
+      render(<MessageDetailView id='msg-1' />)
+
+      fireEvent.click(screen.getByTestId("detail-erase-button"))
+      expect(screen.getByTestId("erase-confirmation-modal")).toBeInTheDocument()
+      expect(eraseRun).not.toHaveBeenCalled()
+
+      fireEvent.click(screen.getByTestId("erase-confirmation-confirm"))
+
+      await waitFor(() => expect(eraseRun).toHaveBeenCalledWith(["msg-1"]))
+      expect(
+        JSON.parse(sessionStorage.getItem(RESTORE_ERASE_FLASH_KEY) ?? "null"),
+      ).toEqual({ action: "erase", ok: true, ids: ["msg-1"] })
+      expect(mockPush).toHaveBeenCalledWith("/en/messages?folder=deleted")
+    })
+
+    it("does not erase when the modal is cancelled", () => {
+      render(<MessageDetailView id='msg-1' />)
+
+      fireEvent.click(screen.getByTestId("detail-erase-button"))
+      fireEvent.click(screen.getByTestId("erase-confirmation-cancel"))
+
+      expect(eraseRun).not.toHaveBeenCalled()
+      expect(mockPush).not.toHaveBeenCalled()
+    })
   })
 })

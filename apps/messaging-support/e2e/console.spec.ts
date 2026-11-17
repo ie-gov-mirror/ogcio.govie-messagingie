@@ -1,6 +1,18 @@
 import { expect, type Page, test } from "@playwright/test"
 import { signInSupportSession, supportProfileEmail } from "./auth"
 
+// The search lists one row per profile detail: the citizen's own row, with
+// an empty Org ID (third column), and one per organisation that imported
+// them (e.g. first-testing).
+const EMPTY_ORG_ID_CELL = "td:nth-child(3) > div:empty"
+
+function fixtureRow(page: Page) {
+  return page
+    .getByRole("row")
+    .filter({ hasText: supportProfileEmail })
+    .filter({ has: page.locator(EMPTY_ORG_ID_CELL) })
+}
+
 async function searchForFixture(page: Page) {
   await page.goto("/")
   await page.getByRole("textbox", { name: "Select" }).click()
@@ -8,14 +20,11 @@ async function searchForFixture(page: Page) {
   await page.getByPlaceholder("Value").fill(supportProfileEmail)
   await page.getByRole("button", { name: "Add Filter" }).click()
   await expect(page).toHaveURL(/[?&]email=/)
-  await expect(
-    page.getByRole("cell", { name: supportProfileEmail }),
-  ).toBeVisible()
+  await expect(fixtureRow(page)).toBeVisible()
 }
 
 async function openRowLink(page: Page, name: string) {
-  const row = page.getByRole("row").filter({ hasText: supportProfileEmail })
-  await row.getByRole("button").click()
+  await fixtureRow(page).getByRole("button").click()
   await page.getByRole("link", { name, exact: true }).click()
 }
 
@@ -66,9 +75,7 @@ test.describe("signed-in console", () => {
       page.getByRole("heading", { name: "Delete Account" }),
     ).toBeVisible()
     await page.getByRole("link", { name: "Back" }).click()
-    await expect(
-      page.getByRole("cell", { name: supportProfileEmail }),
-    ).toBeVisible()
+    await expect(fixtureRow(page)).toBeVisible()
 
     await openRowLink(page, "Messaging")
     await expect(page).toHaveURL(/\/messaging/)

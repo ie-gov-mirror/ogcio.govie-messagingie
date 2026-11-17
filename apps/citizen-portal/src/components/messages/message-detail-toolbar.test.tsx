@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { fireEvent, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { LoadMaterialSymbols } from "@/components/load-material-symbols"
 import { MessageDetailToolbar } from "@/components/messages/message-detail-toolbar"
 import { fakeAnalytics } from "../../../test/utils/analytics"
 import styles from "./message-detail.module.css"
@@ -11,7 +12,7 @@ const { render } = analytics
 const trackEvent = analytics.event
 
 vi.mock("@ogcio/design-system-react", () => ({
-  Icon: () => null,
+  Icon: ({ icon }: { icon: string }) => <span data-icon={icon} />,
   Link: ({
     children,
     onClick,
@@ -33,6 +34,8 @@ vi.mock("next-intl", () => ({
       "home.move": { toolbar: "Move" },
       "home.detail": {
         delete: "Delete",
+        restore: "Restore",
+        erase: "Erase",
         toolbarAriaLabel: "Message actions",
       },
     }
@@ -163,5 +166,71 @@ describe("MessageDetailToolbar", () => {
 
     expect(screen.queryByTestId("detail-move-button")).not.toBeInTheDocument()
     expect(screen.getByTestId("detail-delete-button")).toBeInTheDocument()
+  })
+
+  it("offers Restore and Erase instead of Move and Delete for a deleted message", () => {
+    const onRestore = vi.fn()
+    const onErase = vi.fn()
+    render(
+      <MessageDetailToolbar
+        backHref={backHref}
+        onMove={onMove}
+        onDelete={onDelete}
+        deletedActions={{ onRestore, onErase }}
+      />,
+    )
+
+    expect(screen.queryByTestId("detail-move-button")).not.toBeInTheDocument()
+    expect(screen.queryByTestId("detail-delete-button")).not.toBeInTheDocument()
+    expect(screen.getByTestId("detail-restore-button")).toHaveTextContent(
+      "Restore",
+    )
+    fireEvent.click(screen.getByTestId("detail-restore-button"))
+    fireEvent.click(screen.getByTestId("detail-erase-button"))
+    expect(onRestore).toHaveBeenCalledTimes(1)
+    expect(onErase).toHaveBeenCalledTimes(1)
+    expect(onDelete).not.toHaveBeenCalled()
+  })
+
+  it("loads the restore and erase glyphs the message view draws", () => {
+    render(
+      <MessageDetailToolbar
+        backHref={backHref}
+        onDelete={onDelete}
+        deletedActions={{ onRestore: vi.fn(), onErase: vi.fn() }}
+      />,
+    )
+
+    const icons = ["detail-restore-button", "detail-erase-button"].map(
+      (testId) =>
+        screen
+          .getByTestId(testId)
+          .querySelector("[data-icon]")
+          ?.getAttribute("data-icon") ?? "",
+    )
+    const { container } = render(<LoadMaterialSymbols />)
+    const href =
+      container.querySelector("link[rel='stylesheet']")?.getAttribute("href") ??
+      ""
+
+    for (const icon of icons) {
+      expect(icon).not.toBe("")
+      expect(href).toContain(icon)
+    }
+  })
+
+  it("disables Restore and Erase while an action is in progress", () => {
+    const onRestore = vi.fn()
+    render(
+      <MessageDetailToolbar
+        backHref={backHref}
+        onDelete={onDelete}
+        deletedActions={{ onRestore, onErase: vi.fn() }}
+        isDeleting
+      />,
+    )
+
+    fireEvent.click(screen.getByTestId("detail-restore-button"))
+    expect(onRestore).not.toHaveBeenCalled()
   })
 })

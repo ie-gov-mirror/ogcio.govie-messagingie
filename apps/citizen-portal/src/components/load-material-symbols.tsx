@@ -3,7 +3,8 @@ import { Fragment } from "react"
 /**
  * Extends the DS Material Symbols preload with icons used in
  * citizen-portal that are not yet in `@ogcio/design-system-react`'s
- * `LoadMaterialSymbols` subset (e.g. `drive_file_move` on the message
+ * `LoadMaterialSymbols` subset (e.g. `drive_file_move`,
+ * `restore_from_trash`, and `delete_forever` on the message
  * detail toolbar, and the Life Events glyphs `school`, `blind`,
  * `local_florist`, `article`, and `weekend`, which are not in the
  * Icon registry).
@@ -59,6 +60,7 @@ const MATERIAL_SYMBOL_NAMES = [
   "content_copy",
   "credit_card",
   "delete",
+  "delete_forever",
   "description",
   "directions_car",
   "do_not_disturb_on",
@@ -96,6 +98,7 @@ const MATERIAL_SYMBOL_NAMES = [
   "person_check",
   "picture_as_pdf",
   "refresh",
+  "restore_from_trash",
   "school",
   "search",
   "send",

@@ -282,6 +282,48 @@ describe("Message Service", () => {
       });
     });
 
+    // No read API returns it, so the row is the only place to see it
+    const journey = {
+      journeyId: "11111111-1111-1111-1111-111111111111",
+      submissionId: "submission-42",
+      journeyStep: 2,
+    };
+    it.each([
+      {
+        name: "journey metadata with the baggage geohash in its journey",
+        metadata: { journey },
+        geohash: "gcpv",
+        stored: [{ metadata: { journey: { ...journey, geohash: "gcpv" } } }],
+      },
+      {
+        name: "journey metadata without a geohash",
+        metadata: { journey },
+        geohash: undefined,
+        stored: [{ metadata: { journey } }],
+      },
+      {
+        name: "nothing without journey metadata, even with a geohash",
+        metadata: undefined,
+        geohash: "gcpv",
+        stored: [],
+      },
+    ])("stores $name", async ({ metadata, geohash, stored }) => {
+      const output = await processMessage({
+        pool,
+        sender,
+        message: { ...getMockMessage(), metadata },
+        logger: getMockBaseLogger(),
+        geohash,
+      });
+
+      const { rows } = await pool.query(
+        "SELECT metadata FROM message_metadata WHERE message_id = $1",
+        [output.messageId],
+      );
+
+      expect(rows).toStrictEqual(stored);
+    });
+
     it.each([
       {
         name: "supported formatting",

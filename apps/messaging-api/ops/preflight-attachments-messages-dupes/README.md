@@ -16,6 +16,7 @@ lives under `ops/` instead, which Postgrator does not scan.
 ## What it checks
 
 `verify.sql` prints, with `\echo` section headers:
+
 1. Total rows in `attachments_messages`.
 2. Distinct `(message_id, attachment_id)` pairs.
 3. Number of duplicate **groups** (pairs with `count > 1`).

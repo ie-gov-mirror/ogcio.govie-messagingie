@@ -84,7 +84,13 @@ export function MyProfile() {
           >
             {t("title")}
           </Heading>
-          <PageLoading minHeight='20vh' ariaLabel='Loading profile' size='lg' />
+          {/* A full viewport keeps the footer below the fold until the
+              form replaces the spinner; a shorter box lets it jump. */}
+          <PageLoading
+            minHeight='100vh'
+            ariaLabel='Loading profile'
+            size='lg'
+          />
         </Stack>
       </TwoColumnLayout>
     )
@@ -110,7 +116,7 @@ export function MyProfile() {
 
         <PublicNameForm
           publicName={profile.publicName}
-          profileId={profile.primaryUserId}
+          profileId={profile.id}
           onUpdated={() => refresh()}
         />
 

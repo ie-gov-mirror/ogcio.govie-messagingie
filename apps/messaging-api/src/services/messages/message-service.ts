@@ -4,7 +4,11 @@ import type { FastifyBaseLogger } from "fastify";
 import { isHttpError } from "http-errors";
 import type { Pool } from "pg";
 import type { DB } from "../../db/schema.js";
-import { MessageModel } from "../../models/message-model.js";
+import {
+  type AttachmentShare,
+  type DeletionRow,
+  MessageModel,
+} from "../../models/message-model.js";
 import type {
   CreateMessageBody,
   Delivered,
@@ -16,6 +20,7 @@ import type {
   AcceptedQueryBooleanValues,
   PaginationParams,
 } from "../../types/schemaDefinitions.js";
+import { getM2MUploadSdk } from "../../utils/authentication-factory.js";
 import { messagesCreatedCounter } from "../../utils/metrics.js";
 import { ProfilePersonalSdkWrapper } from "../users/profile-personal-sdk-wrapper.js";
 import { MessagesProcessor } from "./messages-processor.js";
@@ -132,6 +137,61 @@ export class MessageService {
     messageIds: string[];
     loggedInUser: { userId: string; accessToken: string };
   }): Promise<void> {
+    await this.transition({
+      ...params,
+      action: "deleting",
+      expectDeleted: false,
+      apply: (ids) => this.model.softDeleteByIds(ids),
+    });
+  }
+
+  /** Move soft-deleted messages back to the inbox. */
+  async restore(params: {
+    messageIds: string[];
+    loggedInUser: { userId: string; accessToken: string };
+  }): Promise<void> {
+    await this.transition({
+      ...params,
+      action: "restoring",
+      expectDeleted: true,
+      apply: (ids) => this.model.restoreByIds(ids),
+    });
+  }
+
+  /**
+   * Erase soft-deleted messages for their recipient: the recipient loses the
+   * messages and their attachments, the sender's record stays. Attachment
+   * access goes first so a failure leaves the messages in Deleted to retry.
+   */
+  async erase(params: {
+    messageIds: string[];
+    loggedInUser: { userId: string; accessToken: string };
+  }): Promise<void> {
+    await this.transition({
+      ...params,
+      action: "erasing",
+      expectDeleted: true,
+      apply: async (ids) => {
+        await this.removeAttachmentAccess(
+          await this.model.findAttachmentsToUnshare(ids),
+        );
+        await this.model.eraseByIds(ids);
+      },
+    });
+  }
+
+  /**
+   * Shared flow of delete, restore and erase: every id must exist in the
+   * expected state (deleted or not) and belong to the user or a linked
+   * profile, otherwise nothing changes.
+   */
+  private async transition(params: {
+    messageIds: string[];
+    loggedInUser: { userId: string; accessToken: string };
+    action: string;
+    expectDeleted: boolean;
+    apply: (ids: string[]) => Promise<void>;
+  }): Promise<void> {
     const uniqueMessageIds = Array.from(new Set(params.messageIds));
     try {
       const messages = await this.model.findForDeletion(uniqueMessageIds);
@@ -142,25 +202,55 @@ export class MessageService {
         );
         this.logger.warn(
           { notFoundIds },
-          "One or more messages not found during delete operation",
+          `One or more messages not found while ${params.action}`,
         );
         throw httpErrors.notFound("One or more messages not found");
       }
 
-      const byRecipientId = this.groupMessagesByStatus(messages);
+      const byRecipientId = this.groupMessagesByStatus(
+        messages,
+        params.expectDeleted,
+        params.action,
+      );
 
       await this.validateDeletePermissions({
         byRecipientId,
         loggedInUser: params.loggedInUser,
       });
 
-      await this.model.softDeleteByIds(uniqueMessageIds);
+      await params.apply(uniqueMessageIds);
     } catch (error) {
       if (isHttpError(error)) {
         throw error;
       }
       throw httpErrors.internalServerError(
-        "An unexpected error occurred while deleting messages",
+        `An unexpected error occurred while ${params.action} messages`,
+      );
+    }
+  }
+
+  private async removeAttachmentAccess(
+    shares: AttachmentShare[],
+  ): Promise<void> {
+    const byOrganisation = Map.groupBy(shares, (share) => share.organisationId);
+    for (const [organisationId, orgShares] of byOrganisation) {
+      const upload = await getM2MUploadSdk(this.logger, organisationId);
+      await Promise.all(
+        orgShares.map(async ({ attachmentId, recipientUserId }) => {
+          // The SDK types this call as returning `never`; it resolves to
+          // `{ data, error }` like every other upload call.
+          const result = (await upload.removeFileSharing(
+            attachmentId,
+            recipientUserId,
+          )) as unknown as { error?: unknown } | undefined;
+          if (result?.error) {
+            throw httpErrors.createError(
+              503,
+              "Error removing access to the message attachments",
+              { parent: result.error },
+            );
+          }
+        }),
       );
     }
   }
@@ -323,14 +413,16 @@ export class MessageService {
   }
 
   private groupMessagesByStatus(
-    messages: { id: string; deletedAt: Date | null; recipientUserId: string }[],
+    messages: DeletionRow[],
+    expectDeleted: boolean,
+    action: string,
   ): Record<string, string[]> {
-    const alreadyDeleted: string[] = [];
+    const wrongState: string[] = [];
     const byRecipientId: Record<string, string[]> = {};
 
     for (const message of messages) {
-      if (message.deletedAt) {
-        alreadyDeleted.push(message.id);
+      if (Boolean(message.deletedAt) !== expectDeleted) {
+        wrongState.push(message.id);
       } else {
         if (!byRecipientId[message.recipientUserId]) {
           byRecipientId[message.recipientUserId] = [];
@@ -339,10 +431,10 @@ export class MessageService {
       }
     }
 
-    if (alreadyDeleted.length > 0) {
+    if (wrongState.length > 0) {
       this.logger.warn(
-        { alreadyDeletedIds: alreadyDeleted },
-        "One or more messages already deleted during delete operation",
+        { wrongStateIds: wrongState },
+        `One or more messages in the wrong state while ${action}`,
       );
       throw httpErrors.notFound("One or more messages not found");
     }
@@ -480,6 +572,30 @@ export async function deleteMessages(params: {
   });
 }
 
+export async function restoreMessages(params: {
+  pool: Pool;
+  messageIds: string[];
+  logger: FastifyBaseLogger;
+  loggedInUser: { userId: string; accessToken: string };
+}): Promise<void> {
+  return serviceFromPool(params.pool, params.logger).restore({
+    messageIds: params.messageIds,
+    loggedInUser: params.loggedInUser,
+  });
+}
+
+export async function eraseMessages(params: {
+  pool: Pool;
+  messageIds: string[];
+  logger: FastifyBaseLogger;
+  loggedInUser: { userId: string; accessToken: string };
+}): Promise<void> {
+  return serviceFromPool(params.pool, params.logger).erase({
+    messageIds: params.messageIds,
+    loggedInUser: params.loggedInUser,
+  });
+}
+
 export async function assignMessageTag(params: {
   pool: Pool;
   userId: string;
@@ -505,12 +621,15 @@ export async function processMessage(params: {
   };
   message: CreateMessageBody;
   logger: FastifyBaseLogger;
+  // The citizen's geohash, from the request's baggage
+  geohash?: string;
 }) {
   const messagesProcessor = new MessagesProcessor(params.pool, params.logger);
 
   const result = await messagesProcessor.processMessage({
     message: params.message,
     senderUser: params.sender,
+    geohash: params.geohash,
   });
 
   messagesCreatedCounter.add(1, {

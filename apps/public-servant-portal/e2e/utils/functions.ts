@@ -11,13 +11,32 @@ export const generateTestData = () => ({
   timestamp: `${Date.now()}-${crypto.randomUUID()}`,
 })
 
+/**
+ * Selects the E2E template once the form lists it. Re-selecting the
+ * template already shown, e.g. when it is the only one, leaves "Continue to
+ * recipients" disabled, so it is selected only when another one is shown.
+ */
+async function selectE2ETemplate(page: Page) {
+  const select = page.locator("select#template-select")
+  await expect(
+    select.getByRole("option", { name: templates.e2e, exact: true }),
+  ).toBeAttached()
+
+  const shown = await select.locator("option:checked").textContent()
+  if (shown === templates.e2e) {
+    return
+  }
+
+  await select.selectOption(templates.e2e)
+}
+
 export async function sendE2ETemplateMessage(page: Page, nonSecure = false) {
   await navigateAndVerifyHeading(
     page,
     `${ADMIN_URL}/en/send-a-message`,
     "Send a message",
   )
-  await page.selectOption("select#template-select", templates.e2e)
+  await selectE2ETemplate(page)
   //if nonsecure message click button
   if (nonSecure) {
     await page.getByRole("radio", { name: "Non-secured" }).click()
@@ -61,7 +80,7 @@ export async function sendMessageToDevCitizen(page: Page, nonSecure = false) {
     `${ADMIN_URL}/en/send-a-message`,
     "Send a message",
   )
-  await page.selectOption("select#template-select", templates.e2e)
+  await selectE2ETemplate(page)
   //if nonsecure message click button
   if (nonSecure) {
     await page.getByRole("radio", { name: "Non-secured" }).click()
@@ -107,7 +126,7 @@ export async function sendMessageToNewEmailAddress(
     `${ADMIN_URL}/en/send-a-message`,
     "Send a message",
   )
-  await page.selectOption("select#template-select", templates.e2e)
+  await selectE2ETemplate(page)
   //if nonsecure message click button
   if (nonSecure) {
     await page.getByRole("radio", { name: "Non-secured" }).click()

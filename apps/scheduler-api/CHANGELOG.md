@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.3.0](https://github.com/ogcio/govie-services-messaging/compare/scheduler-api-v1.2.4...scheduler-api-v1.3.0) (2026-11-17)
+
+
+### Features
+
+* run the e2e suites against the local stack AB[#46019](https://github.com/ogcio/govie-services-messaging/issues/46019) ([#1174](https://github.com/ogcio/govie-services-messaging/issues/1174)) ([fdfdba0](https://github.com/ogcio/govie-services-messaging/commit/fdfdba01842807af89d9b9f84cd8a606cb366e52))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1139](https://github.com/ogcio/govie-services-messaging/issues/1139)) ([ed428f5](https://github.com/ogcio/govie-services-messaging/commit/ed428f5c46c510f67115b244fc44e5931e2bd971))
+* **deps:** update all non-major dependencies ([#1161](https://github.com/ogcio/govie-services-messaging/issues/1161)) ([cc1f9c1](https://github.com/ogcio/govie-services-messaging/commit/cc1f9c1a00e38984cd931d50be0a6f4b7cfde362))
+* **deps:** update all non-major dependencies ([#1172](https://github.com/ogcio/govie-services-messaging/issues/1172)) ([bf0692c](https://github.com/ogcio/govie-services-messaging/commit/bf0692cc793562487a1b15bddae4e0c3f228662a))
+* **deps:** update dependency @fastify/otel to v1 ([#1141](https://github.com/ogcio/govie-services-messaging/issues/1141)) ([a119965](https://github.com/ogcio/govie-services-messaging/commit/a11996590217faeb70ae7a5aad32d721d810b1ea))
+* **deps:** update dependency @ogcio/o11y-sdk-node to v0.15.0 ([#1173](https://github.com/ogcio/govie-services-messaging/issues/1173)) ([b0afe66](https://github.com/ogcio/govie-services-messaging/commit/b0afe66d808f052ee205ffb0ba507c12f8c4eadd))
+* keep Fastify spans in the request trace AB[#45791](https://github.com/ogcio/govie-services-messaging/issues/45791) ([#1162](https://github.com/ogcio/govie-services-messaging/issues/1162)) ([0bba2e9](https://github.com/ogcio/govie-services-messaging/commit/0bba2e9d0da4bae3a7c4f9dae2b9632d191d7e82))
+* stop the per-request analytics event in four APIs AB[#46135](https://github.com/ogcio/govie-services-messaging/issues/46135) ([#1175](https://github.com/ogcio/govie-services-messaging/issues/1175)) ([d85f9bc](https://github.com/ogcio/govie-services-messaging/commit/d85f9bcd0536337be43bd1c49decec4fb142b5d3))
+
 ## [1.2.4](https://github.com/ogcio/govie-services-messaging/compare/scheduler-api-v1.2.3...scheduler-api-v1.2.4) (2026-11-05)
 
 
