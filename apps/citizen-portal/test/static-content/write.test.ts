@@ -103,6 +103,7 @@ describe("readConfig", () => {
     const env = {
       STATIC_CONTENT_MODE: "proxy",
       STATIC_CONTENT_API_URL: "https://api.integration.uat.beta.gov.ie",
+      STATIC_CONTENT_TOKEN_URL: "https://sso.example/realms/cms/token",
       STATIC_CONTENT_CLIENT_ID: "client",
       STATIC_CONTENT_CLIENT_SECRET: "secret",
       STATIC_CONTENT_INDEX_PAGE_ID: "203578",
@@ -114,7 +115,7 @@ describe("readConfig", () => {
         indexPageId: 203578,
         api: {
           baseUrl: "https://api.integration.uat.beta.gov.ie/",
-          tokenUrl: "https://api.integration.uat.beta.gov.ie/o/token/",
+          tokenUrl: "https://sso.example/realms/cms/token",
           clientId: "client",
           clientSecret: "secret",
         },
@@ -128,13 +129,12 @@ describe("readConfig", () => {
       })
       expect(config.mode === "proxy" && config.api).toMatchObject({
         baseUrl: "https://gateway.example/cms/",
-        tokenUrl: "https://gateway.example/cms/o/token/",
       })
     })
 
     it("names every missing variable", () => {
       expect(() => readConfig({ STATIC_CONTENT_MODE: "proxy" })).toThrow(
-        "STATIC_CONTENT_MODE=proxy needs STATIC_CONTENT_API_URL, STATIC_CONTENT_CLIENT_ID, STATIC_CONTENT_CLIENT_SECRET, STATIC_CONTENT_INDEX_PAGE_ID",
+        "STATIC_CONTENT_MODE=proxy needs STATIC_CONTENT_API_URL, STATIC_CONTENT_TOKEN_URL, STATIC_CONTENT_CLIENT_ID, STATIC_CONTENT_CLIENT_SECRET, STATIC_CONTENT_INDEX_PAGE_ID",
       )
     })
 
@@ -144,6 +144,15 @@ describe("readConfig", () => {
         expect(() =>
           readConfig({ ...env, STATIC_CONTENT_API_URL: url }),
         ).toThrow(/must be an https URL/)
+      },
+    )
+
+    it.each(["http://sso.example/token", "sso.example/token"])(
+      "rejects the token URL %j",
+      (url) => {
+        expect(() =>
+          readConfig({ ...env, STATIC_CONTENT_TOKEN_URL: url }),
+        ).toThrow(/STATIC_CONTENT_TOKEN_URL must be an https URL/)
       },
     )
 

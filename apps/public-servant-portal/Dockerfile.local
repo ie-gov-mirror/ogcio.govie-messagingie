@@ -121,7 +121,7 @@ RUN find \
 RUN envsubst '${OTEL_ENABLE} ${OTEL_SERVICE_NAME} ${OTEL_COLLECTOR_URL} ${PORT} ${TRUSTED_PROXY_CIDR} ${CSP_CONNECT_SRC} ${ANALYTICS_MANAGEMENT_API_ORIGIN} ${ANALYTICS_MANAGEMENT_API_HOST} ${ANALYTICS_TRACKER_ORIGIN} ${MESSAGING_ADMIN_HOST} ${PROFILE_ADMIN_HOST} ${UNLEASH_FRONTEND_ORIGIN} ${UNLEASH_FRONTEND_HOST} ${UNLEASH_FRONTEND_TOKEN} ${NEXT_PUBLIC_SAG_URL}' <"/app/apps/public-servant-portal/docker/nginx.conf.template" > "/app/apps/public-servant-portal/docker/nginx.conf"
 
 # Production stage
-FROM nginxinc/nginx-unprivileged:1.31-alpine-otel AS runner
+FROM nginx/nginx-unprivileged:1.31.9-alpine-otel AS runner
 
 USER root
 

@@ -391,7 +391,6 @@ paths:
                     consent enforcement.
                 metadata:
                   type: object
-                  minProperties: 1
                   properties:
                     journey:
                       type: object
@@ -419,6 +418,7 @@ paths:
                           description:
                             Id of the journey's template the message was produced from (not a
                             MessagingIE template)
+                  minProperties: 1
       responses:
         "201":
           description: Default Response
@@ -5363,7 +5363,6 @@ paths:
                     consent enforcement.
                 metadata:
                   type: object
-                  minProperties: 1
                   properties:
                     journey:
                       type: object
@@ -5391,6 +5390,7 @@ paths:
                           description:
                             Id of the journey's template the message was produced from (not a
                             MessagingIE template)
+                  minProperties: 1
       responses:
         "201":
           description: Default Response

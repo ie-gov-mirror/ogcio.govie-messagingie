@@ -27,7 +27,6 @@ export function createClientCredentialsTokenSource(options: {
   tokenUrl: string
   clientId: string
   clientSecret: string
-  scope?: string
   fetch?: typeof fetch
   now?: () => number
 }): TokenSource {
@@ -52,10 +51,8 @@ export function createClientCredentialsTokenSource(options: {
           "content-type": "application/x-www-form-urlencoded",
           accept: "application/json",
         },
-        body: new URLSearchParams({
-          grant_type: "client_credentials",
-          scope: options.scope ?? "read",
-        }),
+        // No scope: access comes from a role on the client's service account.
+        body: new URLSearchParams({ grant_type: "client_credentials" }),
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       })
     } catch (error) {

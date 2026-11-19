@@ -2,6 +2,7 @@
 
 import { faro, LogLevel } from "@grafana/faro-web-sdk"
 import {
+  Button,
   Card,
   CardContainer,
   CardHeader,
@@ -11,6 +12,7 @@ import {
   type IconProps,
   Link,
 } from "@ogcio/design-system-react"
+import { isNavigationAbortError } from "@ogcio/sag-client"
 import { useAuth, useGatewayFetch } from "@ogcio/sag-client/react"
 import { useTranslations } from "next-intl"
 import { type MouseEvent, useEffect, useRef } from "react"
@@ -74,7 +76,7 @@ export function AttachmentCard({ id }: { id: string }) {
 
   const { authenticated, loading, signIn } = useAuth()
 
-  const { data, error, isLoading } = useGatewayFetch<FileMetadata>(
+  const { data, error, isLoading, refresh } = useGatewayFetch<FileMetadata>(
     uploadApi.metadataKey(id),
   )
 
@@ -87,9 +89,12 @@ export function AttachmentCard({ id }: { id: string }) {
 
   // Guard so a single real failure is reported once, even if the fetch
   // state churns between renders.
+  // A request the browser cancelled (page hidden or navigating away) is not a
+  // failure the citizen should see or that we should report.
+  const cancelled = !data && !isLoading && isNavigationAbortError(error)
   const reportedMissing = useRef(false)
   useEffect(() => {
-    if (isLoading || data || reportedMissing.current) return
+    if (isLoading || data || cancelled || reportedMissing.current) return
     reportedMissing.current = true
     faro.api.pushLog([TRACE_MESSAGES.ATTACHMENT_METADATA.MISSING], {
       context: {
@@ -99,9 +104,19 @@ export function AttachmentCard({ id }: { id: string }) {
       level: LogLevel.WARN,
     })
     track.event(ANALYTICS.message.attachmentError)
-  }, [data, error, id, isLoading, track])
+  }, [cancelled, data, error, id, isLoading, track])
 
-  if (!data) return null
+  if (!data) {
+    if (isLoading || cancelled) return null
+    return (
+      <p>
+        {t("loadFailed")}{" "}
+        <Button variant='flat' appearance='dark' onClick={() => refresh()}>
+          {t("retry")}
+        </Button>
+      </p>
+    )
+  }
 
   const sizeKb = Math.round(data.fileSize / 1024)
   // Same-origin nginx proxy that injects the X-Application header a bare link

@@ -272,7 +272,9 @@
         "downloading": "Á íoslódáil",
         "savedToDevice": "Sábháilte ar an ngléas",
         "previewUnavailable": "Níl réamhamharc ar fáil",
-        "downloadFailed": "Theip ar an íoslódáil"
+        "downloadFailed": "Theip ar an íoslódáil",
+        "loadFailed": "Níorbh fhéidir an iarscríbhinn seo a luchtú.",
+        "retry": "Bain triail eile as"
       },
       "restore": "Athchóirigh",
       "erase": "Léirscrios",

@@ -70,6 +70,33 @@ export function getLifeEvent(
   return lifeEvent
 }
 
+// `output: export` fails the build when a dynamic route has no params, as
+// when no service links to a CMS page. This route stands in and 404s.
+export const SERVICE_PAGE_PLACEHOLDER = { lifeEvent: "_", service: "_" }
+
+export function getServicePageParams(
+  discovery: DiscoveryContent,
+): { lifeEvent: string; service: string }[] {
+  const params = discovery.lifeEvents.flatMap((lifeEvent) =>
+    lifeEvent.services.flatMap((service) =>
+      service.detail
+        ? [{ lifeEvent: lifeEvent.slug, service: service.detail.slug }]
+        : [],
+    ),
+  )
+  return params.length > 0 ? params : [SERVICE_PAGE_PLACEHOLDER]
+}
+
+export function isServicePagePlaceholder(params: {
+  lifeEvent: string
+  service: string
+}) {
+  return (
+    params.lifeEvent === SERVICE_PAGE_PLACEHOLDER.lifeEvent &&
+    params.service === SERVICE_PAGE_PLACEHOLDER.service
+  )
+}
+
 export function getService(
   lifeEvent: LifeEvent,
   slug: string,

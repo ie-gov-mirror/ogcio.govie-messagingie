@@ -16,15 +16,18 @@ does nothing and exits `0`, since the discovery routes aren't built.
 | :----------------------------- | :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `STATIC_CONTENT_MODE`          | `mock`                                | `mock` reads recorded fixtures (`fixtures/uat` for now); `proxy` calls the gov.ie Integration API; `prebuilt` uses what a proxy run already wrote to `STATIC_CONTENT_DIR` |
 | `STATIC_CONTENT_DIR`           | `apps/citizen-portal/.static-content` | output directory (gitignored)                                                                                                                                             |
-| `STATIC_CONTENT_API_URL`       |                                       | proxy only: the API's https base URL, e.g. `https://api.integration.uat.beta.gov.ie`                                                                                      |
-| `STATIC_CONTENT_CLIENT_ID`     |                                       | proxy only: OAuth2 client with the `read` scope                                                                                                                           |
+| `STATIC_CONTENT_API_URL`       |                                       | proxy only: the API's https base URL, e.g. the Information Mediator's                                                                                                     |
+| `STATIC_CONTENT_TOKEN_URL`     |                                       | proxy only: the https OAuth2 token endpoint                                                                                                                               |
+| `STATIC_CONTENT_CLIENT_ID`     |                                       | proxy only: OAuth2 client whose service account has the API role                                                                                                          |
 | `STATIC_CONTENT_CLIENT_SECRET` |                                       | proxy only: that client's secret                                                                                                                                          |
 | `STATIC_CONTENT_INDEX_PAGE_ID` |                                       | proxy only: the ID of the life events landing page                                                                                                                        |
 
-Proxy mode gets a token from `<STATIC_CONTENT_API_URL>/o/token/` with the
-OAuth2 client credentials grant, reuses it until shortly before it expires,
-and fetches a new one once if the API answers 401. The API's spec is
-`wagtail/openapi.yaml`, from `https://api.integration.uat.beta.gov.ie/schema`.
+Proxy mode gets a token from `STATIC_CONTENT_TOKEN_URL` with the OAuth2
+client credentials grant and no scope, reuses it until shortly before it
+expires, and fetches a new one once if the API answers 401. In UAT the API is
+the Information Mediator, which passes Wagtail's pages API through and serves
+its spec at `/q/openapi`; `wagtail/openapi.yaml` is the underlying Wagtail
+API's, from `https://api.integration.uat.beta.gov.ie/schema`.
 
 Any content error prints the document, JSON path and rule, writes nothing
 and exits `1`, which fails the build.
@@ -39,9 +42,9 @@ environment. Dev and PR builds use `mock`. With `prebuilt`, the Docker build
 runs on a hosted agent that can't reach the API, so:
 
 1. The `fetchStaticContent` job, on the `Openshift` pool, runs this script in
-   proxy mode with the API URL and page ID from the variables file and
-   `STATIC_CONTENT_CLIENT_ID`/`SECRET` from the `messaging-uat` variable
-   group, and publishes the output as the `static-content` artifact.
+   proxy mode with the API URL, token URL and page ID from the variables
+   file and `STATIC_CONTENT_CLIENT_ID`/`SECRET` from the `messaging-uat`
+   variable group, and publishes the output as the `static-content` artifact.
 2. The build job downloads it into `apps/citizen-portal/.static-content`
    before `docker build`.
 3. `pnpm build` inside the image runs this script in prebuilt mode.

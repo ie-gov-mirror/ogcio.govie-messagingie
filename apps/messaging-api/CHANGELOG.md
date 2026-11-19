@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.5.0](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.4.3...messaging-api-v1.5.0) (2026-11-17)
+
+
+### Features
+
+* **messaging-api:** add bb.messaging.message.sent counter AB[#45568](https://github.com/ogcio/govie-services-messaging/issues/45568) ([#1135](https://github.com/ogcio/govie-services-messaging/issues/1135)) ([e390238](https://github.com/ogcio/govie-services-messaging/commit/e390238391ce581bdc208be8c4c566326cd62703))
+* run the e2e suites against the local stack AB[#46019](https://github.com/ogcio/govie-services-messaging/issues/46019) ([#1174](https://github.com/ogcio/govie-services-messaging/issues/1174)) ([fdfdba0](https://github.com/ogcio/govie-services-messaging/commit/fdfdba01842807af89d9b9f84cd8a606cb366e52))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#1139](https://github.com/ogcio/govie-services-messaging/issues/1139)) ([ed428f5](https://github.com/ogcio/govie-services-messaging/commit/ed428f5c46c510f67115b244fc44e5931e2bd971))
+* **deps:** update all non-major dependencies ([#1161](https://github.com/ogcio/govie-services-messaging/issues/1161)) ([cc1f9c1](https://github.com/ogcio/govie-services-messaging/commit/cc1f9c1a00e38984cd931d50be0a6f4b7cfde362))
+* **deps:** update all non-major dependencies ([#1172](https://github.com/ogcio/govie-services-messaging/issues/1172)) ([bf0692c](https://github.com/ogcio/govie-services-messaging/commit/bf0692cc793562487a1b15bddae4e0c3f228662a))
+* **deps:** update dependency @fastify/otel to v1 ([#1141](https://github.com/ogcio/govie-services-messaging/issues/1141)) ([a119965](https://github.com/ogcio/govie-services-messaging/commit/a11996590217faeb70ae7a5aad32d721d810b1ea))
+* **deps:** update dependency @ogcio/o11y-sdk-node to v0.15.0 ([#1173](https://github.com/ogcio/govie-services-messaging/issues/1173)) ([b0afe66](https://github.com/ogcio/govie-services-messaging/commit/b0afe66d808f052ee205ffb0ba507c12f8c4eadd))
+* keep Fastify spans in the request trace AB[#45791](https://github.com/ogcio/govie-services-messaging/issues/45791) ([#1162](https://github.com/ogcio/govie-services-messaging/issues/1162)) ([0bba2e9](https://github.com/ogcio/govie-services-messaging/commit/0bba2e9d0da4bae3a7c4f9dae2b9632d191d7e82))
+* **messaging-api:** encrypt provider secrets with AES-256-GCM AB[#45758](https://github.com/ogcio/govie-services-messaging/issues/45758) ([#1158](https://github.com/ogcio/govie-services-messaging/issues/1158)) ([9fbcd76](https://github.com/ogcio/govie-services-messaging/commit/9fbcd76fe45d93bd1d19c9d74ab549748bf32e54))
+* restore and erase deleted messages AB[#45839](https://github.com/ogcio/govie-services-messaging/issues/45839) ([#1164](https://github.com/ogcio/govie-services-messaging/issues/1164)) ([b982f8f](https://github.com/ogcio/govie-services-messaging/commit/b982f8f30755398037b9fb3583c3de6c81f5bd2b))
+* stop the per-request analytics event in four APIs AB[#46135](https://github.com/ogcio/govie-services-messaging/issues/46135) ([#1175](https://github.com/ogcio/govie-services-messaging/issues/1175)) ([d85f9bc](https://github.com/ogcio/govie-services-messaging/commit/d85f9bcd0536337be43bd1c49decec4fb142b5d3))
+* verify the Postgres server certificate AB[#45757](https://github.com/ogcio/govie-services-messaging/issues/45757) ([#1157](https://github.com/ogcio/govie-services-messaging/issues/1157)) ([17f38ab](https://github.com/ogcio/govie-services-messaging/commit/17f38ab8691e4b32637cfb7614769b6151623ec7))
+
+
+### Miscellaneous Chores
+
+* align repo tooling AB[#45916](https://github.com/ogcio/govie-services-messaging/issues/45916) ([#1167](https://github.com/ogcio/govie-services-messaging/issues/1167)) ([84bd822](https://github.com/ogcio/govie-services-messaging/commit/84bd8225f385e29707925ba76b4f243eb8817dc3))
+
 ## [1.4.3](https://github.com/ogcio/govie-services-messaging/compare/messaging-api-v1.4.2...messaging-api-v1.4.3) (2026-11-05)
 
 

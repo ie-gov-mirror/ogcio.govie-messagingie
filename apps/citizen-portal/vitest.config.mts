@@ -53,7 +53,10 @@ export default defineConfig({
         // nextjs-analytics imports `./AnalyticsProvider` (a .jsx file) without
         // an extension, which Node can't resolve; Vite can. Tests render
         // through its real `AnalyticsContext` (test/utils/analytics.tsx).
+        // sag-client's entry has the same extensionless imports; inlining lets
+        // tests use its real navigation-abort check.
         inline: [
+          /@ogcio[/\\]sag-client/,
           /@ogcio[/\\]design-system-react/,
           /@ogcio[/\\]nextjs-analytics/,
         ],

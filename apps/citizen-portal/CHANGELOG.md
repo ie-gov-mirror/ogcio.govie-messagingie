@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.11](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.10...citizen-portal-v0.1.11) (2026-11-19)
+
+
+### Features
+
+* **citizen-portal:** build UAT discovery content through the Information Mediator AB[#45705](https://github.com/ogcio/govie-services-messaging/issues/45705) ([#1168](https://github.com/ogcio/govie-services-messaging/issues/1168)) ([393cc34](https://github.com/ogcio/govie-services-messaging/commit/393cc3460d560f2386669ae3a82455fb6ea8bf92))
+
+
+### Bug Fixes
+
+* **citizen-portal:** show a message when an attachment cannot load AB[#46293](https://github.com/ogcio/govie-services-messaging/issues/46293) ([#1179](https://github.com/ogcio/govie-services-messaging/issues/1179)) ([07ee93a](https://github.com/ogcio/govie-services-messaging/commit/07ee93a14508c0218e912a536da1b486f2e51254))
+* update both portals to nginx 1.31.9 AB[#46265](https://github.com/ogcio/govie-services-messaging/issues/46265) ([#1180](https://github.com/ogcio/govie-services-messaging/issues/1180)) ([b0d4e61](https://github.com/ogcio/govie-services-messaging/commit/b0d4e61d541ce9031c7cfeabfa77d835437a08cb))
+
 ## [0.1.10](https://github.com/ogcio/govie-services-messaging/compare/citizen-portal-v0.1.9...citizen-portal-v0.1.10) (2026-11-17)
 
 

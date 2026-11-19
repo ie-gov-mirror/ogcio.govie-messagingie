@@ -9,6 +9,7 @@ const trackEvent = analytics.event
 
 const pushLogSpy = vi.fn()
 const signIn = vi.hoisted(() => vi.fn())
+const refresh = vi.hoisted(() => vi.fn())
 const authState = vi.hoisted(() => ({ authenticated: true, loading: false }))
 
 vi.mock("next-intl", () => ({
@@ -16,6 +17,8 @@ vi.mock("next-intl", () => ({
     const labels: Record<string, string> = {
       open: "Open",
       download: "Download",
+      loadFailed: "This attachment could not be loaded.",
+      retry: "Try again",
     }
     if (labels[key]) return labels[key]
     if (key === "openFile") return `Open ${params?.fileName ?? ""}`
@@ -38,14 +41,31 @@ vi.mock("@ogcio/sag-client/react", () => ({
   useGatewayFetch: (path: string) => {
     const idMatch = path.match(/^\/upload\/api\/v1\/metadata\/(.+)$/)
     if (!idMatch) {
-      return { data: undefined, isLoading: false, error: null }
+      return { data: undefined, isLoading: false, error: null, refresh }
     }
     const id = idMatch[1]
+    if (id === "aborted-metadata") {
+      return {
+        data: undefined,
+        isLoading: false,
+        error: new DOMException("The operation was aborted.", "AbortError"),
+        refresh,
+      }
+    }
+    if (id === "load-failed-metadata") {
+      return {
+        data: undefined,
+        isLoading: false,
+        error: new TypeError("Load failed"),
+        refresh,
+      }
+    }
     if (id === "missing-metadata") {
       return {
         data: undefined,
         isLoading: false,
         error: new Error("not found"),
+        refresh,
       }
     }
     return {
@@ -56,6 +76,7 @@ vi.mock("@ogcio/sag-client/react", () => ({
       },
       isLoading: false,
       error: null,
+      refresh,
     }
   },
 }))
@@ -65,6 +86,7 @@ describe("AttachmentCard", () => {
     pushLogSpy.mockClear()
     trackEvent.mockClear()
     signIn.mockClear()
+    refresh.mockClear()
     authState.authenticated = true
     authState.loading = false
   })
@@ -114,7 +136,10 @@ describe("AttachmentCard", () => {
   it("logs when attachment metadata is unavailable", () => {
     const { container } = render(<AttachmentCard id='missing-metadata' />)
 
-    expect(container).toBeEmptyDOMElement()
+    expect(container).not.toBeEmptyDOMElement()
+    expect(
+      screen.getByText("This attachment could not be loaded."),
+    ).toBeInTheDocument()
     expect(pushLogSpy).toHaveBeenCalledWith(
       ["Attachment metadata unavailable"],
       {
@@ -125,6 +150,30 @@ describe("AttachmentCard", () => {
         level: "warn",
       },
     )
+  })
+
+  it("shows the failure message and a retry for a Load failed error while the page is visible", () => {
+    render(<AttachmentCard id='load-failed-metadata' />)
+
+    expect(
+      screen.getByText("This attachment could not be loaded."),
+    ).toBeInTheDocument()
+    expect(pushLogSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it("retries the metadata request when Try again is clicked", () => {
+    render(<AttachmentCard id='missing-metadata' />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }))
+    expect(refresh).toHaveBeenCalledTimes(1)
+  })
+
+  it("neither logs nor shows the failure message when the browser cancelled the request", () => {
+    const { container } = render(<AttachmentCard id='aborted-metadata' />)
+
+    expect(container).toBeEmptyDOMElement()
+    expect(pushLogSpy).not.toHaveBeenCalled()
+    expect(trackEvent).not.toHaveBeenCalled()
   })
 
   it("fires message-attachment-download on download click", () => {

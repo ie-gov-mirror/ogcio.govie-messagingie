@@ -50,7 +50,7 @@ function fixedTokens(...tokens: string[]): TokenSource {
 }
 
 describe("client credentials token source", () => {
-  it("requests a read token with the credentials in Basic auth", async () => {
+  it("requests a token with the credentials in Basic auth, no scope", async () => {
     const fetch = vi.fn(async () => tokenResponse("t1", 3600))
     expect(await tokenSource(fetch).getToken()).toBe("t1")
 
@@ -64,7 +64,7 @@ describe("client credentials token source", () => {
         "base64",
       ).toString(),
     ).toBe("client%20id:s3cret%3A%26")
-    expect(String(init.body)).toBe("grant_type=client_credentials&scope=read")
+    expect(String(init.body)).toBe("grant_type=client_credentials")
   })
 
   it("reuses the token until shortly before it expires", async () => {

@@ -156,7 +156,7 @@ RUN envsubst '${OTEL_ENABLE} ${OTEL_SERVICE_NAME} ${OTEL_COLLECTOR_URL} ${PORT} 
 # Production stage — nginx serves the single static export under the
 # three configured server_names. The canonicalisation map inside
 # nginx.conf handles URL-content parity (off-zone paths 301 to owner).
-FROM nginxinc/nginx-unprivileged:1.31-alpine-otel AS runner
+FROM nginx/nginx-unprivileged:1.31.9-alpine-otel AS runner
 
 USER root
 

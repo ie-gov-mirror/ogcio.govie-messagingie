@@ -1,6 +1,6 @@
 {
   "name": "citizen-portal",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": true,
   "scripts": {
     "dev": "pnpm fetch:static-content && PORT=4001 next dev",

@@ -45,7 +45,7 @@ export class ConfigError extends Error {
 export type StaticContentMode = "mock" | "proxy" | "prebuilt"
 
 // The gov.ie Integration API: Wagtail's pages API behind OAuth2 client
-// credentials, with the token endpoint on the same host.
+// credentials, reached through the Information Mediator.
 export type CmsApiConfig = {
   baseUrl: string
   tokenUrl: string
@@ -86,6 +86,7 @@ function readProxyConfig(env: Record<string, string | undefined>): {
 } {
   const names = [
     "STATIC_CONTENT_API_URL",
+    "STATIC_CONTENT_TOKEN_URL",
     "STATIC_CONTENT_CLIENT_ID",
     "STATIC_CONTENT_CLIENT_SECRET",
     "STATIC_CONTENT_INDEX_PAGE_ID",
@@ -98,13 +99,18 @@ function readProxyConfig(env: Record<string, string | undefined>): {
   }
   const value = (name: (typeof names)[number]) => String(env[name]).trim()
 
-  // The client secret goes to the token endpoint, so never over plain HTTP.
-  const apiUrl = value("STATIC_CONTENT_API_URL")
-  if (!isHttpsUrl(apiUrl)) {
-    throw new ConfigError(
-      `STATIC_CONTENT_API_URL must be an https URL, got "${apiUrl}"`,
-    )
+  // The client secret and the token travel to these, so never over plain HTTP.
+  for (const name of [
+    "STATIC_CONTENT_API_URL",
+    "STATIC_CONTENT_TOKEN_URL",
+  ] as const) {
+    if (!isHttpsUrl(value(name))) {
+      throw new ConfigError(
+        `${name} must be an https URL, got "${value(name)}"`,
+      )
+    }
   }
+  const apiUrl = value("STATIC_CONTENT_API_URL")
   const baseUrl = apiUrl.endsWith("/") ? apiUrl : `${apiUrl}/`
 
   const indexPageId = Number(value("STATIC_CONTENT_INDEX_PAGE_ID"))
@@ -118,7 +124,7 @@ function readProxyConfig(env: Record<string, string | undefined>): {
     indexPageId,
     api: {
       baseUrl,
-      tokenUrl: new URL("o/token/", baseUrl).href,
+      tokenUrl: value("STATIC_CONTENT_TOKEN_URL"),
       clientId: value("STATIC_CONTENT_CLIENT_ID"),
       clientSecret: value("STATIC_CONTENT_CLIENT_SECRET"),
     },

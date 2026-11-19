@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.5...public-servant-portal-v0.1.6) (2026-11-19)
+
+
+### Bug Fixes
+
+* update both portals to nginx 1.31.9 AB[#46265](https://github.com/ogcio/govie-services-messaging/issues/46265) ([#1180](https://github.com/ogcio/govie-services-messaging/issues/1180)) ([b0d4e61](https://github.com/ogcio/govie-services-messaging/commit/b0d4e61d541ce9031c7cfeabfa77d835437a08cb))
+
 ## [0.1.5](https://github.com/ogcio/govie-services-messaging/compare/public-servant-portal-v0.1.4...public-servant-portal-v0.1.5) (2026-11-17)
 
 

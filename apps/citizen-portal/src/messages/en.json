@@ -272,7 +272,9 @@
         "downloading": "Downloading",
         "savedToDevice": "Saved to device",
         "previewUnavailable": "Preview unavailable",
-        "downloadFailed": "Download failed"
+        "downloadFailed": "Download failed",
+        "loadFailed": "This attachment could not be loaded.",
+        "retry": "Try again"
       },
       "restore": "Restore",
       "erase": "Erase",

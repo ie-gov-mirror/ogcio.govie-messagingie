@@ -19,6 +19,8 @@ import {
   getDashboardLifeEvents,
   getDiscovery,
   getLifeEvent,
+  getServicePageParams,
+  SERVICE_PAGE_PLACEHOLDER,
 } from "@/lib/discovery"
 import en from "@/messages/en.json"
 import ga from "@/messages/ga.json"
@@ -29,9 +31,13 @@ import {
 import { buildDiscoveryContent } from "../../scripts/static-content/pipeline/index.ts"
 import { createMockTransport } from "../../scripts/static-content/wagtail/index.ts"
 import { writeStaticContent } from "../../scripts/static-content/write.ts"
+import ServicePage from "../../src/app/[locale]/(authenticated)/discovery/[lifeEvent]/[service]/page.lea.tsx"
 import { fakeAnalytics } from "../utils/analytics"
 
 vi.mock("next/navigation", () => ({
+  notFound: () => {
+    throw new Error("NEXT_NOT_FOUND")
+  },
   usePathname: () => "/en/discovery",
   useRouter: () => ({ push: vi.fn() }),
 }))
@@ -101,6 +107,54 @@ describe("getDiscovery", () => {
     expect(() => getLifeEvent(getDiscovery("en", outDir), "nope")).toThrow(
       'Unknown life event "nope"',
     )
+  })
+})
+
+describe("getServicePageParams", () => {
+  it("lists one route per service with a page", () => {
+    const discovery = getDiscovery("en", outDir)
+    const lifeEvent = getLifeEvent(discovery, "child-starting-school")
+    const [first, ...others] = lifeEvent.services
+    const withPage = {
+      ...discovery,
+      lifeEvents: [
+        {
+          ...lifeEvent,
+          services: [
+            {
+              ...first,
+              detail: { slug: "school-place", title: "School place", body: [] },
+            },
+            ...others,
+          ],
+        },
+      ],
+    }
+    expect(getServicePageParams(withPage)).toEqual([
+      { lifeEvent: "child-starting-school", service: "school-place" },
+    ])
+  })
+
+  it("returns a placeholder route when no service has a page", () => {
+    const discovery = getDiscovery("en", outDir)
+    const withoutPages = {
+      ...discovery,
+      lifeEvents: discovery.lifeEvents.map((le) => ({
+        ...le,
+        services: le.services.map(({ detail: _, ...service }) => service),
+      })),
+    }
+    expect(getServicePageParams(withoutPages)).toEqual([
+      SERVICE_PAGE_PLACEHOLDER,
+    ])
+  })
+
+  it("renders the placeholder route as not found", async () => {
+    await expect(
+      ServicePage({
+        params: Promise.resolve({ locale: "en", ...SERVICE_PAGE_PLACEHOLDER }),
+      }),
+    ).rejects.toThrow("NEXT_NOT_FOUND")
   })
 })
 

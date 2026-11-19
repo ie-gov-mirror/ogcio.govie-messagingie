@@ -1,6 +1,13 @@
 import type { Metadata } from "next"
+import { notFound } from "next/navigation"
 import { ServiceView } from "@/components/discovery/discovery-views"
-import { getDiscovery, getLifeEvent, getService } from "@/lib/discovery"
+import {
+  getDiscovery,
+  getLifeEvent,
+  getService,
+  getServicePageParams,
+  isServicePagePlaceholder,
+} from "@/lib/discovery"
 
 type Params = { locale: string; lifeEvent: string; service: string }
 type Props = { params: Promise<Params> }
@@ -14,17 +21,13 @@ export function generateStaticParams({
 }: {
   params: Pick<Params, "locale">
 }) {
-  return getDiscovery(params.locale).lifeEvents.flatMap((lifeEvent) =>
-    lifeEvent.services.flatMap((service) =>
-      service.detail
-        ? [{ lifeEvent: lifeEvent.slug, service: service.detail.slug }]
-        : [],
-    ),
-  )
+  return getServicePageParams(getDiscovery(params.locale))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, lifeEvent, service } = await params
+  const resolved = await params
+  if (isServicePagePlaceholder(resolved)) return {}
+  const { locale, lifeEvent, service } = resolved
   const { detail } = getService(
     getLifeEvent(getDiscovery(locale), lifeEvent),
     service,
@@ -33,7 +36,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ServicePage({ params }: Props) {
-  const { locale, lifeEvent: lifeEventSlug, service: slug } = await params
+  const resolved = await params
+  if (isServicePagePlaceholder(resolved)) notFound()
+  const { locale, lifeEvent: lifeEventSlug, service: slug } = resolved
   const lifeEvent = getLifeEvent(getDiscovery(locale), lifeEventSlug)
   return (
     <ServiceView
